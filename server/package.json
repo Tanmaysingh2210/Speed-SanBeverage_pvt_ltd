@@ -1,7 +1,7 @@
 {
   "name": "server",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -10,6 +10,14 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
-    "express": "^5.1.0"
+    "bcrypt": "^6.0.0",
+    "cookie-parser": "^1.4.7",
+    "crypto": "^1.0.1",
+    "express": "^5.1.0",
+    "express-session": "^1.18.2",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.19.0",
+    "nodemailer": "^7.0.6",
+    "react-router-dom": "^7.9.3"
   }
 }
