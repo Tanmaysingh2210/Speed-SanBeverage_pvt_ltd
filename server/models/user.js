@@ -9,7 +9,7 @@ const userSchema = new mongoose.Schema({
     otpExpire:{type:Date},
     isVerified:{type:Boolean, default:false},
     resetPasswordOtp:{type:String},
-    resetPasswordExpire:{type:Date},
+    resetPasswordOtpExpire:{type:Date},
 })
 
 module.exports = mongoose.model('user', userSchema);

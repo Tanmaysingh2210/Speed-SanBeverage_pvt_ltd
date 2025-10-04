@@ -24,7 +24,8 @@ exports.login = async (req, res) => {
             }
 
             req.session.user = { id: user._id, email: user.email, name: user.name };
-            console.log(req.sessionID);
+            console.log("session: ", req.session);
+            console.log("sessionID: ", req.sessionID);
             res.json({ message: 'Logged in successfully' });
         });
     } catch (err) {
