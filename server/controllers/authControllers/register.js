@@ -1,6 +1,6 @@
 const nodemailer=require('nodemailer');
 const crypto=require('crypto');
-const User = require('../models/user');
+const User = require('../../models/user');
 const bcrypt = require('bcrypt');
 
 const transporter = nodemailer.createTransport({
@@ -11,10 +11,12 @@ const transporter = nodemailer.createTransport({
     }
 });
 
+exports.transporter = transporter;
+
 const generateOtp = () => crypto.randomInt(100000 , 999999).toString();
 
 
-exports.register = async(req, res)=>{
+exports.register = async (req, res)=>{
     try{
         const{name,email,password,depo} = req.body;
         let user = await User.findOne({email});
