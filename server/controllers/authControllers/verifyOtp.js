@@ -15,17 +15,18 @@ exports.verify_otp = async (req, res) => {
         user.otpExpire = undefined;
         await user.save();
 
-        req.session.regenerate(err => {
-            if (err) {
-                console.error("Session regenerate error:", err);
-                return res.status(500).json({ message: "Error starting session" });
-            }
-            req.session.user = { id: user._id, email: user.email, name: user.name };
-            console.log("session data: ", req.session);
-            console.log("Session id : " , req.sessionID);
+        // req.session.regenerate(err => {
+        //     if (err) {
+        //         console.error("Session regenerate error:", err);
+        //         return res.status(500).json({ message: "Error starting session" });
+        //     }
+        //     req.session.user = { id: user._id, email: user.email, name: user.name };
+        //     console.log("session data: ", req.session);
+        //     console.log("Session id : " , req.sessionID);
             
-            res.status(200).json({ message: "Otp verified succesfully." });
-        });
+        // });
+        
+        res.status(200).json({ message: "Otp verified succesfully." });
     } catch (err) {
         res.status(400).json("Error in verification: ", err);
     }
