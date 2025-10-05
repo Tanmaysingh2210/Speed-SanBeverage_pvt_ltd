@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 
 const salesmanSchema = new mongoose.Schema({
   routeNo: {
-    type: String,        
+    type: String,
     required: true
   },
   name: {
@@ -12,13 +12,14 @@ const salesmanSchema = new mongoose.Schema({
     trim: true
   },
   codeNo: {
-    type: String,        
+    type: String,
     required: true,
     unique: true
   }
 }, {
-  timestamps: true      
+  timestamps: true
 })
 
-module.exports=mongoose.model("salesman" , salesmanSchema)
+const Salesman = mongoose.model("salesman", salesmanSchema)
+export default Salesman
 

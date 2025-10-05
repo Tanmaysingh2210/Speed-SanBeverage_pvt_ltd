@@ -16,7 +16,6 @@ exports.addPackage = async (req, res) => {
 };
 
 
-
 exports.getAllPackage = async (req, res) => {
     try {
         const packages = await Package.find();

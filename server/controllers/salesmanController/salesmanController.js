@@ -1,4 +1,4 @@
-const {Salesman}=require('../../models/salesman.js')
+const { Salesman } = require('../../models/salesman')
 
 
 exports.addSalesman = async (req, res) => {
@@ -9,6 +9,7 @@ exports.addSalesman = async (req, res) => {
             return res.status(400).json({ message: "routeNo, name, and codeNo are required" });
 
         const existing = await Salesman.findOne({ codeNo });
+
         if (existing)
             return res.status(400).json({ message: "Salesman with this codeNo already exists" });
 
@@ -17,6 +18,9 @@ exports.addSalesman = async (req, res) => {
         res.status(200).json({ message: "Salesman added successfully" });
     } catch (err) {
         res.status(500).json({ message: "Error adding salesman", error: err.message });
+        console.log("error data", err.message);
+        console.log("Error", err);
+
     }
 };
 

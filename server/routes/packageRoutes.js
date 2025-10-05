@@ -1,7 +1,6 @@
 const express  = require('express');
 const { addPackage, getAllPackage, getPackagebyID, updatePackage, deletePackage } = require('../controllers/skuControllers/package.js');
 
-
 const router = express.Router();
 
 router.post('/', addPackage);
