@@ -1,13 +1,12 @@
 const express = require('express');
-const { register } = require('../controllers/authControllers/register');
-const { verify_otp } = require('../controllers/authControllers/verifyOtp');
-const { login } = require('../controllers/authControllers/login');
-const { resend_otp } = require('../controllers/authControllers/resendOtp');
-const { logout } = require('../controllers/authControllers/logout');
-const { forgotPassword } = require('../controllers/authControllers/forgotPassword');
-const { verify_reset_pass_otp } = require('../controllers/authControllers/verifyresetPassOtp');
-const { resetPassword } = require('../controllers/authControllers/resetPassword');
-
+const { register } = require('../controllers/authControllers/register.js');
+const { verify_otp } = require('../controllers/authControllers/verifyOtp.js');
+const { login } = require('../controllers/authControllers/login.js');
+const { resend_otp } = require('../controllers/authControllers/resendOtp.js');
+const { logout } = require('../controllers/authControllers/logout.js');
+const { forgotPassword } = require('../controllers/authControllers/forgotPassword.js');
+const { verify_reset_pass_otp } = require('../controllers/authControllers/verifyresetPassOtp.js');
+const { resetPassword } = require('../controllers/authControllers/resetPassword.js');
 
 const router = express.Router();
 

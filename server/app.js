@@ -4,6 +4,8 @@ const connectDB = require('./config/db');
 const authRoutes = require('./routes/authRoutes');
 const containerRoutes = require('./routes/containerRoutes');
 const flavourRoutes = require('./routes/flavourRoutes');
+const packageRoutes = require('./routes/packageRoutes');
+const itemRoutes = require('./routes/itemRoutes');
 
 connectDB();
 const app = express();
@@ -19,6 +21,8 @@ app.use(session({
 app.use('/auth', authRoutes);
 app.use('/container',containerRoutes);
 app.use('/flavour',flavourRoutes);
+app.use('/package',packageRoutes);
+app.use('/item',itemRoutes);
 
 
 
