@@ -1,5 +1,4 @@
-import mongoose from "mongoose";
-
+const mongoose =require("mongoose")
 
 const salesmanSchema = new mongoose.Schema({
   routeNo: {
@@ -20,6 +19,5 @@ const salesmanSchema = new mongoose.Schema({
   timestamps: true
 })
 
-const Salesman = mongoose.model("salesman", salesmanSchema)
-export default Salesman
+module.exports = mongoose.model("salesman", salesmanSchema)
 

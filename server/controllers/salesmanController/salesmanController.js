@@ -1,4 +1,4 @@
-const { Salesman } = require('../../models/salesman')
+const  Salesman  = require('../../models/salesman.js')
 
 
 exports.addSalesman = async (req, res) => {
