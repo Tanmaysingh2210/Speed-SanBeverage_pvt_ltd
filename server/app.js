@@ -8,6 +8,7 @@ const packageRoutes = require('./routes/packageRoutes');
 const itemRoutes = require('./routes/itemRoutes');
 const salesmanRoutes = require('./routes/salesmanRoute.js')
 const ratesRoutes=require('./routes/ratesRoutes.js')
+const transactionRoutes=require('./routes/transactionRoutes.js')
 
 connectDB();
 const app = express();
@@ -27,6 +28,7 @@ app.use('/package', packageRoutes);
 app.use('/item', itemRoutes);
 app.use('/salesman', salesmanRoutes);
 app.use('/rates', ratesRoutes);
+app.use('/transaction' , transactionRoutes)
 
 
 const port = 3000;

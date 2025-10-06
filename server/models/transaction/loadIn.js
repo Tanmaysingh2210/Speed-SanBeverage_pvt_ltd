@@ -5,7 +5,7 @@ const LoadInSchema= new mongoose.Schema({
       type: String,
       required: true, 
     },
-    date: {
+    Date: {
       type: Date,
       required: true,
     },
@@ -13,7 +13,7 @@ const LoadInSchema= new mongoose.Schema({
         type:Number,
         default:0
     },
-    Leaked:{
+    leaked:{
         type:Number,
         default:0
     },

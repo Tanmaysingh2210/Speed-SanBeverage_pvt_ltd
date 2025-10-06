@@ -1,4 +1,4 @@
-const LoadIn=require('../../models/transaction/load_in');
+const LoadIn=require('../../models/transaction/loadIn');
 
 exports.addLoadIn = async (req, res) => {
     try {
