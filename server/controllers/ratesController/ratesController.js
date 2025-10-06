@@ -1,7 +1,6 @@
 const Rate=require('../../models/rates.js')
 
 
-// Create a new rate
 exports.addRate = async (req, res) => {
     try {
         const { itemCode, basePrice, perTax, Date } = req.body;
