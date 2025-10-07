@@ -1,0 +1,59 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  font-family: "Poppins", sans-serif;
+  font-weight: 500;
+  font-style: normal;
+}
+
+.flex {
+  display: flex;
+}
+
+.signin {
+  background-color: #1f2937;
+  color: #e5e7eb;
+  display: flex;
+  width: 100vw;
+  height: 100vh;
+
+}
+
+.signin .signin-section {
+  width: 50vw;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-direction: column;
+}
+
+.signin .signin-section .heading {
+  font-size: 48px;
+  font-weight: 700;
+}
+
+.signin .form-entry {}
+
+.signin .form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.signin .form input{
+  background-color:#1f2937;
+  border: none;
+  text-decoration: dashed;
+  text-decoration-color: #e5e7eb;
+}
+
+
+.signin .welcome-section {
+  background-color: #e5e7eb;
+  color: #1f2937;
+  width: 50vw;
+  height: 100vh;
+
+}
