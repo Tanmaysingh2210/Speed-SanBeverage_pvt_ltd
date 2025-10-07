@@ -28,32 +28,57 @@
   align-items: center;
   justify-content: space-between;
   flex-direction: column;
+  flex:1;
+  
 }
 
 .signin .signin-section .heading {
   font-size: 48px;
   font-weight: 700;
+  margin-top:5vh;
+  
 }
 
-.signin .form-entry {}
+
 
 .signin .form {
   display: flex;
   flex-direction: column;
   gap: 10px;
+  flex-grow:1;
+  margin:auto;
+  
 }
 .signin .form input{
   background-color:#1f2937;
   border: none;
-  text-decoration: dashed;
-  text-decoration-color: #e5e7eb;
+  outline:none;
+  border-bottom:2px solid  #e5e7eb;
+  width:30vw;
+
+  
+}
+input:focus{
+  border:none;
 }
 
+.submit{
+  background-color:#10B981;
+  margin:8vw;
+  color:#1f2937;
+  font-weight:700;
+  width:13vw;
+  
+  
+}
+.register{
+  margin-bottom:5vh;
+}
 
 .signin .welcome-section {
   background-color: #e5e7eb;
   color: #1f2937;
   width: 50vw;
   height: 100vh;
-
+  flex:1;
 }

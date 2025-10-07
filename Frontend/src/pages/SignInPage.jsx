@@ -8,12 +8,15 @@ export function SignInPage () {
                     <div className="heading">Sign In</div>
                     <div className="form-entry">
                         <form method="post" className='form'>
-                            <input type="email" placeholder="Email" />
-                            <input type="password" placeholder="Password" />
-                            <input type="submit" value="Sign In" />
+                            <label>Email</label>
+                            <input type="email" name="email" required />
+                            <label>Password</label>
+                            <input type="password" name="Password" required />
+                            
                         </form>
                     </div>
-                    <p className="register">Did'nt have account? <button>Register</button></p>
+                    <button className="submit">Sign In</button>
+                    <p className="register">Did'nt have account? <a>Register</a></p>
                 </div>
                 <div className="welcome-section">
 
