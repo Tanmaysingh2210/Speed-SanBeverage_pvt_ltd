@@ -13,30 +13,37 @@
 }
 
 .signin {
-  background-color: #1f2937;
+  background-color:#e5e7eb;
   color: #e5e7eb;
   display: flex;
   width: 100vw;
   height: 100vh;
-
+  position:relative;
+  flex-grow:1;
 }
 
 .signin .signin-section {
-  width: 50vw;
+  background-color:#1f2937;
+  width: 100vw;
   height: 100vh;
   display: flex;
-  align-items: center;
+  align-items: start;
   justify-content: space-between;
   flex-direction: column;
-  flex:1;
+clip-path: polygon(0 0, 40% 0, 70% 100%, 0% 100%);
+ position:relative;
   
 }
 
 .signin .signin-section .heading {
   font-size: 48px;
   font-weight: 700;
-  margin-top:5vh;
-  
+  position:absolute;
+  justify-content:center;
+  align-items:center;
+  top:4vw;
+  left:12vw;
+  height:auto;
 }
 
 
@@ -46,8 +53,10 @@
   flex-direction: column;
   gap: 10px;
   flex-grow:1;
-  margin:auto;
   
+  position:absolute;
+  top:15vw;
+  left:10vw;
 }
 .signin .form input{
   background-color:#1f2937;
@@ -64,21 +73,39 @@ input:focus{
 
 .submit{
   background-color:#10B981;
-  margin:8vw;
+  
   color:#1f2937;
   font-weight:700;
   width:13vw;
-  
+  position:absolute;
+  top:30vw;
+  left:15vw;
   
 }
 .register{
-  margin-bottom:5vh;
+  position:absolute;
+  top:37vw;
+  left:13.5vw;
 }
 
 .signin .welcome-section {
   background-color: #e5e7eb;
   color: #1f2937;
-  width: 50vw;
-  height: 100vh;
-  flex:1;
+  position:absolute;
+  left:70vw;
+  top:12vw;
+  height: 30vh;
+  width:52vh;
+  z-index:0;
+  
+}
+.welcome{
+font-size:50px;
+  font-weight:bold;
+}
+.back{
+  font-size:50px;
+  font-weight:bold;
+  display:inline-block;
+  margin-left:6.5vw;
 }

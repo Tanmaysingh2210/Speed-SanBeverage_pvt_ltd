@@ -19,7 +19,8 @@ export function SignInPage () {
                     <p className="register">Did'nt have account? <a>Register</a></p>
                 </div>
                 <div className="welcome-section">
-
+                    <span className="welcome">Welcome</span>
+                    <span className="back">Back!</span>
                 </div>
             </div>
         
