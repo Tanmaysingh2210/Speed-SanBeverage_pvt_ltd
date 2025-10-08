@@ -1,7 +1,9 @@
 import React from 'react'
+import { useState } from 'react';
 import './RegisterPage.css'
 
 export function RegisterPage() {
+    const [showPassword, setShowPassword] = useState(false);
     return (
         <div className='register'>
             <div className="left">
@@ -9,6 +11,9 @@ export function RegisterPage() {
                 <div className="empty"></div>
             </div>
             <div className="right">
+                <div className="">
+
+
                     <div className="head">Register</div>
                     <div className="form-box">
                         <form method='post' className='form'>
@@ -23,9 +28,24 @@ export function RegisterPage() {
                                 <label htmlFor="email">Email</label>
                             </div>
 
-                            <div className="input-group">
+                            {/* <div className="input-group">
                                 <input type="password" id="password" required />
                                 <label htmlFor="password">Password</label>
+                            </div> */}
+
+                            <div className="input-group password-group">
+                                <input
+                                    type={showPassword ? 'text' : 'password'}
+                                    id="password"
+                                    required
+                                />
+                                <label htmlFor="password">Password</label>
+                                <span
+                                    className="toggle-eye"
+                                    onClick={() => setShowPassword(!showPassword)}
+                                >
+                                    {showPassword ? '🙈' : '👁️'}
+                                </span>
                             </div>
 
                             <div className="input-group">
@@ -37,6 +57,7 @@ export function RegisterPage() {
                         <button className='btn'>Register</button>
                     </div>
                     <p>Already User? <a href="#">Sign in</a></p>
+                </div>
             </div>
         </div>
     )
