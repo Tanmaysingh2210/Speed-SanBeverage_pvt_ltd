@@ -1,13 +1,16 @@
-import './App.css'
-import { RegisterPage } from './pages/RegisterPage'
+import './App.css';
+//import { RegisterPage } from './pages/RegisterPage';
+import { SignInPage } from './pages/SignInPage';
+//import {SignInPage} from './pages/SignInPage';
 
 function App() {
 
   return (
     <>
-    <RegisterPage />
+    <SignInPage />
     </>
   )
 }
+
 
 export default App

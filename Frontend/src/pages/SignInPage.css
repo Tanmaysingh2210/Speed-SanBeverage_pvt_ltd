@@ -6,10 +6,15 @@
   font-family: "Poppins", sans-serif;
   font-weight: 500;
   font-style: normal;
+  
 }
 
 .flex {
   display: flex;
+}
+:root {
+    --gray-color: #e5e7eb;
+    --blue-color: #1f2937;
 }
 
 .signin {
@@ -20,6 +25,8 @@
   height: 100vh;
   position:relative;
   flex-grow:1;
+  flex-wrap:wrap;
+ 
 }
 
 .signin .signin-section {
@@ -27,23 +34,22 @@
   width: 100vw;
   height: 100vh;
   display: flex;
-  align-items: start;
-  justify-content: space-between;
+  align-items:flex-start;
+  position:relative;
   flex-direction: column;
   clip-path: polygon(0 0, 40% 0, 70% 100%, 0% 100%);
- position:relative;
+ 
   
 }
 
-.signin .signin-section .heading {
-  font-size: 48px;
+.signin .signin-section .content .heading {
+  font-size: clamp(1.5rem,5vw,3rem);
   font-weight: 700;
-  position:absolute;
+  
   justify-content:center;
   align-items:center;
-  top:4vw;
-  left:12vw;
-  height:auto;
+ 
+  transition:0.1s ease;
 }
 
 
@@ -53,40 +59,100 @@
   flex-direction: column;
   gap: 10px;
   flex-grow:1;
-  
-  position:absolute;
-  top:15vw;
-  left:10vw;
-}
-.signin .form input{
-  background-color:#1f2937;
-  border: none;
-  outline:none;
-  border-bottom:2px solid  #e5e7eb;
-  width:30vw;
 
   
 }
-input:focus{
-  border:none;
+
+
+.input-group {
+    position: relative;
+    margin-bottom: 1vh;
+    border-radius: 4px;
+    width: 20vw;
 }
+.input-group input {
+    width: 100%;
+    padding: 12px 0 8px 0;
+    border: none;
+    border-bottom: 2px solid var(--gray-color);
+    background: transparent;
+    color: var(--gray-color);
+    font-size: 2vh;
+    outline: none;
+    transition: border-color 0.3s;
+}
+.input-group label {
+    position: absolute;
+    top: 1vh;
+    left: 0;
+    color: var(--gray-color);
+    pointer-events: none;
+    transition: 0.3s ease all;
+}
+.input-group input:focus {
+    border-color: #10b981;
+}
+
+.input-group input:focus+label,
+.input-group input:valid+label {
+    top: -0.6vh;
+    font-size: 0.8vw;
+    color: #10b981;
+}
+input:-webkit-autofill {
+    transition: background-color 9999s ease-in-out 0s;
+    -webkit-text-fill-color: #fff !important;
+}
+
+input:valid,
+input:invalid {
+    box-shadow: none;
+    outline: none;
+}
+
+.password-group {
+  position: relative;
+  
+}
+
+.password-group input {
+  width: 100%;
+  /* space for eye icon */
+}
+
+
+
+
 
 .submit{
   background-color:#10B981;
-  
+  gap:10px;
   color:#1f2937;
   font-weight:700;
   width:13vw;
-  position:absolute;
-  top:30vw;
-  left:15vw;
+  display:flex;
+  flex-direction:column;
+
   
 }
 .register{
-  position:absolute;
-  top:37vw;
-  left:13.5vw;
+ 
+  display:flex;
+  justify-content:center;
+  align-items:flex-end;
+  
+
 }
+.content{
+  display:flex;
+  flex-direction:column;
+  height:90vh;
+ justify-content:center;
+ align-items:center;
+ width:50%;
+ gap:60px;
+}
+
 
 .signin .welcome-section {
   background-color: #e5e7eb;
@@ -97,7 +163,10 @@ input:focus{
   height: 30vh;
   width:52vh;
   z-index:0;
-  
+ transform: translate(0px, 50px) scale(1);
+  transition: transform 0.3s ease;
+
+ 
 }
 .welcome{
 font-size:50px;
@@ -108,4 +177,13 @@ font-size:50px;
   font-weight:bold;
   display:inline-block;
   margin-left:6.5vw;
+}
+/*
+means iske neeche jayega to kiya hoga 
+*/
+@media(max-width:1024px){  
+  .signin .welcome-section{
+   transform: translate(-50px, 80px) scale(0.9);
+  }     
+  
 }

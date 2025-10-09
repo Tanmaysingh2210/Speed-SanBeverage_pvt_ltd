@@ -1,6 +1,6 @@
-import React from 'react'
+import React from 'react';
 import { useState } from 'react';
-import './RegisterPage.css'
+import './RegisterPage.css';
 
 export function RegisterPage() {
     const [showPassword, setShowPassword] = useState(false);
