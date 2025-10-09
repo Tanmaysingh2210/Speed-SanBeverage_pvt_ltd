@@ -1,0 +1,251 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    font-family: "Poppins", sans-serif;
+    font-weight: 500;
+    font-style: normal;
+    overflow-x: hidden;
+}
+
+:root {
+    --gray-color: #e5e7eb;
+    --blue-color: #1f2937;
+}
+
+.forgetpass {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+}
+
+.forgetpass .right {
+    background-color: var(--gray-color);
+    color: var(--blue-color);
+    width: 50vw;
+    height: 100vh;
+    position: absolute;
+    top: 0;
+    right: 0;
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 24% 100%);
+    
+}
+
+
+
+.forgetpass .right .heading {
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    flex-direction: column;
+    width: 40vw;
+    height: 100vh;
+    font-size: 8vh;
+    font-weight: 600;
+}
+
+.forgetpass .left {
+    background-color: var(--blue-color);
+    color: var(--gray-color);
+    width: 80vw;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    transform: translateX(-12vw);
+
+}
+
+
+
+
+.left .clear {
+    width: 50vw;
+    height: 100vh;
+}
+
+.forgetpass  .head {
+    width: 100%;
+    text-align: center;
+    margin: 3vh auto;
+    font-size: 5vh;
+    font-weight: 400;
+}
+
+.forgetpass .left .form-box {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 40vw;
+    min-width: 30vw;
+}
+
+.forgetpass .left .form-box .form {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 2vh;
+    height: 50vh;
+    width: 45vw;
+    min-width: 20vw;
+}
+
+
+.forgetpass .left .form-box .btn {
+    display: block;
+    margin: 0 auto;
+    padding: 10px 20px;
+    width: 12vw;
+    background-color: #10b981;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 1vw;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.3s ease;
+
+}
+
+/* .register .right .form-box .form input {
+    outline: none;
+    height: 4vh;
+    width: 50%;
+    border-radius: 5px;
+    border: none;
+    background-color: transparent;
+    border-bottom: 3px solid var(--gray-color);
+
+}
+
+.register .right .form-box .form input:focus {
+    border: 2px solid var(--gray-color);
+    border-radius: 5px;
+
+
+} */
+
+
+
+.input-group {
+    position: relative;
+    margin-bottom: 1vh;
+    border-radius: 4px;
+    width: 20vw;
+}
+
+.input-group input {
+    width: 100%;
+    padding: 12px 0 8px 0;
+    border: none;
+    border-bottom: 2px solid var(--gray-color);
+    background: transparent;
+    color: var(--gray-color);
+    font-size: 2vh;
+    outline: none;
+    transition: border-color 0.3s;
+}
+
+.otp-grp{
+    position: relative;
+}
+.sendotp {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  transform: translateY(-10%); /* lifts it above the underline */
+  background-color: var(--gray-color);
+  color: var(--blue-color);
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: 0.2s ease-in-out;
+}
+
+.sendotp:hover {
+  background-color: #10b981;
+  color: var(--gray-color);
+}
+
+.input-group label {
+    position: absolute;
+    top: 1vh;
+    left: 0;
+    color: var(--gray-color);
+    pointer-events: none;
+    transition: 0.3s ease all;
+}
+
+.input-group input:focus {
+    border-color: #10b981;
+}
+
+.input-group input:focus+label,
+.input-group input:valid+label {
+    top: -0.6vh;
+    font-size: 0.8vw;
+    color: #10b981;
+}
+
+input:-webkit-autofill {
+    transition: background-color 9999s ease-in-out 0s;
+    -webkit-text-fill-color: #fff !important;
+}
+
+input:valid,
+input:invalid {
+    box-shadow: none;
+    outline: none;
+}
+
+.password-group {
+  position: relative;
+}
+
+.password-group input {
+  width: 100%;
+  padding-right: 35px; /* space for eye icon */
+}
+
+.toggle-eye {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  font-size: 18px;
+  opacity: 0.7;
+  user-select: none;
+  transition: opacity 0.2s;
+}
+
+.toggle-eye:hover {
+  opacity: 1;
+}
+
+
+
+
+
+p {
+    margin-top: 15px;
+    font-size: 14px;
+    text-align: center;
+}
+
+p a {
+    color: #00bfff;
+    text-decoration: none;
+}
+
+p a:hover {
+    text-decoration: underline;
+}
