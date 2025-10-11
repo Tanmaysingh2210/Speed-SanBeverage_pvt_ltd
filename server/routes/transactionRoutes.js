@@ -1,9 +1,12 @@
 const express = require('express');
-const { addLoadIn } = require('../controllers/transactionController/loadinController');
-const { addLoadout } = require('../controllers/transactionController/loadOutController');
-const router=express.Router();
+const router = express.Router();
 
-router.post('/loadin',addLoadIn );
-router.post('/loadout',addLoadout );
+const loadoutRoutes = require('./transactionRoutes/loadoutRoutes');
+const loadinRoutes = require('./transactionRoutes/loadinRoutes');
+const cashcreditRoutes = require('./transactionRoutes/cashcreditRoutes');
 
-module.exports = router;        
+router.use('/loadout', loadoutRoutes);
+router.use('/loadin', loadinRoutes);
+router.use('/cashcredit', cashcreditRoutes);
+
+module.exports = router;
