@@ -1,20 +1,26 @@
+import { Assets } from '../assets/Assets';
+import { Burger } from '../Components/Burger';
 
+export function HomePage() {
 
-export function HomePage(){
-    return(
+    return (
         <div className="home">
-    <nav className="nav">
-        <div>burger</div>
-        <ul className="elements">
-            <li>Home</li>
-            <li>Statistics</li>
-            <li>Summary</li>
-            
-        </ul>
-    </nav>
+
+            <nav className="nav">
+                <div className="burger">
+                    <img src={Assets.menu} alt="img"></img>
+                </div>
+                <ul className="elements">
+                    <li>Home</li>
+                    <li>Statistics</li>
+                    <li>Summary</li>
+
+                </ul>
+            </nav>
+            <Burger />
 
 
 
-</div>
+        </div>
     );
 }
