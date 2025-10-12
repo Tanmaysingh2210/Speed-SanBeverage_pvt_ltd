@@ -1,0 +1,14 @@
+.container-table{
+    border:2px solid black;
+    width:100%;
+    height:auto;
+    border-collapse:collapse;
+    color:black;
+    display:flex;
+    flex-direction:column;
+     justify-content: flex-start; 
+    align-items: flex-start; 
+     text-align: left;
+    
+    
+}
