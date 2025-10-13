@@ -156,19 +156,20 @@ body {
   width: 100vw;
   height: 100vh;
   display: flex;
-  justify-content: center;
-  align-items: center;
+  justify-content: end;
+  align-items: end;
 
   
 }
 
 .big-box .box{
-  width: 90vw;
-  height: 90vh;
+  width: 85vw;
+  height: 92vh;
   background-color: rgb(42, 81, 112);
   display: flex;
   justify-content: center;
   align-items: center;
+  transition: transform 0.3 ease;
 }
 
 .big-box .options{
@@ -182,3 +183,13 @@ body {
   align-items: center;
   justify-content: center;
 }
+
+@media (max-width=768px ){
+  .box{
+    transform: scale(0.7);
+    
+  }
+
+}
+
+
