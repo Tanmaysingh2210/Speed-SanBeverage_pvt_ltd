@@ -11,6 +11,7 @@ body {
   background: var(--bluish);
   width: 100vw;
   height: 100vh;
+  overflow-x: hidden;
   /* position:relative; */
 }
 
@@ -36,7 +37,7 @@ body {
   gap: 10vh;
   flex-grow: 1;
   margin-right: 3vw;
-  position: absolute;
+  position: fixed;
   top: 0;
   left: 0;
 }
@@ -98,7 +99,7 @@ body {
   z-index: 1;
   box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
   overflow: hidden;
-  min-width: 200px;
+  
 }
 
 .burger-box .heading {
@@ -109,6 +110,7 @@ body {
   height: 8vh;
   font-size: 20px;
   color: white;
+  transition : transform 0.3s ease;
 }
 
 
@@ -153,28 +155,28 @@ body {
 
 
 .big-box {
-  width: 100vw;
-  height: 100vh;
-  display: flex;
 
+  margin-top: 8vh;
+  margin-left: 15vw;
+  width: calc(100vw - 15vw);
+  height: calc(100vh - 8vh);
+  overflow:auto;
+  display: flex;
   justify-content: center;
   align-items: center;
+  background-color: rgb(42, 81, 112);
 
-
-  justify-content: end;
-  align-items: end;
 
 
 }
 
 .big-box .box {
-  width: 85vw;
-  height: 92vh;
-  background-color: rgb(42, 81, 112);
+  width: 28vw;
+  height: 80vh;
   display: flex;
   justify-content: center;
   align-items: center;
-
+  flex-direction: row;
 }
 
 .big-box .options {
@@ -187,5 +189,25 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+
+
+@media (max-width: 1190px) {
+  .burger-box {
+    min-width: 15vw;
+    overflow: hidden;
+  }
+
+  .big-box {
+    margin-left: 15vw;
+    width:calc(100vw - 15vw);
+  }
+    .burger-box .heading {
+      
+    transform: scale(0.7);
+    transform-origin:  center; 
+  }
+ 
 }
 
