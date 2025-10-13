@@ -1,11 +1,25 @@
-export function Burger() {
-    return (
-        <div className="burger-box">
+import React from 'react'
+import { Link } from 'react-router-dom'
+
+const Burger = () => {
+  return (
+      <div className="burger-box">
+            <div className="heading">
+                <i className="fas fa-wine-bottle text-blue-600 text-2xl"></i>
+                <h3 >SAN Beverages</h3>
+            </div>
+            <div className="line"></div>
+
+
             <ul className="burger-ul">
-                <li >Salesman</li>
-                <li>SKQ</li>
+                <li>Transaction</li>
+                <li>Prices</li>
+                <li>Salesman</li>
+                <li><Link to={`/sku`}>SKQ</Link></li>
             </ul>
 
         </div>
-    );
+  )
 }
+
+export default Burger

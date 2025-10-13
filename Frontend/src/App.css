@@ -1,94 +1,184 @@
-
-
-
 :root {
-    --gray-color: #e5e7eb;
-    --blue-color: #1f2937;
-    --green: #14b37d;
-    --bluish: #e9f1ff;
-}
-body{
-  background:var(--bluish)
-  /* position:relative; */
+  --gray-color: #e5e7eb;
+  --blue-color: #1f2937;
+  --green: #14b37d;
+  --bluish: #e9f1ff;
+  --light-blue:   ;
+  --gray:rgba(199, 201, 205, 0.673);
 }
 
+body {
+  background: var(--bluish);
+  width: 100vw;
+  height: 100vh;
+    /* position:relative; */
+}
 
-*{
-  margin:0;
-  padding:0;
+* {
+  margin: 0;
+  padding: 0;
 }
-.home{
-width:100vw;
-min-height:100vh;
 
+.home {
+  width: 100vw;
+  min-height: 100vh;
 }
-.nav{
-  display:flex;
-  flex-direction:row;
-  width:100%;
-  height:8vh;
-  background-color:var(--blue-color);
-  color:black;
-  gap:10vh;
-  flex-grow:1;
- 
-}
-.elements{
-  display:flex;
-  flex-direction:row;
+
+.nav {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
   justify-content:flex-end;
-  align-items:center;
-  color:black;
-  gap:6vh;
-  width:100%;
-  margin-right:3vh;
-   
+  width: 100vw;
+  height: 8vh;
+  background-color: var(--blue-color);
+  color: black;
+  gap: 10vh;
+  flex-grow: 1;
+  margin-right: 3vw;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.elements {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  align-items: center;
+  color: black;
+  gap: 6vh;
+  width: 100%;
+  margin-right: 3vh;
+}
+
+.burger {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-left: 1.5vh;
+}
+
+.elements li {
+  list-style: none;
+  background-color: var(--green);
+  padding: 8px;
+  border-radius: 7px;
+  width: 7vw;
+  min-width: 5vw;
+  text-align: center;
+  margin-right: 3vh;
+}
+
+
+.elements li a{
+  color: black;
+}
+
+.elements li:hover {
+  background-color: #27e2a3;
+  cursor: pointer;
+}
+
+.burger-box {
+  display: flex;
+  align-items: start;
+  justify-content: start;
+  flex-direction: column;
+  color: black;
+  width: 10vw;
+  background-color: rgba(255, 255, 255, 0.282);
+  border: 2px solid rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(2px);
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  height: 100vh;
+  width: 15vw;
+  z-index: 1;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  min-width: 200px;
+}
+
+.burger-box .heading{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 8vh;
+  font-size: 20px;
+  color: white;
+}
+
+
+.burger-box .line{
+  width: 95%;
+  height: 0px;
+  border: 1px solid var(--blue-color);
+  margin: 0 auto;
+  margin-bottom: 5vh;
+}
+
+
+.burger-ul {
+  width: 90%;
+  height: 80%;
+  display: flex;
+  justify-content: start;
+  gap: 2vh;
+  align-items: end;
+  flex-direction: column;
+  list-style: none;
+}
+
+.burger-ul li{
+  width: 80%;
+  height: 6vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  list-style: none;
+  cursor: pointer;
+  border-radius: 5px;
+  font-weight: 600;
+  font-size: large;
 
 }
-.burger{
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  padding-left:1.5vh;
+
+.burger-ul li:hover{
+  background-color: var(--gray);
+}
+
+
+
+.big-box{
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
   
 }
 
-.elements li{
-  list-style:none;
-  background-color:var(--green);
-  padding:8px;
-  border-radius:7px;
-  width:12vh;
-  text-align:center;
-
-}
-.elements li:hover{
-  background-color:#27e2a3;
-  cursor:pointer;
+.big-box .box{
+  width: 90vw;
+  height: 90vh;
+  background-color: rgb(42, 81, 112);
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-.burger-box{
-  display:flex;
-  align-items:center;
-  color:black;
-  justify-content:center;
-  width:10vw;
-  background-color:rgba(255, 255, 255, 0.282);
-  border:2px solid rgba(255, 255, 255, 0.12);
-  backdrop-filter: blur(2px);
-  position:fixed;
-  left:0;
-  bottom:0;
-  height:100vh;
-  width:15vw;
-  z-index:1;
-  box-shadow: 0 4px 30px rgba(0,0,0,0.1);
-  overflow:hidden;
-  min-width:200px;
- 
+.big-box .options{
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
-.burger-ul{
-  flex-direction:column;
-  list-style:none;
- 
+
+.big-box .options ul{
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }

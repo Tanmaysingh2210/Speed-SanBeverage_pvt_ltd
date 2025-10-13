@@ -1,19 +1,26 @@
 import './App.css';
-//import { ForgetPass } from './pages/ForgetPass';
-//import { RegisterPage } from './pages/RegisterPage';
-
-//import {SignInPage} from './pages/SignInPage';
-//import {HomePage} from './pages/HomePage'
-//import {SkuNav} from './Components/SKU/SkuNav';
-import {Container} from './Components/SKU/Container';
+import {Routes, Route } from 'react-router-dom';
+import Dashboard from './pages/Dashboard';
+import Navbar from './Components/Navbar';
+import Burger from './Components/Burger'
+import Summary from './pages/Summary'
+import Statisticks from './pages/Statisticks'
+import Sku from './pages/SkuFolder/Sku';
 
 function App() {
 
   return (
     <>
-     <Container />
+     <Navbar />
+     <Burger />
+     <Routes>
+        <Route path="/" element={<Dashboard/>} />
+        <Route path="/statisticks" element={<Statisticks/>} />
+        <Route path="/summary" element={<Summary />} />
+        <Route path="/sku" element={<Sku />} />
+     </Routes>
     </>
-  )
+  );
 }
 
 
