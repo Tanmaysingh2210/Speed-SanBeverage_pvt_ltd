@@ -1,0 +1,29 @@
+.input-container {
+    display: flex;
+    gap: 10px;
+    margin: 10px 0;
+
+}
+
+.add-container {
+    padding: 6px 10px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    background-color:#000000;
+   
+}
+
+.new-item-btn {
+    background: #14b37d;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+.search-box{
+    color:black;
+}
+.search-box:focus::placeholder{
+opacity:0;
+}

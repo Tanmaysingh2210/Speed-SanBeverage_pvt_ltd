@@ -14,8 +14,9 @@ const Burger = () => {
             <ul className="burger-ul">
                 <li>Transaction</li>
                 <li>Prices</li>
-                <li>Salesman</li>
+                <li><Link to={`/salesman`}>Salesman</Link></li>
                 <li><Link to={`/sku`}>SKQ</Link></li>
+                
             </ul>
 
         </div>

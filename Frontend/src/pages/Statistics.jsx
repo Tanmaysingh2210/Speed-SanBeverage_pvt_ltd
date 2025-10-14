@@ -1,6 +1,6 @@
 import React from 'react'
 
-const Statisticks = () => {
+const Statistics = () => {
   return (
     <div>
       
@@ -8,4 +8,4 @@ const Statisticks = () => {
   )
 }
 
-export default Statisticks
+export default Statistics
