@@ -348,7 +348,7 @@ body {
   padding: 1.5rem;
   border-radius: 12px;
   box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
-  width: 90%;
+  width: 100%;
   max-width: 800px;
   margin: 40px auto;
   font-family: "Poppins", sans-serif;
@@ -399,7 +399,7 @@ body {
 /* Grid layout for the table */
 .table-grid {
   display: grid;
-  grid-template-columns: 0.8fr 2fr 2fr 1.5fr 1.5fr 2fr;
+  grid-template-columns: 0.8fr 0.8fr 2fr 2fr 1.5fr 1.5fr 2fr;
   padding: 10px 14px;
   align-items: center;
   text-align: left;
