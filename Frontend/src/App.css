@@ -277,6 +277,10 @@ body {
     transform: scale(0.8);
   }
 
+  .new-item-btn , .search-box {
+    transform: scale(0.8);
+  }
+
 
 }
 
@@ -373,6 +377,8 @@ body {
   border-radius: 8px;
   width: 250px;
   font-size: 14px;
+  transition: transform 0.3s ease;
+
 }
 
 .new-item-btn {
@@ -383,7 +389,7 @@ body {
   border-radius: 8px;
   font-weight: 500;
   cursor: pointer;
-  transition: 0.3s;
+  transition: 0.3s ease;
 }
 
 .new-item-btn:hover {
