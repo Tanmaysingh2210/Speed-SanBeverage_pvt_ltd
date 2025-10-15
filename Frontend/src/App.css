@@ -51,6 +51,7 @@ body {
   gap: 6vh;
   width: 100%;
   margin-right: 3vh;
+  transition: transform 0.3s ease;
 }
 
 .burger {
@@ -99,7 +100,7 @@ body {
   z-index: 1;
   box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
   overflow: hidden;
-  
+
 }
 
 .burger-box .heading {
@@ -110,7 +111,7 @@ body {
   height: 8vh;
   font-size: 20px;
   color: white;
-  transition : transform 0.3s ease;
+  transition: transform 0.3s ease;
 }
 
 
@@ -132,6 +133,8 @@ body {
   align-items: end;
   flex-direction: column;
   list-style: none;
+  transition: transform 0.3s ease;
+
 }
 
 .burger-ul li {
@@ -159,7 +162,7 @@ body {
   margin-left: 15vw;
   width: calc(100vw - 15vw);
   height: calc(100vh - 8vh);
-  overflow:auto;
+  overflow: auto;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -177,7 +180,7 @@ body {
   margin: 20px;
 }
 
-.box h2{
+.box h2 {
   margin-left: 2vw;
 }
 
@@ -199,7 +202,7 @@ body {
   border-bottom: 2px solid rgba(100, 100, 100, 0.5);
 }
 
-.big-box .options ul li{
+.big-box .options ul li {
   list-style: none;
   background: none;
   border: none;
@@ -213,11 +216,11 @@ body {
   transition: color 0.3s ease;
 }
 
-.big-box .options ul li a:hover{
+.big-box .options ul li a:hover {
   color: darkgray;
 }
 
-.big-box .options ul li a{
+.big-box .options ul li a {
   color: gray;
   cursor: pointer;
   transition: color 0.3s ease;
@@ -228,14 +231,14 @@ body {
   content: "";
   position: absolute;
   left: 0;
-  bottom: -0.7vh; 
+  bottom: -0.7vh;
   width: 100%;
   height: 2px;
   background: var(--green);
   transform: scaleX(0);
   transform-origin: center;
   transition: transform 0.3s ease;
-  z-index: 2; 
+  z-index: 2;
 }
 
 .big-box .options ul li a:hover,
@@ -256,17 +259,28 @@ body {
 
   .big-box {
     margin-left: 15vw;
-    width:calc(100vw - 15vw);
+    width: calc(100vw - 15vw);
   }
-    .burger-box .heading {
-      
+
+  .burger-box .heading {
+
     transform: scale(0.7);
-    transform-origin:  center; 
+    transform-origin: center;
   }
- 
+
+  .nav .elements {
+    transform: scale(0.8);
+    font-size: 0.8rem;
+  }
+
+  .burger-box .burger-ul {
+    transform: scale(0.8);
+  }
+
+
 }
 
-.box .content{
+.box .content {
   border-radius: 5px;
   width: 50vw;
   height: 50vh;
@@ -274,7 +288,7 @@ body {
   margin: 3vw 2vw;
 }
 
-.box .content .add{
+.box .content .add {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -282,7 +296,7 @@ body {
   margin: 1.3vw;
 }
 
-.box .content .add input{
+.box .content .add input {
   background-color: transparent;
   outline: none;
   border: 2px solid var(--gray);
@@ -344,12 +358,12 @@ body {
   margin-bottom: 1rem;
 }
 
-.header-row input{
+.header-row input {
   background-color: transparent;
   border: 2px solid gray;
 }
 
-.header-row input::focus{
+.header-row input::focus {
   border: 2px solid red;
 }
 
@@ -486,6 +500,7 @@ body {
     transform: scale(0.9);
     opacity: 0;
   }
+
   to {
     transform: scale(1);
     opacity: 1;
