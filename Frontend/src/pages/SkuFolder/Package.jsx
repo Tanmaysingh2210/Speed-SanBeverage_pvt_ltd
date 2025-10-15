@@ -59,22 +59,22 @@ const Package = () => {
 
 
   return (
-    <div className="table-container">
+    <div className="container-wrapper">
       {/* Header section */}
-      <div className="header-row">
+      <div className="top-bar">
         <input type="text"
           ref={searchRef}
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
 
           placeholder="🔍 Search Packages..."
-          className="search-box"
+          className="search-input"
         />
-        <button className="new-item-btn" onClick={() => setShowForm(true)}>+ New Package</button>
+        <button className="add-btn" onClick={() => setShowForm(true)}>+ New Package</button>
       </div>
       {/* Add New Container Form */}
       {showForm && (
-        <div className="input-container">
+        <div className="form-wrapper">
           <input
             type="text"
             value={newpackage}
@@ -86,7 +86,7 @@ const Package = () => {
               }
             }}
             placeholder="Enter package name"
-            className="add-container"
+            className="name-input"
           />
           <button onClick={handleAddPackage}>Add</button>
           <button onClick={() => setShowForm(false)}>Cancel</button>
@@ -94,7 +94,7 @@ const Package = () => {
       )}
 
       {/* Table Header */}
-      <div className="table-grid table-header">
+      <div className="grid-layout header-section">
         <div>SL.NO.</div>
         <div>NAME</div>
         <div>ACTIONS</div>
@@ -102,7 +102,7 @@ const Package = () => {
 
       {/* Table Body */}
       {filteredPackages.map((item, index) => (
-        <div key={item.id} className="table-grid table-row">
+        <div key={item.id} className="grid-layout data-row">
           <div>{index + 1}</div>
 
           <div>
@@ -115,7 +115,7 @@ const Package = () => {
                   if (e.key === "Enter") handleSaveEdit(item.id);
                 }}
                 autoFocus
-                className="edit-input"
+                className="inline-edit"
               />
             ) : (
               item.name
@@ -123,18 +123,18 @@ const Package = () => {
           </div>
 
           {/* Actions */}
-          <div className="actions">
+          <div className="action-buttons">
             {editId === item.id ? (
               <>
                 <span
-                  className="save"
+                  className="btn-save"
                   onClick={() => handleSaveEdit(item.id)}
                 >
                   Save
                 </span>{" "}
                 |{" "}
                 <span
-                  className="cancel"
+                  className="btn-cancel"
                   onClick={() => setEditId(null)}
                 >
                   Cancel
@@ -143,14 +143,14 @@ const Package = () => {
             ) : (
               <>
                 <span
-                  className="edit"
+                  className="btn-edit"
                   onClick={() => handleEdit(item.id, item.name)}
                 >
                   Edit
                 </span>{" "}
                 |{" "}
                 <span
-                  className="delete"
+                  className="btn-delete"
                   onClick={() => handleDelete(item.id)}
                 >
                   Delete

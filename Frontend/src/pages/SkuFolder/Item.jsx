@@ -9,9 +9,9 @@ const Item = () => {
   // const handleClose = () => setShowModal(false);
 
   const [items, setItems] = useState([
-    { id: 1, code: "P200", name: "PEPSI", rate: 1000, volume: "200ml", status: "Active" },
-    { id: 2, code: "P200", name: "MIRINDA", rate: 1000, volume: "300ml", status: "Active" },
-    { id: 3, code: "P200", name: "MAAZA", rate: 1000, volume: "300ml", status: "Inactive" },
+    { id: 1, code: "P200", name: "PEPSI 200ML BOTTLE", rate: 600, volume: "200ml", status: "Active" },
+    { id: 2, code: "M300", name: "MIRINDA 300ML CAN", rate: 500, volume: "300ml", status: "Active" },
+    { id: 3, code: "S100", name: "Slice 100ML TETRA", rate: 300, volume: "100ml", status: "Inactive" },
   ]);
 
   const [editId, setEditId] = useState(null);
@@ -138,53 +138,6 @@ const Item = () => {
   };
 
 
-  // const handleModalKeyNavigation = (e, currentField) => {
-  //   if (["ArrowRight", "ArrowDown", "Enter"].includes(e.key)) {
-  //     e.preventDefault();
-  //     switch (currentField) {
-  //       case "code":
-  //         modalNameRef.current?.focus();
-  //         break;
-  //       case "name":
-  //         modalRateRef.current?.focus();
-  //         break;
-  //       case "rate":
-  //         modalVolumeRef.current?.focus();
-  //         break;
-  //       case "volume":
-  //         modalStatusRef.current?.focus();
-  //         break;
-  //       case "status":
-  //         modalSaveBtnRef.current?.focus();
-  //         break;
-  //       default:
-  //         break;
-  //     }
-  //   } else if (["ArrowUp", "ArrowLeft"].includes(e.key)) {
-  //     e.preventDefault();
-  //     switch (currentField) {
-  //       case "name":
-  //         modalCodeRef.current?.focus();
-  //         break;
-  //       case "rate":
-  //         modalNameRef.current?.focus();
-  //         break;
-  //       case "volume":
-  //         modalRateRef.current?.focus();
-  //         break;
-  //       case "status":
-  //         modalVolumeRef.current?.focus();
-  //         break;
-  //       case "save":
-  //         modalStatusRef.current?.focus();
-  //         break;
-  //       default:
-  //         break;
-  //     }
-  //   }
-  // };
-
-
   const handleModalKeyNavigation = (e, currentField) => {
     if (["ArrowRight", "ArrowDown", "Enter"].includes(e.key)) {
       e.preventDefault();
@@ -248,16 +201,11 @@ const Item = () => {
     }
   };
 
-
-
-
   useEffect(() => {
     if (!showModal) {
       setNewItem({ code: "", name: "", rate: "", volume: "", status: "Active" });
     }
   }, [showModal]);
-
-
 
 
   return (

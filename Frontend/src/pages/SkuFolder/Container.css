@@ -1,4 +1,4 @@
-.input-container {
+/* .input-container {
     display: flex;
     gap: 10px;
     margin: 10px 0;
@@ -26,4 +26,196 @@
 }
 .search-box:focus::placeholder{
 opacity:0;
+} */
+
+
+
+
+/* Container */
+.container-wrapper {
+  background: #fff;
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+  width: 35vw;
+  max-width: 800px;
+  margin: 40px auto;
+  font-family: "Poppins", sans-serif;
+}
+
+/* Top bar with search and button */
+.top-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+/* Search input */
+.search-input {
+  background-color: transparent;
+  padding: 8px 14px;
+  border: 2px solid gray;
+  border-radius: 8px;
+  width: 250px;
+  font-size: 14px;
+  transition: transform 0.3s ease;
+  color: black;
+}
+
+/* .search-input:focus {
+    border: 2px solid red;
+
+}
+
+.search-input::placeholder {
+  color: #9ca3af;
+}
+
+.search-input:focus::placeholder {
+  opacity: 0;
+} */
+
+/* Add button */
+.add-btn {
+  background-color: #2563eb;
+  color: #fff;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 8px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+.add-btn:hover {
+  background-color: #1d4ed8;
+}
+
+/* Table styles */
+.grid-layout {
+  /* display: grid;
+  grid-template-columns: 120px 200px 1fr;
+  padding: 20px 30px;
+  align-items: center;
+  text-align: left;
+  font-size: 16px;
+  background-color: white; */
+
+
+  display: grid;
+  grid-template-columns: 0.8fr  3fr  1.5fr;
+  padding: 10px 14px;
+  align-items: center;
+  text-align: left;
+  font-size: 14px;
+}
+
+.header-section {
+  background-color: #f9fafb;
+  font-weight: 600;
+  border-bottom: 2px solid #e5e7eb;
+}
+
+.data-row {
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.data-row:hover {
+  background-color: #f9fafb;
+}
+
+.data-row:last-child {
+  border-bottom: none;
+}
+
+/* Action buttons */
+.action-buttons {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.action-buttons span {
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 16px;
+  transition: opacity 0.2s;
+
+  /* cursor: pointer;
+  font-weight: 500; */
+}
+
+.action-buttons span:hover {
+  opacity: 0.7;
+}
+
+.btn-edit {
+  color: #2563eb;
+}
+
+.btn-delete {
+  color: #dc2626;
+}
+
+/* Form wrapper */
+.form-wrapper {
+  display: flex;
+  gap: 10px;
+  margin: 20px 0;
+  padding: 20px;
+  background-color: white;
+  border-radius: 8px;
+}
+
+.name-input,
+.inline-edit {
+  padding: 4px 14px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 16px;
+  flex: 1;
+  
+}
+
+.name-input:focus,
+.inline-edit:focus {
+  outline: none;
+  border-color: #3b82f6;
+}
+
+.form-wrapper button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.form-wrapper button:first-of-type {
+  background-color: #2563eb;
+  color: white;
+}
+
+.form-wrapper button:first-of-type:hover {
+  background-color: #1d4ed8;
+}
+
+.form-wrapper button:last-of-type {
+  background-color: #e5e7eb;
+  color: #374151;
+}
+
+.form-wrapper button:last-of-type:hover {
+  background-color: #d1d5db;
+}
+
+/* Save/Cancel in inline edit */
+.btn-save {
+  color: #16a34a !important;
+}
+
+.btn-cancel {
+  color: #6b7280 !important;
 }

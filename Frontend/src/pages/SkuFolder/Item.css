@@ -65,6 +65,8 @@
   border-radius: 5px;
   border: 1px solid #d1d5db;
   font-size: 14px;
+  background-color: transparent;
+  color: black;
 }
 
 .modal-buttons {

@@ -62,25 +62,25 @@ const Container = () => {
   };
 
   return (
-    <div className="table-container">
+    <div className="container-wrapper">
       {/* Header section */}
-      <div className="header-row">
+      <div className="top-bar">
         <input
           type="text"
           ref={searchRef}
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           placeholder="🔍 Search Containers..."
-          className="search-box"
+          className="search-input"
         />
-        <button className="new-item-btn" onClick={() => setShowForm(true)}>
+        <button className="add-btn" onClick={() => setShowForm(true)}>
           + New Container
         </button>
       </div>
 
       {/* Add New Container Form */}
       {showForm && (
-        <div className="input-container">
+        <div className="form-wrapper">
           <input
             type="text"
             value={newContainer}
@@ -92,7 +92,7 @@ const Container = () => {
               }
             }}
             placeholder="Enter container name"
-            className="add-container"
+            className="name-input"
           />
           <button onClick={handleAddContainer}>Add</button>
           <button onClick={() => setShowForm(false)}>Cancel</button>
@@ -100,7 +100,7 @@ const Container = () => {
       )}
 
       {/* Table Header */}
-      <div className="table-grid table-header">
+      <div className="grid-layout header-section">
         <div>S NO.</div>
         <div>NAME</div>
         <div>ACTIONS</div>
@@ -108,7 +108,7 @@ const Container = () => {
 
       {/* Table Body */}
       {filteredContainers.map((item, index) => (
-        <div key={item.id} className="table-grid table-row">
+        <div key={item.id} className="grid-layout data-row">
           <div>{index + 1}</div>
 
           {/* If this item is being edited, show input instead of text */}
@@ -122,7 +122,7 @@ const Container = () => {
                   if (e.key === "Enter") handleSaveEdit(item.id);
                 }}
                 autoFocus
-                className="edit-input"
+                className="inline-edit"
               />
             ) : (
               item.name
@@ -130,18 +130,18 @@ const Container = () => {
           </div>
 
           {/* Actions */}
-          <div className="actions">
+          <div className="action-buttons">
             {editId === item.id ? (
               <>
                 <span
-                  className="save"
+                  className="btn-save"
                   onClick={() => handleSaveEdit(item.id)}
                 >
                   Save
                 </span>{" "}
                 |{" "}
                 <span
-                  className="cancel"
+                  className="btn-cancel"
                   onClick={() => setEditId(null)}
                 >
                   Cancel
@@ -150,14 +150,14 @@ const Container = () => {
             ) : (
               <>
                 <span
-                  className="edit"
+                  className="btn-edit"
                   onClick={() => handleEdit(item.id, item.name)}
                 >
                   Edit
                 </span>{" "}
                 |{" "}
                 <span
-                  className="delete"
+                  className="btn-delete"
                   onClick={() => handleDelete(item.id)}
                 >
                   Delete

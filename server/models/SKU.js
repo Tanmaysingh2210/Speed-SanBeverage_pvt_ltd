@@ -21,7 +21,7 @@ const itemSchema = new mongoose.Schema({
     container:{type:String, required:true},
     package:{type:String, required:true},
     flavour: {type:String, required:true}
-})
+});
 
 const Container = mongoose.model('SKU_Container', containerSchema);
 const Package = mongoose.model('SKU_Package', packageSchema);
