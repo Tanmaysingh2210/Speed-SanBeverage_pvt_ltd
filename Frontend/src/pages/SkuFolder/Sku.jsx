@@ -12,8 +12,6 @@ const Sku = () => {
     const [searchQuery, setSearchQuery] = useState('');
     return (
         <>
-
-            
                 <div className="box">
                     <h2>SKU MASTERS</h2>
                     <div className="options">

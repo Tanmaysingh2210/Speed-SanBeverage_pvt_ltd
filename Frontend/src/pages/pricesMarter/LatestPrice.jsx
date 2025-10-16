@@ -1,8 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import "./Prices.css";
 
-const PriceMaster = () => {
-    // Temporary list of existing items
+const LatestPrice = () => {
     const itemList = [
         { code: "P200", name: "PEPSI 200ML BOTTLE" },
         { code: "M300", name: "MIRINDA 300ML CAN" },
@@ -35,7 +34,6 @@ const PriceMaster = () => {
         status: "Active",
     });
 
-    // Refs for navigation
     const codeRef = useRef(null);
     const baseRef = useRef(null);
     const taxRef = useRef(null);
@@ -185,38 +183,7 @@ const PriceMaster = () => {
 
 
 
-    /*
-        const handleSave = (e) => {
-            e.preventDefault();
-            const found = itemList.find(
-                (item) => item.code.toUpperCase() === newPrice.code.toUpperCase()
-            );
-            if (!found) {
-                alert("❌ Invalid item code — item not found in database!");
-                return;
-            }
-    
-            if (!newPrice.basePrice || !newPrice.perTax || !newPrice.date) {
-                alert("⚠️ Please fill all fields!");
-                return;
-            }
-    
-            const data = {
-                id: prices.length + 1,
-                ...newPrice,
-            };
-            setPrices([...prices, data]);
-            setShowModal(false);
-            setNewPrice({
-                code: "",
-                name: "",
-                basePrice: "",
-                perTax: "",
-                date: "",
-                netRate: "",
-            });
-        };
-    */
+   
 
     const handleSave = (e) => {
         e.preventDefault();
@@ -273,8 +240,6 @@ const PriceMaster = () => {
     );
 
     return (
-        <div className="box">
-            <h2>PRICES MASTERS</h2>
             <div className="price-container">
                 {/* Header */}
                 <div className="price-header">
@@ -463,8 +428,7 @@ const PriceMaster = () => {
                     </div>
                 )}
             </div>
-        </div>
     );
 };
 
-export default PriceMaster;
+export default LatestPrice;
