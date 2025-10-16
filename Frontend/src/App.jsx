@@ -7,6 +7,7 @@ import Summary from './pages/Summary';
 import Statistics from './pages/Statistics';
 import Sku from './pages/SkuFolder/Sku';
 import Salesman from './pages/Salesman';
+import Prices from './pages/Prices';
 
 function App() {
 
@@ -22,6 +23,7 @@ function App() {
           <Route path="/summary" element={<Summary />} />
           <Route path="/sku/*" element={<Sku />} />
           <Route path="/salesman" element={<Salesman />} />
+          <Route path="/prices" element={<Prices />} />
         </Routes>
       </div>
     </>

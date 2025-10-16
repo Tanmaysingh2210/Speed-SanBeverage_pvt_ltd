@@ -146,7 +146,7 @@ const Item = () => {
         e.preventDefault();
         modalSaveBtnRef.current?.click();
       }
-      
+
       // If Enter is pressed on the Save button, click it
       if (currentField === "save" && e.key === "Enter") {
         modalSaveBtnRef.current?.click();
@@ -304,7 +304,14 @@ const Item = () => {
               <div>{item.name}</div>
               <div>{item.rate}</div>
               <div>{item.volume}</div>
-              <div>{item.status}</div>
+              <div>
+                <span
+                  className={`status-badge ${item.status === "Active" ? "active" : "inactive"
+                    }`}
+                >
+                  {item.status}
+                </span>
+              </div>
               <div className="actions">
                 <span className="edit" onClick={() => handleEdit(item)}>
                   Edit
