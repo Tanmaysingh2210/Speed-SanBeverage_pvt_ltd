@@ -12,16 +12,18 @@ function App() {
 
   return (
     <>
-     
+
       <Navbar />
       <Burger />
-      <Routes>
-        <Route path="/" element={<Dashboard />} />
-        <Route path="/statistics" element={<Statistics />} />
-        <Route path="/summary" element={<Summary />} />
-        <Route path="/sku/*" element={<Sku />} />
-        <Route path="/salesman" element={<Salesman />} />
-      </Routes>
+      <div className='big-box'>
+        <Routes>
+          <Route path="/" element={<Dashboard />} />
+          <Route path="/statistics" element={<Statistics />} />
+          <Route path="/summary" element={<Summary />} />
+          <Route path="/sku/*" element={<Sku />} />
+          <Route path="/salesman" element={<Salesman />} />
+        </Routes>
+      </div>
     </>
   );
 }

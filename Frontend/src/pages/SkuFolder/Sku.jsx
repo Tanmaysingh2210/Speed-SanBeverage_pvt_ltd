@@ -13,7 +13,7 @@ const Sku = () => {
     return (
         <>
 
-            <div className='big-box'>
+            
                 <div className="box">
                     <h2>SKU MASTERS</h2>
                     <div className="options">
@@ -35,7 +35,6 @@ const Sku = () => {
                         <Route path="item" element={<Item />} />
                     </Routes>
                 </div>
-            </div>
         </>
     )
 }
