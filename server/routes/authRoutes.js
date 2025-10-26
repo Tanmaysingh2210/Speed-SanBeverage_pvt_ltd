@@ -19,6 +19,12 @@ router.post('/forgot_password', forgotPassword);
 router.post('/verify_reset_otp', verify_reset_pass_otp);
 router.post('/reset_password', resetPassword);
 
+router.get('/me', (req, res) => {
+    if (req.session && req.session.user) {
+        return res.json({ user: req.session.user });
+    }
+    return res.status(200).json({ user: null });
+});
 
 
 module.exports = router;

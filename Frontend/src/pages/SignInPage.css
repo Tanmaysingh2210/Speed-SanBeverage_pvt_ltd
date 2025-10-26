@@ -1,3 +1,5 @@
+/*
+
 @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
 
 * {
@@ -6,184 +8,452 @@
   font-family: "Poppins", sans-serif;
   font-weight: 500;
   font-style: normal;
-  
+  overflow: hidden;
+
 }
 
 .flex {
   display: flex;
 }
+
 :root {
-    --gray-color: #e5e7eb;
-    --blue-color: #1f2937;
+  --gray-color: #e5e7eb;
+  --blue-color: #1f2937;
 }
 
 .signin {
-  background-color:#e5e7eb;
+  background-color: #e5e7eb;
   color: #e5e7eb;
   display: flex;
   width: 100vw;
   height: 100vh;
-  position:relative;
-  flex-grow:1;
-  flex-wrap:wrap;
- 
+  position: relative;
+  flex-grow: 1;
+  flex-wrap: wrap;
+
 }
 
 .signin .signin-section {
-  background-color:#1f2937;
+  background-color: #1f2937;
   width: 100vw;
   height: 100vh;
   display: flex;
-  align-items:flex-start;
-  position:relative;
+  align-items: flex-start;
+  position: relative;
   flex-direction: column;
-  clip-path: polygon(0 0, 40% 0, 70% 100%, 0% 100%);
- 
   
+
+
 }
 
 .signin .signin-section .content .heading {
-  font-size: clamp(1.5rem,5vw,3rem);
+  font-size: clamp(1.5rem, 5vw, 3rem);
   font-weight: 700;
-  
-  justify-content:center;
-  align-items:center;
- 
-  transition:0.1s ease;
+  height: 30vh;
+  justify-content: center;
+  align-items: center;
+
+  transition: 0.1s ease;
 }
 
 
 
 .signin .form {
   display: flex;
+  width: 100%;
+  height: 50vh;
   flex-direction: column;
   gap: 10px;
-  flex-grow:1;
+  flex-grow: 1;
 
-  
+
 }
 
 
 .input-group {
-    position: relative;
-    margin-bottom: 1vh;
-    border-radius: 4px;
-    width: 20vw;
+  position: relative;
+  margin-bottom: 1vh;
+  border-radius: 4px;
+  width: 20vw;
 }
+
 .input-group input {
-    width: 100%;
-    padding: 12px 0 8px 0;
-    border: none;
-    border-bottom: 2px solid var(--gray-color);
-    background: transparent;
-    color: var(--gray-color);
-    font-size: 2vh;
-    outline: none;
-    transition: border-color 0.3s;
+  width: 100%;
+  padding: 12px 0 8px 0;
+  border: none;
+  border-bottom: 2px solid var(--gray-color);
+  background: transparent;
+  color: var(--gray-color);
+  font-size: 2vh;
+  outline: none;
+  transition: border-color 0.3s;
 }
+
 .input-group label {
-    position: absolute;
-    top: 1vh;
-    left: 0;
-    color: var(--gray-color);
-    pointer-events: none;
-    transition: 0.3s ease all;
+  position: absolute;
+  top: 1vh;
+  left: 0;
+  color: var(--gray-color);
+  pointer-events: none;
+  transition: 0.3s ease all;
 }
+
 .input-group input:focus {
-    border-color: #10b981;
+  border-color: #10b981;
 }
 
 .input-group input:focus+label,
 .input-group input:valid+label {
-    top: -0.6vh;
-    font-size: 0.8vw;
-    color: #10b981;
+  top: -0.6vh;
+  font-size: 0.8vw;
+  color: #10b981;
 }
+
 input:-webkit-autofill {
-    transition: background-color 9999s ease-in-out 0s;
-    -webkit-text-fill-color: #fff !important;
+  transition: background-color 9999s ease-in-out 0s;
+  -webkit-text-fill-color: #fff !important;
 }
 
 input:valid,
 input:invalid {
-    box-shadow: none;
-    outline: none;
+  box-shadow: none;
+  outline: none;
 }
 
 .password-group {
   position: relative;
-  
+
 }
+
 
 .password-group input {
   width: 100%;
-  /* space for eye icon */
-}
-
-
-
-
-
-.submit{
-  background-color:#10B981;
-  gap:10px;
-  color:#1f2937;
-  font-weight:700;
-  width:13vw;
-  display:flex;
-  flex-direction:column;
-
   
 }
-.register{
- 
-  display:flex;
-  justify-content:center;
-  align-items:flex-end;
-  
+
+
+
+
+
+.submit {
+  background-color: #10B981;
+  gap: 10px;
+  color: #1f2937;
+  font-weight: 700;
+  width: 13vw;
+  display: flex;
+  flex-direction: column;
+
 
 }
-.content{
-  display:flex;
-  flex-direction:column;
-  height:90vh;
- justify-content:center;
- align-items:center;
- width:50%;
- gap:60px;
+
+.register {
+
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+
+
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  height: 90vh;
+  justify-content: center;
+  align-items: center;
+  width: 50%;
+  gap: 60px;
 }
 
 
 .signin .welcome-section {
   background-color: #e5e7eb;
   color: #1f2937;
-  position:absolute;
-  left:70vw;
-  top:12vw;
-  height: 30vh;
-  width:52vh;
-  z-index:0;
- transform: translate(0px, 50px) scale(1);
+  position: absolute;
+  top: 0;
+  right: 0;
+  height: 100%;
+  width: 52vw;
+  z-index: 0;
+  transform: translate(0px, 50px) scale(1);
   transition: transform 0.3s ease;
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 39% 100%);
 
- 
+
 }
-.welcome{
-font-size:50px;
-  font-weight:bold;
+
+.welcome {
+  font-size: 50px;
+  font-weight: bold;
 }
-.back{
-  font-size:50px;
-  font-weight:bold;
-  display:inline-block;
-  margin-left:6.5vw;
+
+.back {
+  font-size: 50px;
+  font-weight: bold;
+  display: inline-block;
+  margin-left: 6.5vw;
 }
-/*
-means iske neeche jayega to kiya hoga 
+
+
+@media(max-width:1024px) {
+  .signin .welcome-section {
+    transform: translate(-50px, 80px) scale(0.9);
+  }
+
+}
+
+
 */
-@media(max-width:1024px){  
-  .signin .welcome-section{
-   transform: translate(-50px, 80px) scale(0.9);
-  }     
-  
+
+
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap");
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
+  overflow-x: hidden;
+}
+
+:root {
+  --gray-color: #e5e7eb;
+  --blue-color: #1f2937;
+  --green: #10b981;
+}
+
+.signin {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100vw;
+  height: 100vh;
+  background-color: var(--gray-color);
+  overflow: hidden;
+  position: relative;
+
+}
+
+/* ---------- LEFT (Form) ---------- */
+.signin-section {
+  background-color: var(--blue-color);
+  color: var(--gray-color);
+  width: 100vw;
+  height: 100%;
+  position: relative;
+  transform: translateX(-20vw);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: all 0.3s ease;
+
+  overflow: hidden;
+}
+
+.signin-section .content {
+  width: 70%;
+  height: 95%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3vh;
+
+}
+
+.signin-section .heading {
+  font-size: 5vh;
+  margin: 4vh auto;
+  height: fit-content;
+  font-weight: 600;
+  text-align: center;
+}
+
+/* ---------- Form ---------- */
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 3vh;
+  width: 100%;
+  align-items: center;
+  margin-top: 7vh;
+  /* overflow: hidden; */
+}
+
+.input-group {
+  position: relative;
+  width: 80%;
+}
+
+.input-group input {
+  width: 100%;
+  padding: 12px 0 8px 0;
+  border: none;
+  border-bottom: 2px solid var(--gray-color);
+  background: transparent;
+  color: var(--gray-color);
+  font-size: 16px;
+  outline: none;
+  transition: border-color 0.3s;
+}
+
+.input-group label {
+  position: absolute;
+  top: 10px;
+  left: 0;
+  color: var(--gray-color);
+  pointer-events: none;
+  transition: 0.3s ease all;
+}
+
+.input-group input:focus {
+  border-color: var(--green);
+}
+
+.input-group input:focus + label,
+.input-group input:valid + label {
+  top: -10px;
+  font-size: 12px;
+  color: var(--green);
+}
+
+.password-group {
+  position: relative;
+}
+
+/* ---------- Submit ---------- */
+.submit {
+  background-color: var(--green);
+  color: white;
+  border: none;
+  padding: 12px 30px;
+  border-radius: 5px;
+  font-weight: 600;
+  font-size: 16px;
+  cursor: pointer;
+  margin-top: 2vh;
+  transition: background 0.3s;
+}
+
+.submit:hover {
+  background-color: #0e9a6d;
+}
+
+/* ---------- Bottom text ---------- */
+.register-link {
+  margin-top: 1vh;
+  font-size: 14px;
+  text-align: center;
+}
+
+.register-link  a {
+  color: var(--green);
+  text-decoration: none;
+}
+
+.register-link  a:hover {
+  text-decoration: underline;
+}
+
+/* ---------- RIGHT (Welcome Panel) ---------- */
+.welcome-section {
+  background-color: var(--gray-color);
+  color: var(--blue-color);
+  width: 40%;
+  height: 100vh;
+  position: absolute;
+  right: 0;
+  top: 0;
+  clip-path: polygon(20% 0, 100% 0, 100% 100%, 0% 100%);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  transition: all 0.3s ease;
+}
+
+.welcome {
+  font-size: 5vh;
+  font-weight: 700;
+  text-align: center;
+}
+
+.back {
+  font-size: 5vh;
+  font-weight: 700;
+  margin-left: 1vw;
+  text-align: center;
+}
+
+/* ---------- RESPONSIVE STYLES ---------- */
+@media (max-width: 1200px) {
+  .signin-section {
+    clip-path: polygon(0 0, 100% 0, 85% 100%, 0 100%);
+  }
+
+  .welcome-section {
+    clip-path: polygon(15% 0, 100% 0, 100% 100%, 0% 100%);
+  }
+}
+
+@media (max-width: 992px) {
+  .signin {
+    flex-direction: column;
+  }
+
+  .signin-section,
+  .welcome-section {
+    position: relative;
+    width: 100%;
+    height: auto;
+    clip-path: none;
+  }
+
+  .signin-section {
+    padding: 6vh 0;
+  }
+
+  .welcome-section {
+    padding: 8vh 0;
+  }
+
+  .signin-section .heading,
+  .welcome,
+  .back {
+    font-size: 4vh;
+  }
+
+  .submit {
+    width: 40%;
+  }
+}
+
+@media (max-width: 768px) {
+  .input-group {
+    width: 90%;
+  }
+
+  .signin-section .heading {
+    font-size: 3.8vh;
+  }
+
+  .submit {
+    width: 50%;
+  }
+}
+
+@media (max-width: 480px) {
+  .signin-section .heading {
+    font-size: 3.2vh;
+  }
+
+  .welcome,
+  .back {
+    font-size: 3.2vh;
+  }
+
+  .submit {
+    width: 70%;
+  }
 }

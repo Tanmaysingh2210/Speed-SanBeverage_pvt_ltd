@@ -1,10 +1,30 @@
 import React from 'react'
+import { Routes, Route } from 'react-router-dom'
+import Navbar from '../Components/Navbar'
+import Burger from '../Components/Burger'
+import Statistics from './Statistics'
+import Summary from './Summary'
+import Sku from './SkuFolder/Sku'
+import Salesman from './Salesman'
+import PriceRoutes from './pricesMarter/priceRoutes'
 
 const Dashboard = () => {
   return (
-    <div>
-      
-    </div>
+    <>
+      <Navbar />
+      <Burger />
+      <div className='big-box'>
+
+        <Routes>
+          <Route path="/statistics" element={<Statistics />} />
+          <Route path="/summary" element={<Summary />} />
+          <Route path="/sku/*" element={<Sku />} />
+          <Route path="/salesman" element={<Salesman />} />
+          <Route path="/prices/*" element={<PriceRoutes />} />
+          {/* <Route path="/transaction/*" element={<Transaction />} /> */}
+        </Routes>
+      </div>
+    </>
   )
 }
 

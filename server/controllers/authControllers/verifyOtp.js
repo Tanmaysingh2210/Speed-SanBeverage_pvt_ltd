@@ -5,9 +5,9 @@ exports.verify_otp = async (req, res) => {
         const { email, otp } = req.body;
         let user = await User.findOne({ email });
         if (!user) return res.status(400).json({ message: "user not exist" });
-        if (user.isVerified == true) res.status(201).json({ message: "user already verified" });
+        if (user.isVerified == true) return res.status(201).json({ message: "user already verified" });
         if (String(user.otp) !== String(otp) || user.otpExpire < new Date()) {
-            res.status(400).json({ message: "invalid or expired otp" });
+            return res.status(400).json({ message: "invalid or expired otp" });
         }
 
         user.isVerified = true;
@@ -23,11 +23,30 @@ exports.verify_otp = async (req, res) => {
         //     req.session.user = { id: user._id, email: user.email, name: user.name };
         //     console.log("session data: ", req.session);
         //     console.log("Session id : " , req.sessionID);
-            
+
         // });
-        
-        res.status(200).json({ message: "Otp verified succesfully." });
+
+        req.session.regenerate(err => {
+            if (err) {
+                console.error("Session regenerate error:", err);
+                return res.status(500).json({ message: "Error starting session" });
+            }
+
+            req.session.user = {
+                id: user._id,
+                email: user.email,
+                name: user.name,
+            };
+
+            console.log("✅ New session created:", req.session.user);
+            res.status(200).json({
+                message: "OTP verified successfully",
+                user: req.session.user,
+            });
+        });
+
     } catch (err) {
-        res.status(400).json("Error in verification: ", err);
+        console.error("Error in verification:", err);
+        res.status(400).json({ message: "Error in verification", error: err.message });
     }
 }

@@ -1,5 +1,6 @@
 const express = require('express');
 const session = require('express-session');
+const cors = require('cors');
 const connectDB = require('./config/db');
 const authRoutes = require('./routes/authRoutes');
 const containerRoutes = require('./routes/containerRoutes');
@@ -14,11 +15,20 @@ connectDB();
 const app = express();
 app.use(express.json());
 
+app.use(cors({
+    origin: 'http://localhost:5173',
+    credentials: true
+}));
+
 app.use(session({
     secret: "beverage-campa",
     resave: false,
     saveUninitialized: true,
-    cookie: { secure: false }
+    cookie: { 
+        secure: false,
+        httpOnly:true,
+        sameSite: 'lax'
+     }
 }));
 
 app.use('/auth', authRoutes);
