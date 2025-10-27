@@ -252,6 +252,7 @@ body {
 
 .box h2 {
   margin-left: 2vw;
+  overflow: hidden;
 }
 
 .big-box .options {
@@ -259,6 +260,7 @@ body {
   align-items: center;
   justify-content: start;
   margin: 0 2vw;
+  overflow: hidden;
 }
 
 .big-box .options ul {
@@ -270,6 +272,8 @@ body {
   position: relative;
   padding-bottom: 0;
   border-bottom: 2px solid rgba(100, 100, 100, 0.5);
+  overflow: hidden;
+
 }
 
 .big-box .options ul li {
@@ -284,6 +288,8 @@ body {
   position: relative;
   cursor: pointer;
   transition: color 0.3s ease;
+  overflow: hidden;
+
 }
 
 .big-box .options ul li a:hover {
@@ -407,21 +413,16 @@ body {
 
 
 
-
-
-
-
-
-
 .table-container {
   background: #fff;
   padding: 1.5rem;
   border-radius: 12px;
   box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
-  width: 75vw;
-  max-width: 800px;
+  width: 90%;
+  max-width: 1200px;
   margin: 40px auto;
   font-family: "Poppins", sans-serif;
+  overflow-x: auto;
 }
 
 /* Header Row */
@@ -429,27 +430,21 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 1rem;
-}
-
-.header-row input {
-  background-color: transparent;
-  border: 2px solid gray;
-  color: black;
-}
-
-.header-row input::focus {
-  border: 2px solid red;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
 }
 
 .search-box {
-  padding: 8px 14px;
-  border: 1px solid #ddd;
+  padding: 10px 14px;
+  border: 2px solid gray;
   border-radius: 8px;
   width: 250px;
+  flex-grow: 1;
+  min-width: 200px;
   font-size: 14px;
-  transition: transform 0.3s ease;
-
+  background-color: transparent;
+  color: gray;
 }
 
 .new-item-btn {
@@ -460,21 +455,22 @@ body {
   border-radius: 8px;
   font-weight: 500;
   cursor: pointer;
-  transition: 0.3s ease;
+  white-space: nowrap;
+  transition: background 0.3s ease;
 }
-
 .new-item-btn:hover {
   background-color: #1e40af;
 }
 
-/* Grid layout for the table */
+/* Table Grid */
 .table-grid {
   display: grid;
-  grid-template-columns: 0.8fr 0.8fr 3fr 1.5fr 1.3fr 1.3fr 1fr 1.5fr;
-  padding: 10px 14px;
+  grid-template-columns: 0.6fr 0.8fr 2fr 1.2fr 1fr 1fr 1fr 1.2fr;
   align-items: center;
   text-align: left;
   font-size: 14px;
+  padding: 10px 14px;
+  min-width: 700px; /* allows scrolling on small screens */
 }
 
 .table-header {
@@ -485,12 +481,18 @@ body {
 
 .table-row {
   border-bottom: 1px solid #e5e7eb;
+  transition: background 0.3s ease;
 }
 
 .table-row:hover {
   background-color: #f1f5f9;
 }
 
+/* Status Badge */
+
+.status{
+  overflow: hidden;
+}
 .status-badge {
   padding: 4px 10px;
   border-radius: 12px;
@@ -508,9 +510,18 @@ body {
   color: #b91c1c;
 }
 
+/* Action Buttons */
 .actions span {
   cursor: pointer;
   font-weight: 500;
+  white-space: nowrap;
+}
+
+.actions .save{
+  color: #16a34a;
+}
+.actions .cancel{
+  color: gray;
 }
 
 .actions .edit {
@@ -521,46 +532,67 @@ body {
   color: #dc2626;
 }
 
-
-.item-container {
-  padding: 20px;
+.edit-input{
+  width: 80%;
+ 
 }
 
-.header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 15px;
+/* ===== Responsive Adjustments ===== */
+@media (max-width: 1024px) {
+  .table-grid {
+    grid-template-columns: 0.6fr 1fr 2fr 1.2fr 1fr 1fr 1fr;
+  }
 }
 
-.new-item-btn {
-  background-color: #2563eb;
-  color: white;
-  border: none;
-  padding: 10px 18px;
-  border-radius: 6px;
-  cursor: pointer;
-  font-weight: 500;
-  transition: 0.2s;
+@media (max-width: 850px) {
+  .table-container {
+    width: 95%;
+    padding: 1rem;
+  }
+
+  .table-grid {
+    grid-template-columns: 1fr 2fr 1fr 1fr;
+    grid-template-areas:
+      "slno code name actions"
+      "container package flavour status";
+    font-size: 13px;
+  }
+
+  .table-header {
+    display: none;
+  }
+
+  .table-row {
+    display: grid;
+    gap: 6px;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 12px;
+    margin-bottom: 10px;
+    background: #fafafa;
+  }
+
+  .actions {
+    text-align: right;
+  }
 }
 
-.new-item-btn:hover {
-  background-color: #1d4ed8;
+@media (max-width: 600px) {
+  .table-container {
+    width: 100%;
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  .search-box {
+    width: 100%;
+  }
+
+  .new-item-btn {
+    width: 100%;
+  }
 }
 
-/* Modal Overlay */
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.45);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-}
 
 /* Modal Box */
 .modal {

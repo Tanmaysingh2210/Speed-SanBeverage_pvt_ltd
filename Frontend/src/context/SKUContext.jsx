@@ -220,6 +220,7 @@ export function SKUProvider({ children }) {
 
   const addItem = async (payload) => {
     try {
+      console.log('SKUContext.addItem', payload);
       const res = await api.post("/item/", payload);
       toast.success(res.data.message || "Item added");
       getAllItems();

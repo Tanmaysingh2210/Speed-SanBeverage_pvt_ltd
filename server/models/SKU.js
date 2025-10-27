@@ -20,7 +20,8 @@ const itemSchema = new mongoose.Schema({
     name:{type:String, required:true},
     container:{type:String, required:true},
     package:{type:String, required:true},
-    flavour: {type:String, required:true}
+    flavour: {type:String, required:true},
+    status: { type: String, enum: ['Active', 'Inactive'], default: 'Active' }
 });
 
 const Container = mongoose.model('SKU_Container', containerSchema);
