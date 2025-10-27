@@ -7,6 +7,6 @@ router.post('/', addItem);
 router.get('/', getAllItems);
 router.get('/:id',getItembyId);
 router.patch('/:id',updateItem);
-router.delete('/:id', deleteItem);
+router.delete('/delete/:id', deleteItem);
 
 module.exports = router;

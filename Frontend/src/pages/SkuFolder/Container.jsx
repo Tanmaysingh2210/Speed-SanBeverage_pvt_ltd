@@ -1,64 +1,57 @@
 import React, { useEffect, useState, useRef } from "react";
 import './Container.css';
+import { useSKU } from '../../context/SKUContext';
 
 const Container = () => {
-  const [containers, setContainers] = useState([
-    { id: 1, name: "CAN" },
-    { id: 2, name: "BOTTLE" },
-    { id: 3, name: "TETRA" },
-  ]);
-
-  
-  const [editId, setEditId] = useState(null);
-  const [editValue, setEditValue] = useState("");
-
-  const [showForm, setShowForm] = useState(false);
-  const [newContainer, setNewContainer] = useState("");
-
-  const addInputRef = useRef(null);
-  const searchRef = useRef(null);
-  const [searchTerm, setSearchTerm] = useState("");
+  const { containers, addContainer, getContaienerByID, deleteContainer, updateContainer, getAllContainers, loading } = useSKU();
 
   useEffect(() => {
-    if (showForm && addInputRef.current) {
-      addInputRef.current.focus(); // auto focus when form appears
-    }
+    getAllContainers();
+  }, []);
+
+  const [editId, setEditId] = useState(null);
+  const [editValue, setEditValue] = useState("");
+  const [showForm, setShowForm] = useState(false);
+  const [newContainer, setNewContainer] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
+  const addInputRef = useRef(null);
+  const searchRef = useRef(null);
+
+  useEffect(() => {
+    if (showForm && addInputRef.current) addInputRef.current.focus();
   }, [showForm]);
 
   const filteredContainers = containers.filter((item) =>
     item.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-
-  const handleAddContainer = () => {
+  const handleAddContainer = async () => {
     if (newContainer.trim() === "") return;
-
-    const newItem = {
-      id: containers.length + 1,
-      name: newContainer.toUpperCase(),
-    };
-
-    setContainers([...containers, newItem]);
+    await addContainer({serial: containers.length + 1 , name: newContainer.toUpperCase() });
     setNewContainer("");
-    // setShowForm(false);
-   
   };
 
-  function handleEdit(id, name) {
-    setEditId(id);
-    setEditValue(name);
-  }
-  function handleSaveEdit(id) {
-    setContainers(containers.map((item) =>
-      item.id === id ? { ...item, name: editValue.toUpperCase() } : item
-    )
-    );
+
+
+  // async function handleSaveEdit(id) {
+  //   // setContainers(containers.map((item) =>
+  //   //   item.id === id ? { ...item, name: editValue.toUpperCase() } : item
+  //   // )
+  //   // );
+  //   // setEditId(null);
+  //   // setEditValue("");
+
+  // }
+
+  const handleSaveEdit = async (id) => {
+    if (editValue.trim() === "") return;
+    await updateContainer(id, { name: editValue.toUpperCase() });
     setEditId(null);
     setEditValue("");
-  }
+  };
 
-  function handleDelete(id) {
-    setContainers(containers.filter((item) => item.id !== id));
+  const handleDelete = async (id) => {
+    await deleteContainer(id);
   };
 
   return (
@@ -106,20 +99,22 @@ const Container = () => {
         <div>ACTIONS</div>
       </div>
 
+      {loading && <div className="loading">Loading...</div>}
+
       {/* Table Body */}
       {filteredContainers.map((item, index) => (
-        <div key={item.id} className="grid-layout data-row">
+        <div key={item._id || index} className="grid-layout data-row">
           <div>{index + 1}</div>
 
           {/* If this item is being edited, show input instead of text */}
           <div>
-            {editId === item.id ? (
+            {editId === item._id ? (
               <input
                 type="text"
                 value={editValue}
                 onChange={(e) => setEditValue(e.target.value)}
                 onKeyDown={(e) => {
-                  if (e.key === "Enter") handleSaveEdit(item.id);
+                  if (e.key === "Enter") handleSaveEdit(item._id);
                 }}
                 autoFocus
                 className="inline-edit"
@@ -131,11 +126,11 @@ const Container = () => {
 
           {/* Actions */}
           <div className="action-buttons">
-            {editId === item.id ? (
+            {editId === item._id ? (
               <>
                 <span
                   className="btn-save"
-                  onClick={() => handleSaveEdit(item.id)}
+                  onClick={() => handleSaveEdit(item._id)}
                 >
                   Save
                 </span>{" "}
@@ -151,14 +146,17 @@ const Container = () => {
               <>
                 <span
                   className="btn-edit"
-                  onClick={() => handleEdit(item.id, item.name)}
+                  onClick={() => {
+                    setEditId(item._id);
+                    setEditValue(item.name);
+                  }}
                 >
                   Edit
                 </span>{" "}
                 |{" "}
                 <span
                   className="btn-delete"
-                  onClick={() => handleDelete(item.id)}
+                  onClick={() => handleDelete(item._id)}
                 >
                   Delete
                 </span>
@@ -167,6 +165,9 @@ const Container = () => {
           </div>
         </div>
       ))}
+      {!loading && filteredContainers.length === 0 && (
+        <div className="no-data">No containers found.</div>
+      )}
     </div>
   );
 };

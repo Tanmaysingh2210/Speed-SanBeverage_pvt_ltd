@@ -1,21 +1,21 @@
-import React, { useState, useRef, useEffect } from 'react'
+import React, { useState, useRef, useEffect } from 'react';
+import { useSKU } from '../../context/SKUContext';
 
 const Flavour = () => {
-  const [flavours, setFlavours] = useState([
-    { id: 1, name: "PEPSI" },
-    { id: 2, name: "MIRINDA" },
-    { id: 3, name: "MOUNTAIN DEW" },
-  ]);
+  const { flavours, addFlavour, getFlavourByID, deleteFlavour, updateFlavour, getAllFlavours, loading } = useSKU();
+
+
   const [editId, setEditId] = useState(null);
   const [editValue, setEditValue] = useState("");
-
   const [showForm, setShowForm] = useState(false);
   const [newFlavour, setNewFlavour] = useState("");
-
+  const [searchTerm, setSearchTerm] = useState("");
   const addInputRef = useRef(null);
   const searchRef = useRef(null);
-  const [searchTerm, setSearchTerm] = useState("");
 
+  useEffect(() => {
+    getAllFlavours();
+  }, []);
 
   useEffect(() => {
     if (showForm && addInputRef.current) {
@@ -28,36 +28,24 @@ const Flavour = () => {
     item.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const handleAddFlavour = () => {
+  const handleAddFlavour = async () => {
     if (newFlavour.trim() === "") return;
-
-    const newItem = {
-      id: flavours.length + 1,
-      name: newFlavour.toUpperCase(),
-    };
-
-    setFlavours([...flavours, newItem]);
+    await addFlavour({ serial: flavours.length + 1, name: newFlavour.toUpperCase() });
     setNewFlavour("");
-    // setShowForm(false);
-
   };
-  function handleEdit(id, name) {
-    setEditId(id);
-    setEditValue(name);
-  }
-  function handleSaveEdit(id) {
-    setFlavours(flavours.map((item) =>
-      item.id === id ? { ...item, name: editValue.toUpperCase() } : item
-    )
-    );
+
+
+  const handleSaveEdit = async (id) => {
+    if (editValue.trim() === "") return;
+    await updateFlavour(id, { name: editValue.toUpperCase() });
     setEditId(null);
     setEditValue("");
-  }
-
-  function handleDelete(id) {
-    setFlavours(flavours.filter((item) => item.id !== id));
   };
 
+
+  const handleDelete = async (id) => {
+    await deleteFlavour(id);
+  };
 
   return (
     <div className="container-wrapper">
@@ -103,20 +91,22 @@ const Flavour = () => {
         <div>ACTIONS</div>
       </div>
 
+      {loading && <div className="loading">Loading...</div>}
+
       {/* Table Body */}
       {filteredFlavours.map((item, index) => (
-        <div key={item.id} className="grid-layout data-row">
+        <div key={item._id || index} className="grid-layout data-row">
           <div>{index + 1}</div>
 
 
-         <div>
-            {editId === item.id ? (
+          <div>
+            {editId === item._id ? (
               <input
                 type="text"
                 value={editValue}
                 onChange={(e) => setEditValue(e.target.value)}
                 onKeyDown={(e) => {
-                  if (e.key === "Enter") handleSaveEdit(item.id);
+                  if (e.key === "Enter") handleSaveEdit(item._id);
                 }}
                 autoFocus
                 className="inline-edit"
@@ -128,11 +118,11 @@ const Flavour = () => {
 
           {/* Actions */}
           <div className="action-buttons">
-            {editId === item.id ? (
+            {editId === item._id ? (
               <>
                 <span
                   className="btn-save"
-                  onClick={() => handleSaveEdit(item.id)}
+                  onClick={() => handleSaveEdit(item._id)}
                 >
                   Save
                 </span>{" "}
@@ -148,14 +138,17 @@ const Flavour = () => {
               <>
                 <span
                   className="btn-edit"
-                  onClick={() => handleEdit(item.id, item.name)}
+                  onClick={() => {
+                    setEditId(item._id);
+                    setEditValue(item.name);
+                  }}
                 >
                   Edit
                 </span>{" "}
                 |{" "}
                 <span
                   className="btn-delete"
-                  onClick={() => handleDelete(item.id)}
+                  onClick={() => handleDelete(item._id)}
                 >
                   Delete
                 </span>
@@ -164,6 +157,9 @@ const Flavour = () => {
           </div>
         </div>
       ))}
+      {!loading && filteredFlavours.length === 0 && (
+        <div className="no-data">No flavours found.</div>
+      )}
     </div>
   );
 };

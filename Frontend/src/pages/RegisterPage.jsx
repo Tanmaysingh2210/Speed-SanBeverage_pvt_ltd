@@ -17,7 +17,7 @@ export default function RegisterPage() {
 
     // OTP state
     const [otp, setOtp] = useState(['', '', '', '', '', '']);
-    const [countdown, setCountdown] = useState(60);
+    const [countdown, setCountdown] = useState(10);
 
     const { register, verifyOtp, resendOtp, user } = useAuth();
     const navigate = useNavigate();
@@ -53,7 +53,7 @@ export default function RegisterPage() {
             await register({ name, email, password, depo });
             toast.success(`OTP sent to ${email}`);
             setOtpStep(true);
-            setCountdown(60);
+            setCountdown(10);
         } catch (err) {
             const msg = err?.response?.data?.message || 'Registration failed';
             toast.error(msg);
@@ -84,7 +84,7 @@ export default function RegisterPage() {
         try {
             await resendOtp(email);
             toast.success(`OTP resent to ${email}`);
-            setCountdown(30);
+            setCountdown(10);
         } catch (err) {
             toast.error(err?.response?.data?.message || 'Failed to resend OTP');
         }

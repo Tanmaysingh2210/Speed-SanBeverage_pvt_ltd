@@ -156,6 +156,76 @@ body {
 }
 
 
+.burger-ul li a:hover {
+  color: #10b981;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-top: 15px;
+  /* border-top: 1px solid #374151; */
+  overflow: hidden;
+}
+
+.user-avatar {
+  font-size: 2rem;
+  color: #10b981;
+}
+
+.user-details {
+  display: flex;
+  flex-direction: column;
+  font-size: 0.9rem;
+}
+
+.user-name {
+  font-weight: 600;
+}
+
+.user-email {
+  font-size: 0.8rem;
+  color: #87888b;
+}
+
+.user-section {
+  border-top: 1px solid #374151;
+  padding-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.logout-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background-color: #ef4444;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background-color 0.2s ease;
+  overflow: hidden;
+  text-align: center;
+}
+
+.logout-btn:hover {
+  background-color: #dc2626;
+}
+
+/* burger design ends */
+
+
+
+
+
+
+
+
 
 .big-box {
   margin-top: 8vh;
@@ -400,7 +470,7 @@ body {
 /* Grid layout for the table */
 .table-grid {
   display: grid;
-  grid-template-columns: 0.8fr 0.8fr 3fr 1.3fr 1.2fr 1.2fr 1.5fr;
+  grid-template-columns: 0.8fr 0.8fr 3fr 1.5fr 1.3fr 1.3fr 1fr 1.5fr;
   padding: 10px 14px;
   align-items: center;
   text-align: left;

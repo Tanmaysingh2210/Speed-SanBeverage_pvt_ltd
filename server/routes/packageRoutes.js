@@ -7,6 +7,6 @@ router.post('/', addPackage);
 router.get('/', getAllPackage);
 router.get('/:id', getPackagebyID);
 router.patch('/:id', updatePackage);
-router.delete('/:id', deletePackage);
+router.delete('/delete/:id', deletePackage);
 
 module.exports = router;

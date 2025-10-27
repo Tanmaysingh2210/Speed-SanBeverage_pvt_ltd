@@ -259,6 +259,8 @@ input:invalid {
   align-items: center;
   justify-content: center;
   gap: 3vh;
+  overflow: hidden;
+
 
 }
 
@@ -278,7 +280,7 @@ input:invalid {
   width: 100%;
   align-items: center;
   margin-top: 7vh;
-  /* overflow: hidden; */
+  overflow: hidden;
 }
 
 .input-group {
@@ -371,12 +373,16 @@ input:invalid {
   justify-content: center;
   align-items: center;
   transition: all 0.3s ease;
+  overflow: hidden;
+
 }
 
 .welcome {
   font-size: 5vh;
   font-weight: 700;
   text-align: center;
+  overflow: hidden;
+
 }
 
 .back {
@@ -384,6 +390,8 @@ input:invalid {
   font-weight: 700;
   margin-left: 1vw;
   text-align: center;
+  overflow: hidden;
+
 }
 
 /* ---------- RESPONSIVE STYLES ---------- */

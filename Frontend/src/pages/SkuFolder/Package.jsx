@@ -1,21 +1,23 @@
 import React, { useEffect, useState, useRef } from 'react'
 import './Container.css';
+import { useSKU } from '../../context/SKUContext';
 
 const Package = () => {
-  const [packages, setPackages] = useState([
-    { id: 1, name: "200ml" },
-    { id: 2, name: "600ml" },
-    { id: 3, name: "1000ml" },
-  ]);
+  const { packages, addPackage, getPackageByID, deletePackage, updatePackage, getAllPackages, loading } = useSKU();
+
+
+  useEffect(() => {
+    getAllPackages();
+  }, []);
+
+
   const [editId, setEditId] = useState(null);
   const [editValue, setEditValue] = useState("");
-
   const [showForm, setShowForm] = useState(false);
   const [newpackage, setNewPackage] = useState("");
-
+  const [searchTerm, setSearchTerm] = useState("");
   const addInputRef = useRef(null);
   const searchRef = useRef(null);
-  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     if (showForm && addInputRef.current) {
@@ -27,34 +29,22 @@ const Package = () => {
     item.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const handleAddPackage = () => {
+  const handleAddPackage = async () => {
     if (newpackage.trim() === "") return;
-
-    const newItem = {
-      id: packages.length + 1,
-      name: newpackage.toLowerCase(),
-    };
-    setPackages([...packages, newItem]);
+    await addPackage({ serial: packages.length + 1, name: newpackage.toUpperCase() });
     setNewPackage("");
-  }
-  function handleEdit(id, name) {
-    setEditId(id);
-    setEditValue(name);
-  }
-
-  function handleSaveEdit(id) {
-    setPackages(packages.map((item) =>
-      item.id === id ? { ...item, name: editValue.toUpperCase() } : item
-    )
-    );
-    setEditId(null);
-    setEditValue("");
-  }
-
-  function handleDelete(id) {
-    setPackages(packages.filter((item) => item.id !== id));
   };
 
+  const handleSaveEdit = async (id) => {
+    if (editValue.trim() === "") return;
+    await updatePackage(id, { name: editValue.toUpperCase() });
+    setEditId(null);
+    setEditValue("");
+  };
+
+  const handleDelete = async (id) => {
+    await deletePackage(id);
+  };
 
 
 
@@ -66,7 +56,6 @@ const Package = () => {
           ref={searchRef}
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-
           placeholder="🔍 Search Packages..."
           className="search-input"
         />
@@ -100,19 +89,21 @@ const Package = () => {
         <div>ACTIONS</div>
       </div>
 
+      {loading && <div className="loading">Loading...</div>}
+
       {/* Table Body */}
       {filteredPackages.map((item, index) => (
-        <div key={item.id} className="grid-layout data-row">
+        <div key={item._id || index} className="grid-layout data-row">
           <div>{index + 1}</div>
 
           <div>
-            {editId === item.id ? (
+            {editId === item._id ? (
               <input
                 type="text"
                 value={editValue}
                 onChange={(e) => setEditValue(e.target.value)}
                 onKeyDown={(e) => {
-                  if (e.key === "Enter") handleSaveEdit(item.id);
+                  if (e.key === "Enter") handleSaveEdit(item._id);
                 }}
                 autoFocus
                 className="inline-edit"
@@ -124,11 +115,11 @@ const Package = () => {
 
           {/* Actions */}
           <div className="action-buttons">
-            {editId === item.id ? (
+            {editId === item._id ? (
               <>
                 <span
                   className="btn-save"
-                  onClick={() => handleSaveEdit(item.id)}
+                  onClick={() => handleSaveEdit(item._id)}
                 >
                   Save
                 </span>{" "}
@@ -144,14 +135,17 @@ const Package = () => {
               <>
                 <span
                   className="btn-edit"
-                  onClick={() => handleEdit(item.id, item.name)}
+                  onClick={() => {
+                    setEditId(item._id);
+                    setEditValue(item.name);
+                  }}
                 >
                   Edit
                 </span>{" "}
                 |{" "}
                 <span
                   className="btn-delete"
-                  onClick={() => handleDelete(item.id)}
+                  onClick={() => handleDelete(item._id)}
                 >
                   Delete
                 </span>
@@ -160,6 +154,9 @@ const Package = () => {
           </div>
         </div>
       ))}
+      {!loading && filteredPackages.length === 0 && (
+        <div className="no-data">No packages found.</div>
+      )}
     </div>
   );
 };

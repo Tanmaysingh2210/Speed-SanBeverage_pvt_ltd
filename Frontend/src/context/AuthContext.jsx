@@ -52,6 +52,15 @@ export function AuthProvider({ children }) {
         }
     }
 
+    async function resendOtp(email) {
+        try{
+            const res = await api.post('/auth/resend_otp',{email});
+            return res || {message: "Otp resended sucessfully"};
+        }catch(err){
+            throw err.response?.data || {message : "Error resending otp"};
+        }
+    }
+
     async function verifyOtp(payload) {
         try {
             const res = await api.post('/auth/verify_otp', payload, { withCredentials: true });
@@ -73,10 +82,8 @@ export function AuthProvider({ children }) {
         if (navigate) navigate('/signin');
     }
 
-
-
     return (
-        <AuthContext.Provider value={{ user, loading, login, logout, register, verifyOtp }}>
+        <AuthContext.Provider value={{ user, loading, login, logout, register, verifyOtp,resendOtp }}>
             {children}
         </AuthContext.Provider>
     );

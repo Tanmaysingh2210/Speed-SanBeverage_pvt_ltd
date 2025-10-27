@@ -9,7 +9,7 @@ router.post('/', addFlavour);
 router.get('/', getAllFlavour);
 router.get('/:id',getFlavourbyID);
 router.patch('/:id',updateFlavour);
-router.delete('/:id', deleteFlavour);
+router.delete('/delete/:id', deleteFlavour);
 
 
 
