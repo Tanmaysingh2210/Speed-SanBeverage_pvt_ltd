@@ -11,7 +11,7 @@ body {
   background: var(--bluish);
   width: 100vw;
   height: 100vh;
-  overflow-x: hidden;
+  overflow: hidden;
   /* position:relative; */
 }
 
@@ -236,6 +236,7 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
+  overflow: hidden;
   /* background-color: rgb(42, 81, 112); */
 
 }
@@ -516,6 +517,8 @@ body {
   font-weight: 500;
   white-space: nowrap;
 }
+
+
 
 .actions .save{
   color: #16a34a;

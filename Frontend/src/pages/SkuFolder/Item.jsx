@@ -226,7 +226,6 @@ const Item = () => {
 
   const handleModalKeyNavigation = (e, currentField) => {
     if (["ArrowRight", "ArrowDown"].includes(e.key)) {
-      // navigation with arrows: prevent default and move focus
       e.preventDefault();
 
       // if (e.key === "Enter" && currentField === "save") {
@@ -234,7 +233,6 @@ const Item = () => {
       //   modalSaveBtnRef.current?.click();
       // }
 
-      // If Enter is pressed on the Save button, click it
       if (currentField === "save" && e.key === "Enter") {
         modalSaveBtnRef.current?.click();
         return;
@@ -263,12 +261,9 @@ const Item = () => {
           break;
       }
     } else if (e.key === "Enter") {
-      // Allow Enter to submit the form naturally when on the Save button
       if (currentField === "save") {
-        // do nothing: let the form submit
         return;
       }
-      // For other fields, prevent default and move focus to next field
       e.preventDefault();
       switch (currentField) {
         case "code":
@@ -428,6 +423,7 @@ const Item = () => {
                 <span
                   className="save"
                   ref={saveBtnRef}
+                  disabled={loading}
                   onClick={() => handleSaveEdit(item._id)}
                 >
                   Save
@@ -500,47 +496,72 @@ const Item = () => {
                 />
               </div>
 
+
               <div className="form-group">
                 <label>Container</label>
-                <input
+                <select
                   ref={modalContainerRef}
-                  type="text"
                   value={newItem.container}
-                  onChange={(e) =>
-                    setNewItem({ ...newItem, container: e.target.value })
-                  }
+                  onChange={(e) => setNewItem({ ...newItem, container: e.target.value })}
                   onKeyDown={(e) => handleModalKeyNavigation(e, "container")}
-                  placeholder="Enter container"
-                />
+                >
+                  <option value="">Select container</option>
+                  {loading ? (
+                    <option disabled>Loading...</option>
+                  ) : (
+                    containers.map((c) => (
+                      <option key={c._id || c} value={c.name || c}>
+                        {c.name || c}
+                      </option>
+                    ))
+                  )}
+                </select>
               </div>
 
               <div className="form-group">
                 <label>Package</label>
-                <input
+                <select
                   ref={modalPackageRef}
-                  type="text"
                   value={newItem.package}
-                  onChange={(e) =>
-                    setNewItem({ ...newItem, package: e.target.value })
-                  }
+                  onChange={(e) => setNewItem({ ...newItem, package: e.target.value })}
                   onKeyDown={(e) => handleModalKeyNavigation(e, "package")}
-                  placeholder="e.g. 200ml"
-                />
+                >
+                  <option value="">Select package</option>
+                  {loading ? (
+                    <option disabled>Loading...</option>
+                  ) : (
+                    packages.map((c) => (
+                      <option key={c._id || c} value={c.name || c}>
+                        {c.name || c}
+                      </option>
+                    ))
+                  )}
+                </select>
               </div>
 
               <div className="form-group">
                 <label>Flavour</label>
-                <input
+                <select
                   ref={modalFlavourRef}
-                  type="text"
                   value={newItem.flavour}
-                  onChange={(e) =>
-                    setNewItem({ ...newItem, flavour: e.target.value })
-                  }
+                  onChange={(e) => setNewItem({ ...newItem, flavour: e.target.value })}
                   onKeyDown={(e) => handleModalKeyNavigation(e, "flavour")}
-                  placeholder="e.g. pepsi"
-                />
+                >
+                  <option value="">Select flavour</option>
+                  {loading ? (
+                    <option disabled>Loading...</option>
+                  ) : (
+                    flavours.map((c) => (
+                      <option key={c._id || c} value={c.name || c}>
+                        {c.name || c}
+                      </option>
+                    ))
+                  )}
+                </select>
               </div>
+
+         
+             
 
               <div className="form-group">
                 <label>Status</label>

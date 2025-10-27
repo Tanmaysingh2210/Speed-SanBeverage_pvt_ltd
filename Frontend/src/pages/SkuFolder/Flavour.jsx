@@ -77,7 +77,7 @@ const Flavour = () => {
             placeholder="Enter Flavour name"
             className="name-input"
           />
-          <button onClick={handleAddFlavour}>Add</button>
+          <button onClick={handleAddFlavour} disabled={loading}>{loading? "Loading.":"Add"}</button>
           <button onClick={() => setShowForm(false)}>Cancel</button>
         </div>
       )}
@@ -122,6 +122,7 @@ const Flavour = () => {
               <>
                 <span
                   className="btn-save"
+                  disabled = {loading}
                   onClick={() => handleSaveEdit(item._id)}
                 >
                   Save

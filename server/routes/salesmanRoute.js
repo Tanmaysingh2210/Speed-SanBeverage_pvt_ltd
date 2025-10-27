@@ -7,6 +7,6 @@ router.post('/', addSalesman);
 router.get('/', getAllSalesmen);
 router.get('/:id', getSalesmanById);
 router.patch('/:id', updateSalesman);
-router.delete('/:id', deleteSalesman);
+router.delete('/delete/:id', deleteSalesman);
 
 module.exports = router;        

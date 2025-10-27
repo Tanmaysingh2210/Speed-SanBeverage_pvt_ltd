@@ -290,7 +290,7 @@ const LatestPrice = () => {
                             <div>{p.perTax}%</div>
                             <div>{p.netRate}</div>
                             <div>{p.date}</div>
-                            <div>
+                            <div className="status">
                                 <span
                                     className={`status-badge ${p.status === "Active" ? "active" : "inactive"
                                         }`}
