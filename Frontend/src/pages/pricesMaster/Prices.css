@@ -1,0 +1,362 @@
+/* .price-container {
+  background: #f9fbff;
+  padding: 20px;
+  border-radius: 10px;
+  font-family: "Segoe UI", sans-serif;
+}
+
+.price-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.price-search {
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  width: 300px;
+  outline: none;
+}
+
+.price-add-btn {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.price-table {
+  display: grid;
+  grid-template-columns: 1fr;
+  color: black;
+}
+
+.price-row {
+  display: grid;
+  grid-template-columns: 0.8fr 0.8fr 3fr 1.3fr 1.2fr 1.2fr 1.5fr 2fr;
+  align-items: center;
+  padding: 10px 5px;
+  border-bottom: 1px solid #e0e0e0;
+  font-size: 14px;
+}
+
+.price-row.header {
+  background-color: #f0f3f9;
+  font-weight: bold;
+  border-bottom: 2px solid #d0d0d0;
+}
+
+.actions span {
+  cursor: pointer;
+}
+
+.actions .edit {
+  color: #007bff;
+}
+
+.actions .delete {
+  color: #dc3545;
+}
+
+/* Modal */
+/* .modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal {
+  background: #fff;
+  padding: 25px;
+  border-radius: 12px;
+  width: 400px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.modal h2 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 10px;
+}
+
+.form-group input,
+.form-group select {
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+.modal-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 15px;
+}
+
+.submit-btn {
+  background: #007bff;
+  color: white;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.cancel-btn {
+  background: #ccc;
+  color: #000;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+} */
+
+
+
+
+
+
+
+
+.price-container {
+  background: #f9fbff;
+  padding: 20px;
+  border-radius: 10px;
+  font-family: "Segoe UI", sans-serif;
+  width: 75%;
+  max-width: 1200px;
+  margin: 10vh auto;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+}
+
+/* ---------- HEADER ---------- */
+.price-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.price-search {
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  width: 300px;
+  outline: none;
+  font-size: 14px;
+  background-color: transparent;
+  color: #000;
+}
+
+.price-add-btn {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 14px;
+  transition: background 0.2s;
+}
+
+.price-add-btn:hover {
+  background-color: #005ec9;
+}
+
+/* ---------- TABLE ---------- */
+.price-table {
+  display: grid;
+  grid-template-columns: 1fr;
+  color: black;
+  width: 100%;
+  overflow-x: auto;
+}
+
+.price-row {
+  display: grid;
+  grid-template-columns: 0.8fr 0.8fr 3fr 1.3fr 1.2fr 1.2fr 1.5fr 1.5fr 2fr;
+  align-items: center;
+  padding: 10px 5px;
+  border-bottom: 1px solid #e0e0e0;
+  font-size: 14px;
+  text-wrap: nowrap;
+}
+
+.price-row.header {
+  background-color: #f0f3f9;
+  font-weight: bold;
+  border-bottom: 2px solid #d0d0d0;
+}
+
+.actions span {
+  cursor: pointer;
+  margin-right: 8px;
+  font-weight: 500;
+}
+
+.actions .edit {
+  color: #007bff;
+}
+
+.actions .delete {
+  color: #dc3545;
+}
+
+/* ---------- MODAL ---------- */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal {
+  background: #fff;
+  padding: 25px;
+  border-radius: 12px;
+  width: 400px;
+  max-width: 90%;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  color: #000;
+}
+
+.modal h2 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 10px;
+}
+
+.form-group input,
+.form-group select {
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.modal-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 15px;
+}
+
+.submit-btn {
+  background: #007bff;
+  color: white;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.cancel-btn {
+  background: #ccc;
+  color: #000;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+/* ---------- RESPONSIVE DESIGN ---------- */
+
+/* 🧩 Medium Laptops (15-16 inch, width <= 1200px) */
+@media (max-width: 1200px) {
+  .price-row {
+    grid-template-columns: 0.6fr 0.8fr 2.5fr 1.1fr 1fr 1fr 1.2fr 1.5fr;
+    font-size: 13.5px;
+  }
+
+  .price-search {
+    width: 260px;
+  }
+
+  .price-add-btn {
+    padding: 7px 14px;
+  }
+}
+
+/* 🧩 Small Laptops (13-14 inch, width <= 992px) */
+@media (max-width: 992px) {
+  .price-row {
+    grid-template-columns: 0.7fr 1fr 2.5fr 1fr 1fr 1fr 1.5fr 1.5fr;
+    font-size: 13px;
+  }
+
+  .price-search {
+    width: 100%;
+  }
+
+  .price-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .price-add-btn {
+    width: 100%;
+    text-align: center;
+  }
+}
+
+/* 🧩 Tablets or Narrow Screens (<= 768px) */
+@media (max-width: 768px) {
+  .price-row {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 12px;
+    font-size: 13px;
+  }
+
+  .price-row.header {
+    display: none; /* Hide header for compact mobile style */
+  }
+
+  .price-row div {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .price-container {
+    padding: 15px;
+  }
+
+  .modal {
+    width: 90%;
+    padding: 15px;
+  }
+}
+
+/* 🧩 Scrollbar styling for overflow */
+.price-table::-webkit-scrollbar {
+  height: 8px;
+}
+.price-table::-webkit-scrollbar-thumb {
+  background: #bbb;
+  border-radius: 4px;
+}

@@ -7,6 +7,7 @@ import Summary from './Summary'
 import Sku from './SkuFolder/Sku'
 import Salesman from './Salesman'
 import PriceRoutes from './pricesMarter/priceRoutes'
+import Transaction from'./transaction/TransactionRoutes'
 
 const Dashboard = () => {
   return (
@@ -21,7 +22,7 @@ const Dashboard = () => {
           <Route path="/sku/*" element={<Sku />} />
           <Route path="/salesman" element={<Salesman />} />
           <Route path="/prices/*" element={<PriceRoutes />} />
-          {/* <Route path="/transaction/*" element={<Transaction />} /> */}
+          <Route path="/transaction/*" element={<Transaction />} /> 
         </Routes>
       </div>
     </>

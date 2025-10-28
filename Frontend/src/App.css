@@ -112,6 +112,7 @@ body {
   font-size: 20px;
   color: white;
   transition: transform 0.3s ease;
+  overflow:hidden;
 }
 
 
@@ -167,6 +168,9 @@ body {
   padding-top: 15px;
   /* border-top: 1px solid #374151; */
   overflow: hidden;
+  flex-direction:column;
+  width:100%;
+
 }
 
 .user-avatar {
@@ -182,39 +186,53 @@ body {
 
 .user-name {
   font-weight: 600;
+    transition: transform 0.3s ease;
+    overflow:hidden;
+
 }
 
 .user-email {
   font-size: 0.8rem;
   color: #87888b;
+  height:1.5vw;
+    transition: transform 0.3s ease;
+    overflow:hidden;
+
 }
 
 .user-section {
   border-top: 1px solid #374151;
   padding-top: 10px;
+  padding-bottom:10px;
   display: flex;
-  flex-direction: column;
-  gap: 8px;
+  flex-direction:column;
+  gap: 25px;
+  width:100%;
+  justify-content:center;
+  align-items:center;
 }
 
 .logout-btn {
   display: flex;
   align-items: center;
-  gap: 8px;
+ 
   background-color: #ef4444;
   color: white;
   border: none;
-  padding: 8px 12px;
+  /* padding: 8px 12px; */
   border-radius: 8px;
   cursor: pointer;
   font-size: 0.9rem;
   transition: background-color 0.2s ease;
   overflow: hidden;
   text-align: center;
+  width:80%;
+  justify-content:center;
 }
 
 .logout-btn:hover {
-  background-color: #dc2626;
+  background-color: #bb0808;
+  
 }
 
 /* burger design ends */
@@ -341,8 +359,13 @@ body {
 
   .burger-box .heading {
 
-    transform: scale(0.7);
+    transform: scale(0.6);
     transform-origin: center;
+    
+  }
+  .user-name .user-email{
+    transform:scale(0.6);
+     transform-origin: center;
   }
 
   .nav .elements {

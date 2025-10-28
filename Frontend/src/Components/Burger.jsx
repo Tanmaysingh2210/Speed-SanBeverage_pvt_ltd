@@ -28,7 +28,7 @@ const Burger = () => {
             <div className="line"></div>
 
             <ul className="burger-ul">
-                <li>Transaction</li>
+                <li><Link to={`/transaction`}>Transaction</Link></li>
                 <li><Link to={`/prices`}>Prices</Link> </li>
                 <li><Link to={`/salesman`}>Salesman</Link></li>
                 <li><Link to={`/sku`}>SKQ</Link></li>
