@@ -1,25 +1,29 @@
 import React, { useState, useRef, useEffect } from "react";
 import "./SkuFolder/Item.css";
+import { useSalesman } from "../context/SalesmanContext";
+import toast from 'react-hot-toast';
+
 
 const Salesman = () => {
   const [showModal, setShowModal] = useState(false);
   const handleOpen = () => setShowModal(true);
   const handleClose = () => setShowModal(false);
 
-  const [salesmans, setSalesmans] = useState([
-    { id: 1, code: "B001", name: "AYUSH", route_no: 1, status: "Active" },
-    { id: 2, code: "A001", name: "TANMAY", route_no: 2, status: "Active" },
-    { id: 3, code: "C001", name: "SHLOK", route_no: 3, status: "Inactive" },
-  ]);
+  const { salesmans,loading, getAllSalesmen, updateSalesman, addSalesman, getSalesmanByID, deleteSalesman } = useSalesman();
+
+  useEffect(() => {
+    getAllSalesmen();
+  }, []);
+
 
   const [editId, setEditId] = useState(null);
   const [editSalesman, setEditSalesman] = useState({});
   const [searchTerm, setSearchTerm] = useState("");
 
   const [newSalesman, setNewSalesman] = useState({
-    code: "",
+    codeNo: "",
     name: "",
-    route_no: "",
+    routeNo: 0,
     status: "Active",
   });
 
@@ -34,7 +38,7 @@ const Salesman = () => {
   const modalRef = useRef(null);
   const modalCodeRef = useRef(null);
   const modalNameRef = useRef(null);
-  const modalRoute_NoRef = useRef(null);
+  const modalrouteNoRef = useRef(null);
   const modalStatusRef = useRef(null);
   const modalSaveBtnRef = useRef(null);
 
@@ -47,7 +51,6 @@ const Salesman = () => {
     }
   }, [showModal]);
 
-  // Close modal if clicked outside
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (modalRef.current && !modalRef.current.contains(e.target)) {
@@ -58,43 +61,53 @@ const Salesman = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [showModal]);
 
-  const handleAddSalesman = (e) => {
+
+  const handleAddSalesman = async (e) => {
     e.preventDefault();
-    if (!newSalesman.code || !newSalesman.name || !newSalesman.route_no) {
-      return alert("Please fill all fields");
+    if (!newSalesman.codeNo || !newSalesman.name || !newSalesman.routeNo) {
+      toast.error("Please fill all fields");
+      return;
     }
 
-    const newData = {
-      id: salesmans.length + 1,
-      code: newSalesman.code.toUpperCase(),
-      name: newSalesman.name.toUpperCase(),
-      route_no: newSalesman.route_no,
-      status: newSalesman.status,
-    };
+    try {
+      const newData = {
+        codeNo: newSalesman.codeNo.toUpperCase(),
+        name: newSalesman.name.toUpperCase(),
+        routeNo: newSalesman.routeNo,
+        status: newSalesman.status,
+      };
 
-    setSalesmans([...salesmans, newData]);
-    setNewSalesman({ code: "", name: "", route_no: "", status: "Active" });
-    setShowModal(false);
+      await addSalesman(newData);
+      setNewSalesman({ codeNo: "", name: "", routeNo: 0, status: "Active" });
+      setShowModal(false);
+      toast.success("Salesman Added");
+    } catch (err) {
+      toast.error(err?.response?.data?.message || 'Failed to add salesman');
+    }
   };
 
   const handleEdit = (salesman) => {
-    setEditId(salesman.id);
-    setEditSalesman(salesman);
+    setEditId(salesman._id);
+    setEditSalesman({ ...salesman });
 
     setTimeout(() => {
       codeInputRef.current?.focus();
     }, 50);
+
   };
 
-  const handleSaveEdit = (id) => {
-    setSalesmans(
-      salesmans.map((i) => (i.id === id ? editSalesman : i))
-    );
-    setEditId(null);
+  const handleSaveEdit = async (id) => {
+    try {
+      await updateSalesman(id, editSalesman);
+      setEditId(null);
+      toast.success("Salesman updated successfully");
+    } catch (err) {
+      toast.error(err?.response?.data?.message || "Update failed");
+    }
   };
 
-  const handleDelete = (id) => {
-    setSalesmans(salesmans.filter((i) => i.id !== id));
+  const handleDelete = async (id) => {
+    await deleteSalesman(id);
   };
 
   const filteredSalesmans = salesmans.filter((i) =>
@@ -108,7 +121,7 @@ const Salesman = () => {
         case "name":
           nameInputRef.current?.focus();
           break;
-        case "route_no":
+        case "routeNo":
           routeInputRef.current?.focus();
           break;
         case "status":
@@ -137,9 +150,9 @@ const Salesman = () => {
           modalNameRef.current?.focus();
           break;
         case "name":
-          modalRoute_NoRef.current?.focus();
+          modalrouteNoRef.current?.focus();
           break;
-        case "route_no":
+        case "routeNo":
           modalStatusRef.current?.focus();
           break;
         case "status":
@@ -154,11 +167,11 @@ const Salesman = () => {
         case "name":
           modalCodeRef.current?.focus();
           break;
-        case "route_no":
+        case "routeNo":
           modalNameRef.current?.focus();
           break;
         case "status":
-          modalRoute_NoRef.current?.focus();
+          modalrouteNoRef.current?.focus();
           break;
         case "save":
           modalStatusRef.current?.focus();
@@ -171,7 +184,7 @@ const Salesman = () => {
 
   useEffect(() => {
     if (!showModal) {
-      setNewSalesman({ code: "", name: "", route_no: "", status: "Active" });
+      setNewSalesman({ codeNo: "", name: "", routeNo: 0, status: "Active" });
     }
   }, [showModal]);
 
@@ -189,7 +202,7 @@ const Salesman = () => {
             onChange={(e) => setSearchTerm(e.target.value)}
             value={searchTerm}
           />
-          <button className="new-item-btn" onClick={handleOpen}>
+          <button className="new-item-btn" onClick={() => setShowModal(true)}>
             + New
           </button>
         </div>
@@ -204,18 +217,20 @@ const Salesman = () => {
           <div>ACTIONS</div>
         </div>
 
+        {loading && <div className="loading">Loading...</div>}
+
         {/* Table Body */}
         {filteredSalesmans.map((salesman, index) => (
-          <div key={salesman.id} className="table-grid table-row">
+          <div key={salesman._id || index} className="table-grid table-row">
             <div>{index + 1}</div>
-            {editId === salesman.id ? (
+            {editId === salesman._id ? (
               <>
                 <input
                   type="text"
                   ref={codeInputRef}
-                  value={editSalesman.code}
+                  value={editSalesman.codeNo}
                   onChange={(e) =>
-                    setEditSalesman({ ...editSalesman, code: e.target.value })
+                    setEditSalesman({ ...editSalesman, codeNo: e.target.value })
                   }
                   onKeyDown={(e) => handleKeyNavigation(e, "name")}
                 />
@@ -226,16 +241,16 @@ const Salesman = () => {
                   onChange={(e) =>
                     setEditSalesman({ ...editSalesman, name: e.target.value })
                   }
-                  onKeyDown={(e) => handleKeyNavigation(e, "route_no")}
+                  onKeyDown={(e) => handleKeyNavigation(e, "routeNo")}
                 />
                 <input
                   type="number"
                   ref={routeInputRef}
-                  value={editSalesman.route_no}
+                  value={editSalesman.routeNo}
                   onChange={(e) =>
                     setEditSalesman({
                       ...editSalesman,
-                      route_no: e.target.value,
+                      routeNo: e.target.value,
                     })
                   }
                   onKeyDown={(e) => handleKeyNavigation(e, "status")}
@@ -258,7 +273,8 @@ const Salesman = () => {
                   <span
                     className="save"
                     ref={saveBtnRef}
-                    onClick={() => handleSaveEdit(salesman.id)}
+                    disabled={loading}
+                    onClick={() => handleSaveEdit(salesman._id)}
                   >
                     Save
                   </span>{" "}
@@ -270,9 +286,9 @@ const Salesman = () => {
               </>
             ) : (
               <>
-                <div>{salesman.code}</div>
+                <div>{salesman.codeNo}</div>
                 <div>{salesman.name}</div>
-                <div>{salesman.route_no}</div>
+                <div>{salesman.routeNo}</div>
                 <div>{salesman.status}</div>
                 <div className="actions">
                   <span className="edit" onClick={() => handleEdit(salesman)}>
@@ -281,7 +297,7 @@ const Salesman = () => {
                   |{" "}
                   <span
                     className="delete"
-                    onClick={() => handleDelete(salesman.id)}
+                    onClick={() => handleDelete(salesman._id)}
                   >
                     Delete
                   </span>
@@ -303,9 +319,9 @@ const Salesman = () => {
                     type="text"
                     placeholder="Enter Salesman code"
                     ref={modalCodeRef}
-                    value={newSalesman.code}
+                    value={newSalesman.codeNo}
                     onChange={(e) =>
-                      setNewSalesman({ ...newSalesman, code: e.target.value })
+                      setNewSalesman({ ...newSalesman, codeNo: e.target.value })
                     }
                     onKeyDown={(e) => handleModalKeyNavigation(e, "code")}
                   />
@@ -330,15 +346,15 @@ const Salesman = () => {
                   <input
                     type="text"
                     placeholder="e.g 001"
-                    ref={modalRoute_NoRef}
-                    value={newSalesman.route_no}
+                    ref={modalrouteNoRef}
+                    value={newSalesman.routeNo}
                     onChange={(e) =>
                       setNewSalesman({
                         ...newSalesman,
-                        route_no: e.target.value,
+                        routeNo: e.target.value,
                       })
                     }
-                    onKeyDown={(e) => handleModalKeyNavigation(e, "route_no")}
+                    onKeyDown={(e) => handleModalKeyNavigation(e, "routeNo")}
                   />
                 </div>
 
@@ -365,6 +381,7 @@ const Salesman = () => {
                     type="submit"
                     className="submit-btn"
                     ref={modalSaveBtnRef}
+                    disabled={loading}
                     onKeyDown={(e) => handleModalKeyNavigation(e, "save")}
                   >
                     Save
@@ -372,7 +389,7 @@ const Salesman = () => {
                   <button
                     type="button"
                     className="cancel-btn"
-                    onClick={handleClose}
+                    onClick={()=>setShowModal(false)}
                   >
                     Cancel
                   </button>
@@ -381,6 +398,9 @@ const Salesman = () => {
             </div>
           </div>
         )}
+      {!loading && filteredSalesmans.length === 0 && (
+        <div className="no-data">No salesmans found.</div>
+      )}
       </div>
     </div>
   );

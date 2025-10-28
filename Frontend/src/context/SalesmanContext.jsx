@@ -1,4 +1,6 @@
 import React, { useState, useEffect, useContext, createContext } from 'react';
+import toast from 'react-hot-toast'
+import api from '../api/api';
 
 
 const SalesmanContext = createContext();
@@ -7,7 +9,7 @@ export function SalesmanProvider({ children }) {
     const [salesmans, setSalesmans] = useState([]);
     const [loading, setLoading] = useState(false);
 
-    const getAllSalesmans = async () => {
+    const getAllSalesmen = async () => {
         try {
             setLoading(true);
             const res = await api.get("/salesman/");
@@ -35,7 +37,8 @@ export function SalesmanProvider({ children }) {
             setLoading(true);
             const res = await api.post("/salesman/", payload);
             toast.success(res.data.message || "Salesman added successfully");
-            getAllSalesmans();
+            // refresh list after add
+            getAllSalesmen();
         } catch (err) {
             toast.error(err.response?.data?.message || "Error adding salesman");
         } finally {
@@ -48,7 +51,7 @@ export function SalesmanProvider({ children }) {
             setLoading(true);
             const res = await api.patch(`/salesman/${id}`, payload);
             toast.success(res.data.message || "Salesman updated");
-            getAllSalesmans();
+            getAllSalesmen();
         } catch (err) {
             toast.error(err.response?.data?.message || "Error updating salesman");
         } finally {
@@ -71,12 +74,11 @@ export function SalesmanProvider({ children }) {
     };
 
     useEffect(() => {
-        getAllSalesmans();
+        getAllSalesmen();
     }, []);
 
-
     return (
-        <SalesmanContext.Provider value={{ salesmans, getAllSalesmans, updateSalesman, deleteSalesman, addSalesman, getSalesmanByID }} >{children}</SalesmanContext.Provider>
+        <SalesmanContext.Provider value={{ salesmans, loading, getAllSalesmen, updateSalesman, deleteSalesman, addSalesman, getSalesmanByID }} >{children}</SalesmanContext.Provider>
     );
 }
 

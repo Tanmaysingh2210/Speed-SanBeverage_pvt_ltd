@@ -2,7 +2,7 @@ const mongoose =require("mongoose")
 
 const salesmanSchema = new mongoose.Schema({
   routeNo: {
-    type: String,
+    type: Number,
     required: true
   },
   name: {

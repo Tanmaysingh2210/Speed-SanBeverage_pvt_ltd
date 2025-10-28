@@ -7,9 +7,7 @@ const AuthContext = createContext();
 export function AuthProvider({ children }) {
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
-    // useNavigate must be called (AuthProvider must be used inside a Router)
     const navigate = useNavigate();
-
 
     useEffect(() => {
         async function fetchUser() {

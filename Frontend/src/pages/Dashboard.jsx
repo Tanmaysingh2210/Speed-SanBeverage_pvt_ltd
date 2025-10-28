@@ -6,7 +6,7 @@ import Statistics from './Statistics'
 import Summary from './Summary'
 import Sku from './SkuFolder/Sku'
 import Salesman from './Salesman'
-import PriceRoutes from './pricesMarter/priceRoutes'
+import PriceRoutes from './pricesMarter/PriceRoutes';
 import Transaction from'./transaction/TransactionRoutes'
 
 const Dashboard = () => {
