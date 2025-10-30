@@ -2,35 +2,18 @@ import React, { useState, useRef, useEffect } from "react";
 import "./Prices.css";
 
 const LatestPrice = () => {
-    const itemList = [
-        { code: "P200", name: "PEPSI 200ML BOTTLE" },
-        { code: "M300", name: "MIRINDA 300ML CAN" },
-        { code: "S100", name: "SLICE 100ML TETRA" },
-    ];
-
-    const [prices, setPrices] = useState([
-        {
-            id: 1,
-            code: "P200",
-            name: "PEPSI 200ML BOTTLE",
-            basePrice: 500,
-            perTax: 10,
-            netRate: 550,
-            date: "2025-10-16",
-            status: "Active"
-        },
-    ]);
-
+    const [items, setItems] = useState([]); // Dynamic items from backend
+    const [prices, setPrices] = useState([]);
     const [showModal, setShowModal] = useState(false);
     const [editId, setEditId] = useState(null);
     const [search, setSearch] = useState("");
+    const [loading, setLoading] = useState(false);
     const [newPrice, setNewPrice] = useState({
         code: "",
         name: "",
         basePrice: "",
         perTax: "",
         date: "",
-        netRate: "",
         status: "Active",
     });
 
@@ -40,8 +23,46 @@ const LatestPrice = () => {
     const dateRef = useRef(null);
     const statusRef = useRef(null);
     const saveRef = useRef(null);
-
     const modalRef = useRef(null);
+
+    const calculateNetRate= (basePrice , perTax)=>{
+        if(!basePrice || !perTax) return '';
+        return (parseFloat(basePrice) + (parseFloat(basePrice)*parseFloat(perTax)/100)).toFixed(2)
+    };
+    // Fetch all items (SKU) on component mount
+    useEffect(() => {
+        fetchItems();
+        fetchPrices();
+    }, []);
+
+    // Fetch items from backend (all SKUs)
+    const fetchItems = async () => {
+        try {
+            const response = await fetch("http://localhost:3000/item"); // Adjust your endpoint
+            const data = await response.json();
+            setItems(data); // Expecting array like [{code: "P200", name: "PEPSI 200ML BOTTLE"}, ...]
+        } catch (error) {
+            console.error("Error fetching items:", error);
+            alert("Failed to fetch items from server");
+        }
+    };
+
+    // Fetch all prices from backend
+    const fetchPrices = async () => {
+        try {
+            setLoading(true);
+            const response = await fetch("http://localhost:3000/rates"); // Adjust your endpoint
+            const data = await response.json();
+             console.log('Fetched prices:', data);
+            setPrices(data);
+        } catch (error) {
+            console.error("Error fetching prices:", error);
+            alert("Failed to fetch prices from server");
+        } finally {
+            setLoading(false);
+        }
+    };
+  
 
     // Autofocus when modal opens
     useEffect(() => {
@@ -50,9 +71,9 @@ const LatestPrice = () => {
         }
     }, [showModal]);
 
-    // Auto update name & net rate
+    // Auto update name when code changes
     useEffect(() => {
-        const found = itemList.find(
+        const found = items.find(
             (item) => item.code.toUpperCase() === newPrice.code.toUpperCase()
         );
         if (found) {
@@ -66,60 +87,18 @@ const LatestPrice = () => {
                 name: "",
             }));
         }
-    }, [newPrice.code]);
-
-    useEffect(() => {
-        if (newPrice.basePrice && newPrice.perTax) {
-            const net = (
-                parseFloat(newPrice.basePrice) +
-                (parseFloat(newPrice.basePrice) * parseFloat(newPrice.perTax)) / 100
-            ).toFixed(2);
-            setNewPrice((prev) => ({ ...prev, netRate: net }));
-        }
-    }, [newPrice.basePrice, newPrice.perTax]);
+    }, [newPrice.code, items]);
 
     // Handle navigation keys
-    // const handleKeyNav = (e, currentField) => {
-    //     const next = {
-    //         code: baseRef,
-    //         basePrice: taxRef,
-    //         perTax: dateRef,
-    //         date: saveRef,
-    //     };
-    //     const prev = {
-    //         code:null,
-    //         basePrice: codeRef,
-    //         perTax: baseRef,
-    //         date: taxRef,
-    //         save: dateRef,
-    //     };
-
-    //     if (["ArrowRight", "ArrowDown", "Enter"].includes(e.key)) {
-    //         e.preventDefault();
-    //         next[currentField]?.current?.focus();
-    //     } else if (["ArrowLeft", "ArrowUp"].includes(e.key)) {
-    //         e.preventDefault();
-    //         // prev[currentField]?.current?.focus();
-    //         if (prev[currentField]?.current) {
-    //              prev[currentField].current.focus();
-    //         }
-    //     }
-    // };
-
     const handleKeyNav = (e, currentField) => {
         if (["ArrowRight", "ArrowDown", "Enter"].includes(e.key)) {
             e.preventDefault();
 
             if (e.key === "Enter" && currentField === "save") {
-                e.preventDefault();
-                saveRef.current?.click();
-            }
-
-            // If Enter is pressed on the Save button, click it
-            if (currentField === "save" && e.key === "Enter") {
                 saveRef.current?.click();
                 return;
             }
+
             switch (currentField) {
                 case "code":
                     baseRef.current?.focus();
@@ -135,9 +114,9 @@ const LatestPrice = () => {
                     break;
                 case "status":
                     if (e.key === "Enter") {
-                        saveRef.current?.click(); // trigger save
+                        saveRef.current?.click();
                     } else {
-                        saveRef.current?.focus(); // for arrow keys
+                        saveRef.current?.focus();
                     }
                     break;
                 default:
@@ -146,8 +125,6 @@ const LatestPrice = () => {
         } else if (["ArrowUp", "ArrowLeft"].includes(e.key)) {
             e.preventDefault();
             switch (currentField) {
-                case "code":
-                    break;
                 case "basePrice":
                     codeRef.current?.focus();
                     break;
@@ -169,7 +146,6 @@ const LatestPrice = () => {
         }
     };
 
-
     // Close modal when clicked outside
     useEffect(() => {
         const handleClickOutside = (e) => {
@@ -181,14 +157,11 @@ const LatestPrice = () => {
         return () => document.removeEventListener("mousedown", handleClickOutside);
     }, [showModal]);
 
-
-
-   
-
-    const handleSave = (e) => {
+    // Handle Save (Create or Update)
+    const handleSave = async (e) => {
         e.preventDefault();
 
-        const found = itemList.find(
+        const found = items.find(
             (item) => item.code.toUpperCase() === newPrice.code.toUpperCase()
         );
 
@@ -202,232 +175,320 @@ const LatestPrice = () => {
             return;
         }
 
-        if (editId) {
-            setPrices(prices.map((p) => (p.id === editId ? newPrice : p)));
-        } else {
-            const data = {
-                id: Date.now(),
-                ...newPrice,
-            };
-            setPrices([...prices, data]);
+        try {
+            setLoading(true);
+
+            if (editId) {
+                // UPDATE existing price
+                const response = await fetch(`http://localhost:3000/rates/${editId}`, {
+                    method: "PUT",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                    itemCode: newPrice.code,
+                    name: newPrice.name,
+                    basePrice: newPrice.basePrice,
+                    perTax: newPrice.perTax,
+                    Date: newPrice.date,
+                    status: newPrice.status,
+                })
+                });
+
+                if (!response.ok) throw new Error("Failed to update price");
+
+                alert("✅ Price updated successfully!");
+            } else {
+                // CREATE new price
+                const response = await fetch("http://localhost:3000/rates", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                    itemCode: newPrice.code,
+                    name: newPrice.name,
+                    basePrice: newPrice.basePrice,
+                    perTax: newPrice.perTax,
+                    Date: newPrice.date,
+                    status: newPrice.status,
+                })
+                });
+
+                if (!response.ok) throw new Error("Failed to create price");
+
+                alert("✅ Price created successfully!");
+            }
+
+            // Refresh the prices list
+            await fetchPrices();
+
+            // Close modal and reset form
+            setShowModal(false);
+            setEditId(null);
+            setNewPrice({
+                code: "",
+                name: "",
+                basePrice: "",
+                perTax: "",
+                date: "",
+                netRate: "",
+                status: "Active",
+            });
+        } catch (error) {
+            console.error("Error saving price:", error);
+            alert("❌ Error saving price. Please try again.");
+        } finally {
+            setLoading(false);
         }
-
-        setShowModal(false);
-        setEditId(null);
-        setNewPrice({
-            code: "",
-            name: "",
-            basePrice: "",
-            perTax: "",
-            date: "",
-            netRate: "",
-            status: "Active",
-        });
     };
 
-    const handleDelete = (id) => {
-        setPrices(prices.filter((p) => p.id !== id));
+    // Handle Delete
+    const handleDelete = async (id) => {
+        if (!window.confirm("Are you sure you want to delete this price?")) return;
+
+        try {
+            setLoading(true);
+            const response = await fetch(`http://localhost:3000/rates/${id}`, {
+                method: "DELETE",
+            });
+
+            if (!response.ok) throw new Error("Failed to delete price");
+
+            alert("✅ Price deleted successfully!");
+            await fetchPrices(); // Refresh the list
+        } catch (error) {
+            console.error("Error deleting price:", error);
+            alert("❌ Error deleting price. Please try again.");
+        } finally {
+            setLoading(false);
+        }
     };
 
+    // Handle Edit
     const handleEdit = (price) => {
-        setEditId(price.id);
-        setNewPrice({...price});
-        setShowModal(true);
-    };
+    setEditId(price._id || price.id);
 
-    const filtered = prices.filter((p) =>
-        p.name.toLowerCase().includes(search.toLowerCase())
-    );
+    setNewPrice({
+        code: price.itemCode || "",
+        name: price.name || "",
+        basePrice: price.basePrice || "",
+        perTax: price.perTax || "",
+        date: price.Date ? price.Date.split("T")[0] : "",
+        status: price.status || "Active"
+    });
+
+    setShowModal(true);
+};
+    // Filter prices by search term
+    const safeString = v => (v === null || v === undefined) ? '' : String(v);
+
+// Safe filtered list
+const filtered = Array.isArray(prices)
+  ? prices.filter(p => safeString(p?.name).toLowerCase().includes(safeString(search).toLowerCase()))
+  : [];
 
     return (
-            <div className="price-container">
-                {/* Header */}
-                <div className="price-header">
-                    <input
-                        type="text"
-                        placeholder="🔍 Search Items..."
-                        value={search}
-                        onChange={(e) => setSearch(e.target.value)}
-                        className="price-search"
-                    />
-                    <button className="price-add-btn" onClick={() => {
+        <div className="price-container">
+            {/* Header */}
+            <div className="price-header">
+                <input
+                    type="text"
+                    placeholder="🔍 Search Items..."
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                    className="price-search"
+                />
+                <button
+                    className="price-add-btn"
+                    onClick={() => {
                         setShowModal(true);
-                        setEditId(null); // Reset editId
-                        setNewPrice({   // Reset form fields
+                        setEditId(null);
+                        setNewPrice({
                             code: "",
                             name: "",
                             basePrice: "",
                             perTax: "",
                             date: "",
                             netRate: "",
-                            status:"Active",
+                            status: "Active",
                         });
-                    }}>
-                        + New Price
-                    </button>
-                </div>
-
-                {/* Table */}
-                <div className="price-table">
-                    <div className="price-row header">
-                        <div>SL.NO.</div>
-                        <div>CODE</div>
-                        <div>NAME</div>
-                        <div>BASE PRICE</div>
-                        <div>% TAX</div>
-                        <div>NET RATE</div>
-                        <div>DATE</div>
-                        <div>STATUS</div>
-                        <div>ACTIONS</div>
-                    </div>
-
-                    {filtered.map((p, i) => (
-                        <div key={p.id} className="price-row">
-                            <div>{i + 1}</div>
-                            <div>{p.code.toUpperCase()}</div>
-                            <div>{p.name}</div>
-                            <div>{p.basePrice}</div>
-                            <div>{p.perTax}%</div>
-                            <div>{p.netRate}</div>
-                            <div>{p.date}</div>
-                            <div className="status">
-                                <span
-                                    className={`status-badge ${p.status === "Active" ? "active" : "inactive"
-                                        }`}
-                                >
-                                    {p.status}
-                                </span>
-                            </div>
-
-                            {/* <div>{p.status}</div> */}
-                            <div className="actions">
-                                <span className="edit" onClick={() => handleEdit(p)}>
-                                    Edit
-                                </span>{" "}
-                                |{" "}
-                                <span className="delete" onClick={() => handleDelete(p.id)}>
-                                    Delete
-                                </span>
-                            </div>
-                        </div>
-                    ))}
-                </div>
-
-                {/* Modal */}
-                {showModal && (
-                    <div className="modal-overlay">
-                        <div className="modal" ref={modalRef}>
-                            <h2>{editId ? "Edit Price" : "Add New Price"}</h2>
-                            <form onSubmit={handleSave}>
-                                <div className="form-group">
-                                    <label>Item Code</label>
-                                    <input
-                                        ref={codeRef}
-                                        type="text"
-                                        value={newPrice.code}
-                                        onChange={(e) =>
-                                            setNewPrice({ ...newPrice, code: e.target.value })
-                                        }
-                                        onKeyDown={(e) => handleKeyNav(e, "code")}
-                                    />
-                                </div>
-
-                                <div className="form-group">
-                                    <label>Item Name</label>
-                                    <input
-                                        type="text"
-                                        value={newPrice.name}
-                                        readOnly
-                                        style={{ backgroundColor: "#f5f5f5" }}
-                                    />
-                                </div>
-
-                                <div className="form-group">
-                                    <label>Base Price</label>
-                                    <input
-                                        ref={baseRef}
-                                        type="number"
-                                        value={newPrice.basePrice}
-                                        onChange={(e) =>
-                                            setNewPrice({ ...newPrice, basePrice: e.target.value })
-                                        }
-                                        onKeyDown={(e) => handleKeyNav(e, "basePrice")}
-                                    />
-                                </div>
-
-                                <div className="form-group">
-                                    <label>% Tax</label>
-                                    <input
-                                        ref={taxRef}
-                                        type="number"
-                                        value={newPrice.perTax}
-                                        onChange={(e) =>
-                                            setNewPrice({ ...newPrice, perTax: e.target.value })
-                                        }
-                                        onKeyDown={(e) => handleKeyNav(e, "perTax")}
-                                    />
-                                </div>
-
-                                <div className="form-group">
-                                    <label>Date</label>
-                                    <input
-                                        ref={dateRef}
-                                        type="date"
-                                        value={newPrice.date}
-                                        onChange={(e) =>
-                                            setNewPrice({ ...newPrice, date: e.target.value })
-                                        }
-                                        onKeyDown={(e) => handleKeyNav(e, "date")}
-                                    />
-                                </div>
-
-                                <div className="form-group">
-                                    <label>Net Rate</label>
-                                    <input
-                                        type="text"
-                                        value={newPrice.netRate}
-                                        readOnly
-                                        style={{ backgroundColor: "#f5f5f5" }}
-                                    />
-                                </div>
-
-                                <div className="form-group">
-                                    <label>Status</label>
-                                    <select
-                                        ref={statusRef}
-                                        value={newPrice.status}
-                                        onChange={(e) =>
-                                            setNewPrice({ ...newPrice, status: e.target.value })
-                                        }
-                                        onKeyDown={(e) => handleKeyNav(e, "status")}
-                                    >
-                                        <option value="Active">Active</option>
-                                        <option value="Inactive">Inactive</option>
-                                    </select>
-                                </div>
-
-                                <div className="modal-buttons">
-                                    <button
-                                        ref={saveRef}
-                                        type="submit"
-                                        className="submit-btn"
-                                        onKeyDown={(e) => handleKeyNav(e, "save")}
-                                    >
-                                        Save
-                                    </button>
-                                    <button
-                                        type="button"
-                                        className="cancel-btn"
-                                        onClick={() => setShowModal(false)}
-                                    >
-                                        Cancel
-                                    </button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                )}
+                    }}
+                >
+                    + New Price
+                </button>
             </div>
+
+            {/* Loading indicator */}
+            {loading && <div className="loading">Loading...</div>}
+
+            {/* Table */}
+            <div className="price-table">
+                <div className="price-row header">
+                    <div>SL.NO.</div>
+                    <div>CODE</div>
+                    <div>NAME</div>
+                    <div>BASE PRICE</div>
+                    <div>% TAX</div>
+                    <div>NET RATE</div>
+                    <div>DATE</div>
+                    <div>STATUS</div>
+                    <div>ACTIONS</div>
+                </div>
+
+                {filtered.length === 0 && !loading && (
+                    <div className="no-data">No prices found</div>
+                )}
+
+                {filtered.map((p, i) => (
+                    <div key={p?._id || i} className="price-row">
+                    <div>{i + 1}</div>
+                    <div>{p?.itemCode || ''}</div>
+                    <div>{p?.name || ''}</div>
+                    <div>{p?.basePrice || ''}</div>
+                    <div>{p?.perTax || ''}%</div>
+                    <div>{calculateNetRate(p?.basePrice , p?.perTax)}</div>
+                    <div>{p?.Date || ''}</div>
+
+                        <div className="status">
+                            <span
+                                className={`status-badge ${
+                                    p?.status === "Active" ? "active" : "inactive"
+                                }`}
+                            >
+                                {p?.status || ''}
+                            </span>
+                        </div>
+                        <div className="actions">
+                            <span className="edit" onClick={() => handleEdit(p)}>
+                                Edit
+                            </span>{" "}
+                            |{" "}
+                            <span
+                                className="delete"
+                                onClick={() => handleDelete(p._id || p.id)}
+                            >
+                                Delete
+                            </span>
+                        </div>
+                    </div>
+                ))}
+            </div>
+
+            {/* Modal */}
+            {showModal && (
+                <div className="modal-overlay">
+                    <div className="modal" ref={modalRef}>
+                        <h2>{editId ? "Edit Price" : "Add New Price"}</h2>
+                        <form onSubmit={handleSave}>
+                            <div className="form-group">
+                                <label>Item Code</label>
+                                <input
+                                    ref={codeRef}
+                                    type="text"
+                                    value={newPrice.code}
+                                    onChange={(e) =>
+                                        setNewPrice({ ...newPrice, code: e.target.value })
+                                    }
+                                    onKeyDown={(e) => handleKeyNav(e, "code")}
+                                    disabled={editId} // Disable code editing when updating
+                                />
+                            </div>
+
+                            <div className="form-group">
+                                <label>Item Name</label>
+                                <input
+                                    type="text"
+                                    value={newPrice.name}
+                                    readOnly
+                                    style={{ backgroundColor: "#f5f5f5" }}
+                                />
+                            </div>
+
+                            <div className="form-group">
+                                <label>Base Price</label>
+                                <input
+                                    ref={baseRef}
+                                    type="number"
+                                    value={newPrice.basePrice}
+                                    onChange={(e) =>
+                                        setNewPrice({ ...newPrice, basePrice: e.target.value })
+                                    }
+                                    onKeyDown={(e) => handleKeyNav(e, "basePrice")}
+                                />
+                            </div>
+
+                            <div className="form-group">
+                                <label>% Tax</label>
+                                <input
+                                    ref={taxRef}
+                                    type="number"
+                                    value={newPrice.perTax}
+                                    onChange={(e) =>
+                                        setNewPrice({ ...newPrice, perTax: e.target.value })
+                                    }
+                                    onKeyDown={(e) => handleKeyNav(e, "perTax")}
+                                />
+                            </div>
+
+                            <div className="form-group">
+                                <label>Date</label>
+                                <input
+                                    ref={dateRef}
+                                    type="date"
+                                    value={newPrice.date}
+                                    onChange={(e) =>
+                                        setNewPrice({ ...newPrice, date: e.target.value })
+                                    }
+                                    onKeyDown={(e) => handleKeyNav(e, "date")}
+                                />
+                            </div>
+
+                            <div className="form-group">
+                                <label>Net Rate</label>
+                                <input
+                                    type="text"
+                                    value={calculateNetRate(newPrice.basePrice , newPrice.perTax)}
+                                    readOnly
+                                    style={{ backgroundColor: "#f5f5f5" }}
+                                />
+                            </div>
+
+                            <div className="form-group">
+                                <label>Status</label>
+                                <select
+                                    ref={statusRef}
+                                    value={newPrice.status}
+                                    onChange={(e) =>
+                                        setNewPrice({ ...newPrice, status: e.target.value })
+                                    }
+                                    onKeyDown={(e) => handleKeyNav(e, "status")}
+                                >
+                                    <option value="Active">Active</option>
+                                    <option value="Inactive">Inactive</option>
+                                </select>
+                            </div>
+
+                            <div className="modal-buttons">
+                                <button
+                                    ref={saveRef}
+                                    type="submit"
+                                    className="submit-btn"
+                                    onKeyDown={(e) => handleKeyNav(e, "save")}
+                                    disabled={loading}
+                                >
+                                    {loading ? "Saving..." : "Save"}
+                                </button>
+                                <button
+                                    type="button"
+                                    className="cancel-btn"
+                                    onClick={() => setShowModal(false)}
+                                    disabled={loading}
+                                >
+                                    Cancel
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
+        </div>
     );
 };
 

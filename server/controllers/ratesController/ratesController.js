@@ -1,20 +1,27 @@
-const Rate=require('../../models/rates.js')
-
+const Rate = require('../../models/rates.js')
 
 exports.addRate = async (req, res) => {
     try {
-        const { itemCode, basePrice, perTax, Date } = req.body;
+        const { code, basePrice, perTax, date, name, netRate, status } = req.body;
 
-        if (!itemCode || !basePrice || !perTax || !Date) {
-            return res.status(400).json({ message: "All fields are required (itemCode, basePrice, perTax, Date)" });
+        if (!code || !basePrice || !perTax || !date) {
+            return res.status(400).json({ message: "All fields are required" });
         }
 
-        const existing = await Rate.findOne({ itemCode });
+        const existing = await Rate.findOne({ code });
         if (existing) {
-            return res.status(400).json({ message: "Rate for this itemCode already exists" });
+            return res.status(400).json({ message: "Rate for this code already exists" });
         }
 
-        await Rate.create({ itemCode, basePrice, perTax, Date });
+        await Rate.create({ 
+            itemCode: code, 
+            basePrice, 
+            perTax, 
+            Date: date, 
+            name,
+            netRate,
+            status
+        });
         res.status(200).json({ message: "Rate added successfully" });
 
     } catch (err) {
@@ -22,6 +29,7 @@ exports.addRate = async (req, res) => {
         res.status(500).json({ message: "Error adding rate", error: err.message });
     }
 };
+
 
 // Get all rates
 exports.getAllRates = async (req, res) => {
