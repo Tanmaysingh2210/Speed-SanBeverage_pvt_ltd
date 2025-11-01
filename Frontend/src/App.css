@@ -416,7 +416,11 @@ body {
 
 
 
-
+.toast{
+  overflow: hidden;
+  width: fit-content;
+  
+}
 
 
 
@@ -527,11 +531,14 @@ body {
 .status-badge.active {
   background-color: #dcfce7;
   color: #166534;
+  width: fit-content;
 }
 
 .status-badge.inactive {
   background-color: #fee2e2;
   color: #b91c1c;
+  width: fit-content;
+
 }
 
 /* Action Buttons */

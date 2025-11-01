@@ -122,10 +122,8 @@ const Item = () => {
 
       // close modal after successful add
       setShowModal(false);
-      toast.success('Item added');
     } catch (err) {
-      console.error('Add item failed', err);
-      toast.error(err?.response?.data?.message || 'Failed to add item');
+      console.error(err?.response?.data?.message || 'Failed to add item');
     } finally {
       isSubmittingRef.current = false;
       setIsSubmitting(false);
@@ -150,10 +148,8 @@ const Item = () => {
     try {
       await updateItem(id, editItem);
       setEditId(null);
-      toast.success("Item updated successfully");
     } catch (err) {
-      console.error("Update failed", err);
-      toast.error(err?.response?.data?.message || "Update failed");
+      console.error(err?.response?.data?.message || "Update failed");
     }
   };
 

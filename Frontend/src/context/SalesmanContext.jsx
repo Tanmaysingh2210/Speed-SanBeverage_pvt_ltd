@@ -37,10 +37,14 @@ export function SalesmanProvider({ children }) {
             setLoading(true);
             const res = await api.post("/salesman/", payload);
             toast.success(res.data.message || "Salesman added successfully");
-            // refresh list after add
-            getAllSalesmen();
+
+            await getAllSalesmen();
+            return res;
         } catch (err) {
-            toast.error(err.response?.data?.message || "Error adding salesman");
+            toast.error(err.response.data.message || "Error adding salesman");
+
+            throw err;
+            // console.log(err.response.data.message);
         } finally {
             setLoading(false);
         }
@@ -54,6 +58,7 @@ export function SalesmanProvider({ children }) {
             getAllSalesmen();
         } catch (err) {
             toast.error(err.response?.data?.message || "Error updating salesman");
+            throw err;
         } finally {
             setLoading(false);
         }

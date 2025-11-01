@@ -23,6 +23,7 @@ export function SKUProvider({ children }) {
       setContainers(res.data);
     } catch (err) {
       toast.error(err.response?.data?.message || "Error fetching containers");
+      throw err;
     } finally {
       setLoading(false);
     }
@@ -35,6 +36,7 @@ export function SKUProvider({ children }) {
       setContainers(res.data);
     } catch (err) {
       toast.error(err.response?.data?.message || "Error fetching container");
+      throw err;
     } finally {
       setLoading(false);
     }
@@ -46,9 +48,11 @@ export function SKUProvider({ children }) {
 
       const res = await api.post("/container/", payload);
       toast.success(res.data.message || "Container added successfully");
-      getAllContainers();
+      await getAllContainers();
+      return res;
     } catch (err) {
       toast.error(err.response?.data?.message || "Error adding container");
+      throw err;
     } finally {
       setLoading(false);
     }
@@ -57,12 +61,12 @@ export function SKUProvider({ children }) {
   const updateContainer = async (id, payload) => {
     try {
       setLoading(true);
-
       const res = await api.patch(`/container/${id}`, payload);
       toast.success(res.data.message || "Container updated");
-      getAllContainers();
+      await getAllContainers();
     } catch (err) {
       toast.error(err.response?.data?.message || "Error updating container");
+      throw err;
     } finally {
       setLoading(false);
     }
@@ -75,6 +79,7 @@ export function SKUProvider({ children }) {
       const res = await api.delete(`/container/delete/${id}`);
       toast.success(res.data.message || "container deleted");
       setContainers(containers.filter((c) => c._id !== id));
+      return res;
     } catch (err) {
       toast.error(err.response?.data?.message || "Error deleting container");
       throw err;
@@ -92,8 +97,10 @@ export function SKUProvider({ children }) {
       setLoading(true);
       const res = await api.get("/package/");
       setPackages(res.data);
+      return res;
     } catch (err) {
       toast.error(err.response?.data?.message || "Error fetching packages");
+      throw err;
     } finally {
       setLoading(false);
     }
@@ -104,8 +111,10 @@ export function SKUProvider({ children }) {
       setLoading(true);
       const res = await api.get(`/package/${id}`);
       setPackages(res.data);
+      return res;
     } catch (err) {
       toast.error(err.response?.data?.message || "Error fetching package");
+      throw err;
     } finally {
       setLoading(false);
     }
@@ -114,12 +123,13 @@ export function SKUProvider({ children }) {
   const addPackage = async (payload) => {
     try {
       setLoading(true);
-
       const res = await api.post("/package/", payload);
       toast.success(res.data.message || "package added successfully");
-      getAllPackages();
+      await getAllPackages();
+      return res;
     } catch (err) {
       toast.error(err.response?.data?.message || "Error adding package");
+      throw err;
     } finally {
       setLoading(false);
     }
@@ -131,9 +141,11 @@ export function SKUProvider({ children }) {
 
       const res = await api.patch(`/package/${id}`, payload);
       toast.success(res.data.message || "package updated");
-      getAllPackages();
+      await getAllPackages();
+      return res;
     } catch (err) {
       toast.error(err.response?.data?.message || "Error updating package");
+      throw err;
     } finally {
       setLoading(false);
     }
@@ -146,6 +158,7 @@ export function SKUProvider({ children }) {
       const res = await api.delete(`/package/delete/${id}`);
       toast.success(res.data.message || "package deleted");
       setPackages(packages.filter((c) => c._id !== id));
+      return res;
     } catch (err) {
       toast.error(err.response?.data?.message || "Error deleting package");
       throw err;
@@ -163,8 +176,10 @@ export function SKUProvider({ children }) {
       setLoading(true);
       const res = await api.get("/flavour/");
       setFlavours(res.data);
+      return res;
     } catch (err) {
       toast.error(err.response?.data?.message || "Error fetching flavour");
+      throw err;
     } finally {
       setLoading(false);
     }
@@ -175,8 +190,10 @@ export function SKUProvider({ children }) {
       setLoading(true);
       const res = await api.get(`/flavour/${id}`);
       setFlavours(res.data);
+      return res;
     } catch (err) {
       toast.error(err.response?.data?.message || "Error fetching flavour");
+      throw err;
     } finally {
       setLoading(false);
     }
@@ -188,9 +205,10 @@ export function SKUProvider({ children }) {
 
       const res = await api.post("/flavour/", payload);
       toast.success(res.data.message || "flavour added successfully");
-      getAllFlavours();
+      await getAllFlavours();
     } catch (err) {
       toast.error(err.response?.data?.message || "Error adding flavour");
+      throw err;
     } finally {
       setLoading(false);
     }
@@ -199,12 +217,13 @@ export function SKUProvider({ children }) {
   const updateFlavour = async (id, payload) => {
     try {
       setLoading(true);
-
       const res = await api.patch(`/flavour/${id}`, payload);
       toast.success(res.data.message || "flavour updated");
-      getAllFlavours();
+      await getAllFlavours();
+      return res;
     } catch (err) {
       toast.error(err.response?.data?.message || "Error updating flavour");
+      throw err;
     } finally {
       setLoading(false);
     }
@@ -213,10 +232,10 @@ export function SKUProvider({ children }) {
   const deleteFlavour = async (id) => {
     try {
       setLoading(true);
-
       const res = await api.delete(`/flavour/delete/${id}`);
       toast.success(res.data.message || "flavour deleted");
       setFlavours(flavours.filter((c) => c._id !== id));
+      return res;
     } catch (err) {
       toast.error(err.response?.data?.message || "Error deleting flavour");
       throw err;
@@ -235,8 +254,10 @@ export function SKUProvider({ children }) {
       setLoading(true);
       const res = await api.get("/item/");
       setItems(res.data);
+      return res;
     } catch (err) {
       toast.error(err.response?.data?.message || "Error fetching items");
+      throw err;
     } finally {
       setLoading(false);
     }
@@ -247,8 +268,10 @@ export function SKUProvider({ children }) {
       setLoading(true);
       const res = await api.get(`/item/${id}`);
       setFlavours(res.data);
+      return res;
     } catch (err) {
       toast.error(err.response?.data?.message || "Error fetching flavour");
+      throw err;
     } finally {
       setLoading(false);
     }
@@ -257,13 +280,13 @@ export function SKUProvider({ children }) {
   const addItem = async (payload) => {
     try {
       setLoading(true);
-
-      console.log('SKUContext.addItem', payload);
       const res = await api.post("/item/", payload);
       toast.success(res.data.message || "Item added");
-      getAllItems();
+      await getAllItems();
+      return res;
     } catch (err) {
       toast.error(err.response?.data?.message || "Error adding item");
+      throw err;
     } finally {
       setLoading(false);
     }
@@ -272,12 +295,13 @@ export function SKUProvider({ children }) {
   const updateItem = async (id, payload) => {
     try {
       setLoading(true);
-
       const res = await api.patch(`/item/${id}`, payload);
       toast.success(res.data.message || "Item updated");
-      getAllItems();
+      await getAllItems();
+      return res;
     } catch (err) {
       toast.error(err.response?.data?.message || "Error updating item");
+      throw err;
     } finally {
       setLoading(false);
     }
@@ -286,12 +310,13 @@ export function SKUProvider({ children }) {
   const deleteItem = async (id) => {
     try {
       setLoading(true);
-
       const res = await api.delete(`/item/delete/${id}`);
       toast.success(res.data.message || "Item deleted");
       setItems(items.filter((i) => i._id !== id));
+      return res;
     } catch (err) {
       toast.error(err.response?.data?.message || "Error deleting item");
+      throw err;
     } finally {
       setLoading(false);
     }

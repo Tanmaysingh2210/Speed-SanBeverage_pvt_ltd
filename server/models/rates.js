@@ -5,7 +5,7 @@ const ratesSchema= new mongoose.Schema({
     name: { type: String  },
     basePrice: { type: Number, required: true },
     perTax: { type: Number, required: true },
-    Date: { type: String, required: true },
+    date: { type: Date, required: true },
     status: { type: String, default: 'Active' }
 
 } , {timestamps:true})

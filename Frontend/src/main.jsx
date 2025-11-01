@@ -6,16 +6,19 @@ import App from './App.jsx';
 import { AuthProvider } from './context/AuthContext.jsx';
 import { SKUProvider } from './context/SKUContext.jsx';
 import { SalesmanProvider } from './context/SalesmanContext.jsx';
+import { PricesProvider } from './context/PricesContext.jsx';
 
 createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <BrowserRouter>
       <SKUProvider>
-        <SalesmanProvider>
-          <AuthProvider>
-            <App />
-          </AuthProvider>
-        </SalesmanProvider>
+        <PricesProvider>
+          <SalesmanProvider>
+            <AuthProvider>
+              <App />
+            </AuthProvider>
+          </SalesmanProvider>
+        </PricesProvider>
       </SKUProvider>
     </BrowserRouter>
   </React.StrictMode>

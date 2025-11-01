@@ -1,13 +1,17 @@
 import React, { useState, useRef, useEffect } from "react";
 import "./Prices.css";
+import { usePrice } from "../../context/PricesContext";
+import { useSKU } from "../../context/SKUContext";
+import toast from "react-hot-toast"
 
 const LatestPrice = () => {
-    const [items, setItems] = useState([]); // Dynamic items from backend
-    const [prices, setPrices] = useState([]);
+
+    const { prices, getAllPrices, getPriceByID, updatePrice, deletePrice, addPrice, loading } = usePrice();
+    const { items, getAllItems } = useSKU();
+
     const [showModal, setShowModal] = useState(false);
     const [editId, setEditId] = useState(null);
     const [search, setSearch] = useState("");
-    const [loading, setLoading] = useState(false);
     const [newPrice, setNewPrice] = useState({
         code: "",
         name: "",
@@ -25,46 +29,17 @@ const LatestPrice = () => {
     const saveRef = useRef(null);
     const modalRef = useRef(null);
 
-    const calculateNetRate= (basePrice , perTax)=>{
-        if(!basePrice || !perTax) return '';
-        return (parseFloat(basePrice) + (parseFloat(basePrice)*parseFloat(perTax)/100)).toFixed(2)
+    const calculateNetRate = (basePrice, perTax) => {
+        if (!basePrice || !perTax) return '';
+        return (parseFloat(basePrice) + (parseFloat(basePrice) * parseFloat(perTax) / 100)).toFixed(2)
     };
-    // Fetch all items (SKU) on component mount
+
     useEffect(() => {
-        fetchItems();
-        fetchPrices();
+        getAllItems();
+        getAllPrices();
     }, []);
 
-    // Fetch items from backend (all SKUs)
-    const fetchItems = async () => {
-        try {
-            const response = await fetch("http://localhost:3000/item"); // Adjust your endpoint
-            const data = await response.json();
-            setItems(data); // Expecting array like [{code: "P200", name: "PEPSI 200ML BOTTLE"}, ...]
-        } catch (error) {
-            console.error("Error fetching items:", error);
-            alert("Failed to fetch items from server");
-        }
-    };
 
-    // Fetch all prices from backend
-    const fetchPrices = async () => {
-        try {
-            setLoading(true);
-            const response = await fetch("http://localhost:3000/rates"); // Adjust your endpoint
-            const data = await response.json();
-             console.log('Fetched prices:', data);
-            setPrices(data);
-        } catch (error) {
-            console.error("Error fetching prices:", error);
-            alert("Failed to fetch prices from server");
-        } finally {
-            setLoading(false);
-        }
-    };
-  
-
-    // Autofocus when modal opens
     useEffect(() => {
         if (showModal) {
             setTimeout(() => codeRef.current?.focus(), 100);
@@ -89,7 +64,6 @@ const LatestPrice = () => {
         }
     }, [newPrice.code, items]);
 
-    // Handle navigation keys
     const handleKeyNav = (e, currentField) => {
         if (["ArrowRight", "ArrowDown", "Enter"].includes(e.key)) {
             e.preventDefault();
@@ -146,7 +120,16 @@ const LatestPrice = () => {
         }
     };
 
-    // Close modal when clicked outside
+    const formatDate = (isoDate) => {
+        if (!isoDate) return "";
+        const date = new Date(isoDate);
+        const day = String(date.getDate()).padStart(2, "0");
+        const month = String(date.getMonth() + 1).padStart(2, "0");
+        const year = date.getFullYear();
+        return `${day}-${month}-${year}`;
+    };
+
+
     useEffect(() => {
         const handleClickOutside = (e) => {
             if (modalRef.current && !modalRef.current.contains(e.target)) {
@@ -157,69 +140,41 @@ const LatestPrice = () => {
         return () => document.removeEventListener("mousedown", handleClickOutside);
     }, [showModal]);
 
-    // Handle Save (Create or Update)
+
+
     const handleSave = async (e) => {
         e.preventDefault();
-
-        const found = items.find(
-            (item) => item.code.toUpperCase() === newPrice.code.toUpperCase()
-        );
+        const found = items.find((item) => item.code.toUpperCase() === newPrice.code.toUpperCase());
 
         if (!found) {
-            alert("❌ Invalid item code — item not found in database!");
+            toast.error("❌ Invalid item code — item not found!");
             return;
         }
 
         if (!newPrice.basePrice || !newPrice.perTax || !newPrice.date) {
-            alert("⚠️ Please fill all fields!");
+            toast.error("⚠️ Please fill all fields!");
             return;
         }
 
+        // Backend expects fields: code, basePrice, perTax, date
+        // Map frontend names to backend contract
+        const payload = {
+            code: newPrice.code,
+            name: newPrice.name,
+            basePrice: Number(newPrice.basePrice),
+            perTax: Number(newPrice.perTax),
+            date: newPrice.date, // backend expects `date` (lowercase)
+            status: newPrice.status,
+        };
+        console.log('add/update price payload', payload);
+
         try {
-            setLoading(true);
-
             if (editId) {
-                // UPDATE existing price
-                const response = await fetch(`http://localhost:3000/rates/${editId}`, {
-                    method: "PUT",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                    itemCode: newPrice.code,
-                    name: newPrice.name,
-                    basePrice: newPrice.basePrice,
-                    perTax: newPrice.perTax,
-                    Date: newPrice.date,
-                    status: newPrice.status,
-                })
-                });
-
-                if (!response.ok) throw new Error("Failed to update price");
-
-                alert("✅ Price updated successfully!");
+                await updatePrice(editId, payload);
             } else {
-                // CREATE new price
-                const response = await fetch("http://localhost:3000/rates", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({
-                    itemCode: newPrice.code,
-                    name: newPrice.name,
-                    basePrice: newPrice.basePrice,
-                    perTax: newPrice.perTax,
-                    Date: newPrice.date,
-                    status: newPrice.status,
-                })
-                });
+                await addPrice(payload);
+            };
 
-                if (!response.ok) throw new Error("Failed to create price");
-
-                alert("✅ Price created successfully!");
-            }
-
-            // Refresh the prices list
-            await fetchPrices();
-
-            // Close modal and reset form
             setShowModal(false);
             setEditId(null);
             setNewPrice({
@@ -231,58 +186,38 @@ const LatestPrice = () => {
                 netRate: "",
                 status: "Active",
             });
-        } catch (error) {
-            console.error("Error saving price:", error);
-            alert("❌ Error saving price. Please try again.");
-        } finally {
-            setLoading(false);
+
+        } catch (err) {
+            console.error(err?.response?.data?.message || "Error adding or editing price");
         }
     };
 
     // Handle Delete
     const handleDelete = async (id) => {
-        if (!window.confirm("Are you sure you want to delete this price?")) return;
-
-        try {
-            setLoading(true);
-            const response = await fetch(`http://localhost:3000/rates/${id}`, {
-                method: "DELETE",
-            });
-
-            if (!response.ok) throw new Error("Failed to delete price");
-
-            alert("✅ Price deleted successfully!");
-            await fetchPrices(); // Refresh the list
-        } catch (error) {
-            console.error("Error deleting price:", error);
-            alert("❌ Error deleting price. Please try again.");
-        } finally {
-            setLoading(false);
-        }
+        await deletePrice(id);
     };
 
-    // Handle Edit
     const handleEdit = (price) => {
-    setEditId(price._id || price.id);
+        setEditId(price._id);
 
-    setNewPrice({
-        code: price.itemCode || "",
-        name: price.name || "",
-        basePrice: price.basePrice || "",
-        perTax: price.perTax || "",
-        date: price.Date ? price.Date.split("T")[0] : "",
-        status: price.status || "Active"
-    });
+        setNewPrice({
+            code: price.itemCode || "",
+            name: price.name || "",
+            basePrice: price.basePrice || "",
+            perTax: price.perTax || "",
+            date: price.date ? price.date.split("T")[0] : "",
+            status: price.status || "Active"
+        });
+        setShowModal(true);
+    };
 
-    setShowModal(true);
-};
     // Filter prices by search term
     const safeString = v => (v === null || v === undefined) ? '' : String(v);
 
-// Safe filtered list
-const filtered = Array.isArray(prices)
-  ? prices.filter(p => safeString(p?.name).toLowerCase().includes(safeString(search).toLowerCase()))
-  : [];
+    // Safe filtered list
+    const filtered = Array.isArray(prices)
+        ? prices.filter(p => safeString(p?.name).toLowerCase().includes(safeString(search).toLowerCase()))
+        : [];
 
     return (
         <div className="price-container">
@@ -297,7 +232,8 @@ const filtered = Array.isArray(prices)
                 />
                 <button
                     className="price-add-btn"
-                    onClick={() => {
+                    disabled={loading}
+                        onClick={() => {
                         setShowModal(true);
                         setEditId(null);
                         setNewPrice({
@@ -315,7 +251,6 @@ const filtered = Array.isArray(prices)
                 </button>
             </div>
 
-            {/* Loading indicator */}
             {loading && <div className="loading">Loading...</div>}
 
             {/* Table */}
@@ -338,19 +273,18 @@ const filtered = Array.isArray(prices)
 
                 {filtered.map((p, i) => (
                     <div key={p?._id || i} className="price-row">
-                    <div>{i + 1}</div>
-                    <div>{p?.itemCode || ''}</div>
-                    <div>{p?.name || ''}</div>
-                    <div>{p?.basePrice || ''}</div>
-                    <div>{p?.perTax || ''}%</div>
-                    <div>{calculateNetRate(p?.basePrice , p?.perTax)}</div>
-                    <div>{p?.Date || ''}</div>
+                        <div>{i + 1}</div>
+                        <div>{p?.itemCode.toUpperCase() || ''}</div>
+                        <div>{p?.name.toUpperCase() || ''}</div>
+                        <div>{p?.basePrice || ''}</div>
+                        <div>{p?.perTax || ''}%</div>
+                        <div>{calculateNetRate(p?.basePrice, p?.perTax)}</div>
+                        <div>{formatDate(p?.date) || ''}</div>
 
                         <div className="status">
                             <span
-                                className={`status-badge ${
-                                    p?.status === "Active" ? "active" : "inactive"
-                                }`}
+                                className={`status-badge ${p?.status === "Active" ? "active" : "inactive"
+                                    }`}
                             >
                                 {p?.status || ''}
                             </span>
@@ -362,7 +296,7 @@ const filtered = Array.isArray(prices)
                             |{" "}
                             <span
                                 className="delete"
-                                onClick={() => handleDelete(p._id || p.id)}
+                                onClick={() => handleDelete(p._id)}
                             >
                                 Delete
                             </span>
@@ -444,7 +378,7 @@ const filtered = Array.isArray(prices)
                                 <label>Net Rate</label>
                                 <input
                                     type="text"
-                                    value={calculateNetRate(newPrice.basePrice , newPrice.perTax)}
+                                    value={calculateNetRate(newPrice.basePrice, newPrice.perTax)}
                                     readOnly
                                     style={{ backgroundColor: "#f5f5f5" }}
                                 />

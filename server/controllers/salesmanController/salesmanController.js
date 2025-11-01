@@ -3,7 +3,7 @@ const  Salesman  = require('../../models/salesman.js')
 
 exports.addSalesman = async (req, res) => {
     try {
-        const { routeNo, name, codeNo } = req.body;
+        const { routeNo, name, codeNo , status} = req.body;
 
         if (!routeNo || !name || !codeNo)
             return res.status(400).json({ message: "routeNo, name, and codeNo are required" });
@@ -13,7 +13,7 @@ exports.addSalesman = async (req, res) => {
         if (existing)
             return res.status(400).json({ message: "Salesman with this codeNo already exists" });
 
-        await Salesman.create({ routeNo, name, codeNo });
+        await Salesman.create({ routeNo, name, codeNo ,status: status || 'Active'});
 
         res.status(200).json({ message: "Salesman added successfully" });
     } catch (err) {

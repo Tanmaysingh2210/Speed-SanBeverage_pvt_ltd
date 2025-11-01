@@ -14,7 +14,8 @@ const salesmanSchema = new mongoose.Schema({
     type: String,
     required: true,
     unique: true
-  }
+  },
+  status: { type: String, enum: ['Active', 'Inactive'], default: 'Active' }
 }, {
   timestamps: true
 })

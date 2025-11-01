@@ -7,22 +7,18 @@ exports.addRate = async (req, res) => {
         if (!code || !basePrice || !perTax || !date) {
             return res.status(400).json({ message: "All fields are required" });
         }
-
-        const existing = await Rate.findOne({ code });
-        if (existing) {
-            return res.status(400).json({ message: "Rate for this code already exists" });
-        }
-
-        await Rate.create({ 
-            itemCode: code, 
-            basePrice, 
-            perTax, 
-            Date: date, 
+        
+        const created = await Rate.create({
+            itemCode: code,
             name,
+            basePrice,
+            perTax,
+            date, // schema expects `date` (lowercase)
+            status: status || 'Active',
             netRate,
-            status
         });
-        res.status(200).json({ message: "Rate added successfully" });
+
+        return res.status(201).json({ message: "Rate added successfully", rate: created });
 
     } catch (err) {
         console.log("Error adding rate:", err.message);

@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
-import "./SkuFolder/Item.css";
 import { useSalesman } from "../context/SalesmanContext";
 import toast from 'react-hot-toast';
+import './salesman.css'
 
 
 const Salesman = () => {
@@ -9,7 +9,7 @@ const Salesman = () => {
   const handleOpen = () => setShowModal(true);
   const handleClose = () => setShowModal(false);
 
-  const { salesmans,loading, getAllSalesmen, updateSalesman, addSalesman, getSalesmanByID, deleteSalesman } = useSalesman();
+  const { salesmans, loading, getAllSalesmen, updateSalesman, addSalesman, getSalesmanByID, deleteSalesman } = useSalesman();
 
   useEffect(() => {
     getAllSalesmen();
@@ -68,7 +68,6 @@ const Salesman = () => {
       toast.error("Please fill all fields");
       return;
     }
-
     try {
       const newData = {
         codeNo: newSalesman.codeNo.toUpperCase(),
@@ -76,13 +75,12 @@ const Salesman = () => {
         routeNo: newSalesman.routeNo,
         status: newSalesman.status,
       };
-
       await addSalesman(newData);
       setNewSalesman({ codeNo: "", name: "", routeNo: 0, status: "Active" });
       setShowModal(false);
-      toast.success("Salesman Added");
     } catch (err) {
-      toast.error(err?.response?.data?.message || 'Failed to add salesman');
+      console.error(err.response.data.message || 'Failed to add salesman');
+
     }
   };
 
@@ -100,9 +98,9 @@ const Salesman = () => {
     try {
       await updateSalesman(id, editSalesman);
       setEditId(null);
-      toast.success("Salesman updated successfully");
+      // toast.success("Salesman updated successfully");
     } catch (err) {
-      toast.error(err?.response?.data?.message || "Update failed");
+      console.error(err?.response?.data?.message || "Update failed");
     }
   };
 
@@ -182,6 +180,7 @@ const Salesman = () => {
     }
   };
 
+
   useEffect(() => {
     if (!showModal) {
       setNewSalesman({ codeNo: "", name: "", routeNo: 0, status: "Active" });
@@ -192,23 +191,23 @@ const Salesman = () => {
     <div className="box">
       <h2>SALESMAN MASTERS</h2>
 
-      <div className="table-container">
+      <div className="salesman-container">
         {/* Header section */}
-        <div className="header-row">
+        <div className="salesman-header-row">
           <input
             type="text"
             placeholder="🔍 Search Salesman..."
-            className="search-box"
+            className="salesman-search-box"
             onChange={(e) => setSearchTerm(e.target.value)}
             value={searchTerm}
           />
-          <button className="new-item-btn" onClick={() => setShowModal(true)}>
+          <button className="salesman-new-item-btn" onClick={() => setShowModal(true)}>
             + New
           </button>
         </div>
 
         {/* Table Header */}
-        <div className="table-grid table-header">
+        <div className="salesman-table-grid salesman-table-header">
           <div>SL.NO.</div>
           <div>CODE</div>
           <div>NAME</div>
@@ -221,7 +220,7 @@ const Salesman = () => {
 
         {/* Table Body */}
         {filteredSalesmans.map((salesman, index) => (
-          <div key={salesman._id || index} className="table-grid table-row">
+          <div key={salesman._id || index} className="salesman-table-grid salesman-table-row">
             <div>{index + 1}</div>
             {editId === salesman._id ? (
               <>
@@ -286,10 +285,11 @@ const Salesman = () => {
               </>
             ) : (
               <>
-                <div>{salesman.codeNo}</div>
-                <div>{salesman.name}</div>
+                <div>{salesman.codeNo.toUpperCase()}</div>
+                <div>{salesman.name.toUpperCase()}</div>
                 <div>{salesman.routeNo}</div>
-                <div>{salesman.status}</div>
+                <div className={`status-badge ${salesman.status === "Active" ? "active" : "inactive"
+                  }`}>{salesman.status}</div>
                 <div className="actions">
                   <span className="edit" onClick={() => handleEdit(salesman)}>
                     Edit
@@ -389,7 +389,7 @@ const Salesman = () => {
                   <button
                     type="button"
                     className="cancel-btn"
-                    onClick={()=>setShowModal(false)}
+                    onClick={() => setShowModal(false)}
                   >
                     Cancel
                   </button>
@@ -398,9 +398,9 @@ const Salesman = () => {
             </div>
           </div>
         )}
-      {!loading && filteredSalesmans.length === 0 && (
-        <div className="no-data">No salesmans found.</div>
-      )}
+        {!loading && filteredSalesmans.length === 0 && (
+          <div className="no-data">No salesmans found.</div>
+        )}
       </div>
     </div>
   );

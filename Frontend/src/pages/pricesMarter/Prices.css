@@ -135,7 +135,7 @@
   padding: 20px;
   border-radius: 10px;
   font-family: "Segoe UI", sans-serif;
-  width: 75%;
+  width: 90%;
   max-width: 1200px;
   margin: 10vh auto;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
@@ -189,7 +189,7 @@
 
 .price-row {
   display: grid;
-  grid-template-columns: 0.8fr 0.8fr 3fr 1.3fr 1.2fr 1.2fr 1.5fr 1.5fr 2fr;
+  grid-template-columns: 0.8fr 0.8fr 3fr 1.3fr 1fr 1.2fr 1.5fr 1.2fr 1.5fr;
   align-items: center;
   padding: 10px 5px;
   border-bottom: 1px solid #e0e0e0;
