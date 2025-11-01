@@ -7,7 +7,6 @@ import Package from './Package'
 import Item from './Item'
 
 
-
 const Sku = () => {
     const [searchQuery, setSearchQuery] = useState('');
     return (

@@ -120,13 +120,13 @@ const LatestPrice = () => {
         }
     };
 
-    const formatDate = (isoDate) => {
+    const formatDate = (isoDate) => { //yyyy-mm-dd
         if (!isoDate) return "";
         const date = new Date(isoDate);
         const day = String(date.getDate()).padStart(2, "0");
         const month = String(date.getMonth() + 1).padStart(2, "0");
         const year = date.getFullYear();
-        return `${day}-${month}-${year}`;
+        return `${day}-${month}-${year}`; //dd-mm-yyyy
     };
 
 
@@ -144,12 +144,6 @@ const LatestPrice = () => {
 
     const handleSave = async (e) => {
         e.preventDefault();
-        const found = items.find((item) => item.code.toUpperCase() === newPrice.code.toUpperCase());
-
-        if (!found) {
-            toast.error("❌ Invalid item code — item not found!");
-            return;
-        }
 
         if (!newPrice.basePrice || !newPrice.perTax || !newPrice.date) {
             toast.error("⚠️ Please fill all fields!");
@@ -271,8 +265,8 @@ const LatestPrice = () => {
                 {filtered.map((p, i) => (
                     <div key={p?._id || i} className="price-row">
                         <div>{i + 1}</div>
-                        <div>{p?.itemCode.toUpperCase() || ''}</div>
-                        <div>{p?.name.toUpperCase() || ''}</div>
+                        <div>{p?.itemCode?.toUpperCase() || ''}</div>
+                        <div>{p?.name?.toUpperCase() || ''}</div>
                         <div>{p?.basePrice || ''}</div>
                         <div>{p?.perTax || ''}%</div>
                         <div>{calculateNetRate(p?.basePrice, p?.perTax)}</div>

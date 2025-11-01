@@ -29,9 +29,11 @@ export function TransactionProvider({ children }) {
         try {
             setLoading(true);
             const res = await api.post('/transaction/loadout/', payload);
+            toast.success(res.data.message || "loadout fetched sucessfully");
             setLoadout(res);
             return res;
         } catch (err) {
+            toast.error(err.response?.data?.message || "Error adding loadout");
             throw err;
         } finally {
             setLoading(false);
@@ -45,6 +47,7 @@ export function TransactionProvider({ children }) {
             toast.success(res.data.message || "loadout updated sucessfully");
             await getAllLoadout();
             return res;
+
         } catch (err) {
             toast.error(err.response?.data?.message || "Error updating loadout");
             throw err;
@@ -74,11 +77,9 @@ export function TransactionProvider({ children }) {
         try {
             setLoading(true);
             const res = await api.get(`/transaction/loadout/`);
-            toast.success(res.data.message || "loadouts fetched sucessfully");
             setLoadout(res);
             return res;
         } catch (err) {
-            toast.error(err.response?.data?.message || "Error fetching loadout");
             throw err;
         } finally {
             setLoading(false);
