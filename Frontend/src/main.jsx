@@ -7,6 +7,7 @@ import { AuthProvider } from './context/AuthContext.jsx';
 import { SKUProvider } from './context/SKUContext.jsx';
 import { SalesmanProvider } from './context/SalesmanContext.jsx';
 import { PricesProvider } from './context/PricesContext.jsx';
+import { TransactionProvider } from './context/TransactionContext.jsx';
 
 createRoot(document.getElementById('root')).render(
   <React.StrictMode>
@@ -14,9 +15,11 @@ createRoot(document.getElementById('root')).render(
       <SKUProvider>
         <PricesProvider>
           <SalesmanProvider>
-            <AuthProvider>
-              <App />
-            </AuthProvider>
+            <TransactionProvider>
+              <AuthProvider>
+                <App />
+              </AuthProvider>
+            </TransactionProvider>
           </SalesmanProvider>
         </PricesProvider>
       </SKUProvider>

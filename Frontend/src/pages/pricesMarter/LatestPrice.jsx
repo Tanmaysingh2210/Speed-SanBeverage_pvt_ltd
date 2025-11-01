@@ -156,8 +156,6 @@ const LatestPrice = () => {
             return;
         }
 
-        // Backend expects fields: code, basePrice, perTax, date
-        // Map frontend names to backend contract
         const payload = {
             code: newPrice.code,
             name: newPrice.name,
@@ -192,7 +190,6 @@ const LatestPrice = () => {
         }
     };
 
-    // Handle Delete
     const handleDelete = async (id) => {
         await deletePrice(id);
     };
