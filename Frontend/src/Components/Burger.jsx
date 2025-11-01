@@ -35,7 +35,6 @@ const Burger = () => {
 
             </ul>
 
-
             {user && (
                 <div className="user-section">
                     <div className="user-info">

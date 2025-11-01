@@ -10,4 +10,4 @@ const ratesSchema= new mongoose.Schema({
 
 } , {timestamps:true})
 
-module.exports=mongoose.model('rates' , ratesSchema)
+module.exports=mongoose.model('rates' , ratesSchema);

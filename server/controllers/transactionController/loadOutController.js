@@ -2,17 +2,17 @@ const LoadOut = require("../../models/transaction/LoadOut");
 
 exports.addLoadout = async (req, res) => {
     try {
-        const { salesmanCode, itemCode, items } = req.body;
+        const { salesmanCode, date, items } = req.body;
 
-        if (!salesmanCode || !Date || !Array.isArray(items) || items.length === 0) return res.status(400).json({ message: "All fields are required" });
+        if (!salesmanCode || !date || !Array.isArray(items) || items.length === 0) return res.status(400).json({ message: "All fields are required" });
 
-        const existing = await LoadOut.findOne({ salesmanCode: salesmanCode, Date: Date });
+        const existing = await LoadOut.findOne({ salesmanCode: salesmanCode, date: date });
 
         if (existing) return res.status(400).json({ message: `Loadout record of ${salesmanCode} at ${Date} exists` });
 
         await LoadOut.create({
             salesmanCode: salesmanCode,
-            Date: Date,
+            date: date,
             items
         });
 
