@@ -1,6 +1,8 @@
 import React from 'react';
 
 import { Routes, Route, Link, NavLink, Navigate } from 'react-router-dom';
+import { LoadOut } from './LoadOut';
+import {LoadIn} from './LoadIn';
 
 
 const Transaction = () => {
@@ -22,8 +24,8 @@ const Transaction = () => {
 
                 <Routes>
                     <Route index element={<Navigate to="load-out" replace />} />
-
-                    {/* { <Route path="load-in" element={<LoadOut />} /> } */}
+                    <Route path="load-out" element={<LoadOut />}></Route>
+                    <Route path="load-in" element={<LoadIn />} /> 
                      
                 </Routes>
             </div>
