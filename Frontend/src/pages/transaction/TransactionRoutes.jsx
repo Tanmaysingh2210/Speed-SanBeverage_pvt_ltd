@@ -21,10 +21,10 @@ const Transaction = () => {
                 </div>
 
                 <Routes>
-                    {/* <Route index element={<Navigate to="latest" replace />} />
+                    <Route index element={<Navigate to="load-out" replace />} />
 
-                    <Route path="latest" element={<LatestPrice />} />
-                    <Route path="browse" element={<BrowsePrice />} /> */}
+                    {/* { <Route path="load-in" element={<LoadOut />} /> } */}
+                     
                 </Routes>
             </div>
         </>
