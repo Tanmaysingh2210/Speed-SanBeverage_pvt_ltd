@@ -5,7 +5,7 @@ import { useSKU } from '../../context/SKUContext';
 import { useSalesman } from '../../context/SalesmanContext';
 import "./transaction.css";
 
-const LoadOut = () => {
+const LoadIn = () => {
     const { loading, addLoadout } = useTransaction();
     const { items, getAllItems } = useSKU();
     const { salesmans, getAllSalesmen } = useSalesman();
@@ -14,44 +14,47 @@ const LoadOut = () => {
     const modalDateRef = useRef(null);
     const modalTripRef = useRef(null);
     const modalItemRef = useRef(null);
-    const modalQtyRef = useRef(null);
-    
+    const modalFilledRef=useRef(null);
+    const modalBurstRef = useRef(null);
+
     const saveRef = useRef(null);
     const addRef = useRef(null);
 
     const [newLoadItem, setNewLoadItem] = useState({
-        itemCode: "",
-        qty: 0
+        itemcode: "",
+        Filled: 0,
+        Burst:0
     });
 
-    const [newLoadOut, setNewLoadOut] = useState({
+    const [newLoadIn, setNewLoadIn] = useState({
         salesmanCode: "",
         date: "",
-        trip: 1,
+        trip: "",
         items: []
     });
 
     // derive matched salesman from current code so UI updates as user types
     const matchedSalesman = Array.isArray(salesmans)
-        ? salesmans.find((sm) => String(sm.codeNo || sm.code || '').toUpperCase() === String(newLoadOut.salesmanCode || '').toUpperCase())
+        ? salesmans.find((sm) => String(sm.codeNo || sm.code || '').toUpperCase() === String(newLoadIn.salesmanCode || '').toUpperCase())
         : null;
 
     useEffect(() => {
-        getAllItems();
-        getAllSalesmen();
+        // ensure items and salesmen are loaded for lookups
+        getAllItems && getAllItems();
+        getAllSalesmen && getAllSalesmen();
     }, []);
 
 
 
 
     const handleAddItem = () => {
-        if (!newLoadItem.itemCode || newLoadItem.qty <= 0) {
-            toast.error("Enter valid item code and quantity");
+        if (!newLoadItem.itemcode || (newLoadItem.Filled <= 0 && newLoadItem.Burst <=0)) {
+            toast.error("Enter valid item code and filled quantity");
             return;
         }
 
-        const exists = newLoadOut.items.find(
-            (it) => it.itemCode.toUpperCase() === newLoadItem.itemCode.toUpperCase()
+        const exists = newLoadIn.items.find(
+            (it) => it.itemcode.toUpperCase() === newLoadItem.itemcode.toUpperCase()
         );
 
         if (exists) {
@@ -59,18 +62,18 @@ const LoadOut = () => {
             return;
         }
 
-        setNewLoadOut((prev) => ({
+        setNewLoadIn((prev) => ({
             ...prev,
             items: [...prev.items, newLoadItem]
         }));
 
-        setNewLoadItem({ itemCode: "", qty: 0 });
+        setNewLoadItem({ itemcode: "", qty: 0 });
     };
 
     const handleDelete = (code) => {
         setNewLoadOut((prev) => ({
             ...prev,
-            items: prev.items.filter((it) => it.itemCode !== code)
+            items: prev.items.filter((it) => it.itemcode !== code)
         }));
 
         toast.success("Item removed");
@@ -124,7 +127,7 @@ const LoadOut = () => {
                 case "trip":
                     modalItemRef.current?.focus();
                     break;
-                case "item":
+                case "itemcode":
                     modalQtyRef.current?.focus();
                     break;
                 case "oty":
@@ -149,7 +152,7 @@ const LoadOut = () => {
                 case "trip":
                     modalDateRef.current?.focus();
                     break;
-                case "item":
+                case "itemcode":
                     modalTripRef.current?.focus();
                     break;
                 case "qty":
@@ -176,9 +179,9 @@ const LoadOut = () => {
                                 <input
                                     type="text"
                                     placeholder="Enter Salesman code"
-                                    value={newLoadOut.salesmanCode}
+                                    value={newLoadIn.salesmanCode}
                                     onChange={(e) =>
-                                        setNewLoadOut({ ...newLoadOut, salesmanCode: e.target.value })
+                                        setNewLoadIn({ ...newLoadIn, salesmanCode: e.target.value })
                                     }
                                     ref={modalCodeRef}
                                     onKeyDown={(e) => handleKeyNav(e, "code")}
@@ -206,8 +209,8 @@ const LoadOut = () => {
                                 <label>Date</label>
                                 <input
                                     type="date"
-                                    value={newLoadOut.date}
-                                    onChange={(e) => setNewLoadOut({ ...newLoadOut, date: e.target.value })}
+                                    value={newLoadIn.date}
+                                    onChange={(e) => setNewLoadIn({ ...newLoadIn, date: e.target.value })}
                                     ref={modalDateRef}
                                     onKeyDown={(e) => handleKeyNav(e, "date")}
                                 />
@@ -217,9 +220,9 @@ const LoadOut = () => {
                                 <input
                                     type="number"
                                     placeholder='Enter trip no.'
-                                    value={newLoadOut.trip}
+                                    value={newLoadIn.trip}
                                     ref={modalTripRef}
-                                    onChange={(e) => setNewLoadOut({ ...newLoadOut, trip: e.target.value })}
+                                    onChange={(e) => setNewLoadIn({ ...newLoadIn, trip: e.target.value })}
                                     onKeyDown={(e) => handleKeyNav(e, "trip")}
                                 />
                             </div>
@@ -233,22 +236,37 @@ const LoadOut = () => {
                                 <input
                                     type="text"
                                     placeholder='Enter Item code'
-                                    value={newLoadItem.itemCode}
+                                    value={newLoadItem.itemcode}
                                     ref={modalItemRef}
-                                    onChange={(e) => setNewLoadItem({ ...newLoadItem, itemCode: e.target.value })}
-                                    onKeyDown={(e) => handleKeyNav(e, "item")}
+                                    onChange={(e) => setNewLoadItem({ ...newLoadItem, itemcode: e.target.value })}
+                                    onKeyDown={(e) => handleKeyNav(e, "itemcode")}
                                 />
                             </div>
                             <div className="form-group">
-                                <label>Qty</label>
+                                <label>Filled</label>
                                 <input
                                     type="number"
                                     value={newLoadItem.qty}
-                                    ref={modalQtyRef}
+                                    ref={modalFilledRef}
                                     onChange={(e) => setNewLoadItem({ ...newLoadItem, qty: e.target.value })}
                                     onKeyDown={(e) => handleKeyNav(e, "qty")}
+                                    placeholder="Enter Qty/-"
                                 />
                             </div>
+                            <div className="form-group">
+                                <label>Burst</label>
+                                <input
+                                    type="number"
+                                    value={newLoadItem.qty}
+                                    ref={modalBurstRef}
+                                    onChange={(e) => setNewLoadItem({ ...newLoadItem, qty: e.target.value })}
+                                    onKeyDown={(e) => handleKeyNav(e, "qty")}
+                                    placeholder="Enter Qty/-"
+                                />
+                            </div>
+
+
+                            
                             <button type="button" className="add-btn" onKeyDown={(e) => handleKeyNav(e, "add")} onClick={handleAddItem} ref={addRef} >
                                 ➕ Add Item
                             </button>
@@ -266,34 +284,37 @@ const LoadOut = () => {
                                 {/* <div>SL.NO.</div> */}
                                 <div>CODE</div>
                                 <div>NAME</div>
-                                <div>Qty</div>
+                                <div>Filled</div>
+                                <div>Burst</div>
                                 <div>ACTION</div>
                             </div>
                             {loading && <div>Loading...</div>}
 
-                            {newLoadOut.items.length > 0 ? (
-                                newLoadOut.items.map((it, index) => {
+                            {newLoadIn.items.length > 0 ? (
+                                newLoadIn.items.map((it, index) => {
                                     const matchedItem = items.find(
-                                        (sku) => sku.code.toUpperCase() === it.itemCode.toUpperCase()
+                                        (sku) => sku.code.toUpperCase() === it.itemcode.toUpperCase()
                                     );
                                     return (
                                         <div key={index} className="trans-table-grid trans-table-row">
-                                            <div>{it.itemCode}</div>
+                                            <div>{it.itemcode}</div>
                                             <div>{matchedItem ? matchedItem.name : "-"}</div>
                                             <div>{it.qty}</div>
                                             <div className="actions">
                                                 <span
                                                     className="delete"
-                                                    onClick={() => handleDelete(it.itemCode)}
+                                                    onClick={() => handleDelete(it.itemcode)}
                                                 >
                                                     Delete
                                                 </span>
                                             </div>
+
+
                                         </div>
                                     );
                                 })
                             ) : (
-                                <div className="no-items">No Items added yet!</div>
+                                <div className="no-items">Node Items added yet!</div>
                             )}
 
                         </div>
@@ -303,9 +324,9 @@ const LoadOut = () => {
 
                 </div>
             </div>
-            <button onClick={handleSubmit} className='trans-submit-btn'>Submit</button>
+            <button onClick={handleSubmit}>Submit</button>
         </div>
     )
 }
 
-export default LoadOut
+export default LoadIn
