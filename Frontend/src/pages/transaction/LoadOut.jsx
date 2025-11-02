@@ -15,18 +15,19 @@ const LoadOut = () => {
     const modalTripRef = useRef(null);
     const modalItemRef = useRef(null);
     const modalQtyRef = useRef(null);
+    
     const saveRef = useRef(null);
     const addRef = useRef(null);
 
     const [newLoadItem, setNewLoadItem] = useState({
-        itemcode: "",
+        itemCode: "",
         qty: 0
     });
 
     const [newLoadOut, setNewLoadOut] = useState({
         salesmanCode: "",
         date: "",
-        trip: "",
+        trip: 1,
         items: []
     });
 
@@ -36,22 +37,21 @@ const LoadOut = () => {
         : null;
 
     useEffect(() => {
-        // ensure items and salesmen are loaded for lookups
-        getAllItems && getAllItems();
-        getAllSalesmen && getAllSalesmen();
+        getAllItems();
+        getAllSalesmen();
     }, []);
 
 
 
 
     const handleAddItem = () => {
-        if (!newLoadItem.itemcode || newLoadItem.qty <= 0) {
+        if (!newLoadItem.itemCode || newLoadItem.qty <= 0) {
             toast.error("Enter valid item code and quantity");
             return;
         }
 
         const exists = newLoadOut.items.find(
-            (it) => it.itemcode.toUpperCase() === newLoadItem.itemcode.toUpperCase()
+            (it) => it.itemCode.toUpperCase() === newLoadItem.itemCode.toUpperCase()
         );
 
         if (exists) {
@@ -64,13 +64,13 @@ const LoadOut = () => {
             items: [...prev.items, newLoadItem]
         }));
 
-        setNewLoadItem({ itemcode: "", qty: 0 });
+        setNewLoadItem({ itemCode: "", qty: 0 });
     };
 
     const handleDelete = (code) => {
         setNewLoadOut((prev) => ({
             ...prev,
-            items: prev.items.filter((it) => it.itemcode !== code)
+            items: prev.items.filter((it) => it.itemCode !== code)
         }));
 
         toast.success("Item removed");
@@ -124,7 +124,7 @@ const LoadOut = () => {
                 case "trip":
                     modalItemRef.current?.focus();
                     break;
-                case "itemcode":
+                case "item":
                     modalQtyRef.current?.focus();
                     break;
                 case "oty":
@@ -149,7 +149,7 @@ const LoadOut = () => {
                 case "trip":
                     modalDateRef.current?.focus();
                     break;
-                case "itemcode":
+                case "item":
                     modalTripRef.current?.focus();
                     break;
                 case "qty":
@@ -233,10 +233,10 @@ const LoadOut = () => {
                                 <input
                                     type="text"
                                     placeholder='Enter Item code'
-                                    value={newLoadItem.itemcode}
+                                    value={newLoadItem.itemCode}
                                     ref={modalItemRef}
-                                    onChange={(e) => setNewLoadItem({ ...newLoadItem, itemcode: e.target.value })}
-                                    onKeyDown={(e) => handleKeyNav(e, "itemcode")}
+                                    onChange={(e) => setNewLoadItem({ ...newLoadItem, itemCode: e.target.value })}
+                                    onKeyDown={(e) => handleKeyNav(e, "item")}
                                 />
                             </div>
                             <div className="form-group">
@@ -274,28 +274,26 @@ const LoadOut = () => {
                             {newLoadOut.items.length > 0 ? (
                                 newLoadOut.items.map((it, index) => {
                                     const matchedItem = items.find(
-                                        (sku) => sku.code.toUpperCase() === it.itemcode.toUpperCase()
+                                        (sku) => sku.code.toUpperCase() === it.itemCode.toUpperCase()
                                     );
                                     return (
                                         <div key={index} className="trans-table-grid trans-table-row">
-                                            <div>{it.itemcode}</div>
+                                            <div>{it.itemCode}</div>
                                             <div>{matchedItem ? matchedItem.name : "-"}</div>
                                             <div>{it.qty}</div>
                                             <div className="actions">
                                                 <span
                                                     className="delete"
-                                                    onClick={() => handleDelete(it.itemcode)}
+                                                    onClick={() => handleDelete(it.itemCode)}
                                                 >
                                                     Delete
                                                 </span>
                                             </div>
-
-
                                         </div>
                                     );
                                 })
                             ) : (
-                                <div className="no-items">Node Items added yet!</div>
+                                <div className="no-items">No Items added yet!</div>
                             )}
 
                         </div>
@@ -305,7 +303,7 @@ const LoadOut = () => {
 
                 </div>
             </div>
-            <button onClick={handleSubmit}>Submit</button>
+            <button onClick={handleSubmit} className='trans-submit-btn'>Submit</button>
         </div>
     )
 }

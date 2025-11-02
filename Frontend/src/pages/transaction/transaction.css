@@ -9,6 +9,13 @@
   --light-shadow: rgba(0, 0, 0, 0.1);
 }
 
+.trans{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
 .flex{
     display: flex;
     gap: 2vw;
@@ -90,32 +97,7 @@
   background-color: #f1f5f9;
 }
 
-/* Status Badge */
 
-.status{
-  overflow: hidden;
-}
-.status-badge {
-  padding: 4px 10px;
-  border-radius: 12px;
-  font-size: 13px;
-  font-weight: 500;
-}
-
-.status-badge.active {
-  background-color: #dcfce7;
-  color: #166534;
-  width: fit-content;
-}
-
-.status-badge.inactive {
-  background-color: #fee2e2;
-  color: #b91c1c;
-  width: fit-content;
-
-}
-
-/* Action Buttons */
 .actions span {
   cursor: pointer;
   font-weight: 500;
@@ -123,21 +105,6 @@
 }
 
 
-
-.actions .save{
-  color: #16a34a;
-}
-.actions .cancel{
-  color: gray;
-}
-
-.actions .edit {
-  color: #2563eb;
-}
-
-.actions .delete {
-  color: #dc2626;
-}
 
 .edit-input{
   width: 80%;
@@ -249,8 +216,8 @@
   gap: 10px;
 }
 
-.submit-btn {
-  background-color: #16a34a;
+.trans-submit-btn {
+  background-color: #54bd7b;
   color: white;
   border: none;
   padding: 8px 15px;
