@@ -12,10 +12,10 @@ export function TransactionProvider({ children }) {
     const addLoadout = async (payload) => {
         try {
             setLoading(true);
-            const res = await api.post('/transaction/loadout/add/', payload);
-            toast.success(res.data.message || "loadout added sucessfully");
+            const res = await api.post('/transaction/loadout/add', payload);
+            toast.success(res.data.message || "loadout added successfully");
             await getAllLoadout();
-            return res;
+            return res.data;
         } catch (err) {
             toast.error(err.response?.data?.message || "Error adding loadout");
             throw err;
@@ -28,10 +28,9 @@ export function TransactionProvider({ children }) {
     const getLoadout = async (payload) => {
         try {
             setLoading(true);
-            const res = await api.post('/transaction/loadout/', payload);
-            toast.success(res.data.message || "loadout fetched sucessfully");
-            setLoadout(res);
-            return res;
+            const res = await api.post('/transaction/loadout', payload);
+            setLoadout(res.data);
+            return res.data;
         } catch (err) {
             toast.error(err.response?.data?.message || "Error adding loadout");
             throw err;
@@ -43,10 +42,10 @@ export function TransactionProvider({ children }) {
     const updateLoadout = async (id, payload) => {
         try {
             setLoading(true);
-            const res = await api.patch(`/transaction/loadout/update/:${id}`, payload)
-            toast.success(res.data.message || "loadout updated sucessfully");
+            const res = await api.patch(`/transaction/loadout/update/${id}`, payload);
+            toast.success(res.data.message || "loadout updated successfully");
             await getAllLoadout();
-            return res;
+            return res.data;
 
         } catch (err) {
             toast.error(err.response?.data?.message || "Error updating loadout");
@@ -60,10 +59,10 @@ export function TransactionProvider({ children }) {
 
         try {
             setLoading(true);
-            const res = await api.delete(`/transaction/loadout/delete/:${id}`);
-            toast.success(res.data.message || "loadout deleted sucessfully");
+            const res = await api.delete(`/transaction/loadout/delete/${id}`);
+            toast.success(res.data.message || "loadout deleted successfully");
             await getAllLoadout();
-            return res;
+            return res.data;
 
         } catch (err) {
             toast.error(err.response?.data?.message || "Error deleting loadout");
@@ -76,9 +75,9 @@ export function TransactionProvider({ children }) {
     const getAllLoadout = async () => {
         try {
             setLoading(true);
-            const res = await api.get(`/transaction/loadout/`);
-            setLoadout(res);
-            return res;
+            const res = await api.get(`/transaction/loadout`);
+            setLoadout(res.data);
+            return res.data;
         } catch (err) {
             throw err;
         } finally {
