@@ -15,6 +15,7 @@ const LoadOut = () => {
     const modalTripRef = useRef(null);
     const modalItemRef = useRef(null);
     const modalQtyRef = useRef(null);
+    
     const saveRef = useRef(null);
     const addRef = useRef(null);
 
