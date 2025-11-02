@@ -8,7 +8,7 @@ const ratesSchema = new mongoose.Schema({
     date: { type: Date, required: true },
     status: { type: String, default: 'Active' }
 
-}, { timestamps: true })
+}, { timestamps: false })
 
 // // ✅ create compound unique index
 // ratesSchema.index({ itemCode: 1, date: 1 }, { unique: true });

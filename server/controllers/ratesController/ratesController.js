@@ -8,7 +8,7 @@ exports.addRate = async (req, res) => {
             return res.status(400).json({ message: "All fields are required" });
         }
 
-        const existing = await Rate.findOne({ itemCode: code , date });
+        const existing = await Rate.findOne({ itemCode: code, date: new Date(date).toISOString() });
 
         if (existing)
             return res.status(400).json({ message: "Price of this item already exists at same date" });
@@ -25,6 +25,7 @@ exports.addRate = async (req, res) => {
         return res.status(201).json({ message: "Rate added successfully", rate: created });
 
     } catch (err) {
+
         console.log("Error adding rate:", err.message);
         res.status(500).json({ message: "Error adding rate", error: err.message });
     }

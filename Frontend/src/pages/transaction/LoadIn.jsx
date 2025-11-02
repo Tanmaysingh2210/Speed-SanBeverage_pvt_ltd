@@ -1,14 +1,3 @@
-<<<<<<< HEAD
-import './LoadIn.css';
-import '../Salesman.css'
-export default function LoadIn(){
-     return(
-        <div className="load-in-container">
-            <div>
-                <input>
-                
-                </input>
-=======
 import React, { useState, useEffect, useRef } from 'react';
 import toast from 'react-hot-toast';
 import { useTransaction } from '../../context/TransactionContext';
@@ -343,7 +332,6 @@ const LoadIn = () => {
                 <div className="trans-table trans-grid">
 
                 </div>
->>>>>>> b63d4db84563b8519e9b6904c40849cffc90d1db
             </div>
             <button onClick={handleSubmit}>Submit</button>
         </div>
