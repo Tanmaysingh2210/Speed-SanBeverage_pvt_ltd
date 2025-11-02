@@ -67,11 +67,13 @@ const LoadIn = () => {
             items: [...prev.items, newLoadItem]
         }));
 
-        setNewLoadItem({ itemcode: "", qty: 0 });
+        setNewLoadItem({ itemcode: "", Filled: 0 });
+        setNewLoadItem({ itemcode: "", Burst: 0 });
+
     };
 
     const handleDelete = (code) => {
-        setNewLoadOut((prev) => ({
+        setNewLoadIn((prev) => ({
             ...prev,
             items: prev.items.filter((it) => it.itemcode !== code)
         }));
@@ -82,21 +84,21 @@ const LoadIn = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        if (!newLoadOut.salesmanCode || !newLoadOut.date || newLoadOut.items.length == 0) {
+        if (!newLoadIn.salesmanCode || !newLoadIn.date || newLoadIn.items.length == 0) {
             toast.error("Fill all fields properly");
             return;
         }
         const paylaod = {
-            salesmanCode: newLoadOut.salesmanCode,
-            date: newLoadOut.date,
-            trip: newLoadOut.trip,
-            items: newLoadOut.items
+            salesmanCode: newLoadIn.salesmanCode,
+            date: newLoadIn.date,
+            trip: newLoadIn.trip,
+            items: newLoadIn.items
         };
 
         try {
             await addLoadout(paylaod);
 
-            setNewLoadOut({
+            setNewLoadIn ({
                 salesmanCode: "",
                 date: "",
                 trip: "",
@@ -128,9 +130,12 @@ const LoadIn = () => {
                     modalItemRef.current?.focus();
                     break;
                 case "itemcode":
-                    modalQtyRef.current?.focus();
+                    modalFilledRef.current?.focus();
                     break;
-                case "oty":
+                case "Filled":
+                    modalBurstRef.current?.focus();
+                    break;
+                case "Burst":
                     addRef.current?.focus();
                     break;
                 case "status":
@@ -155,11 +160,15 @@ const LoadIn = () => {
                 case "itemcode":
                     modalTripRef.current?.focus();
                     break;
-                case "qty":
+                case "Filled":
                     modalItemRef.current?.focus();
                     break;
+                case "Burst":
+                    modalFilledRef.current?.focus();
+                    break;
+
                 case "add":
-                    modalQtyRef.current?.focus();
+                    modalBurstRef.current?.focus();
                     break;
                 default:
                     break;
@@ -314,7 +323,7 @@ const LoadIn = () => {
                                     );
                                 })
                             ) : (
-                                <div className="no-items">Node Items added yet!</div>
+                                <div className="no-items">No Items added yet!</div>
                             )}
 
                         </div>
