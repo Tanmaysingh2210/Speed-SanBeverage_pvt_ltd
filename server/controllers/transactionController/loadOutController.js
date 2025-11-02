@@ -2,17 +2,18 @@ const LoadOut = require("../../models/transaction/LoadOut");
 
 exports.addLoadout = async (req, res) => {
     try {
-        const { salesmanCode, date, items } = req.body;
+        const { salesmanCode, date, trip, items } = req.body;
 
         if (!salesmanCode || !date || !Array.isArray(items) || items.length === 0) return res.status(400).json({ message: "All fields are required" });
 
-        const existing = await LoadOut.findOne({ salesmanCode: salesmanCode, date: date });
+        const existing = await LoadOut.findOne({ salesmanCode: salesmanCode, date: date, trip });
 
-        if (existing) return res.status(400).json({ message: `Loadout record of ${salesmanCode} at ${Date} exists` });
+        if (existing) return res.status(400).json({ message: `Loadout record exists` });
 
         await LoadOut.create({
             salesmanCode: salesmanCode,
             date: date,
+            trip,
             items
         });
 
@@ -25,8 +26,8 @@ exports.addLoadout = async (req, res) => {
 
 exports.getLoadOut = async (req, res) => {
     try {
-        const {salesmanCode , date } = req.body;
-        const data = await LoadOut.findOne({salesmanCode , date});
+        const { salesmanCode, date, trip } = req.body;
+        const data = await LoadOut.findOne({ salesmanCode, date , trip});
         res.status(200).json(data);
     } catch (err) {
         res.status(500).json({ message: "Error fetching loadout record", error: err.message });
