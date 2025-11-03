@@ -156,7 +156,7 @@ const LatestPrice = () => {
             basePrice: Number(newPrice.basePrice),
             perTax: Number(newPrice.perTax),
             date: newPrice.date, // backend expects `date` (lowercase)
-            status: newPrice.status,
+            status: editId ? newPrice.status : "Active", //  Force Active for new prices
         };
         console.log('add/update price payload', payload);
 
@@ -207,8 +207,10 @@ const LatestPrice = () => {
 
     // Safe filtered list
     const filtered = Array.isArray(prices)
-        ? prices.filter(p => safeString(p?.name).toLowerCase().includes(safeString(search).toLowerCase()))
-        : [];
+  ? prices
+      .filter(p => p?.status === "Active") //  Only show active prices
+      .filter(p => safeString(p?.name).toLowerCase().includes(safeString(search).toLowerCase()))
+  : [];
 
     return (
         <div className="price-container">
@@ -375,6 +377,8 @@ const LatestPrice = () => {
                                 />
                             </div>
 
+                                {editId && (
+                                    
                             <div className="form-group">
                                 <label>Status</label>
                                 <select
@@ -389,6 +393,7 @@ const LatestPrice = () => {
                                     <option value="Inactive">Inactive</option>
                                 </select>
                             </div>
+                                )}
 
                             <div className="modal-buttons">
                                 <button

@@ -8,26 +8,44 @@ exports.addRate = async (req, res) => {
             return res.status(400).json({ message: "All fields are required" });
         }
 
-        const existing = await Rate.findOne({ itemCode: code, date: new Date(date).toISOString() });
+        const existing = await Rate.findOne({ 
+            itemCode: code, 
+            date: new Date(date).toISOString() 
+        });
 
-        if (existing)
-            return res.status(400).json({ message: "Price of this item already exists at same date" });
+        if (existing) {
+            return res.status(400).json({ 
+                message: "Price of this item already exists at same date" 
+            });
+        }
 
+        // NEW: Mark all existing prices for this item as Inactive
+        await Rate.updateMany(
+            { itemCode: code }, // Find all prices with same item code
+            { $set: { status: "Inactive" } } // Set them to Inactive
+        );
+
+        // Create new price as Active
         const created = await Rate.create({
             itemCode: code,
             name,
             basePrice,
             perTax,
             date,
-            status: status || 'Active',
+            status: "Active", // Always Active for new prices
         });
 
-        return res.status(201).json({ message: "Rate added successfully", rate: created });
+        return res.status(201).json({ 
+            message: "Rate added successfully and old prices marked inactive", 
+            rate: created 
+        });
 
     } catch (err) {
-
         console.log("Error adding rate:", err.message);
-        res.status(500).json({ message: "Error adding rate", error: err.message });
+        res.status(500).json({ 
+            message: "Error adding rate", 
+            error: err.message 
+        });
     }
 };
 
