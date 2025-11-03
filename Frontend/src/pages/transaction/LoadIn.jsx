@@ -6,7 +6,7 @@ import { useSalesman } from '../../context/SalesmanContext';
 import "./transaction.css";
 
 const LoadIn = () => {
-    const { loading, addLoadout } = useTransaction();
+    const { loading, addLoadIn } = useTransaction();
     const { items, getAllItems } = useSKU();
     const { salesmans, getAllSalesmen } = useSalesman();
 
@@ -14,7 +14,7 @@ const LoadIn = () => {
     const modalDateRef = useRef(null);
     const modalTripRef = useRef(null);
     const modalItemRef = useRef(null);
-    const modalFilledRef=useRef(null);
+    const modalFilledRef = useRef(null);
     const modalBurstRef = useRef(null);
 
     const saveRef = useRef(null);
@@ -23,13 +23,13 @@ const LoadIn = () => {
     const [newLoadItem, setNewLoadItem] = useState({
         itemcode: "",
         Filled: 0,
-        Burst:0
+        Burst: 0
     });
 
     const [newLoadIn, setNewLoadIn] = useState({
         salesmanCode: "",
         date: "",
-        trip: "",
+        trip: 1,
         items: []
     });
 
@@ -39,16 +39,14 @@ const LoadIn = () => {
         : null;
 
     useEffect(() => {
-        // ensure items and salesmen are loaded for lookups
-        getAllItems && getAllItems();
-        getAllSalesmen && getAllSalesmen();
+        getAllItems();
+        getAllSalesmen();
     }, []);
 
 
-
-
-    const handleAddItem = () => {
-        if (!newLoadItem.itemcode || (newLoadItem.Filled <= 0 && newLoadItem.Burst <=0)) {
+    const handleAddItem = (e) => {
+        e.preventDefault();
+        if (!newLoadItem.itemcode || (newLoadItem.Filled <= 0 && newLoadItem.Burst <= 0)) {
             toast.error("Enter valid item code and filled quantity");
             return;
         }
@@ -67,8 +65,7 @@ const LoadIn = () => {
             items: [...prev.items, newLoadItem]
         }));
 
-        setNewLoadItem({ itemcode: "", Filled: 0 });
-        setNewLoadItem({ itemcode: "", Burst: 0 });
+        setNewLoadItem({ itemcode: "", Filled: 0, Burst: 0 });
 
     };
 
@@ -84,10 +81,11 @@ const LoadIn = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        if (!newLoadIn.salesmanCode || !newLoadIn.date || newLoadIn.items.length == 0) {
+        if (!newLoadIn.salesmanCode || !newLoadIn.trip || !newLoadIn.date || newLoadIn.items.length == 0) {
             toast.error("Fill all fields properly");
             return;
         }
+
         const paylaod = {
             salesmanCode: newLoadIn.salesmanCode,
             date: newLoadIn.date,
@@ -96,9 +94,9 @@ const LoadIn = () => {
         };
 
         try {
-            await addLoadout(paylaod);
+            await addLoadIn(paylaod); 
 
-            setNewLoadIn ({
+            setNewLoadIn({
                 salesmanCode: "",
                 date: "",
                 trip: "",
@@ -106,7 +104,7 @@ const LoadIn = () => {
             });
 
         } catch (err) {
-            console.error(err.response.data.message || "Error adding loadout");
+            console.error(err.response.data.message || "Error adding LoadIn");
         }
     };
 
@@ -114,8 +112,8 @@ const LoadIn = () => {
         if (["ArrowRight", "ArrowDown", "Enter"].includes(e.key)) {
             e.preventDefault();
 
-            if (e.key === "Enter" && currentField === "save") {
-                saveRef.current?.click();
+            if (e.key === "Enter" && currentField === "add") {
+                addRef.current?.click();
                 return;
             }
 
@@ -136,18 +134,16 @@ const LoadIn = () => {
                     modalBurstRef.current?.focus();
                     break;
                 case "Burst":
-                    addRef.current?.focus();
-                    break;
-                case "status":
                     if (e.key === "Enter") {
-                        saveRef.current?.click();
+                        addRef.current?.click();
                     } else {
-                        saveRef.current?.focus();
+                        addRef.current?.focus();
                     }
                     break;
                 default:
                     break;
             }
+            
         } else if (["ArrowUp", "ArrowLeft"].includes(e.key)) {
             e.preventDefault();
             switch (currentField) {
@@ -166,7 +162,6 @@ const LoadIn = () => {
                 case "Burst":
                     modalFilledRef.current?.focus();
                     break;
-
                 case "add":
                     modalBurstRef.current?.focus();
                     break;
@@ -255,10 +250,10 @@ const LoadIn = () => {
                                 <label>Filled</label>
                                 <input
                                     type="number"
-                                    value={newLoadItem.qty}
+                                    value={newLoadItem.Filled}
                                     ref={modalFilledRef}
-                                    onChange={(e) => setNewLoadItem({ ...newLoadItem, qty: e.target.value })}
-                                    onKeyDown={(e) => handleKeyNav(e, "qty")}
+                                    onChange={(e) => setNewLoadItem({ ...newLoadItem, Filled: e.target.value })}
+                                    onKeyDown={(e) => handleKeyNav(e, "Filled")}
                                     placeholder="Enter Qty/-"
                                 />
                             </div>
@@ -266,16 +261,16 @@ const LoadIn = () => {
                                 <label>Burst</label>
                                 <input
                                     type="number"
-                                    value={newLoadItem.qty}
+                                    value={newLoadItem.Burst}
                                     ref={modalBurstRef}
-                                    onChange={(e) => setNewLoadItem({ ...newLoadItem, qty: e.target.value })}
-                                    onKeyDown={(e) => handleKeyNav(e, "qty")}
+                                    onChange={(e) => setNewLoadItem({ ...newLoadItem, Burst: e.target.value })}
+                                    onKeyDown={(e) => handleKeyNav(e, "Burst")}
                                     placeholder="Enter Qty/-"
                                 />
                             </div>
 
 
-                            
+
                             <button type="button" className="add-btn" onKeyDown={(e) => handleKeyNav(e, "add")} onClick={handleAddItem} ref={addRef} >
                                 ➕ Add Item
                             </button>
@@ -289,7 +284,7 @@ const LoadIn = () => {
                         />
                     </div> */}
                         <div className="table">
-                            <div className="trans-table-grid trans-table-header">
+                            <div className="trans-loadin-table-grid trans-table-header">
                                 {/* <div>SL.NO.</div> */}
                                 <div>CODE</div>
                                 <div>NAME</div>
@@ -305,10 +300,11 @@ const LoadIn = () => {
                                         (sku) => sku.code.toUpperCase() === it.itemcode.toUpperCase()
                                     );
                                     return (
-                                        <div key={index} className="trans-table-grid trans-table-row">
+                                        <div key={index} className="trans-loadin-table-grid trans-table-row">
                                             <div>{it.itemcode}</div>
                                             <div>{matchedItem ? matchedItem.name : "-"}</div>
-                                            <div>{it.qty}</div>
+                                            <div>{it.Filled}</div>
+                                            <div>{it.Burst}</div>
                                             <div className="actions">
                                                 <span
                                                     className="delete"

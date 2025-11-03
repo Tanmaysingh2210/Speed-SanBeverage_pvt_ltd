@@ -27,7 +27,8 @@ exports.addLoadout = async (req, res) => {
 exports.getLoadOut = async (req, res) => {
     try {
         const { salesmanCode, date, trip } = req.body;
-        const data = await LoadOut.findOne({ salesmanCode, date , trip});
+        const data = await LoadOut.findOne({ salesmanCode, date, trip });
+        if (!data) return res.status(404).json({ message: "Record not found" });
         res.status(200).json(data);
     } catch (err) {
         res.status(500).json({ message: "Error fetching loadout record", error: err.message });

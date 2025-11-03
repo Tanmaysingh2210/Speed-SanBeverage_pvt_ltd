@@ -84,9 +84,6 @@ const LatestPrice = () => {
                     dateRef.current?.focus();
                     break;
                 case "date":
-                    statusRef.current?.focus();
-                    break;
-                case "status":
                     if (e.key === "Enter") {
                         saveRef.current?.click();
                     } else {
@@ -108,11 +105,8 @@ const LatestPrice = () => {
                 case "date":
                     taxRef.current?.focus();
                     break;
-                case "status":
-                    dateRef.current?.focus();
-                    break;
                 case "save":
-                    statusRef.current?.focus();
+                    dateRef.current?.focus();
                     break;
                 default:
                     break;

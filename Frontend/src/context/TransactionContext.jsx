@@ -7,6 +7,7 @@ const TransationContext = createContext();
 
 export function TransactionProvider({ children }) {
     const [loadout, setLoadout] = useState([]);
+    const [loadin, setLoadin] = useState([]);
     const [loading, setLoading] = useState(false);
 
     const addLoadout = async (payload) => {
@@ -84,9 +85,84 @@ export function TransactionProvider({ children }) {
             setLoading(false);
         }
     };
-    
+
+    const addLoadIn = async (payload) => {
+        try {
+            setLoading(true);
+            const res = await api.post('/transaction/loadin/add', payload);
+            toast.success(res.data.message || "loadin added successfully");
+            await getAllLoadIn();
+            return res.data;
+        } catch (err) {
+            toast.error(err.response?.data?.message || "Error adding loadin");
+            throw err;
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const getLoadIn = async (payload) => {
+        try {
+            setLoading(true);
+            const res = await api.post('/transaction/loadin', payload);
+            setLoadin(res.data);
+            return res.data;
+        } catch (err) {
+            toast.error(err.response?.data?.message || "Error adding loadin");
+            throw err;
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const updateLoadIn = async (id, payload) => {
+        try {
+            setLoading(true);
+            const res = await api.patch(`/transaction/loadin/update/${id}`, payload);
+            toast.success(res.data.message || "loadin updated successfully");
+            await getAllLoadin();
+            return res.data;
+
+        } catch (err) {
+            toast.error(err.response?.data?.message || "Error updating loadin");
+            throw err;
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const deleteLoadin = async (id) => {
+        try {
+            setLoading(true);
+            const res = await api.delete(`/transaction/loadin/delete/${id}`);
+            toast.success(res.data.message || "loadin deleted successfully");
+            await getAllLoadin();
+            return res.data;
+
+        } catch (err) {
+            toast.error(err.response?.data?.message || "Error deleting loadin");
+            throw err;
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const getAllLoadin = async () => {
+        try {
+            setLoading(true);
+            const res = await api.get(`/transaction/loadin`);
+            setLoadin(res.data);
+            return res.data;
+        } catch (err) {
+            throw err;
+        } finally {
+            setLoading(false);
+        }
+    };
+
     useEffect(() => {
         getAllLoadout();
+        getAllLoadin();
     }, []);
 
     return (
@@ -98,6 +174,14 @@ export function TransactionProvider({ children }) {
             deleteLoadout,
             addLoadout,
             getLoadout,
+
+            loadin,
+            addLoadIn,
+            getLoadIn,
+            updateLoadIn,
+            deleteLoadin,
+            getAllLoadin,
+
         }} >
             {children}
         </TransationContext.Provider>

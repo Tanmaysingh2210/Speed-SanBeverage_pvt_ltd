@@ -15,7 +15,7 @@ const LoadOut = () => {
     const modalTripRef = useRef(null);
     const modalItemRef = useRef(null);
     const modalQtyRef = useRef(null);
-    
+
     const saveRef = useRef(null);
     const addRef = useRef(null);
 
@@ -79,7 +79,7 @@ const LoadOut = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        if (!newLoadOut.salesmanCode || !newLoadOut.date || newLoadOut.items.length == 0) {
+        if (!newLoadOut.salesmanCode || !newLoadOut.date || newLoadOut.trip <= 0 || newLoadOut.items.length == 0) {
             toast.error("Fill all fields properly");
             return;
         }
