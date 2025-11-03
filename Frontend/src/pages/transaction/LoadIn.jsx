@@ -52,7 +52,7 @@ const LoadIn = () => {
         }
 
         const exists = newLoadIn.items.find(
-            (it) => it.itemcode.toUpperCase() === newLoadItem.itemcode.toUpperCase()
+            (it) => String(it.itemCode || '').toUpperCase() === String(newLoadItem.itemcode || '').toUpperCase()
         );
 
         if (exists) {
@@ -60,9 +60,16 @@ const LoadIn = () => {
             return;
         }
 
+        // normalize to server schema: itemCode, Filled, Burst
+        const normalized = {
+            itemCode: newLoadItem.itemcode,
+            Filled: Number(newLoadItem.Filled) || 0,
+            Burst: Number(newLoadItem.Burst) || 0,
+        };
+
         setNewLoadIn((prev) => ({
             ...prev,
-            items: [...prev.items, newLoadItem]
+            items: [...prev.items, normalized]
         }));
 
         setNewLoadItem({ itemcode: "", Filled: 0, Burst: 0 });
@@ -72,7 +79,7 @@ const LoadIn = () => {
     const handleDelete = (code) => {
         setNewLoadIn((prev) => ({
             ...prev,
-            items: prev.items.filter((it) => it.itemcode !== code)
+            items: prev.items.filter((it) => it.itemCode !== code)
         }));
 
         toast.success("Item removed");
@@ -81,7 +88,7 @@ const LoadIn = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        if (!newLoadIn.salesmanCode || !newLoadIn.trip || !newLoadIn.date || newLoadIn.items.length == 0) {
+        if (!newLoadIn.salesmanCode || !newLoadIn.trip || !newLoadIn.date || newLoadIn.items.length === 0) {
             toast.error("Fill all fields properly");
             return;
         }
@@ -89,12 +96,12 @@ const LoadIn = () => {
         const paylaod = {
             salesmanCode: newLoadIn.salesmanCode,
             date: newLoadIn.date,
-            trip: newLoadIn.trip,
+            trip: Number(newLoadIn.trip),
             items: newLoadIn.items
         };
 
         try {
-            await addLoadIn(paylaod); 
+            await addLoadIn(paylaod);
 
             setNewLoadIn({
                 salesmanCode: "",
@@ -143,7 +150,7 @@ const LoadIn = () => {
                 default:
                     break;
             }
-            
+
         } else if (["ArrowUp", "ArrowLeft"].includes(e.key)) {
             e.preventDefault();
             switch (currentField) {
@@ -297,18 +304,18 @@ const LoadIn = () => {
                             {newLoadIn.items.length > 0 ? (
                                 newLoadIn.items.map((it, index) => {
                                     const matchedItem = items.find(
-                                        (sku) => sku.code.toUpperCase() === it.itemcode.toUpperCase()
+                                        (sku) => String(sku.code || '').toUpperCase() === String(it.itemCode || it.itemcode || '').toUpperCase()
                                     );
                                     return (
                                         <div key={index} className="trans-loadin-table-grid trans-table-row">
-                                            <div>{it.itemcode}</div>
+                                            <div>{it.itemCode}</div>
                                             <div>{matchedItem ? matchedItem.name : "-"}</div>
                                             <div>{it.Filled}</div>
                                             <div>{it.Burst}</div>
                                             <div className="actions">
                                                 <span
                                                     className="delete"
-                                                    onClick={() => handleDelete(it.itemcode)}
+                                                    onClick={() => handleDelete(it.itemCode)}
                                                 >
                                                     Delete
                                                 </span>

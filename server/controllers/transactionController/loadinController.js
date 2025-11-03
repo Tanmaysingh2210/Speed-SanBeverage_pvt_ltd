@@ -12,7 +12,7 @@ exports.addLoadIn = async (req, res) => {
 
         await LoadIn.create({
             salesmanCode: salesmanCode,
-            date: Date,
+            date,
             trip,
             items
         });

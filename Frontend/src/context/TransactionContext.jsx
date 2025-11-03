@@ -91,7 +91,7 @@ export function TransactionProvider({ children }) {
             setLoading(true);
             const res = await api.post('/transaction/loadin/add', payload);
             toast.success(res.data.message || "loadin added successfully");
-            await getAllLoadIn();
+            await getAllLoadin();
             return res.data;
         } catch (err) {
             toast.error(err.response?.data?.message || "Error adding loadin");
