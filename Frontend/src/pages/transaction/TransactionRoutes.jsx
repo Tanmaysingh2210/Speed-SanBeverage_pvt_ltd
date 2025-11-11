@@ -4,7 +4,7 @@ import { Routes, Route, Link, NavLink, Navigate } from 'react-router-dom';
 
 import LoadOut from './LoadOut';
 import LoadIn from './LoadIn';
-
+import Credit from './Credit';
 
 
 const Transaction = () => {
@@ -18,7 +18,7 @@ const Transaction = () => {
                         <li><NavLink to={`/transaction/load-out`} className={({ isActive }) => (isActive ? 'active' : '')}>Load Out</NavLink></li>
 
                         <li><NavLink to={`/transaction/load-in`} className={({ isActive }) => (isActive ? 'active' : '')}>Load In</NavLink></li>
-                        <li><NavLink to={`/transaction/cash/credit`} className={({ isActive }) => (isActive ? 'active' : '')}>Cash/Credit</NavLink></li>
+                        <li><NavLink to={`/transaction/cash-credit`} className={({ isActive }) => (isActive ? 'active' : '')}>Cash/Credit</NavLink></li>
                         <li><NavLink to={`/transaction/s.sheet`} className={({ isActive }) => (isActive ? 'active' : '')}>S.Sheet</NavLink></li>
                     </ul>
                 </div>
@@ -27,7 +27,7 @@ const Transaction = () => {
                     <Route index element={<Navigate to="load-out" replace />} />
                     <Route path="load-out" element={<LoadOut />}></Route>
                     <Route path="load-in" element={<LoadIn />} />                
-
+                    <Route path="cash-credit" element={<Credit />}></Route>
                 </Routes>
             </div>
         </>
