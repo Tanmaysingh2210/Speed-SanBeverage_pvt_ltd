@@ -187,7 +187,7 @@ useEffect(() => {
 
   return (
   <div className="price-container">
-    <h2>Browse Prices</h2>
+    {/* <h2>Browse Prices</h2> */}
 
     {/* Search and Date Filter Header */}
     <div className="price-header">
@@ -247,6 +247,7 @@ useEffect(() => {
         <div>BASE PRICE</div>
         <div>% TAX</div>
         <div>NET RATE</div>
+        <div>DATE</div>
         <div>STATUS</div>
         <div>ACTIONS</div>
       </div>
@@ -272,6 +273,7 @@ useEffect(() => {
           <div>₹{p?.basePrice || ''}</div>
           <div>{p?.perTax || ''}%</div>
           <div>₹{calculateNetRate(p?.basePrice, p?.perTax)}</div>
+          <div>{FormatDate(p?.date) || ""}</div>
           <div className="status">
             <span className={`status-badge ${p?.status === 'Active' ? 'active' : 'inactive'}`}>
               {p?.status || ''}
