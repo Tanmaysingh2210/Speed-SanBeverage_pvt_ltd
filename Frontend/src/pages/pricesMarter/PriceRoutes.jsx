@@ -11,7 +11,7 @@ const PriceRoutes = () => {
                 <div className="options">
                     <ul>
                         <li><NavLink to={`/prices/latest`} className={({ isActive }) => (isActive ? 'active' : '')}>Latest Price</NavLink></li>
-                        <li><NavLink to={`/prices/browse`} className={({ isActive }) => (isActive ? 'active' : '')}>Browse</NavLink></li>
+                        <li><NavLink to={`/prices/browse`} className={({ isActive }) => (isActive ? 'active' : '')}>Browse Price</NavLink></li>
                     </ul>
                 </div>
 
