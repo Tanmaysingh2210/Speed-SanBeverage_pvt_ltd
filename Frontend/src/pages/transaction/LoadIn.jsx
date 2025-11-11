@@ -22,8 +22,8 @@ const LoadIn = () => {
 
     const [newLoadItem, setNewLoadItem] = useState({
         itemcode: "",
-        Filled: 0,
-        Burst: 0
+        Filled: null,
+        Burst: null
     });
 
     const [newLoadIn, setNewLoadIn] = useState({
@@ -278,8 +278,8 @@ const LoadIn = () => {
 
 
 
-                            <button type="button" className="add-btn" onKeyDown={(e) => handleKeyNav(e, "add")} onClick={handleAddItem} ref={addRef} >
-                                ➕ Add Item
+                            <button type="button" className="add-btn add-btn-load-in" onKeyDown={(e) => handleKeyNav(e, "add")} onClick={handleAddItem} ref={addRef} >
+                               ➕ Add 
                             </button>
                         </div>
                         {/* <div className="form-group">
