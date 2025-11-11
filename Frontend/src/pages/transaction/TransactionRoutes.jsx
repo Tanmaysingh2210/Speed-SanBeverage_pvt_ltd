@@ -5,6 +5,7 @@ import { Routes, Route, Link, NavLink, Navigate } from 'react-router-dom';
 import LoadOut from './LoadOut';
 import LoadIn from './LoadIn';
 import Credit from './Credit';
+import S_Sheet from './S_Sheet';
 
 
 const Transaction = () => {
@@ -25,9 +26,10 @@ const Transaction = () => {
 
                 <Routes>
                     <Route index element={<Navigate to="load-out" replace />} />
-                    <Route path="load-out" element={<LoadOut />}></Route>
-                    <Route path="load-in" element={<LoadIn />} />                
-                    <Route path="cash-credit" element={<Credit />}></Route>
+                    <Route path="load-out" element={<LoadOut />} />
+                    <Route path="load-in" element={<LoadIn />} />
+                    <Route path="cash-credit" element={<Credit />} />
+                    <Route path="s-sheet" element={<S_Sheet />} />
                 </Routes>
             </div>
         </>
