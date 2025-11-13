@@ -1,15 +1,16 @@
 const mongoose = require('mongoose');
 
 const cash_creditSchema = new mongoose.Schema({
-    CRNo: {type:Number,
-        required:true
+    crNo: {
+        type: Number,
+        required: true
     },
-    SalesmanCode: {type:String, required:true},
-    Trip: {type:Number, required:true},
-    Date:{type:Date,required:true},
-    Value: {type:Number, required:true},
-    Tax:{type:Number, required:true}
-
-},{timestamps:false})
+    salesmanCode: { type: String, required: true },
+    trip: { type: Number, required: true },
+    date: { type: Date, required: true },
+    value: { type: Number, required: true },
+    tax: { type: Number, required: true },
+    remark: { type: String }
+}, { timestamps: false })
 
 module.exports = mongoose.model('Transaction_cash_credit', cash_creditSchema);

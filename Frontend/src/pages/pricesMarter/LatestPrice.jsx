@@ -201,10 +201,10 @@ const LatestPrice = () => {
 
     // Safe filtered list
     const filtered = Array.isArray(prices)
-  ? prices
-      .filter(p => p?.status === "Active") //  Only show active prices
-      .filter(p => safeString(p?.name).toLowerCase().includes(safeString(search).toLowerCase()))
-  : [];
+        ? prices
+            .filter(p => p?.status === "Active") //  Only show active prices
+            .filter(p => safeString(p?.name).toLowerCase().includes(safeString(search).toLowerCase()))
+        : [];
 
     return (
         <div className="price-container">
@@ -220,7 +220,7 @@ const LatestPrice = () => {
                 <button
                     className="price-add-btn"
                     disabled={loading}
-                        onClick={() => {
+                    onClick={() => {
                         setShowModal(true);
                         setEditId(null);
                         setNewPrice({
@@ -371,23 +371,23 @@ const LatestPrice = () => {
                                 />
                             </div>
 
-                                {editId && (
-                                    
-                            <div className="form-group">
-                                <label>Status</label>
-                                <select
-                                    ref={statusRef}
-                                    value={newPrice.status}
-                                    onChange={(e) =>
-                                        setNewPrice({ ...newPrice, status: e.target.value })
-                                    }
-                                    onKeyDown={(e) => handleKeyNav(e, "status")}
-                                >
-                                    <option value="Active">Active</option>
-                                    <option value="Inactive">Inactive</option>
-                                </select>
-                            </div>
-                                )}
+                            {editId && (
+
+                                <div className="form-group">
+                                    <label>Status</label>
+                                    <select
+                                        ref={statusRef}
+                                        value={newPrice.status}
+                                        onChange={(e) =>
+                                            setNewPrice({ ...newPrice, status: e.target.value })
+                                        }
+                                        onKeyDown={(e) => handleKeyNav(e, "status")}
+                                    >
+                                        <option value="Active">Active</option>
+                                        <option value="Inactive">Inactive</option>
+                                    </select>
+                                </div>
+                            )}
 
                             <div className="modal-buttons">
                                 <button

@@ -2,17 +2,18 @@ const CashCredit = require('../../models/transaction/CashCredit');
 
 exports.createCashCredit = async (req, res) => {
     try {
-        const { CRNo, Date, SalesmanCode, Trip, Value, Tax } = req.body;
+        const { crNo, date, salesmanCode, trip, value, tax, remark } = req.body;
 
-        if (!CRNo || !Date || !SalesmanCode || !Trip || !Value || !Tax) return res.status(400).json({ message: "All fields are required" });
+        if (!crNo || !date || !salesmanCode || !trip || !value || !tax) return res.status(400).json({ message: "All fields are required" });
 
         await CashCredit.create({
-            CRNo,
-            SalesmanCode,
-            Date,
-            Trip,
-            Value,
-            Tax
+            crNo,
+            salesmanCode,
+            date,
+            trip,
+            value,
+            tax,
+            remark
         });
 
         res.status(201).json({ message: "New Cash/Credit created sucessfully" });

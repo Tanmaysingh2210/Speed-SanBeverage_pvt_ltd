@@ -336,7 +336,7 @@ const LoadIn = () => {
 
                 </div>
             </div>
-            <button onClick={handleSubmit}>Submit</button>
+            <button className='trans-submit-btn' onClick={handleSubmit}>Submit</button>
         </div>
     )
 }
