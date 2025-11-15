@@ -43,22 +43,152 @@ const PurchaseEntry = () => {
                         </div>
                     </form>
 
-                </div>
-                <div className="item-inputs">
-                    <div></div>
-                    <div className="flex">
-                        <div className="form-group">
-                            <label>Sale</label>
-                            <input
-                                type="number"
-                                placeholder="Enter Sale Price"
-                            />
+                    <div className="item-inputs ">
+
+                        <div className="flex name-address">
+                        
+                            <div className="form-group name-address-box">
+                                <label>Name & Address</label>
+                                <input
+                                    type="text"
+                                    placeholder="Enter Name and Address"
+                                />
+                            </div>
                         </div>
+                        <div className="flex">
+                            <div className="form-group">
+                                <label>Vehicle no.</label>
+                                <input
+                                    type="text"
+                                    placeholder="Enter vehicle no."
+                                />
+                            </div>
+
+                            <div className="form-group">
+                                <label>VNO DT.</label>
+                                <input
+                                    type="date"
+                                />
+                            </div>
+
+                            <div className="form-group">
+                                <label>VNO.</label>
+                                <input
+                                    type="text"
+                                    placeholder="Enter "
+                                />
+                            </div>
+                        </div>
+
+                        <div className="flex">
+                            <div className="form-group">
+                                <label>BILL</label>
+                                <input
+                                    type="text"
+                                    placeholder="Enter "
+                                />
+                            </div>
+
+                            <div className="form-group">
+                                <label>ERC</label>
+                                <input
+                                    type="text"
+                                    placeholder="Enter"
+                                />
+                            </div>
+
+                            <div className="form-group">
+                                <label>FRC</label>
+                                <input
+                                    type="text"
+                                    placeholder="Enter"
+                                />
+                            </div>
+                        </div>
+                        
 
                     </div>
 
                 </div>
 
+
+
+                <div className="trans-bottom">
+                     <div className="flex">
+                            <div className="form-group">
+                                <label>Value</label>
+                                <input
+                                    type="number"
+                                    placeholder="Enter "
+                                />
+                            </div>
+
+                            <div className="form-group">
+                                <label>DISC</label>
+                                <input
+                                    type="text"
+                                    placeholder="Enter"
+                                />
+                            </div>
+
+                            <div className="form-group">
+                                <label>TOTAL</label>
+                                <input
+                                    type="text"
+                                    placeholder="Enter"
+                                />
+                            </div>
+                        </div>
+                        
+                        <div className="flex">
+                            <div className="form-group">
+                                <label>%VAT</label>
+                                <input
+                                    type="number"
+                                    placeholder="Enter "
+                                />
+                            </div>
+
+                            <div className="form-group">
+                                <label>VAT</label>
+                                <input
+                                    type="number"
+                                    placeholder="Enter"
+                                />
+                            </div>
+
+                            <div className="form-group">
+                                <label>NETAMT</label>
+                                <input
+                                    type="text"
+                                    placeholder="Enter"
+                                />
+                            </div>
+                        </div>
+                        
+                     <div className="flex">
+                            <div className="form-group purchase-agst">
+                                <label>PURCHASE AGST</label>
+                                <input
+                                    type="number"
+                                    placeholder="Enter "
+                                />
+                            </div>
+
+                            
+
+                            <div className="form-group form-issue">
+                                <label>Form Issue</label>
+                                <input
+                                    type="text"
+                                    placeholder="Enter"
+                                />
+                            </div>
+                        </div>
+                        
+
+
+                </div>
 
             </div>
 

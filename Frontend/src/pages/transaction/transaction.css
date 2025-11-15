@@ -31,6 +31,25 @@
 
 }
 
+.name-address{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+}
+.name-address-box{
+  width:30vw;
+}
+.form-issue{
+  width:30vw;
+}
+.purchase-agst{
+  width:20vw;
+}
+
+.trans-bottom{
+  width:100%;
+}
+
 .trans-container {
   background: #fff;
   padding: 1.5rem;
@@ -40,7 +59,7 @@
   max-width: 1200px;
   margin: 40px auto;
   font-family: "Poppins", sans-serif;
-  overflow: hidden;
+  scrollbar-width:none;
 }
 
 .trans-left {
