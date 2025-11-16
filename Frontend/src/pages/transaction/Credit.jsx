@@ -3,7 +3,7 @@ import toast from 'react-hot-toast';
 import { useTransaction } from '../../context/TransactionContext';
 import { useSKU } from '../../context/SKUContext';
 import { useSalesman } from '../../context/SalesmanContext';
-import "./credit.css";
+import "./transaction.css";
 
 const Credit = () => {
 
@@ -17,6 +17,7 @@ const Credit = () => {
         trip: 1,
         value: null,
         tax: null,
+        cashDeposited: null,
         chequeDeposited: null,
         ref: null,
         remark: ""
@@ -29,6 +30,7 @@ const Credit = () => {
     const taxref = useRef(null);
     const remarkRef = useRef(null);
     const submitRef = useRef(null);
+    const cashRef = useRef(null);
     const defRef = useRef(null);
     const chequeRef = useRef(null);
 
@@ -46,6 +48,7 @@ const Credit = () => {
             value: Number(newCredit.value),
             tax: Number(newCredit.tax),
             ref: Number(newCredit.ref) || 0,
+            cashDeposited: Number(newCredit.cashDeposited),
             chequeDeposited: Number(newCredit.chequeDeposited) || 0,
             remark: newCredit.remark || ""
         }
@@ -59,6 +62,7 @@ const Credit = () => {
                 trip: 1,
                 value: null,
                 tax: null,
+                cashDeposited: null,
                 chequeDeposited: null,
                 ref: null,
                 remark: ""
@@ -103,6 +107,9 @@ const Credit = () => {
                     defRef.current?.focus();
                     break;
                 case "ref":
+                    cashRef.current?.focus();
+                    break;
+                case "cash":
                     chequeRef.current?.focus();
                     break;
                 case "cheque":
@@ -136,8 +143,11 @@ const Credit = () => {
                 case "ref":
                     remarkRef.current?.focus();
                     break;
-                case "cheque":
+                case "cash":
                     defRef.current?.focus();
+                    break;
+                case "cheque":
+                    cashRef.current?.focus();
                     break;
                 case "save":
                     chequeRef.current?.focus();
@@ -275,6 +285,17 @@ const Credit = () => {
                                 placeholder="DEP/REF"
                                 onChange={(e) => setNewCredit({ ...newCredit, ref: e.target.value })}
                                 onKeyDown={(e) => handleKeyNav(e, "ref")}
+                            />
+                        </div>
+                        <div className="form-group">
+                            <label>CASH DEPOSITED</label>
+                            <input
+                                type="number"
+                                ref={cashRef}
+                                value={newCredit.cashDeposited || ""}
+                                placeholder="Cash deposited"
+                                onChange={(e) => setNewCredit({ ...newCredit, cashDeposited: e.target.value })}
+                                onKeyDown={(e) => handleKeyNav(e, "cash")}
                             />
                         </div>
                         <div className="form-group">
