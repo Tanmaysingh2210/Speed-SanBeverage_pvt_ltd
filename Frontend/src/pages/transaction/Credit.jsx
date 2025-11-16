@@ -3,7 +3,7 @@ import toast from 'react-hot-toast';
 import { useTransaction } from '../../context/TransactionContext';
 import { useSKU } from '../../context/SKUContext';
 import { useSalesman } from '../../context/SalesmanContext';
-import "./transaction.css";
+import "./credit.css";
 
 const Credit = () => {
 
@@ -17,6 +17,8 @@ const Credit = () => {
         trip: 1,
         value: null,
         tax: null,
+        chequeDeposited: null,
+        ref: null,
         remark: ""
     });
 
@@ -27,15 +29,15 @@ const Credit = () => {
     const taxref = useRef(null);
     const remarkRef = useRef(null);
     const submitRef = useRef(null);
+    const defRef = useRef(null);
+    const chequeRef = useRef(null);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
         if (!newCredit.salesmanCode || !newCredit.trip || !newCredit.date || !newCredit.tax || !newCredit.value) {
             toast.error("Fill all fields properly");
             return;
         }
-
         const payload = {
             crNo: Number(newCredit.crNo),
             salesmanCode: newCredit.salesmanCode,
@@ -43,9 +45,10 @@ const Credit = () => {
             trip: Number(newCredit.trip),
             value: Number(newCredit.value),
             tax: Number(newCredit.tax),
+            ref: Number(newCredit.ref) || 0,
+            chequeDeposited: Number(newCredit.chequeDeposited) || 0,
             remark: newCredit.remark || ""
         }
-
         try {
             await addCash_credit(payload);
 
@@ -56,9 +59,10 @@ const Credit = () => {
                 trip: 1,
                 value: null,
                 tax: null,
+                chequeDeposited: null,
+                ref: null,
                 remark: ""
             });
-
         } catch (err) {
             console.error(err.response.data.message || "Error adding Cash/Credit");
         }
@@ -96,6 +100,12 @@ const Credit = () => {
                     remarkRef.current?.focus();
                     break;
                 case "remark":
+                    defRef.current?.focus();
+                    break;
+                case "ref":
+                    chequeRef.current?.focus();
+                    break;
+                case "cheque":
                     if (e.key === "Enter") {
                         submitRef.current?.click();
                     } else {
@@ -123,8 +133,14 @@ const Credit = () => {
                 case "remark":
                     taxref.current?.focus();
                     break;
-                case "save":
+                case "ref":
                     remarkRef.current?.focus();
+                    break;
+                case "cheque":
+                    defRef.current?.focus();
+                    break;
+                case "save":
+                    chequeRef.current?.focus();
                     break;
                 default:
                     break;
@@ -144,20 +160,20 @@ const Credit = () => {
                         <div className="form-group">
                             <label>Cash/Credit</label>
                             <select
-                                value={newCredit.crNo}
+                                value={newCredit.crNo || ""}
                                 onChange={(e) => setNewCredit({ ...newCredit, crNo: Number(e.target.value) })}
                             >
                                 <option value={1}>cash</option>
                                 <option value={2}>credit</option>
                             </select>
                         </div>
-                        <div className="form-group">
+                        <div className="form-group date-input">
                             <label>Date</label>
                             <input
                                 type="date"
                                 ref={dateRef}
                                 value={newCredit.date}
-                                onChange={(e)=> setNewCredit({...newCredit , date: e.target.value})}
+                                onChange={(e) => setNewCredit({ ...newCredit, date: e.target.value })}
                                 onKeyDown={(e) => handleKeyNav(e, "date")}
                             />
                         </div>
@@ -168,7 +184,7 @@ const Credit = () => {
                                 placeholder="Enter Salesman Code"
                                 ref={codeRef}
                                 value={newCredit.salesmanCode}
-                                onChange={(e)=> setNewCredit({...newCredit, salesmanCode:e.target.value})}
+                                onChange={(e) => setNewCredit({ ...newCredit, salesmanCode: e.target.value })}
                                 onKeyDown={(e) => handleKeyNav(e, "code")}
                             />
                         </div>
@@ -193,7 +209,7 @@ const Credit = () => {
 
                     </form>
 
-                    <div className="item-inputs">
+                    <div className="item-inputs middle-inputs">
                         <div className="form-group">
                             <label>Trip</label>
                             <input
@@ -201,7 +217,7 @@ const Credit = () => {
                                 ref={tripRef}
                                 placeholder="Enter Trip no."
                                 value={newCredit.trip}
-                                onChange={(e)=> setNewCredit({...newCredit, trip:e.target.value})}
+                                onChange={(e) => setNewCredit({ ...newCredit, trip: e.target.value })}
                                 onKeyDown={(e) => handleKeyNav(e, "trip")}
                             />
                         </div>
@@ -212,7 +228,7 @@ const Credit = () => {
                                 ref={valueRef}
                                 value={newCredit.value || ""}
                                 placeholder="Enter Value"
-                                onChange={(e)=> setNewCredit({...newCredit, value:e.target.value})}
+                                onChange={(e) => setNewCredit({ ...newCredit, value: e.target.value })}
                                 onKeyDown={(e) => handleKeyNav(e, "value")}
                             />
                         </div>
@@ -223,7 +239,7 @@ const Credit = () => {
                                 ref={taxref}
                                 value={newCredit.tax || ""}
                                 placeholder="% Tax"
-                                onChange={(e)=> setNewCredit({...newCredit, tax:e.target.value})}
+                                onChange={(e) => setNewCredit({ ...newCredit, tax: e.target.value })}
                                 onKeyDown={(e) => handleKeyNav(e, "tax")}
                             />
                         </div>
@@ -236,14 +252,40 @@ const Credit = () => {
                                 style={{ backgroundColor: "#f5f5f5" }}
                             />
                         </div>
-                        <div className="form-group">
+                        <div className="form-group expand-grp" >
                             <label>Remark</label>
                             <input
                                 type="text"
                                 value={newCredit.remark || ""}
-                                onChange={(e)=> setNewCredit({...newCredit, remark:e.target.value})}
+                                onChange={(e) => setNewCredit({ ...newCredit, remark: e.target.value })}
                                 ref={remarkRef}
                                 onKeyDown={(e) => handleKeyNav(e, "remark")}
+                            />
+                        </div>
+
+                    </div>
+
+                    <div className="item-inputs">
+                        <div className="form-group">
+                            <label>DEP/REF</label>
+                            <input
+                                type="number"
+                                ref={defRef}
+                                value={newCredit.ref || ""}
+                                placeholder="DEP/REF"
+                                onChange={(e) => setNewCredit({ ...newCredit, ref: e.target.value })}
+                                onKeyDown={(e) => handleKeyNav(e, "ref")}
+                            />
+                        </div>
+                        <div className="form-group">
+                            <label>CHEQUE DEPOSITED</label>
+                            <input
+                                type="number"
+                                ref={chequeRef}
+                                value={newCredit.chequeDeposited || ""}
+                                placeholder="Cheque deposited"
+                                onChange={(e) => setNewCredit({ ...newCredit, chequeDeposited: e.target.value })}
+                                onKeyDown={(e) => handleKeyNav(e, "cheque")}
                             />
                         </div>
                     </div>
