@@ -10,6 +10,7 @@ const itemRoutes = require('./routes/itemRoutes');
 const salesmanRoutes = require('./routes/salesmanRoute.js')
 const ratesRoutes=require('./routes/ratesRoutes.js')
 const transactionRoutes=require('./routes/transactionRoutes.js')
+const purchaseRoutes=require('./routes/purchaseRoutes/purchaseRoutes.js')
 
 connectDB();
 const app = express();
@@ -39,6 +40,7 @@ app.use('/item', itemRoutes);
 app.use('/salesman', salesmanRoutes);
 app.use('/rates', ratesRoutes);
 app.use('/transaction' , transactionRoutes)
+app.use('/purchase' , purchaseRoutes)
 
 
 const port = 3000;

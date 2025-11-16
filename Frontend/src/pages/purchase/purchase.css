@@ -1,0 +1,272 @@
+/* Purchase Entry Specific CSS */
+
+.purchase-entry-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 20px 0;
+  overflow-x: hidden;
+}
+
+.purchase-entry-container {
+  background: #fff;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+  width: 90%;
+  max-width: 1200px;
+  margin: 20px auto;
+  font-family: "Poppins", sans-serif;
+  max-height: calc(100vh - 300px);
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: none; /* Firefox */
+  padding-bottom: 3rem;
+}
+
+.purchase-entry-container::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Edge */
+}
+
+.purchase-entry-top {
+  display: flex;
+  gap: 3vw;
+  margin-bottom: 20px;
+}
+
+.purchase-entry-left-section {
+  width: 30%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.purchase-entry-right-section {
+  width: 70%;
+  display: flex;
+  flex-direction: column;
+}
+
+.purchase-entry-bottom {
+  width: 100%;
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 2px solid #e5e7eb;
+}
+
+.purchase-entry-row {
+  display: flex;
+  gap: 2vw;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.purchase-entry-full-width {
+  width: 100%;
+}
+
+.purchase-form-group {
+  margin-bottom: 8px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+}
+
+.purchase-form-group label {
+    overflow-y: hidden;
+  margin-bottom: 6px;
+  font-weight: 500;
+  font-size: 14px;
+  color: #374151;
+}
+
+.purchase-form-group input,
+.purchase-form-group select {
+  padding: 10px 12px;
+  border-radius: 6px;
+  border: 1px solid #d1d5db;
+  font-size: 14px;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  background-color: #fff !important;
+  width: 100%;
+  color: #374151 !important;
+  position: relative;
+  z-index: 1;
+}
+
+.purchase-form-group input:not([type="date"]) {
+  color: #374151 !important;
+}
+
+/* Number input arrows visible */
+.purchase-form-group input[type="number"]::-webkit-inner-spin-button,
+.purchase-form-group input[type="number"]::-webkit-outer-spin-button {
+  opacity: 1;
+}
+
+.purchase-form-group input:focus,
+.purchase-form-group select:focus {
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.purchase-form-group input:read-only {
+  background-color: #f3f4f6;
+  cursor: not-allowed;
+  color: #6b7280;
+}
+
+.purchase-form-group input::placeholder {
+  color: #9ca3af !important;
+  opacity: 1;
+}
+
+/* Date input styling - ONLY for date fields */
+.purchase-form-group input[type="date"] {
+  position: relative;
+}
+
+.purchase-form-group input[type="date"]::-webkit-inner-spin-button,
+.purchase-form-group input[type="date"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  display: none;
+  margin: 0;
+}
+
+.purchase-form-group input[type="date"]::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+}
+
+.purchase-form-group input[type="date"]::-webkit-datetime-edit-text,
+.purchase-form-group input[type="date"]::-webkit-datetime-edit-month-field,
+.purchase-form-group input[type="date"]::-webkit-datetime-edit-day-field,
+.purchase-form-group input[type="date"]::-webkit-datetime-edit-year-field {
+  color: transparent;
+}
+
+.purchase-form-group input[type="date"]:focus::-webkit-datetime-edit-text,
+.purchase-form-group input[type="date"]:focus::-webkit-datetime-edit-month-field,
+.purchase-form-group input[type="date"]:focus::-webkit-datetime-edit-day-field,
+.purchase-form-group input[type="date"]:focus::-webkit-datetime-edit-year-field,
+.purchase-form-group input[type="date"]:valid::-webkit-datetime-edit-text,
+.purchase-form-group input[type="date"]:valid::-webkit-datetime-edit-month-field,
+.purchase-form-group input[type="date"]:valid::-webkit-datetime-edit-day-field,
+.purchase-form-group input[type="date"]:valid::-webkit-datetime-edit-year-field {
+  color: #374151;
+}
+
+/* Width modifiers */
+.purchase-form-group-half {
+  width: 48%;
+  flex: none;
+}
+
+/* Button Container */
+.purchase-button-container {
+  width: 90%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 25px 0;
+  display: flex;
+  justify-content: center;
+  position: sticky;
+  bottom: 10px;
+  background: transparent;
+  z-index: 10;
+  overflow-y: hidden;
+}
+
+/* Submit Button */
+.purchase-submit-button {
+  padding: 12px 40px;
+  background-color: #14b886;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(20, 184, 134, 0.4);
+  min-width: 200px;
+  white-space: nowrap;
+  overflow: hidden;
+  height: 41px;
+}
+
+.purchase-submit-button:hover {
+  background-color: #0f9b6e;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(20, 184, 134, 0.5);
+}
+
+.purchase-submit-button:active {
+  transform: translateY(0);
+}
+
+.purchase-submit-button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .purchase-entry-top {
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .purchase-entry-left-section,
+  .purchase-entry-right-section {
+    width: 100%;
+  }
+}
+
+@media (max-width: 768px) {
+  .purchase-entry-container {
+    width: 95%;
+    padding: 1.5rem;
+  }
+
+  .purchase-entry-row {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .purchase-form-group {
+    width: 100%;
+  }
+
+  .purchase-form-group-half {
+    width: 100%;
+  }
+
+  .purchase-submit-button {
+    width: 100%;
+  }
+}
+
+@media (max-width: 600px) {
+  .purchase-entry-container {
+    width: 100%;
+    border-radius: 0;
+    padding: 1rem;
+  }
+
+  .purchase-form-group input,
+  .purchase-form-group select {
+    font-size: 13px;
+    padding: 8px 10px;
+  }
+
+  .purchase-submit-button {
+    padding: 10px 20px;
+    font-size: 14px;
+  }
+}

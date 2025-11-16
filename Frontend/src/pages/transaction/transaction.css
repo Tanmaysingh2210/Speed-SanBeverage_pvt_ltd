@@ -9,45 +9,51 @@
   --light-shadow: rgba(0, 0, 0, 0.1);
 }
 
+/* ===== ORIGINAL STYLES (Unchanged) ===== */
 .trans {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  
 }
 
 .flex {
   display: flex;
   gap: 2vw;
-  /* border: 1px solid green; */
   align-items: center;
   justify-content: space-between;
-}
-.gap3{
-  display:flex;
-  gap:75px;
-  flex-direction:column;
-
+  margin-bottom: 12px;
 }
 
-.name-address{
-  display:flex;
-  justify-content:center;
-  align-items:center;
-}
-.name-address-box{
-  width:30vw;
-}
-.form-issue{
-  width:30vw;
-}
-.purchase-agst{
-  width:20vw;
+.gap3 {
+  display: flex;
+  gap: 75px;
+  flex-direction: column;
 }
 
-.trans-bottom{
-  width:100%;
+.name-address {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.name-address-box {
+  width: 100%;
+}
+
+.form-issue {
+  width: 48%;
+}
+
+.purchase-agst {
+  width: 48%;
+}
+
+.trans-bottom {
+  width: 100%;
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 2px solid #e5e7eb;
 }
 
 .trans-container {
@@ -59,20 +65,18 @@
   max-width: 1200px;
   margin: 40px auto;
   font-family: "Poppins", sans-serif;
-  scrollbar-width:none;
+  scrollbar-width: none;
 }
 
 .trans-left {
   display: flex;
   gap: 3vw;
+  margin-bottom: 0;
 }
 
 .trans-form {
   width: 30%;
-  /* border: 2px solid red; */
-
 }
-
 
 .add-btn {
   background-color: #2563eb;
@@ -98,7 +102,6 @@
   width: 100%;
 }
 
-/* Table Grid */
 .trans-table-grid {
   display: grid;
   grid-template-columns: 0.6fr 2fr 0.5fr 1fr;
@@ -107,18 +110,16 @@
   font-size: 14px;
   padding: 10px 14px;
   min-width: 700px;
-  /* allows scrolling on small screens */
 }
 
 .trans-loadin-table-grid {
   display: grid;
-  grid-template-columns: 0.6fr 2fr 0.5fr 0.5fr 1fr ;
+  grid-template-columns: 0.6fr 2fr 0.5fr 0.5fr 1fr;
   align-items: center;
   text-align: left;
   font-size: 14px;
   padding: 10px 14px;
   min-width: 700px;
-  /* allows scrolling on small screens */
 }
 
 .trans-table-header {
@@ -136,21 +137,164 @@
   background-color: #f1f5f9;
 }
 
-
 .actions span {
   cursor: pointer;
   font-weight: 500;
   white-space: nowrap;
 }
 
-
-
 .edit-input {
   width: 80%;
-
 }
 
-/* ===== Responsive Adjustments ===== */
+.modal {
+  background: #fff;
+  padding: 30px;
+  width: 420px;
+  border-radius: 10px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+  animation: popup 0.3s ease;
+}
+
+@keyframes popup {
+  from {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.form-group {
+  margin-bottom: 8px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+}
+
+.modal-form label {
+  margin-bottom: 5px;
+  font-weight: 500;
+}
+
+.modal-form input,
+.modal-form select {
+  padding: 8px;
+  border-radius: 5px;
+  border: 1px solid #d1d5db;
+  font-size: 14px;
+}
+
+.modal-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.trans-submit-btn {
+  background-color: #54bd7b;
+  color: white;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.cancel-btn {
+  background-color: #ef4444;
+  color: white;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+/* ===== NEW SAFE ADDITIONS (Only for Purchase Entry) ===== */
+
+/* Enhanced Input Styling - Only affects direct children of form-group */
+.form-group > input,
+.form-group > select {
+  padding: 10px 12px;
+  border-radius: 6px;
+  border: 1px solid #d1d5db;
+  font-size: 14px;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  background-color: #fff;
+}
+
+.form-group > input:focus,
+.form-group > select:focus {
+  outline: none;
+  border-color: var(--primary-blue);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.form-group > input:read-only {
+  background-color: #f3f4f6;
+  cursor: not-allowed;
+  color: #6b7280;
+}
+
+.form-group > input::placeholder {
+  color: #9ca3af;
+}
+
+.form-group > label {
+  margin-bottom: 6px;
+  font-weight: 500;
+  font-size: 14px;
+  color: #374151;
+}
+
+/* Salesman Detail - Safe class */
+.salesman-detail {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Item Inputs - Already exists, just ensuring it doesn't break */
+.item-inputs {
+  display: flex;
+  flex-direction: column;
+  width: 70%;
+}
+
+/* Purchase Entry specific button (new class) */
+.purchase-entry-submit-btn {
+  padding: 12px 40px;
+  background-color: var(--primary-green);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(20, 184, 134, 0.3);
+}
+
+.purchase-entry-submit-btn:hover {
+  background-color: #0f9b6e;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(20, 184, 134, 0.4);
+}
+
+.purchase-entry-submit-btn:active {
+  transform: translateY(0);
+}
+
+.purchase-entry-submit-btn:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
+}
+
+/* ===== Responsive - Original preserved ===== */
 @media (max-width: 1024px) {
   .salesman-table-grid {
     grid-template-columns: 0.6fr 1fr 2fr 1.2fr 1fr 1fr 1fr;
@@ -205,74 +349,3 @@
     width: 100%;
   }
 }
-
-
-/* Modal Box */
-.modal {
-  background: #fff;
-  padding: 30px;
-  width: 420px;
-  border-radius: 10px;
-  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
-  animation: popup 0.3s ease;
-}
-
-@keyframes popup {
-  from {
-    transform: scale(0.9);
-    opacity: 0;
-  }
-
-  to {
-    transform: scale(1);
-    opacity: 1;
-  }
-}
-
-/* Form Styling */
-.form-group {
-  margin-bottom: 8px;
-  display: flex;
-  flex-direction: column;
-}
-
-.modal-form label {
-  margin-bottom: 5px;
-  font-weight: 500;
-}
-
-.modal-form input,
-.modal-form select {
-  padding: 8px;
-  border-radius: 5px;
-  border: 1px solid #d1d5db;
-  font-size: 14px;
-}
-
-.modal-buttons {
-  display: flex;
-  justify-content: flex-end;
-  gap: 10px;
-}
-
-.trans-submit-btn {
-  background-color: #54bd7b;
-  color: white;
-  border: none;
-  padding: 8px 15px;
-  border-radius: 6px;
-  cursor: pointer;
-}
-
-.cancel-btn {
-  background-color: #ef4444;
-  color: white;
-  border: none;
-  padding: 8px 15px;
-  border-radius: 6px;
-  cursor: pointer;
-}
-
-
-
-

@@ -10,7 +10,7 @@ const Purchase = () =>{
                             <h2>Purchase</h2>
                             <div className="options">
                                 <ul>
-                                    <li><NavLink to={`/purchase/purchaseEntry`} className={({ isActive }) => (isActive ? 'active' : '')}> Purcahse-Entry</NavLink></li>
+                                    <li><NavLink to={`/purchase/purchaseEntry`} className={({ isActive }) => (isActive ? 'active' : '')}> Purchase-Entry</NavLink></li>
                                     
                                 </ul>
                             </div>

@@ -8,6 +8,7 @@ import { SKUProvider } from './context/SKUContext.jsx';
 import { SalesmanProvider } from './context/SalesmanContext.jsx';
 import { PricesProvider } from './context/PricesContext.jsx';
 import { TransactionProvider } from './context/TransactionContext.jsx';
+import { PurchaseProvider } from './context/PurchaseContext.jsx';
 
 createRoot(document.getElementById('root')).render(
   <React.StrictMode>
@@ -15,11 +16,13 @@ createRoot(document.getElementById('root')).render(
       <SKUProvider>
         <PricesProvider>
           <SalesmanProvider>
+              <PurchaseProvider>
             <TransactionProvider>
               <AuthProvider>
                 <App />
               </AuthProvider>
             </TransactionProvider>
+              </PurchaseProvider>
           </SalesmanProvider>
         </PricesProvider>
       </SKUProvider>
