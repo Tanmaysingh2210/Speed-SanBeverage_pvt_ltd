@@ -17,7 +17,7 @@ const Sku = () => {
                        
                         <ul>
                             <li><NavLink to={`/sku/container`} className={({ isActive }) => (isActive ? 'active' : '')}>Container</NavLink></li>
-                            <li><NavLink to={`/sku/package`} className={({ isActive }) => (isActive ? 'active' : '')}>Packaging</NavLink></li>
+                            <li><NavLink to={`/sku/package`} className={({ isActive }) => (isActive ? 'active' : '')}>Package</NavLink></li>
                             <li><NavLink to={`/sku/flavour`} className={({ isActive }) => (isActive ? 'active' : '')}>Flavour</NavLink></li>
                             <li><NavLink to={`/sku/item`} className={({ isActive }) => (isActive ? 'active' : '')}>Item Master</NavLink></li>
                         </ul>

@@ -49,10 +49,14 @@ const LatestPrice = () => {
     }, [showModal]);
 
     // Auto update name when code changes
-    const matchedItem = Array.isArray(items)
-        ? items.find((sm) => String(sm.code || '').toUpperCase() === String(newPrice.code || '').toUpperCase())
-        : null;
-
+    const matchedItem =
+        Array.isArray(items)
+            ? items.find(
+                (sm) =>
+                    String(sm.code || sm.itemCode || '').toUpperCase() ===
+                    String(newPrice.code || '').toUpperCase()
+            )
+            : null;
 
 
     const handleKeyNav = (e, currentField) => {
@@ -257,39 +261,37 @@ const LatestPrice = () => {
                     <div className="no-data">No prices found</div>
                 )}
 
-                {filtered.map((p, i) => (
-                    <div key={p?._id || i} className="price-row">
-                        <div>{i + 1}</div>
-                        <div>{p?.itemCode?.toUpperCase() || ''}</div>
-                        <div>{matchedItem ? matchedItem.name : ''}</div>
-                        <div>{p?.basePrice || ''}</div>
-                        <div>{p?.perDisc || ''}%</div>
-                        <div>{p?.perTax || ''}%</div>
-                        <div>{calculateNetRate(p?.basePrice, p?.perTax, p?.perDisc)}</div>
-                        <div>{formatDate(p?.date) || ''}</div>
+                {filtered.map((p, i) => {
+                    const rowItem = Array.isArray(items)
+                        ? items.find((it) =>
+                            String(it.code || it.itemCode || "").toUpperCase() ===
+                            String(p.itemCode || "").toUpperCase()
+                        )
+                        : null;
 
-                        <div className="status">
-                            <span
-                                className={`status-badge ${p?.status === "Active" ? "active" : "inactive"
-                                    }`}
-                            >
-                                {p?.status || ''}
-                            </span>
+                    return (
+                        <div key={p?._id || i} className="price-row">
+                            <div>{i + 1}</div>
+                            <div>{p?.itemCode?.toUpperCase() || ''}</div>
+                            <div>{rowItem?.name || ''}</div>
+                            <div>{p?.basePrice || ''}</div>
+                            <div>{p?.perDisc || ''}%</div>
+                            <div>{p?.perTax || ''}%</div>
+                            <div>{calculateNetRate(p?.basePrice, p?.perTax, p?.perDisc)}</div>
+                            <div>{formatDate(p?.date) || ''}</div>
+                            <div className="status">
+                                <span className={`status-badge ${p?.status === "Active" ? "active" : "inactive"}`}>
+                                    {p?.status || ''}
+                                </span>
+                            </div>
+                            <div className="actions">
+                                <span className="edit" onClick={() => handleEdit(p)}>Edit</span>
+                                {" | "}
+                                <span className="delete" onClick={() => handleDelete(p._id)}>Delete</span>
+                            </div>
                         </div>
-                        <div className="actions">
-                            <span className="edit" onClick={() => handleEdit(p)}>
-                                Edit
-                            </span>{" "}
-                            |{" "}
-                            <span
-                                className="delete"
-                                onClick={() => handleDelete(p._id)}
-                            >
-                                Delete
-                            </span>
-                        </div>
-                    </div>
-                ))}
+                    );
+                })}
             </div>
 
             {/* Modal */}
@@ -316,7 +318,7 @@ const LatestPrice = () => {
                                 <label>Item Name</label>
                                 <input
                                     type="text"
-                                    value={newPrice.name}
+                                    value={matchedItem?.name || ""}
                                     readOnly
                                     style={{ backgroundColor: "#f5f5f5" }}
                                 />
