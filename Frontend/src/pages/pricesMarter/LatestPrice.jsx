@@ -14,10 +14,10 @@ const LatestPrice = () => {
     const [search, setSearch] = useState("");
     const [newPrice, setNewPrice] = useState({
         code: "",
-        name: "",
         basePrice: "",
         perTax: "",
         date: "",
+        perDisc: "",
         status: "Active",
     });
 
@@ -27,11 +27,13 @@ const LatestPrice = () => {
     const dateRef = useRef(null);
     const statusRef = useRef(null);
     const saveRef = useRef(null);
+    const discRef = useRef(null);
     const modalRef = useRef(null);
 
-    const calculateNetRate = (basePrice, perTax) => {
+    const calculateNetRate = (basePrice, perTax, perDisc) => {
         if (!basePrice || !perTax) return '';
-        return (parseFloat(basePrice) + (parseFloat(basePrice) * parseFloat(perTax) / 100)).toFixed(2)
+        let taxablePrice = (parseFloat(basePrice) - (parseFloat(basePrice) * parseFloat(perDisc) / 100)).toFixed(2);
+        return (parseFloat(taxablePrice) + (parseFloat(taxablePrice) * parseFloat(perTax) / 100)).toFixed(2);
     };
 
     useEffect(() => {
@@ -47,22 +49,11 @@ const LatestPrice = () => {
     }, [showModal]);
 
     // Auto update name when code changes
-    useEffect(() => {
-        const found = items.find(
-            (item) => item.code.toUpperCase() === newPrice.code.toUpperCase()
-        );
-        if (found) {
-            setNewPrice((prev) => ({
-                ...prev,
-                name: found.name,
-            }));
-        } else if (newPrice.code) {
-            setNewPrice((prev) => ({
-                ...prev,
-                name: "",
-            }));
-        }
-    }, [newPrice.code, items]);
+    const matchedItem = Array.isArray(items)
+        ? items.find((sm) => String(sm.code || '').toUpperCase() === String(newPrice.code || '').toUpperCase())
+        : null;
+
+
 
     const handleKeyNav = (e, currentField) => {
         if (["ArrowRight", "ArrowDown", "Enter"].includes(e.key)) {
@@ -78,6 +69,9 @@ const LatestPrice = () => {
                     baseRef.current?.focus();
                     break;
                 case "basePrice":
+                    discRef.current?.focus();
+                    break;
+                case "disc":
                     taxRef.current?.focus();
                     break;
                 case "perTax":
@@ -99,8 +93,11 @@ const LatestPrice = () => {
                 case "basePrice":
                     codeRef.current?.focus();
                     break;
-                case "perTax":
+                case "disc":
                     baseRef.current?.focus();
+                    break;
+                case "perTax":
+                    discRef.current?.focus();
                     break;
                 case "date":
                     taxRef.current?.focus();
@@ -149,6 +146,7 @@ const LatestPrice = () => {
             name: newPrice.name,
             basePrice: Number(newPrice.basePrice),
             perTax: Number(newPrice.perTax),
+            perDisc: Number(newPrice.perDisc),
             date: newPrice.date, // backend expects `date` (lowercase)
             status: editId ? newPrice.status : "Active", //  Force Active for new prices
         };
@@ -247,6 +245,7 @@ const LatestPrice = () => {
                     <div>CODE</div>
                     <div>NAME</div>
                     <div>BASE PRICE</div>
+                    <div>% DISC</div>
                     <div>% TAX</div>
                     <div>NET RATE</div>
                     <div>DATE</div>
@@ -262,10 +261,11 @@ const LatestPrice = () => {
                     <div key={p?._id || i} className="price-row">
                         <div>{i + 1}</div>
                         <div>{p?.itemCode?.toUpperCase() || ''}</div>
-                        <div>{p?.name?.toUpperCase() || ''}</div>
+                        <div>{matchedItem ? matchedItem.name : ''}</div>
                         <div>{p?.basePrice || ''}</div>
+                        <div>{p?.perDisc || ''}%</div>
                         <div>{p?.perTax || ''}%</div>
-                        <div>{calculateNetRate(p?.basePrice, p?.perTax)}</div>
+                        <div>{calculateNetRate(p?.basePrice, p?.perTax, p?.perDisc)}</div>
                         <div>{formatDate(p?.date) || ''}</div>
 
                         <div className="status">
@@ -336,6 +336,19 @@ const LatestPrice = () => {
                             </div>
 
                             <div className="form-group">
+                                <label>% Disc</label>
+                                <input
+                                    ref={discRef}
+                                    type="number"
+                                    value={newPrice.perDisc}
+                                    onChange={(e) =>
+                                        setNewPrice({ ...newPrice, perDisc: e.target.value })
+                                    }
+                                    onKeyDown={(e) => handleKeyNav(e, "disc")}
+                                />
+                            </div>
+
+                            <div className="form-group">
                                 <label>% Tax</label>
                                 <input
                                     ref={taxRef}
@@ -365,7 +378,7 @@ const LatestPrice = () => {
                                 <label>Net Rate</label>
                                 <input
                                     type="text"
-                                    value={calculateNetRate(newPrice.basePrice, newPrice.perTax)}
+                                    value={calculateNetRate(newPrice.basePrice, newPrice.perTax, newPrice.perDisc)}
                                     readOnly
                                     style={{ backgroundColor: "#f5f5f5" }}
                                 />

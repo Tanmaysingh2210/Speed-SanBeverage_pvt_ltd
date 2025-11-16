@@ -2,9 +2,9 @@ const Rate = require('../../models/rates.js')
 
 exports.addRate = async (req, res) => {
     try {
-        const { code, basePrice, perTax, date, name, netRate, status } = req.body;
+        const { code, basePrice, perTax, date, perDisc, status } = req.body;
 
-        if (!code || !basePrice || !perTax || !date) {
+        if (!code || !basePrice || !perTax || !date || !perDisc) {
             return res.status(400).json({ message: "All fields are required" });
         }
 
@@ -28,9 +28,9 @@ exports.addRate = async (req, res) => {
         // Create new price as Active
         const created = await Rate.create({
             itemCode: code,
-            name,
             basePrice,
             perTax,
+            perDisc,
             date,
             status: "Active", // Always Active for new prices
         });

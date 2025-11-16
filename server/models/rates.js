@@ -1,10 +1,10 @@
-const mongoose = require("mongoose")
+const mongoose = require("mongoose");
 
 const ratesSchema = new mongoose.Schema({
     itemCode: { type: String, required: true },
-    name: { type: String },
     basePrice: { type: Number, required: true },
     perTax: { type: Number, required: true },
+    perDisc: { type: Number },
     date: { type: Date, required: true },
     status: { type: String, default: 'Active' }
 

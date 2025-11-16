@@ -245,6 +245,7 @@ useEffect(() => {
         <div>CODE</div>
         <div>NAME</div>
         <div>BASE PRICE</div>
+        <div>% DISC</div>
         <div>% TAX</div>
         <div>NET RATE</div>
         <div>DATE</div>
@@ -271,6 +272,7 @@ useEffect(() => {
           <div>{p?.itemCode?.toUpperCase() || ''}</div>
           <div>{p?.name?.toUpperCase() || ''}</div>
           <div>₹{p?.basePrice || ''}</div>
+          <div>{p?.perDisc || ''}%</div>
           <div>{p?.perTax || ''}%</div>
           <div>₹{calculateNetRate(p?.basePrice, p?.perTax)}</div>
           <div>{FormatDate(p?.date) || ""}</div>
