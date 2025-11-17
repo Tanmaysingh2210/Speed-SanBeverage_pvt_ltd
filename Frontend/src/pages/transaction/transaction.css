@@ -63,9 +63,10 @@
   box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
   width: 90%;
   max-width: 1200px;
-  margin: 40px auto;
+  margin: 32px auto;
   font-family: "Poppins", sans-serif;
   scrollbar-width: none;
+  overflow: hidden;
 }
 
 .trans-left {
@@ -171,7 +172,7 @@
   margin-bottom: 8px;
   display: flex;
   flex-direction: column;
-  flex: 1;
+  /* flex: 1; */
   min-width: 0;
 }
 
@@ -199,6 +200,7 @@
   color: white;
   border: none;
   padding: 8px 15px;
+  overflow: hidden;
   border-radius: 6px;
   cursor: pointer;
 }
@@ -260,7 +262,6 @@
 .item-inputs {
   display: flex;
   flex-direction: column;
-  width: 70%;
 }
 
 /* Purchase Entry specific button (new class) */
