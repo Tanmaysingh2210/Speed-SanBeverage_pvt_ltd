@@ -1,13 +1,121 @@
 import React from 'react'
 import { useState, useEffect, useRef } from 'react'
 import "./transaction.css";
+import { useTransaction } from '../../context/TransactionContext';
+import { useSalesman } from '../../context/SalesmanContext';
 
 const S_Sheet = () => {
 
+  const { getSettlement, loading } = useTransaction();
+  const { salesmans } = useSalesman();
+
+  const [sheetData, setSheetData] = useState(null);
 
   const codeRef = useRef(null);
   const dateRef = useRef(null);
   const tripRef = useRef(null);
+  const findRef = useRef(null);
+
+  const [sheet, setSheet] = useState({
+    salesmanCode: "",
+    date: "",
+    trip: null
+  });
+
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+
+  //   if (!sheet.salesmanCode || !sheet.trip || !sheet.date) {
+  //     toast.error("Fill all fields properly");
+  //     return;
+  //   }
+
+  //   try {
+  //     await getPriceByDate(sheet.code, sheet.date);
+
+  //   } catch (err) {
+
+  //   }
+  // };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!sheet.salesmanCode || !sheet.trip || !sheet.date) {
+      toast.error("Fill all fields properly");
+      return;
+    }
+
+    try {
+      const data = await getSettlement({
+        salesmanCode: sheet.salesmanCode,
+        date: sheet.date,
+        trip: sheet.trip,
+      });
+
+      setSheetData(data); // store settlement details in UI
+
+      setSheet({
+        salesmanCode: "",
+        date: "",
+        trip: null
+      });
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const calculateTotalA = (sale, ref) => {
+    if (!sale || !ref) return;
+    return sale - ref;
+  }
+
+  const handleKeyNav = (e, currentField) => {
+    if (["ArrowRight", "ArrowDown", "Enter"].includes(e.key)) {
+      e.preventDefault();
+      if (e.key === "Enter" && currentField === "find") {
+        findRef.current?.click();
+        return;
+      }
+      switch (currentField) {
+        case "code":
+          dateRef.current?.focus();
+          break;
+        case "date":
+          tripRef.current?.focus();
+          break;
+        case "trip":
+          if (e.key === "Enter") {
+            findRef.current?.click();
+          } else {
+            findRef.current?.focus();
+          }
+          break;
+        default:
+          break;
+      }
+    } else if (["ArrowUp", "ArrowLeft"].includes(e.key)) {
+      e.preventDefault();
+      switch (currentField) {
+        case "date":
+          codeRef.current?.focus();
+          break;
+        case "trip":
+          dateRef.current?.focus();
+          break;
+        case "find":
+          tripRef.current?.focus();
+          break;
+        default:
+          break;
+      }
+    }
+  };
+
+
+  const matchedSalesman = Array.isArray(salesmans)
+    ? salesmans.find((sm) => String(sm.codeNo || sm.code || '').toUpperCase() === String(sheet.salesmanCode || sheetData?.salesmanCode || '').toUpperCase())
+    : null;
 
 
   return (
@@ -21,6 +129,9 @@ const S_Sheet = () => {
                 <input
                   type="text"
                   placeholder='Enter Salesman code'
+                  value={sheet.salesmanCode || sheetData?.salesmanCode || ""}
+                  onChange={(e) => setSheet({ ...sheet, salesmanCode: e.target.value })}
+                  onKeyDown={(e) => handleKeyNav(e, "code")}
                   ref={codeRef}
                 />
               </div>
@@ -29,6 +140,7 @@ const S_Sheet = () => {
                 <input
                   readOnly
                   type="text"
+                  value={matchedSalesman ? matchedSalesman.name : ""}
                   style={{ backgroundColor: "#f5f5f5" }}
                 />
               </div>
@@ -37,6 +149,7 @@ const S_Sheet = () => {
                 <input
                   readOnly
                   type="number"
+                  value={matchedSalesman ? matchedSalesman.routeNo : ""}
                   style={{ backgroundColor: "#f5f5f5" }}
                 />
               </div>
@@ -44,6 +157,9 @@ const S_Sheet = () => {
                 <label>Date</label>
                 <input
                   type="date"
+                  value={sheet.date || sheetData?.date || ""}
+                  onChange={(e) => setSheet({ ...sheet, date: e.target.value })}
+                  onKeyDown={(e) => handleKeyNav(e, "date")}
                   ref={dateRef}
                 />
               </div>
@@ -51,120 +167,163 @@ const S_Sheet = () => {
                 <label>Trip No.</label>
                 <input
                   type="number"
+                  value={sheet.trip || sheetData?.trip || ""}
+                  onChange={(e) => setSheet({ ...sheet, trip: e.target.value })}
                   ref={tripRef}
+                  onKeyDown={(e) => handleKeyNav(e, "trip")}
                   placeholder='Enter trip no.'
                 />
               </div>
             </div>
           </form>
-        
-        <div className="item-inputs gap3">
+
+          <div className="item-inputs gap3">
             <div className="gap1">
-            <div className="flex">
-              <div className="form-group">
-                <label>Sale</label>
-                <input 
-                   type="number"
-                   placeholder="Enter Sale Price"
-                />
+              <div className="flex">
+                <div className="form-group">
+                  <label>Sale</label>
+                  <input
+                    readOnly
+                    value={sheetData?.totals?.totalSale || ""}
+                    type="number"
+                    placeholder="Enter Sale Price"
+                  />
+                </div>
+                <div className="form-group">
+                  <label>DEP/REF</label>
+                  <input
+                    readOnly
+                    value={sheetData?.cashCreditDetails?.ref || ""}
+                    type="number"
+                    placeholder="Enter"
+                  />
+                </div>
+                <div className="form-group">
+                  <label>TOTAL A</label>
+                  <input
+                    readOnly
+                    value={calculateTotalA(sheetData?.totals?.totalSale, sheetData?.cashCreditDetails?.ref) || ""}
+                    type="number"
+                    placeholder="Enter"
+                  />
+                </div>
               </div>
-              <div className="form-group">
-                <label>DEP/REF</label>
-                <input 
-                   type="number"
-                   placeholder="Enter"
-                />
-              </div>
-               <div className="form-group">
-                <label>TOTAL A</label>
-                <input 
-                   type="number"
-                   placeholder="Enter"
-                />
+              <div className="flex">
+                <div className="form-group">
+                  <label>SMP,DSC,INCM,SCME</label>
+                  <input
+                    readOnly
+                    type="number"
+                    value={sheetData?.totals?.totalDiscount || ""}
+                    placeholder="Enter"
+                  />
+                </div>
+
+                {/* <div className="form-group">
+                  <label>OTHERS</label>
+                  <input
+                    type="number"
+                    placeholder="Enter"
+                  />
+                </div> */}
+
+
+                <div className="form-group">
+                  <label>TOTAL B</label>
+                  <input
+                    readOnly
+                    type="number"
+                    value={sheetData?.totals?.totalDiscount || ""}
+                    placeholder="Enter"
+                  />
+                </div>
               </div>
             </div>
-            <div className="flex">
-               <div className="form-group">
-                <label>SMP,DSC,INCM,SCME</label>
-                <input 
-                   type="number"
-                   placeholder="Enter"
-                />
+
+            <div className="gap2">
+              <div className="flex">
+                <div className="form-group">
+                  <label>Cash Sale</label>
+                  <input
+                    readOnly
+                    type="number"
+                    placeholder="Enter"
+                    value={
+                      sheetData?.cashCreditDetails?.ref ?
+                        (sheetData?.totals?.grandTotal - sheetData?.cashCreditDetails?.ref).toFixed(2) : ""}
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label>Net Collection</label>
+                  <input
+                    readOnly
+                    type="number"
+                    placeholder="Enter"
+                    value={sheetData?.totals?.grandTotal || ""}
+                  />
+                </div>
+                <div className="form-group">
+                  <label>Cheq.Desposited</label>
+                  <input
+                    readOnly
+                    type="number"
+                    value={(sheetData?.cashCreditDetails?.chequeDeposited) || ""}
+                    placeholder="Enter"
+                  />
+                </div>
               </div>
+              <div className="flex">
+                <div className="form-group">
+                  <label>Cash Short</label>
+                  <input
+                    readOnly
+                    type="number"
+                    value={
+                      (sheetData?.totals?.shortOrExcess < 0) ?
+                        -(sheetData?.totals?.shortOrExcess) : ""}
+                    placeholder="Enter"
+                  />
+                </div>
+                <div className="form-group">
+                  <label>Short/Excess</label>
+                  <input
+                    readOnly
+                    type="number"
+                    className={sheetData?.totals?.shortOrExcess > 0 ? "excess" : "short"}
+                    style={{
+                      color: sheetData?.totals?.shortOrExcess > 0 ? 'green' :
+                        sheetData?.totals?.shortOrExcess < 0 ? 'red' : 'black'
+                    }}
+                    value={(sheetData?.totals?.shortOrExcess) || ""}
+                    placeholder="Enter"
+                  />
+                </div>
+                <div className="form-group">
+                  <label>Cash Deposited</label>
+                  <input
+                    readOnly
+                    type="number"
+                    value={(sheetData?.cashCreditDetails?.cashDeposited) || ""}
+                    placeholder="Enter"
+                  />
+                </div>
 
-              <div className="form-group">
-                <label>OTHERS</label>
-                <input 
-                   type="number"
-                   placeholder="Enter"
-                />
-              </div>
-
-
-              <div className="form-group">
-                <label>TOTAL B</label>
-                <input 
-                   type="number"
-                   placeholder="Enter"
-                />
               </div>
             </div>
-        </div>  
-
-          <div className="gap2">
-            <div className="flex">
-             <div className="form-group">
-                <label>Cash Sale</label>
-                <input 
-                   type="number"
-                   placeholder="Enter"
-                />
-              </div>
-              
-              <div className="form-group">
-                <label>Net Collection</label>
-                <input 
-                   type="number"
-                   placeholder="Enter"
-                />
-              </div>
-              <div className="form-group">
-                <label>Cheq.Desposited</label>
-                <input 
-                   type="number"
-                   placeholder="Enter"
-                />
-              </div>
-            </div> 
-            <div className="flex">
-              <div className="form-group">
-                <label>Cash Short</label>
-                <input 
-                   type="number"
-                   placeholder="Enter"
-                />
-              </div>
-              <div className="form-group">
-                <label>Short/Excess</label>
-                <input 
-                   type="number"
-                   placeholder="Enter"
-                />
-              </div>
-              <div className="form-group">
-                <label>Cash Deposited</label>
-                <input 
-                   type="number"
-                   placeholder="Enter"
-                />
-              </div>
-
-            </div>
-          </div>
 
           </div>
         </div>
       </div>
+      <button
+        className='trans-submit-btn'
+        ref={findRef}
+        onClick={handleSubmit}
+        onKeyDown={(e) => handleKeyNav(e, "find")}
+        disabled={loading}
+      >
+        {loading ? "Loading..." : "Find"}
+      </button>
     </div >
   )
 }

@@ -214,6 +214,14 @@
   cursor: pointer;
 }
 
+input.excess{
+  color: green;
+}
+
+input.short{
+  color: red;
+}
+
 /* ===== NEW SAFE ADDITIONS (Only for Purchase Entry) ===== */
 
 /* Enhanced Input Styling - Only affects direct children of form-group */

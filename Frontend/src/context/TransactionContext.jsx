@@ -202,6 +202,19 @@ export function TransactionProvider({ children }) {
         }
     };
 
+    const getSettlement = async (payload) => {
+        try {
+            setLoading(true);
+            const res = await api.post('/transaction/settlement', payload);
+            return res.data;
+        } catch (err) {
+            toast.error(err.response?.data?.message || "Error fetching settlement");
+            throw err;
+        } finally {
+            setLoading(false);
+        }
+    };
+
     useEffect(() => {
         getAllLoadout();
         getAllLoadin();
@@ -226,8 +239,9 @@ export function TransactionProvider({ children }) {
 
             addCash_credit,
             updateCash_credit,
-            deleteCash_credit
+            deleteCash_credit,
 
+            getSettlement,
 
         }} >
             {children}

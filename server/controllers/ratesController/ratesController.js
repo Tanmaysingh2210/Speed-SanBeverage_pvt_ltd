@@ -8,14 +8,14 @@ exports.addRate = async (req, res) => {
             return res.status(400).json({ message: "All fields are required" });
         }
 
-        const existing = await Rate.findOne({ 
-            itemCode: code, 
-            date: new Date(date).toISOString() 
+        const existing = await Rate.findOne({
+            itemCode: code,
+            date: new Date(date).toISOString()
         });
 
         if (existing) {
-            return res.status(400).json({ 
-                message: "Price of this item already exists at same date" 
+            return res.status(400).json({
+                message: "Price of this item already exists at same date"
             });
         }
 
@@ -35,19 +35,37 @@ exports.addRate = async (req, res) => {
             status: "Active", // Always Active for new prices
         });
 
-        return res.status(201).json({ 
-            message: "Rate added successfully and old prices marked inactive", 
-            rate: created 
+        return res.status(201).json({
+            message: "Rate added successfully and old prices marked inactive",
+            rate: created
         });
 
     } catch (err) {
         console.log("Error adding rate:", err.message);
-        res.status(500).json({ 
-            message: "Error adding rate", 
-            error: err.message 
+        res.status(500).json({
+            message: "Error adding rate",
+            error: err.message
         });
     }
 };
+
+
+exports.getLatestByDate = async (req, res) => {
+    try {
+        const { code, date } = req.query;
+
+        const price = await Rate.find({
+            code,
+            effectiveDate: { $lte: new Date(date) }
+        })
+            .sort({ effectiveDate: -1 })
+            .limit(1);
+
+        res.status(200).json(price[0]);
+    } catch (err) {
+        res.status(500).json({message: "Error fetching price", error:err.message});
+    }
+}
 
 
 // Get all rates

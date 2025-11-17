@@ -21,6 +21,20 @@ export function PricesProvider({ children }) {
         }
     };
 
+    const getPriceByDate = async (code , date) => {
+        try {
+            setLoading(true);
+            const res = await api.get(`/rates/price` , {
+                params: {code , date}
+            });
+            return res.data;
+        } catch (err) {
+            throw err.response?.data?.message || "Error fetching price";
+        }finally{
+            setLoading(false);
+        }
+    };
+
     const getPriceByID = async (id) => {
         try {
             setLoading(true);
@@ -81,7 +95,7 @@ export function PricesProvider({ children }) {
     }, []);
 
     return (
-        <PriceContext.Provider value={{ prices, loading, getAllPrices, updatePrice, getPriceByID, deletePrice, addPrice }} >{children}</PriceContext.Provider>
+        <PriceContext.Provider value={{ prices, loading, getAllPrices, updatePrice,getPriceByDate, getPriceByID, deletePrice, addPrice }} >{children}</PriceContext.Provider>
     );
 
 }

@@ -185,9 +185,7 @@ const BrowsePrice = () => {
 
   return (
     <div className="price-container">
-      {/* <h2>Browse Prices</h2> */}
 
-      {/* Search and Date Filter Header */}
       <div className="price-header">
         <input
           type="text"
