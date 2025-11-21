@@ -219,14 +219,6 @@ const S_Sheet = () => {
                   />
                 </div>
 
-                {/* <div className="form-group">
-                  <label>OTHERS</label>
-                  <input
-                    type="number"
-                    placeholder="Enter"
-                  />
-                </div> */}
-
 
                 <div className="form-group">
                   <label>TOTAL B</label>

@@ -169,6 +169,7 @@ const LatestPrice = () => {
                 code: "",
                 name: "",
                 basePrice: "",
+                perDisc: "",
                 perTax: "",
                 date: "",
                 netRate: "",
@@ -191,6 +192,7 @@ const LatestPrice = () => {
             code: price.itemCode || "",
             name: price.name || "",
             basePrice: price.basePrice || "",
+            perDisc: price.perDisc || "",
             perTax: price.perTax || "",
             date: price.date ? price.date.split("T")[0] : "",
             status: price.status || "Active"
@@ -230,6 +232,7 @@ const LatestPrice = () => {
                             name: "",
                             basePrice: "",
                             perTax: "",
+                            perDisc: "",
                             date: "",
                             netRate: "",
                             status: "Active",

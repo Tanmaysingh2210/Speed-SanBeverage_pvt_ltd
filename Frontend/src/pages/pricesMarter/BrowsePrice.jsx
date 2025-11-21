@@ -14,6 +14,7 @@ const BrowsePrice = () => {
     code: "",
     name: "",
     basePrice: "",
+    perDisc: "",
     perTax: "",
     date: "",
     status: "Active"
@@ -43,6 +44,7 @@ const BrowsePrice = () => {
   const baseRef = useRef(null)
   const taxRef = useRef(null)
   const dateRef = useRef(null)
+  const discRef = useRef(null);
   const statusRef = useRef(null)
   const saveRef = useRef(null)
 
@@ -60,6 +62,7 @@ const BrowsePrice = () => {
       code: price.itemCode || "",
       name: price.name || "",
       basePrice: price.basePrice || "",
+      perDisc: price.perDisc || "",
       perTax: price.perTax || "",
       date: price.date ? price.date.split("T")[0] : "",
       status: price.status || "Active"
@@ -91,6 +94,7 @@ const BrowsePrice = () => {
       name: editPrice.name,
       basePrice: Number(editPrice.basePrice),
       perTax: Number(editPrice.perTax),
+      perDisc: Number(editPrice.perDisc),
       date: editPrice.date,
       status: editPrice.status,
     };
@@ -108,6 +112,7 @@ const BrowsePrice = () => {
         code: "",
         name: "",
         basePrice: "",
+        perDisc: "",
         perTax: "",
         date: "",
         status: "Active",
@@ -139,12 +144,18 @@ const BrowsePrice = () => {
     return `${day}-${Month}-${Year}`
   }
 
-  const calculateNetRate = (basePrice, perTax) => {
-    if (!basePrice || !perTax) return "";
-    const base = parseFloat(basePrice);
-    const tax = parseFloat(perTax);
-    return (base + (base * tax / 100)).toFixed(2)
-  }
+  // const calculateNetRate = (basePrice, perTax) => {
+  //   if (!basePrice || !perTax) return "";
+  //   const base = parseFloat(basePrice);
+  //   const tax = parseFloat(perTax);
+  //   return (base + (base * tax / 100)).toFixed(2)
+  // }
+
+  const calculateNetRate = (basePrice, perTax, perDisc) => {
+    if (!basePrice || !perTax) return '';
+    let taxablePrice = (parseFloat(basePrice) - (parseFloat(basePrice) * parseFloat(perDisc) / 100)).toFixed(2);
+    return (parseFloat(taxablePrice) + (parseFloat(taxablePrice) * parseFloat(perTax) / 100)).toFixed(2);
+  };
 
   const safeString = (v) => {
     return (v == null || v == undefined) ? '' : String(v)
@@ -181,6 +192,56 @@ const BrowsePrice = () => {
     (sm) => String(sm.code || '').toUpperCase() === String(editPrice.code || '').toUpperCase()
   ) : null;
 
+
+  const handleKeyNav = (e, currentField) => {
+    if (["ArrowRight", "ArrowDown", "Enter"].includes(e.key)) {
+      e.preventDefault();
+
+      if (e.key === "Enter" && currentField === "save") {
+        saveRef.current?.click();
+        return;
+      }
+
+      switch (currentField) {
+        case "basePrice":
+          discRef.current?.focus();
+          break;
+        case "disc":
+          taxRef.current?.focus();
+          break;
+        case "perTax":
+          dateRef.current?.focus();
+          break;
+        case "date":
+          if (e.key === "Enter") {
+            saveRef.current?.click();
+          } else {
+            saveRef.current?.focus();
+          }
+          break;
+        default:
+          break;
+      }
+    } else if (["ArrowUp", "ArrowLeft"].includes(e.key)) {
+      e.preventDefault();
+      switch (currentField) {
+        case "disc":
+          baseRef.current?.focus();
+          break;
+        case "perTax":
+          discRef.current?.focus();
+          break;
+        case "date":
+          taxRef.current?.focus();
+          break;
+        case "save":
+          dateRef.current?.focus();
+          break;
+        default:
+          break;
+      }
+    }
+  };
 
 
   return (
@@ -276,7 +337,7 @@ const BrowsePrice = () => {
               <div>₹{p?.basePrice || ''}</div>
               <div>{p?.perDisc || ''}%</div>
               <div>{p?.perTax || ''}%</div>
-              <div>₹{calculateNetRate(p?.basePrice, p?.perTax)}</div>
+              <div>₹{calculateNetRate(p?.basePrice, p?.perTax, p?.perDisc)}</div>
               <div>{FormatDate(p?.date) || ""}</div>
               <div className="status">
                 <span className={`status-badge ${p?.status === 'Active' ? 'active' : 'inactive'}`}>
@@ -331,6 +392,18 @@ const BrowsePrice = () => {
                 type="number"
                 value={editPrice.basePrice}
                 onChange={(e) => setEditPrice({ ...editPrice, basePrice: e.target.value })}
+                onKeyDown={(e) => handleKeyNav(e, "basePrice")}
+              />
+            </div>
+
+            <div className="form-group">
+              <label>% Disc</label>
+              <input
+                ref={discRef}
+                onKeyDown={(e) => handleKeyNav(e, "disc")}
+                type="number"
+                value={editPrice.perDisc}
+                onChange={(e) => setEditPrice({ ...editPrice, perDisc: e.target.value })}
               />
             </div>
 
@@ -338,6 +411,7 @@ const BrowsePrice = () => {
               <label>% Tax</label>
               <input
                 ref={taxRef}
+                onKeyDown={(e) => handleKeyNav(e, "perTax")}
                 type="number"
                 value={editPrice.perTax}
                 onChange={(e) => setEditPrice({ ...editPrice, perTax: e.target.value })}
@@ -348,6 +422,7 @@ const BrowsePrice = () => {
               <label>Date</label>
               <input
                 ref={dateRef}
+                onKeyDown={(e) => handleKeyNav(e, "date")}
                 type="date"
                 value={editPrice.date}
                 onChange={(e) => setEditPrice({ ...editPrice, date: e.target.value })}
@@ -358,7 +433,7 @@ const BrowsePrice = () => {
               <label>Net Rate</label>
               <input
                 type="text"
-                value={calculateNetRate(editPrice.basePrice, editPrice.perTax)}
+                value={calculateNetRate(editPrice.basePrice, editPrice.perTax, editPrice.perDisc)}
                 readOnly
                 style={{ backgroundColor: '#f5f5f5' }}
               />
@@ -379,6 +454,8 @@ const BrowsePrice = () => {
             <div className="modal-buttons">
               <button
                 ref={saveRef}
+                onKeyDown={(e) => handleKeyNav(e, "save")}
+
                 className="submit-btn"
                 onClick={handleSave}
                 disabled={loading}

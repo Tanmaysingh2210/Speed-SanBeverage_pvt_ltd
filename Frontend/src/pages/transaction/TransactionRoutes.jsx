@@ -6,6 +6,7 @@ import LoadOut from './LoadOut';
 import LoadIn from './LoadIn';
 import Credit from './Credit';
 import S_Sheet from './S_Sheet';
+import AllTransaction from './AllTransaction';
 
 
 const Transaction = () => {
@@ -26,6 +27,7 @@ const Transaction = () => {
 
                 <Routes>
                     <Route index element={<Navigate to="load-out" replace />} />
+                    <Route path='all-transaction' element={<AllTransaction />} />
                     <Route path="load-out" element={<LoadOut />} />
                     <Route path="load-in" element={<LoadIn />} />
                     <Route path="cash-credit" element={<Credit />} />
