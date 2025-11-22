@@ -33,7 +33,7 @@ export function TransactionProvider({ children }) {
             setLoadout(res.data);
             return res.data;
         } catch (err) {
-            toast.error(err.response?.data?.message || "Error adding loadout");
+            toast.error(err.response?.data?.message || "Error getting loadout");
             throw err;
         } finally {
             setLoading(false);
@@ -45,7 +45,7 @@ export function TransactionProvider({ children }) {
             setLoading(true);
             const res = await api.patch(`/transaction/loadout/update/${id}`, payload);
             toast.success(res.data.message || "loadout updated successfully");
-            await getAllLoadout();
+            // await getAllLoadout();
             return res.data;
 
         } catch (err) {
@@ -62,7 +62,7 @@ export function TransactionProvider({ children }) {
             setLoading(true);
             const res = await api.delete(`/transaction/loadout/delete/${id}`);
             toast.success(res.data.message || "loadout deleted successfully");
-            await getAllLoadout();
+            // await getAllLoadout();
             return res.data;
 
         } catch (err) {
@@ -91,7 +91,7 @@ export function TransactionProvider({ children }) {
             setLoading(true);
             const res = await api.post('/transaction/loadin/add', payload);
             toast.success(res.data.message || "loadin added successfully");
-            await getAllLoadin();
+            // await getAllLoadin();
             return res.data;
         } catch (err) {
             toast.error(err.response?.data?.message || "Error adding loadin");
@@ -120,7 +120,7 @@ export function TransactionProvider({ children }) {
             setLoading(true);
             const res = await api.patch(`/transaction/loadin/update/${id}`, payload);
             toast.success(res.data.message || "loadin updated successfully");
-            await getAllLoadin();
+            // await getAllLoadin();
             return res.data;
 
         } catch (err) {
@@ -136,7 +136,7 @@ export function TransactionProvider({ children }) {
             setLoading(true);
             const res = await api.delete(`/transaction/loadin/delete/${id}`);
             toast.success(res.data.message || "loadin deleted successfully");
-            await getAllLoadin();
+            // await getAllLoadin();
             return res.data;
 
         } catch (err) {
@@ -167,7 +167,7 @@ export function TransactionProvider({ children }) {
             toast.success(res.data.message || "cash/credit added sucessfully");
             return res.data;
         } catch (err) {
-            toast.error(err?.res?.data?.message || "Error adding cash/credit");
+            toast.error(err.response?.data?.message || "Error adding cash/credit");
             throw err;
         } finally {
             setLoading(false);
@@ -177,11 +177,11 @@ export function TransactionProvider({ children }) {
     const getCash_credit = async (payload) => { //to get one cash credit 
         try {
             setLoading(true);
-            const res = await api.post(`/transaction/cashcredit/`, payload);
+            const res = await api.post(`/transaction/cashcredit/getone`, payload);
             setCashCredit(res.data);
-            return res.date;
+            return res.data;
         } catch (err) {
-            toast.error(err?.res?.data?.message || "Error fetching cash/credit");
+            toast.error(err.response?.data?.message || "Error fetching cash/credit");
             throw err;
         } finally {
             setLoading(false);
@@ -195,7 +195,7 @@ export function TransactionProvider({ children }) {
             toast.success(res.data.message || "cash/credit updated sucessfully");
             return res.data;
         } catch (err) {
-            toast.error(err?.res?.data?.message || "Error updating cash/credit");
+            toast.error(err.response?.data?.message || "Error updating cash/credit");
             throw err;
         } finally {
             setLoading(false);
@@ -209,7 +209,7 @@ export function TransactionProvider({ children }) {
             toast.success(res.data.message || "cash/credit deleted sucessfully");
             return res.data;
         } catch (err) {
-            toast.error(err?.res?.data?.message || "Error deleting cash/credit");
+            toast.error(err.response?.data?.message || "Error deleting cash/credit");
             throw err;
         } finally {
             setLoading(false);
@@ -229,10 +229,14 @@ export function TransactionProvider({ children }) {
         }
     };
 
-    useEffect(() => {
-        getAllLoadout();
-        getAllLoadin();
-    }, []);
+    const FormatDate = (isodate) => {
+        if (!isodate) return ""
+        const date = new Date(isodate);
+        const day = String(date.getDate()).padStart(2, "0");
+        const Month = String(date.getMonth() + 1).padStart(2, "0");
+        const Year = date.getFullYear();
+        return `${day}-${Month}-${Year}`
+    }
 
     return (
         <TransationContext.Provider value={{
@@ -258,6 +262,8 @@ export function TransactionProvider({ children }) {
             deleteCash_credit,
 
             getSettlement,
+
+            FormatDate
 
         }} >
             {children}

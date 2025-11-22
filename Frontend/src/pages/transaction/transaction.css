@@ -270,6 +270,9 @@ input.short{
 }
 .set-margin{
   margin: 0  auto;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: none;
 }
 
 /* ===== NEW SAFE ADDITIONS (Only for Purchase Entry) ===== */

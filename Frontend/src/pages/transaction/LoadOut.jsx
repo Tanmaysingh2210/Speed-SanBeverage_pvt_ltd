@@ -295,12 +295,8 @@ const LoadOut = () => {
                             ) : (
                                 <div className="no-items">No Items added yet!</div>
                             )}
-
                         </div>
                     </div>
-                </div>
-                <div className="trans-table trans-grid">
-
                 </div>
             </div>
             <button onClick={handleSubmit} className='trans-submit-btn'>Submit</button>

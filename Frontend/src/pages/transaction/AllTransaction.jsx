@@ -1,76 +1,23 @@
 import React, { useRef, useState } from 'react'
 import "./transaction.css";
 import { useTransaction } from '../../context/TransactionContext';
+import { useSalesman } from '../../context/SalesmanContext';
 import toast from 'react-hot-toast';
 
 const AllTransaction = () => {
 
-  const { loadout, getLoadout, updateLoadout, deleteLoadout, loadin, getLoadIn, updateLoadIn, deleteLoadin, cashCredit, getCash_credit, updateCash_credit, deleteCash_credit, loading } = useTransaction();
-
+  const { FormatDate, loadout, getLoadout, updateLoadout, deleteLoadout, loadin, getLoadIn, updateLoadIn, deleteLoadin, cashCredit, getCash_credit, updateCash_credit, deleteCash_credit, loading } = useTransaction();
+  const { salesmans } = useSalesman();
 
   const [find, setFind] = useState({
-    type: "",
+    type: "all",
     salesmanCode: "",
     date: "",
-    trip: ""
+    trip: 1
   });
 
 
   const [transactions, setTransactions] = useState([
-    {
-      id: 1,
-      type: 'Load Out',
-      salesmanCode: 'SM001',
-      salesmanName: 'John Doe',
-      routeNo: 'R-101',
-      date: '2025-11-20',
-      trip: '1',
-      items: [
-        { code: 'P200', qty: 10 }
-      ]
-    },
-    {
-      id: 2,
-      type: 'Load In',
-      salesmanCode: 'SM001',
-      salesmanName: 'John Doe',
-      routeNo: 'R-101',
-      date: '2025-11-20',
-      trip: '1',
-      items: [
-        { code: 'ITEM001', filled: 8, burst: 2 }
-      ]
-    },
-    {
-      id: 3,
-      type: 'Cash/Credit',
-      salesmanCode: 'SM002',
-      salesmanName: 'Jane Smith',
-      routeNo: 'R-102',
-      date: '2025-11-19',
-      trip: '2',
-      cashCredit: 'cash',
-      depRef: 400,
-      value: 5000,
-      tax: 5,
-      netValue: 4750,
-      cashDeposited: 4750,
-      chequeDeposited: 0,
-      remark: 'Daily collection'
-    },
-    {
-      id: 4,
-      type: 'Load Out',
-      salesmanCode: 'SM003',
-      salesmanName: 'Mike Johnson',
-      routeNo: 'R-103',
-      date: '2025-11-21',
-      trip: '1',
-      items: [
-        { code: 'ITEM002', qty: 15 },
-        { code: 'ITEM003', qty: 8 }
-      ]
-    }
   ]);
 
   const dateRef = useRef(null);
@@ -121,15 +68,6 @@ const AllTransaction = () => {
     }
   };
 
-  const FormatDate = (isodate) => {
-    if (!isodate) return ""
-    const date = new Date(isodate);
-    const day = String(date.getDate()).padStart(2, "0");
-    const Month = String(date.getMonth() + 1).padStart(2, "0");
-    const Year = date.getFullYear();
-    return `${day}-${Month}-${Year}`
-  }
-
 
   const handleFind = async (e) => {
     e.preventDefault();
@@ -145,70 +83,625 @@ const AllTransaction = () => {
     };
 
     if (find.type === "all") {
+      // Fetch all three but don't fail the whole flow if one of them errors.
       try {
-        const loadoutData = await getLoadout(payload);
-        const loadinData = await getLoadIn(payload);
-        const cashCreditData = await getCash_credit(loadout);
+        const results = await Promise.allSettled([
+          getLoadout(payload),
+          getLoadIn(payload),
+          getCash_credit(payload),
+        ]);
+
+        const [loadoutRes, loadinRes, cashRes] = results;
 
         const newTransactions = [];
 
-        if(loadoutData) {
+        if (loadoutRes.status === 'fulfilled' && loadoutRes.value) {
+          newTransactions.push({ ...loadoutRes.value, type: 'Load Out', id: Date.now() + 1 });
+        } else if (loadoutRes.status === 'rejected') {
+          console.warn('Loadout fetch failed:', loadoutRes.reason);
+        }
+
+        if (loadinRes.status === 'fulfilled' && loadinRes.value) {
+          newTransactions.push({ ...loadinRes.value, type: 'Load In', id: Date.now() + 1 });
+        } else if (loadinRes.status === 'rejected') {
+          console.warn('Loadin fetch failed:', loadinRes.reason);
+        }
+
+        if (cashRes.status === 'fulfilled' && cashRes.value) {
+          newTransactions.push({ ...cashRes.value, type: 'Cash/Credit', id: Date.now() + 1 });
+        } else if (cashRes.status === 'rejected') {
+          console.warn('CashCredit fetch failed:', cashRes.reason);
+        }
+
+        if (newTransactions.length === 0) {
+          toast.error('No records found for the selected criteria');
+        } else {
+          setTransactions((prev) => [...prev, ...newTransactions]);
+        }
+
+        setFind({ salesmanCode: '', trip: 1, type: 'all', date: '' });
+      } catch (error) {
+        console.error('Unexpected error in all-fetch:', error);
+        toast.error('Error fetching records');
+      }
+    }
+    else if (find.type === "loadout") {
+      try {
+        const loadoutData = await getLoadout(payload);
+
+        const newTransactions = [];
+
+        if (loadoutData) {
           newTransactions.push({
             ...loadoutData,
-            type: "Load Out"
-          });
-        }
-
-        if(loadinData){
-          newTransactions.push({
-            ...loadinData,
-            type: "Load In"
-          });
-        }
-
-        if(cashCreditData){
-          newTransactions.push({
-            ...cashCreditData,
-            type: "Cash/Credit"
+            type: "Load Out",
+            id: Date.now() + 1
           });
         }
 
         setTransactions([...transactions, ...newTransactions]);
+
+        setFind({
+          salesmanCode: "",
+          trip: 1,
+          type: "all",
+          date: ""
+        })
+      } catch (error) {
+        console.error("Error fetching loadout");
+      }
+    }
+    else if (find.type === "loadin") {
+      try {
+        const loadinData = await getLoadIn(payload);
+
+        const newTransactions = [];
+
+        if (loadinData) {
+          newTransactions.push({
+            ...loadinData,
+            type: "Load In",
+            id: Date.now() + 1
+          });
+        }
+
+        setTransactions([...transactions, ...newTransactions]);
+
+        setFind({
+          salesmanCode: "",
+          trip: 1,
+          type: "all",
+          date: ""
+        })
+      } catch (error) {
+        console.error("Error fetching loadin");
+      }
+    }
+    else {
+      try {
+        const cashCreditData = await getCash_credit(payload);
+
+        const newTransactions = [];
+
+        if (cashCreditData) {
+          newTransactions.push({
+            ...cashCreditData,
+            type: "Cash/Credit",
+            id: Date.now() + 1
+          });
+        }
+
+        setTransactions([...transactions, ...newTransactions]);
+
+        setFind({
+          salesmanCode: "",
+          trip: 1,
+          type: "all",
+          date: ""
+        })
       } catch (error) {
         console.error("Error fetching data");
       }
     }
-
-
-  }
-
-
+  };
 
 
 
   const renderDetails = (transaction) => {
-    if (transaction.type === 'Load Out' || transaction.type === 'Load In') {
+    if (transaction.type === 'Load Out') {
       return (
         <div style={{ fontSize: '14px' }}>
-          {transaction.items.map((item, idx) => (
+          {transaction.items?.map((item, idx) => (
             <div key={idx} style={{ color: '#666', marginBottom: '4px' }}>
-              {item.code}: {item.name}
-              {transaction.type === 'Load Out' ? ` (Qty: ${item.qty})` : ` (F: ${item.filled}, B: ${item.burst})`}
+              {item.itemCode?.toUpperCase()}: Qty {item.qty}
+            </div>
+          ))}
+        </div>
+      );
+    } else if (transaction.type === 'Load In') {
+      return (
+        <div style={{ fontSize: '14px' }}>
+          {transaction.items?.map((item, idx) => (
+            <div key={idx} style={{ color: '#666', marginBottom: '4px' }}>
+              {item.itemCode?.toUpperCase()}: Filled {item.Filled}, Burst {item.Burst}
             </div>
           ))}
         </div>
       );
     } else if (transaction.type === 'Cash/Credit') {
+      const netValue = transaction.value - transaction.tax - transaction.ref;
       return (
         <div style={{ fontSize: '14px', color: '#666' }}>
-          <div>{transaction.cashCredit.toUpperCase()}</div>
+          <div>CR No: {transaction.crNo}</div>
           <div>Value: ₹{transaction.value}</div>
-          <div>Net: ₹{transaction.netValue}</div>
+          <div>Tax: ₹{transaction.tax} | Ref: ₹{transaction.ref}</div>
+          <div>Net: ₹{netValue}</div>
+          <div>Cash: ₹{transaction.cashDeposited} | Cheque: ₹{transaction.chequeDeposited}</div>
+          {transaction.remark && <div>Remark: {transaction.remark}</div>}
         </div>
       );
     }
   };
 
+  const renderCashCredit = () => {
+    return (
+      <>
+        <div className="trans-container">
+          <div className="trans-left">
+            <form className="trans-form">
+              <div className="form-group">
+                <label>Cash/Credit</label>
+                <select
+                  value={newCredit.crNo || ""}
+                  onChange={(e) => setNewCredit({ ...newCredit, crNo: Number(e.target.value) })}
+                >
+                  <option value={1}>cash</option>
+                  <option value={2}>credit</option>
+                </select>
+              </div>
+              <div className="form-group date-input">
+                <label>Date</label>
+                <input
+                  type="date"
+                  ref={dateRef}
+                  value={newCredit.date}
+                  onChange={(e) => setNewCredit({ ...newCredit, date: e.target.value })}
+                  onKeyDown={(e) => handleKeyNav(e, "date")}
+                />
+              </div>
+              <div className="form-group">
+                <label>Salesman Code</label>
+                <input
+                  type="text"
+                  placeholder="Enter Salesman Code"
+                  ref={codeRef}
+                  value={newCredit.salesmanCode}
+                  onChange={(e) => setNewCredit({ ...newCredit, salesmanCode: e.target.value })}
+                  onKeyDown={(e) => handleKeyNav(e, "code")}
+                />
+              </div>
+              <div className="form-group">
+                <label>Salesman Name</label>
+                <input
+                  readOnly
+                  type="text"
+                  value={matchedSalesman ? matchedSalesman.name : ""}
+                  style={{ backgroundColor: "#f5f5f5" }}
+                />
+              </div>
+              <div className="form-group">
+                <label>Route No.</label>
+                <input
+                  readOnly
+                  type="number"
+                  value={matchedSalesman ? matchedSalesman.routeNo : ""}
+                  style={{ backgroundColor: "#f5f5f5" }}
+                />
+              </div>
+
+            </form>
+
+            <div className="item-inputs middle-inputs">
+              <div className="form-group">
+                <label>Trip</label>
+                <input
+                  type="number"
+                  ref={tripRef}
+                  placeholder="Enter Trip no."
+                  value={newCredit.trip}
+                  onChange={(e) => setNewCredit({ ...newCredit, trip: e.target.value })}
+                  onKeyDown={(e) => handleKeyNav(e, "trip")}
+                />
+              </div>
+              <div className="form-group">
+                <label>Value</label>
+                <input
+                  type="number"
+                  ref={valueRef}
+                  value={newCredit.value || ""}
+                  placeholder="Enter Value"
+                  onChange={(e) => setNewCredit({ ...newCredit, value: e.target.value })}
+                  onKeyDown={(e) => handleKeyNav(e, "value")}
+                />
+              </div>
+              <div className="form-group">
+                <label>Tax</label>
+                <input
+                  type="number"
+                  ref={taxref}
+                  value={newCredit.tax || ""}
+                  placeholder="% Tax"
+                  onChange={(e) => setNewCredit({ ...newCredit, tax: e.target.value })}
+                  onKeyDown={(e) => handleKeyNav(e, "tax")}
+                />
+              </div>
+              <div className="form-group">
+                <label>Net Value</label>
+                <input
+                  readOnly
+                  type="number"
+                  value={calculateNetValue(newCredit?.value, newCredit?.tax)}
+                  style={{ backgroundColor: "#f5f5f5" }}
+                />
+              </div>
+              <div className="form-group expand-grp" >
+                <label>Remark</label>
+                <input
+                  type="text"
+                  value={newCredit.remark || ""}
+                  onChange={(e) => setNewCredit({ ...newCredit, remark: e.target.value })}
+                  ref={remarkRef}
+                  onKeyDown={(e) => handleKeyNav(e, "remark")}
+                />
+              </div>
+            </div>
+
+            <div className="item-inputs">
+              <div className="form-group">
+                <label>DEP/REF</label>
+                <input
+                  type="number"
+                  ref={defRef}
+                  value={newCredit.ref || ""}
+                  placeholder="DEP/REF"
+                  onChange={(e) => setNewCredit({ ...newCredit, ref: e.target.value })}
+                  onKeyDown={(e) => handleKeyNav(e, "ref")}
+                />
+              </div>
+              <div className="form-group">
+                <label>CASH DEPOSITED</label>
+                <input
+                  type="number"
+                  ref={cashRef}
+                  value={newCredit.cashDeposited || ""}
+                  placeholder="Cash deposited"
+                  onChange={(e) => setNewCredit({ ...newCredit, cashDeposited: e.target.value })}
+                  onKeyDown={(e) => handleKeyNav(e, "cash")}
+                />
+              </div>
+              <div className="form-group">
+                <label>CHEQUE DEPOSITED</label>
+                <input
+                  type="number"
+                  ref={chequeRef}
+                  value={newCredit.chequeDeposited || ""}
+                  placeholder="Cheque deposited"
+                  onChange={(e) => setNewCredit({ ...newCredit, chequeDeposited: e.target.value })}
+                  onKeyDown={(e) => handleKeyNav(e, "cheque")}
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <button
+          className='trans-submit-btn'
+          ref={submitRef}
+          onClick={handleSubmit}
+          onKeyDown={(e) => handleKeyNav(e, "save")}
+          disabled={loading}
+        >
+          {loading ? "Loading..." : "Submit"}
+        </button>
+
+      </>
+    )
+  };
+
+  const renderLoadOut = () => {
+    return (
+      <>
+        <div className='trans-container'>
+          <div className="trans-left">
+            <form className='trans-form' >
+              <div className="salesman-detail">
+                <div className="form-group">
+                  <label>Salesman Code</label>
+                  <input
+                    type="text"
+                    placeholder="Enter Salesman code"
+                    value={newLoadOut.salesmanCode}
+                    onChange={(e) =>
+                      setNewLoadOut({ ...newLoadOut, salesmanCode: e.target.value })
+                    }
+                    ref={modalCodeRef}
+                    onKeyDown={(e) => handleKeyNav(e, "code")}
+                  />
+                </div>
+                <div className="form-group">
+                  <label>Salesman Name</label>
+                  <input
+                    readOnly
+                    type="text"
+                    value={matchedSalesman ? matchedSalesman.name : ""}
+                    style={{ backgroundColor: "#f5f5f5" }}
+                  />
+                </div>
+                <div className="form-group">
+                  <label>Route No.</label>
+                  <input
+                    readOnly
+                    type="number"
+                    value={matchedSalesman ? matchedSalesman.routeNo : ""}
+                    style={{ backgroundColor: "#f5f5f5" }}
+                  />
+                </div>
+                <div className="form-group">
+                  <label>Date</label>
+                  <input
+                    type="date"
+                    value={newLoadOut.date}
+                    onChange={(e) => setNewLoadOut({ ...newLoadOut, date: e.target.value })}
+                    ref={modalDateRef}
+                    onKeyDown={(e) => handleKeyNav(e, "date")}
+                  />
+                </div>
+                <div className="form-group">
+                  <label>Trip No.</label>
+                  <input
+                    type="number"
+                    placeholder='Enter trip no.'
+                    value={newLoadOut.trip}
+                    ref={modalTripRef}
+                    onChange={(e) => setNewLoadOut({ ...newLoadOut, trip: e.target.value })}
+                    onKeyDown={(e) => handleKeyNav(e, "trip")}
+                  />
+                </div>
+              </div>
+            </form>
+
+            <div className="item-inputs">
+              <div className="flex">
+                <div className="form-group">
+                  <label>Item Code</label>
+                  <input
+                    type="text"
+                    placeholder='Enter Item code'
+                    value={newLoadItem.itemCode}
+                    ref={modalItemRef}
+                    onChange={(e) => setNewLoadItem({ ...newLoadItem, itemCode: e.target.value })}
+                    onKeyDown={(e) => handleKeyNav(e, "item")}
+                  />
+                </div>
+                <div className="form-group">
+                  <label>Qty</label>
+                  <input
+                    type="number"
+                    value={newLoadItem.qty}
+                    ref={modalQtyRef}
+                    onChange={(e) => setNewLoadItem({ ...newLoadItem, qty: e.target.value })}
+                    onKeyDown={(e) => handleKeyNav(e, "qty")}
+                  />
+                </div>
+                <button type="button" className="add-btn" onKeyDown={(e) => handleKeyNav(e, "add")} onClick={handleAddItem} ref={addRef} >
+                  ➕ Add Item
+                </button>
+              </div>
+              {/* <div className="form-group">
+                        <label>Item Name</label>
+                        <input
+                            readOnly
+                            type="text"
+                            style={{ backgroundColor: "#f5f5f5" }}
+                        />
+                    </div> */}
+              <div className="table">
+                <div className="trans-table-grid trans-table-header">
+                  {/* <div>SL.NO.</div> */}
+                  <div>CODE</div>
+                  <div>NAME</div>
+                  <div>Qty</div>
+                  <div>ACTION</div>
+                </div>
+                {loading && <div>Loading...</div>}
+
+                {newLoadOut.items.length > 0 ? (
+                  newLoadOut.items.map((it, index) => {
+                    const matchedItem = items.find(
+                      (sku) => sku.code.toUpperCase() === it.itemCode.toUpperCase()
+                    );
+                    return (
+                      <div key={index} className="trans-table-grid trans-table-row">
+                        <div>{it.itemCode}</div>
+                        <div>{matchedItem ? matchedItem.name : "-"}</div>
+                        <div>{it.qty}</div>
+                        <div className="actions">
+                          <span
+                            className="delete"
+                            onClick={() => handleDelete(it.itemCode)}
+                          >
+                            Delete
+                          </span>
+                        </div>
+                      </div>
+                    );
+                  })
+                ) : (
+                  <div className="no-items">No Items added yet!</div>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+        <button onClick={handleSubmit} className='trans-submit-btn'>Submit</button>
+      </>
+    )
+  };
+
+  const renderLoadIn = () => {
+    return (
+      <>
+        <div className='trans-container'>
+          <div className="trans-left">
+            <form className='trans-form' >
+              <div className="salesman-detail">
+                <div className="form-group">
+                  <label>Salesman Code</label>
+                  <input
+                    type="text"
+                    placeholder="Enter Salesman code"
+                    value={newLoadIn.salesmanCode}
+                    onChange={(e) =>
+                      setNewLoadIn({ ...newLoadIn, salesmanCode: e.target.value })
+                    }
+                    ref={modalCodeRef}
+                    onKeyDown={(e) => handleKeyNav(e, "code")}
+                  />
+                </div>
+                <div className="form-group">
+                  <label>Salesman Name</label>
+                  <input
+                    readOnly
+                    type="text"
+                    value={matchedSalesman ? matchedSalesman.name : ""}
+                    style={{ backgroundColor: "#f5f5f5" }}
+                  />
+                </div>
+                <div className="form-group">
+                  <label>Route No.</label>
+                  <input
+                    readOnly
+                    type="number"
+                    value={matchedSalesman ? matchedSalesman.routeNo : ""}
+                    style={{ backgroundColor: "#f5f5f5" }}
+                  />
+                </div>
+                <div className="form-group">
+                  <label>Date</label>
+                  <input
+                    type="date"
+                    value={newLoadIn.date}
+                    onChange={(e) => setNewLoadIn({ ...newLoadIn, date: e.target.value })}
+                    ref={modalDateRef}
+                    onKeyDown={(e) => handleKeyNav(e, "date")}
+                  />
+                </div>
+                <div className="form-group">
+                  <label>Trip No.</label>
+                  <input
+                    type="number"
+                    placeholder='Enter trip no.'
+                    value={newLoadIn.trip}
+                    ref={modalTripRef}
+                    onChange={(e) => setNewLoadIn({ ...newLoadIn, trip: e.target.value })}
+                    onKeyDown={(e) => handleKeyNav(e, "trip")}
+                  />
+                </div>
+              </div>
+            </form>
+
+            <div className="item-inputs">
+              <div className="flex">
+                <div className="form-group">
+                  <label>Item Code</label>
+                  <input
+                    type="text"
+                    placeholder='Enter Item code'
+                    value={newLoadItem.itemcode}
+                    ref={modalItemRef}
+                    onChange={(e) => setNewLoadItem({ ...newLoadItem, itemcode: e.target.value })}
+                    onKeyDown={(e) => handleKeyNav(e, "itemcode")}
+                  />
+                </div>
+                <div className="form-group">
+                  <label>Filled</label>
+                  <input
+                    type="number"
+                    value={newLoadItem.Filled}
+                    ref={modalFilledRef}
+                    onChange={(e) => setNewLoadItem({ ...newLoadItem, Filled: e.target.value })}
+                    onKeyDown={(e) => handleKeyNav(e, "Filled")}
+                    placeholder="Enter Qty/-"
+                  />
+                </div>
+                <div className="form-group">
+                  <label>Burst</label>
+                  <input
+                    type="number"
+                    value={newLoadItem.Burst}
+                    ref={modalBurstRef}
+                    onChange={(e) => setNewLoadItem({ ...newLoadItem, Burst: e.target.value })}
+                    onKeyDown={(e) => handleKeyNav(e, "Burst")}
+                    placeholder="Enter Qty/-"
+                  />
+                </div>
+
+
+
+                <button type="button" className="add-btn add-btn-load-in" onKeyDown={(e) => handleKeyNav(e, "add")} onClick={handleAddItem} ref={addRef} >
+                  ➕ Add
+                </button>
+              </div>
+              <div className="table">
+                <div className="trans-loadin-table-grid trans-table-header">
+                  {/* <div>SL.NO.</div> */}
+                  <div>CODE</div>
+                  <div>NAME</div>
+                  <div>Filled</div>
+                  <div>Burst</div>
+                  <div>ACTION</div>
+                </div>
+                {loading && <div>Loading...</div>}
+
+                {newLoadIn.items.length > 0 ? (
+                  newLoadIn.items.map((it, index) => {
+                    const matchedItem = items.find(
+                      (sku) => String(sku.code || '').toUpperCase() === String(it.itemCode || it.itemcode || '').toUpperCase()
+                    );
+                    return (
+                      <div key={index} className="trans-loadin-table-grid trans-table-row">
+                        <div>{it.itemCode}</div>
+                        <div>{matchedItem ? matchedItem.name : "-"}</div>
+                        <div>{it.Filled}</div>
+                        <div>{it.Burst}</div>
+                        <div className="actions">
+                          <span
+                            className="delete"
+                            onClick={() => handleDelete(it.itemCode)}
+                          >
+                            Delete
+                          </span>
+                        </div>
+
+
+                      </div>
+                    );
+                  })
+                ) : (
+                  <div className="no-items">No Items added yet!</div>
+                )}
+
+              </div>
+            </div>
+          </div>
+          <div className="trans-table trans-grid">
+
+          </div>
+        </div>
+        <button className='trans-submit-btn' onClick={handleSubmit}>Submit</button>
+      </>
+    )
+  };
 
 
   return (
@@ -302,12 +795,15 @@ const AllTransaction = () => {
             //   items.find((it) =>
             //     String(it.code || "").toUpperCase() === String(p.itemCode || "").toUpperCase()
             //   ) : null;
+            const matchedSalesman = Array.isArray(salesmans)
+              ? salesmans.find((sm) => String(sm.codeNo || sm.code || '').toUpperCase() === String(p?.salesmanCode || '').toUpperCase())
+              : null;
 
             return (
               <div key={p?._id || i} className="all-row">
                 <div>{p?.type}</div>
                 <div>{p?.salesmanCode?.toUpperCase() || ''}</div>
-                <div>{p?.salesmanName?.toUpperCase() || ''} </div>
+                <div>{matchedSalesman ? matchedSalesman.name : ""} </div>
                 {/* <div>₹{calculateNetRate(p?.basePrice, p?.perTax, p?.perDisc)}</div> */}
                 <div>{FormatDate(p?.date) || ""}</div>
                 <div>{p?.trip} </div>
@@ -331,295 +827,5 @@ const AllTransaction = () => {
   )
 };
 
-
-const styles = {
-  container: {
-    minHeight: '100vh',
-    backgroundColor: '#f9fafb',
-  },
-  header: {
-    backgroundColor: '#ffffff',
-    borderBottom: '1px solid #e5e7eb',
-  },
-  headerContent: {
-    maxWidth: '1280px',
-    margin: '0 auto',
-    padding: '24px 32px',
-  },
-  title: {
-    fontSize: '30px',
-    fontWeight: 'bold',
-    color: '#111827',
-    margin: 0,
-  },
-  tabsContainer: {
-    display: 'flex',
-    gap: '16px',
-    marginTop: '16px',
-  },
-  tab: {
-    padding: '8px 16px',
-    color: '#6b7280',
-    background: 'none',
-    border: 'none',
-    cursor: 'pointer',
-    fontSize: '14px',
-  },
-  tabActive: {
-    padding: '8px 16px',
-    color: '#2563eb',
-    background: 'none',
-    border: 'none',
-    borderBottom: '2px solid #2563eb',
-    cursor: 'pointer',
-    fontSize: '14px',
-    fontWeight: '500',
-  },
-  mainContent: {
-    maxWidth: '1280px',
-    margin: '0 auto',
-    padding: '24px 32px',
-  },
-  filterCard: {
-    backgroundColor: '#ffffff',
-    borderRadius: '8px',
-    boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
-    padding: '24px',
-    marginBottom: '24px',
-  },
-  filterHeader: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '8px',
-    marginBottom: '16px',
-  },
-  filterTitle: {
-    fontSize: '18px',
-    fontWeight: '600',
-    color: '#1f2937',
-    margin: 0,
-  },
-  filterGrid: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-    gap: '16px',
-  },
-  formGroup: {
-    display: 'flex',
-    flexDirection: 'column',
-  },
-  label: {
-    display: 'block',
-    fontSize: '14px',
-    fontWeight: '500',
-    color: '#374151',
-    marginBottom: '4px',
-  },
-  input: {
-    width: '100%',
-    padding: '8px 12px',
-    border: '1px solid #d1d5db',
-    borderRadius: '6px',
-    fontSize: '14px',
-    outline: 'none',
-    boxSizing: 'border-box',
-  },
-  select: {
-    width: '100%',
-    padding: '8px 12px',
-    border: '1px solid #d1d5db',
-    borderRadius: '6px',
-    fontSize: '14px',
-    outline: 'none',
-    backgroundColor: '#ffffff',
-    cursor: 'pointer',
-    boxSizing: 'border-box',
-  },
-  clearButton: {
-    marginTop: '16px',
-    fontSize: '14px',
-    color: '#2563eb',
-    background: 'none',
-    border: 'none',
-    cursor: 'pointer',
-    fontWeight: '500',
-  },
-  resultsCount: {
-    marginBottom: '16px',
-    fontSize: '14px',
-    color: '#6b7280',
-  },
-  tableCard: {
-    backgroundColor: '#ffffff',
-    borderRadius: '8px',
-    boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
-    overflow: 'hidden',
-  },
-  tableHeader: {
-    display: 'grid',
-    gridTemplateColumns: 'auto 1fr auto auto auto 1.5fr auto',
-    gap: '16px',
-    backgroundColor: '#f9fafb',
-    borderBottom: '1px solid #e5e7eb',
-    padding: '12px 24px',
-    fontSize: '12px',
-    fontWeight: '500',
-    color: '#6b7280',
-    textTransform: 'uppercase',
-    letterSpacing: '0.05em',
-  },
-  tableRow: {
-    display: 'grid',
-    gridTemplateColumns: 'auto 1fr auto auto auto 1.5fr auto',
-    gap: '16px',
-    padding: '16px 24px',
-    borderBottom: '1px solid #e5e7eb',
-    alignItems: 'start',
-    transition: 'background-color 0.2s',
-  },
-  badge: {
-    display: 'inline-flex',
-    padding: '4px 8px',
-    fontSize: '12px',
-    fontWeight: '600',
-    borderRadius: '9999px',
-  },
-  badgeBlue: {
-    backgroundColor: '#dbeafe',
-    color: '#1e40af',
-  },
-  badgeGreen: {
-    backgroundColor: '#d1fae5',
-    color: '#065f46',
-  },
-  badgePurple: {
-    backgroundColor: '#e9d5ff',
-    color: '#6b21a8',
-  },
-  salesmanCode: {
-    fontSize: '14px',
-    fontWeight: '500',
-    color: '#111827',
-  },
-  salesmanName: {
-    fontSize: '14px',
-    color: '#6b7280',
-  },
-  cellText: {
-    fontSize: '14px',
-    color: '#111827',
-  },
-  actionsCell: {
-    textAlign: 'right',
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '8px',
-    alignItems: 'flex-end',
-  },
-  editButton: {
-    display: 'inline-flex',
-    alignItems: 'center',
-    gap: '4px',
-    fontSize: '14px',
-    color: '#2563eb',
-    background: 'none',
-    border: 'none',
-    cursor: 'pointer',
-  },
-  deleteButton: {
-    display: 'inline-flex',
-    alignItems: 'center',
-    gap: '4px',
-    fontSize: '14px',
-    color: '#dc2626',
-    background: 'none',
-    border: 'none',
-    cursor: 'pointer',
-  },
-  noData: {
-    padding: '48px 24px',
-    textAlign: 'center',
-    color: '#6b7280',
-  },
-  modalOverlay: {
-    position: 'fixed',
-    inset: 0,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    zIndex: 50,
-    padding: '16px',
-  },
-  modal: {
-    backgroundColor: '#ffffff',
-    borderRadius: '8px',
-    boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1)',
-    maxWidth: '672px',
-    width: '100%',
-    maxHeight: '90vh',
-    overflow: 'auto',
-  },
-  modalHeader: {
-    position: 'sticky',
-    top: 0,
-    backgroundColor: '#ffffff',
-    borderBottom: '1px solid #e5e7eb',
-    padding: '16px 24px',
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  modalTitle: {
-    fontSize: '20px',
-    fontWeight: '600',
-    color: '#1f2937',
-    margin: 0,
-  },
-  closeButton: {
-    color: '#6b7280',
-    background: 'none',
-    border: 'none',
-    cursor: 'pointer',
-  },
-  modalContent: {
-    padding: '24px',
-  },
-  formGrid: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(2, 1fr)',
-    gap: '16px',
-  },
-  modalFooter: {
-    position: 'sticky',
-    bottom: 0,
-    backgroundColor: '#f9fafb',
-    padding: '16px 24px',
-    display: 'flex',
-    justifyContent: 'flex-end',
-    gap: '12px',
-    borderTop: '1px solid #e5e7eb',
-  },
-  cancelButton: {
-    padding: '8px 16px',
-    color: '#374151',
-    backgroundColor: '#ffffff',
-    border: '1px solid #d1d5db',
-    borderRadius: '6px',
-    cursor: 'pointer',
-    fontSize: '14px',
-  },
-  saveButton: {
-    padding: '8px 16px',
-    color: '#ffffff',
-    backgroundColor: '#2563eb',
-    border: 'none',
-    borderRadius: '6px',
-    cursor: 'pointer',
-    fontSize: '14px',
-    display: 'flex',
-    alignItems: 'center',
-  },
-};
 
 export default AllTransaction

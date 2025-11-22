@@ -29,7 +29,7 @@ exports.getLoadOut = async (req, res) => {
         const { salesmanCode, date, trip } = req.body;
         if (!salesmanCode || !date || !trip) return res.status(400).json({ message: "All fields are required" });
         const data = await LoadOut.findOne({ salesmanCode, date, trip });
-        if (!data) return res.status(404).json({ message: "Record not found" });
+        if (!data) return res.status(404).json({ message: "Loadout record not found" });
         res.status(200).json(data);
     } catch (err) {
         res.status(500).json({ message: "Error fetching loadout record", error: err.message });

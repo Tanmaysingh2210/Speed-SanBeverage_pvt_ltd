@@ -44,7 +44,7 @@ exports.getOneCashCredit = async (req, res) => {
     } catch (err) {
         res.status(500).json({ message: 'Error fetching cash/credit', error: err.message });
     }
-}
+};
 
 exports.getCashCreditById = async (req, res) => {
     try {

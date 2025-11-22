@@ -6,7 +6,7 @@ const router = express.Router();
 router.post('/add', createCashCredit);
 
 
-router.post('/', getOneCashCredit);
+router.post('/getone', getOneCashCredit);
 
 
 router.get('/', getAllCashCredits);
