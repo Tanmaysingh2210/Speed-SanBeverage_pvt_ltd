@@ -1,6 +1,6 @@
 const express = require('express');
 const session = require('express-session');
-const cors = require('cors');
+const cors = require('cors'); 
 const connectDB = require('./config/db');
 const authRoutes = require('./routes/authRoutes');
 const containerRoutes = require('./routes/containerRoutes');
