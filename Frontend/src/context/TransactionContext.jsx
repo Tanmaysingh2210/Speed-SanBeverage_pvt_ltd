@@ -8,6 +8,7 @@ const TransationContext = createContext();
 export function TransactionProvider({ children }) {
     const [loadout, setLoadout] = useState([]);
     const [loadin, setLoadin] = useState([]);
+    const [cashCredit, setCashCredit] = useState([]);
     const [loading, setLoading] = useState(false);
 
     const addLoadout = async (payload) => {
@@ -15,7 +16,6 @@ export function TransactionProvider({ children }) {
             setLoading(true);
             const res = await api.post('/transaction/loadout/add', payload);
             toast.success(res.data.message || "loadout added successfully");
-            await getAllLoadout();
             return res.data;
         } catch (err) {
             toast.error(err.response?.data?.message || "Error adding loadout");
@@ -26,7 +26,7 @@ export function TransactionProvider({ children }) {
 
     };
 
-    const getLoadout = async (payload) => {
+    const getLoadout = async (payload) => { // to gte one loadout record 
         try {
             setLoading(true);
             const res = await api.post('/transaction/loadout', payload);
@@ -101,7 +101,7 @@ export function TransactionProvider({ children }) {
         }
     };
 
-    const getLoadIn = async (payload) => {
+    const getLoadIn = async (payload) => { //to get one loadin 
         try {
             setLoading(true);
             const res = await api.post('/transaction/loadin', payload);
@@ -174,6 +174,20 @@ export function TransactionProvider({ children }) {
         }
     };
 
+    const getCash_credit = async (payload) => { //to get one cash credit 
+        try {
+            setLoading(true);
+            const res = await api.post(`/transaction/cashcredit/`, payload);
+            setCashCredit(res.data);
+            return res.date;
+        } catch (err) {
+            toast.error(err?.res?.data?.message || "Error fetching cash/credit");
+            throw err;
+        } finally {
+            setLoading(false);
+        }
+    };
+
     const updateCash_credit = async (payload, id) => {
         try {
             setLoading(true);
@@ -237,7 +251,9 @@ export function TransactionProvider({ children }) {
             deleteLoadin,
             getAllLoadin,
 
+            cashCredit,
             addCash_credit,
+            getCash_credit,
             updateCash_credit,
             deleteCash_credit,
 

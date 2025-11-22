@@ -164,6 +164,46 @@
   text-align: center;
 }
 
+
+.all-table {
+  display: grid;
+  grid-template-columns: 1fr;
+  color: black;
+  width: 100%;
+  overflow-x: auto;
+}
+
+.all-row {
+  display: grid;
+  grid-template-columns: 1.1fr 0.8fr 2fr 1fr 0.5fr 2fr 1.1fr;
+  align-items: center;
+  padding: 10px 5px;
+  border-bottom: 1px solid #e0e0e0;
+  font-size: 14px;
+  text-wrap: nowrap;
+}
+
+.all-row.header {
+  background-color: #f0f3f9;
+  font-weight: bold;
+  border-bottom: 2px solid #d0d0d0;
+}
+
+.actions span {
+  cursor: pointer;
+  margin-right: 8px;
+  font-weight: 500;
+}
+
+.actions .edit {
+  color: #007bff;
+}
+
+.actions .delete {
+  color: #dc3545;
+}
+
+
 @keyframes popup {
   from {
     transform: scale(0.9);

@@ -2,7 +2,7 @@ const CashCredit = require('../../models/transaction/CashCredit');
 
 exports.createCashCredit = async (req, res) => {
     try {
-        const { crNo, date, salesmanCode, trip, value,ref,cashDeposited, chequeDeposited, tax, remark } = req.body;
+        const { crNo, date, salesmanCode, trip, value, ref, cashDeposited, chequeDeposited, tax, remark } = req.body;
 
         if (!crNo || !date || !salesmanCode || !trip || !value || !tax) return res.status(400).json({ message: "All fields are required" });
 
@@ -34,6 +34,18 @@ exports.getAllCashCredits = async (req, res) => {
     }
 };
 
+exports.getOneCashCredit = async (req, res) => {
+    try {
+        const { salesmanCode, trip, date } = req.body;
+        if (!date || !salesmanCode || !trip) return res.status(400).json({ message: "All fields are required" });
+        const data = await CashCredit.findOne({ salesmanCode, date, trip });
+        if (!data) return res.status(404).json({ message: "Cash/credit not found" });
+        res.status(200).json(data);
+    } catch (err) {
+        res.status(500).json({ message: 'Error fetching cash/credit', error: err.message });
+    }
+}
+
 exports.getCashCreditById = async (req, res) => {
     try {
         const data = await CashCredit.findById(req.params.id);
@@ -41,30 +53,30 @@ exports.getCashCreditById = async (req, res) => {
 
         res.staus(200).json(data);
 
-    } catch (err) { 
-        res.status(500).json({message: "Error fetching cash credit by id", error:err.message});
+    } catch (err) {
+        res.status(500).json({ message: "Error fetching cash credit by id", error: err.message });
     }
 };
 
-exports.updateCashCredit = async (req ,res) =>{
-    try{
-        const updated =await  CashCredit.findByIdAndUpdate(req.params.id , req.body , {
-            new:true, runValidators:true
+exports.updateCashCredit = async (req, res) => {
+    try {
+        const updated = await CashCredit.findByIdAndUpdate(req.params.id, req.body, {
+            new: true, runValidators: true
         });
-        if(!updated) return res.status(404).json({message:"Record not found"});
-        res.status(200).json({message:"Record updated sucessfully", data:updated});
-    }catch(err){
-        res.status(500).json({message:"Error updating records",error: err.message});
+        if (!updated) return res.status(404).json({ message: "Record not found" });
+        res.status(200).json({ message: "Record updated sucessfully", data: updated });
+    } catch (err) {
+        res.status(500).json({ message: "Error updating records", error: err.message });
     }
 };
 
-exports.deleteCashCredit = async (req ,res) =>{
-    try{
+exports.deleteCashCredit = async (req, res) => {
+    try {
         const deleted = CashCredit.findByIdAndDelete(req.params.id);
-        if(!deleted) return res.status(404).json({message:"Record not found"});
-        res.status(200).json({message:"Record deleted sucessfully"});
+        if (!deleted) return res.status(404).json({ message: "Record not found" });
+        res.status(200).json({ message: "Record deleted sucessfully" });
 
-    }catch(err){
-        res.status(500).json({message:"Error deleting Record", error:err.message});
+    } catch (err) {
+        res.status(500).json({ message: "Error deleting Record", error: err.message });
     }
 };
