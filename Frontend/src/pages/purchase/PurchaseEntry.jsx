@@ -122,9 +122,6 @@ const PurchaseEntry = () => {
                 case "vehicleno":
                     modalBillRef.current?.focus();
                     break;
-                case "nameandaddress":
-                    modalVehiclenoRef.current?.focus();
-                    break;
                 case "bill":
                     modalVnodtRef.current?.focus();
                     break;
