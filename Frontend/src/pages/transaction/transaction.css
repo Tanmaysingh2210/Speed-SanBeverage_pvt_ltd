@@ -25,6 +25,10 @@
   margin-bottom: 12px;
 }
 
+.hidden{
+  overflow: hidden;
+}
+
 .gap3 {
   display: flex;
   gap: 75px;
@@ -252,7 +256,7 @@
   cursor: pointer;
 }
 
-.cancel-btn {
+.cancel-btn, .trans-cancel-btn {
   background-color: #ef4444;
   color: white;
   border: none;

@@ -1,14 +1,21 @@
 import React, { useState, useEffect, useRef } from 'react';
 import toast from 'react-hot-toast';
 import { useTransaction } from '../../context/TransactionContext';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useSKU } from '../../context/SKUContext';
 import { useSalesman } from '../../context/SalesmanContext';
 import "./transaction.css";
 
 const LoadIn = () => {
-    const { loading, addLoadIn } = useTransaction();
+    const navigate = useNavigate();
+    const location = useLocation();
+
+    const { loading, addLoadIn, updateLoadIn } = useTransaction();
     const { items, getAllItems } = useSKU();
     const { salesmans, getAllSalesmen } = useSalesman();
+
+    const editMode = location.state?.editMode || false;
+    const editData = location.state?.editData || null;
 
     const modalCodeRef = useRef(null);
     const modalDateRef = useRef(null);
@@ -22,15 +29,15 @@ const LoadIn = () => {
 
     const [newLoadItem, setNewLoadItem] = useState({
         itemcode: "",
-        Filled: null,
-        Burst: null
+        Filled: "",
+        Burst: ""
     });
 
     const [newLoadIn, setNewLoadIn] = useState({
-        salesmanCode: "",
-        date: "",
-        trip: 1,
-        items: []
+        salesmanCode: editData?.salesmanCode || "",
+        date: editData?.date ? editData.date.split('T')[0] : "",
+        trip: editData?.trip || 1,
+        items: editData?.items || []
     });
 
     // derive matched salesman from current code so UI updates as user types
@@ -42,7 +49,6 @@ const LoadIn = () => {
         getAllItems();
         getAllSalesmen();
     }, []);
-
 
     const handleAddItem = (e) => {
         e.preventDefault();
@@ -72,8 +78,8 @@ const LoadIn = () => {
             items: [...prev.items, normalized]
         }));
 
-        setNewLoadItem({ itemcode: "", Filled: 0, Burst: 0 });
-
+        setNewLoadItem({ itemcode: "", Filled: "", Burst: "" });
+        modalItemRef.current?.focus();
     };
 
     const handleDelete = (code) => {
@@ -93,7 +99,7 @@ const LoadIn = () => {
             return;
         }
 
-        const paylaod = {
+        const payload = {
             salesmanCode: newLoadIn.salesmanCode,
             date: newLoadIn.date,
             trip: Number(newLoadIn.trip),
@@ -101,7 +107,14 @@ const LoadIn = () => {
         };
 
         try {
-            await addLoadIn(paylaod);
+            if (editData && editMode) {
+                await updateLoadIn(editData._id, payload);
+                setTimeout(() => {
+                    navigate('/transaction/all-transaction');
+                }, 100);
+            } else {
+                await addLoadIn(payload);
+            }
 
             setNewLoadIn({
                 salesmanCode: "",
@@ -114,6 +127,13 @@ const LoadIn = () => {
             console.error(err.response.data.message || "Error adding LoadIn");
         }
     };
+
+    const handleCancel = () => {
+        if (window.confirm('Are you sure you want to cancel? changes will be lost.')) {
+            navigate('/transaction/all-transaction');
+        }
+    };
+
 
     const handleKeyNav = (e, currentField) => {
         if (["ArrowRight", "ArrowDown", "Enter"].includes(e.key)) {
@@ -147,6 +167,10 @@ const LoadIn = () => {
                         addRef.current?.focus();
                     }
                     break;
+                case "add":
+                    if (e.key === "Enter") addRef.current?.click();
+                    else saveRef.current?.focus();
+                    break;
                 default:
                     break;
             }
@@ -171,6 +195,9 @@ const LoadIn = () => {
                     break;
                 case "add":
                     modalBurstRef.current?.focus();
+                    break;
+                case "save":
+                    addRef.current?.focus();
                     break;
                 default:
                     break;
@@ -279,7 +306,7 @@ const LoadIn = () => {
 
 
                             <button type="button" className="add-btn add-btn-load-in" onKeyDown={(e) => handleKeyNav(e, "add")} onClick={handleAddItem} ref={addRef} >
-                               ➕ Add 
+                                ➕ Add
                             </button>
                         </div>
                         {/* <div className="form-group">
@@ -332,11 +359,25 @@ const LoadIn = () => {
                         </div>
                     </div>
                 </div>
-                <div className="trans-table trans-grid">
-
-                </div>
             </div>
-            <button className='trans-submit-btn' onClick={handleSubmit}>Submit</button>
+            <div className="flex hidden">
+                <button
+                    className='trans-submit-btn'
+                    onClick={handleSubmit}
+                    disabled={loading}
+                    ref={saveRef}
+                    onKeyDown={(e) => handleKeyNav(e, "save")}
+                >
+                    {loading ? "Saving..." : editMode ? "Update" : "Submit"}
+                </button>
+                <button
+                    className='trans-cancel-btn'
+                    onClick={handleCancel}
+                    style={editMode ? { display: "block" } : { display: "none" }}
+                >
+                    Cancel
+                </button>
+            </div>
         </div>
     )
 }

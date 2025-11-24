@@ -1,14 +1,21 @@
 import React, { useState, useEffect, useRef } from 'react';
 import toast from 'react-hot-toast';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useTransaction } from '../../context/TransactionContext';
 import { useSKU } from '../../context/SKUContext';
 import { useSalesman } from '../../context/SalesmanContext';
 import "./transaction.css";
 
 const LoadOut = () => {
-    const { loading, addLoadout } = useTransaction();
+    const navigate = useNavigate();
+    const location = useLocation();
+
+    const { loading, addLoadout, updateLoadout } = useTransaction();
     const { items, getAllItems } = useSKU();
     const { salesmans, getAllSalesmen } = useSalesman();
+
+    const editMode = location.state?.editMode || false;
+    const editData = location.state?.editData || null;
 
     const modalCodeRef = useRef(null);
     const modalDateRef = useRef(null);
@@ -21,14 +28,14 @@ const LoadOut = () => {
 
     const [newLoadItem, setNewLoadItem] = useState({
         itemCode: "",
-        qty: 0
+        qty: ""
     });
 
     const [newLoadOut, setNewLoadOut] = useState({
-        salesmanCode: "",
-        date: "",
-        trip: 1,
-        items: []
+        salesmanCode: editData?.salesmanCode || "",
+        date: editData?.date ? editData.date.split('T')[0] : "",
+        trip: editData?.trip || 1,
+        items: editData?.items || []
     });
 
     // derive matched salesman from current code so UI updates as user types
@@ -41,11 +48,9 @@ const LoadOut = () => {
         getAllSalesmen();
     }, []);
 
-
-
-
     const handleAddItem = () => {
-        if (!newLoadItem.itemCode || newLoadItem.qty <= 0) {
+        const qtyNum = Number(newLoadItem.qty);
+        if (!newLoadItem.itemCode || !newLoadItem.qty || qtyNum <= 0) {
             toast.error("Enter valid item code and quantity");
             return;
         }
@@ -61,10 +66,11 @@ const LoadOut = () => {
 
         setNewLoadOut((prev) => ({
             ...prev,
-            items: [...prev.items, newLoadItem]
+            items: [...prev.items, { ...newLoadItem, qty: qtyNum }]
         }));
 
-        setNewLoadItem({ itemCode: "", qty: 0 });
+        setNewLoadItem({ itemCode: "", qty: "" });
+        modalItemRef.current?.focus();
     };
 
     const handleDelete = (code) => {
@@ -79,6 +85,7 @@ const LoadOut = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
+
         if (!newLoadOut.salesmanCode || !newLoadOut.date || newLoadOut.trip <= 0 || newLoadOut.items.length == 0) {
             toast.error("Fill all fields properly");
             return;
@@ -91,7 +98,14 @@ const LoadOut = () => {
         };
 
         try {
-            await addLoadout(paylaod);
+            if (editMode && editData) {
+                await updateLoadout(editData._id, paylaod);
+                setTimeout(() => {
+                    navigate('/transaction/all-transaction');
+                }, 100);
+            } else {
+                await addLoadout(paylaod);
+            }
 
             setNewLoadOut({
                 salesmanCode: "",
@@ -104,6 +118,13 @@ const LoadOut = () => {
             console.error(err.response.data.message || "Error adding loadout");
         }
     };
+
+    const handleCancel = () => {
+        if (window.confirm('Are you sure you want to cancel? changes will be lost.')) {
+            navigate('/transaction/all-transaction');
+        }
+    };
+
 
     const handleKeyNav = (e, currentField) => {
         if (["ArrowRight", "ArrowDown", "Enter"].includes(e.key)) {
@@ -127,15 +148,13 @@ const LoadOut = () => {
                 case "item":
                     modalQtyRef.current?.focus();
                     break;
-                case "oty":
-                    addRef.current?.focus();
+                case "qty":
+                    if (e.key === "Enter") addRef.current?.click();
+                    else addRef.current?.focus();
                     break;
-                case "status":
-                    if (e.key === "Enter") {
-                        saveRef.current?.click();
-                    } else {
-                        saveRef.current?.focus();
-                    }
+                case "add":
+                    if (e.key === "Enter") addRef.current?.click();
+                    else saveRef.current?.focus();
                     break;
                 default:
                     break;
@@ -158,12 +177,14 @@ const LoadOut = () => {
                 case "add":
                     modalQtyRef.current?.focus();
                     break;
+                case "save":
+                    addRef.current?.focus();
+                    break;
                 default:
                     break;
             }
         }
     };
-
 
     return (
         <div className="trans">
@@ -244,6 +265,7 @@ const LoadOut = () => {
                                 <input
                                     type="number"
                                     value={newLoadItem.qty}
+                                    placeholder='Enter qty'
                                     ref={modalQtyRef}
                                     onChange={(e) => setNewLoadItem({ ...newLoadItem, qty: e.target.value })}
                                     onKeyDown={(e) => handleKeyNav(e, "qty")}
@@ -299,7 +321,25 @@ const LoadOut = () => {
                     </div>
                 </div>
             </div>
-            <button onClick={handleSubmit} className='trans-submit-btn'>Submit</button>
+            <div className="flex hidden">
+                <button
+                    onClick={handleSubmit}
+                    ref={saveRef}
+                    onKeyDown={(e) => handleKeyNav(e, "save")}
+                    disabled={loading}
+                    className='trans-submit-btn'
+                >
+                    {loading ? "Saving..." : editMode ? 'Update' : 'Submit'}
+                </button>
+                <button
+                    className="trans-cancel-btn"
+                    onClick={handleCancel}
+                    disabled={loading}
+                    style={editMode ? { display: "block" } : { display: "none" }}
+                >
+                    Cancel
+                </button>
+            </div>
         </div>
     )
 }

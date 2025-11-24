@@ -19,7 +19,7 @@ const S_Sheet = () => {
   const [sheet, setSheet] = useState({
     salesmanCode: "",
     date: "",
-    trip: null
+    trip: 1
   });
 
   // const handleSubmit = async (e) => {
@@ -50,7 +50,7 @@ const S_Sheet = () => {
       const data = await getSettlement({
         salesmanCode: sheet.salesmanCode,
         date: sheet.date,
-        trip: sheet.trip,
+        trip: Number(sheet.trip) || 1,
       });
 
       setSheetData(data); // store settlement details in UI
@@ -58,7 +58,7 @@ const S_Sheet = () => {
       setSheet({
         salesmanCode: "",
         date: "",
-        trip: null
+        trip: 1
       });
     } catch (err) {
       console.log(err);

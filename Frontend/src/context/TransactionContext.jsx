@@ -188,7 +188,7 @@ export function TransactionProvider({ children }) {
         }
     };
 
-    const updateCash_credit = async (payload, id) => {
+    const updateCash_credit = async ( id, payload) => {
         try {
             setLoading(true);
             const res = await api.patch(`/transaction/cashcredit/update/${id}`, payload);

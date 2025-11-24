@@ -144,12 +144,6 @@ const BrowsePrice = () => {
     return `${day}-${Month}-${Year}`
   }
 
-  // const calculateNetRate = (basePrice, perTax) => {
-  //   if (!basePrice || !perTax) return "";
-  //   const base = parseFloat(basePrice);
-  //   const tax = parseFloat(perTax);
-  //   return (base + (base * tax / 100)).toFixed(2)
-  // }
 
   const calculateNetRate = (basePrice, perTax, perDisc) => {
     if (!basePrice || !perTax) return '';

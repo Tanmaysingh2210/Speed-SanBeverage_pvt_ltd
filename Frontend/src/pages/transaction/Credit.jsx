@@ -1,26 +1,34 @@
 import React, { useState, useEffect, useRef } from 'react';
 import toast from 'react-hot-toast';
 import { useTransaction } from '../../context/TransactionContext';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useSKU } from '../../context/SKUContext';
 import { useSalesman } from '../../context/SalesmanContext';
 import "./transaction.css";
 
-const Credit = () => {
 
-    const { loading, addCash_credit } = useTransaction();
+const Credit = () => {
+    const navigate = useNavigate();
+    const location = useLocation();
+
+    const { loading, addCash_credit, updateCash_credit } = useTransaction();
     const { salesmans, getAllSalesmen } = useSalesman();
 
+
+    const editMode = location.state?.editMode || false;
+    const editData = location.state?.editData || null;
+
     const [newCredit, setNewCredit] = useState({
-        crNo: 1,
-        salesmanCode: "",
-        date: "",
-        trip: 1,
-        value: null,
-        tax: null,
-        cashDeposited: null,
-        chequeDeposited: null,
-        ref: null,
-        remark: ""
+        crNo: editData?.crNo || 1,
+        salesmanCode: editData?.salesmanCode || "",
+        date: editData?.date ? editData?.date.split('T')[0] : "",
+        trip: editData?.trip || 1,
+        value: editData?.value || null,
+        tax: editData?.tax || null,
+        cashDeposited: editData?.cashDeposited || null,
+        chequeDeposited: editData?.chequeDeposited || null,
+        ref: editData?.ref || null,
+        remark: editData?.remark || ""
     });
 
     const codeRef = useRef(null);
@@ -34,6 +42,7 @@ const Credit = () => {
     const defRef = useRef(null);
     const chequeRef = useRef(null);
 
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (!newCredit.salesmanCode || !newCredit.trip || !newCredit.date || !newCredit.tax || !newCredit.value) {
@@ -41,20 +50,26 @@ const Credit = () => {
             return;
         }
         const payload = {
-            crNo: Number(newCredit.crNo),
+            crNo: Number(newCredit.crNo) || 1,
             salesmanCode: newCredit.salesmanCode,
             date: newCredit.date,
-            trip: Number(newCredit.trip),
-            value: Number(newCredit.value),
-            tax: Number(newCredit.tax),
+            trip: Number(newCredit.trip) || 1,
+            value: Number(newCredit.value) || 0,
+            tax: Number(newCredit.tax) || 0,
             ref: Number(newCredit.ref) || 0,
-            cashDeposited: Number(newCredit.cashDeposited),
+            cashDeposited: Number(newCredit.cashDeposited) || 0,
             chequeDeposited: Number(newCredit.chequeDeposited) || 0,
             remark: newCredit.remark || ""
         }
         try {
-            await addCash_credit(payload);
-
+            if (editData && editMode) {
+                await updateCash_credit(editData._id , payload);
+                setTimeout(() => {
+                    navigate('/transaction/all-transaction')
+                }, 100);
+            } else {
+                await addCash_credit(payload);
+            }
             setNewCredit({
                 crNo: null,
                 salesmanCode: "",
@@ -69,6 +84,12 @@ const Credit = () => {
             });
         } catch (err) {
             console.error(err.response.data.message || "Error adding Cash/Credit");
+        }
+    };
+
+    const handleCancel = () => {
+        if (window.confirm("Are you sure you want to cancel? changes will be lost.")) {
+            navigate('/transaction/all-transaction');
         }
     };
 
@@ -161,6 +182,8 @@ const Credit = () => {
     const matchedSalesman = Array.isArray(salesmans)
         ? salesmans.find((sm) => String(sm.codeNo || sm.code || '').toUpperCase() === String(newCredit.salesmanCode || '').toUpperCase())
         : null;
+
+
 
     return (
         <div className="trans">
@@ -312,15 +335,25 @@ const Credit = () => {
                     </div>
                 </div>
             </div>
-            <button
-                className='trans-submit-btn'
-                ref={submitRef}
-                onClick={handleSubmit}
-                onKeyDown={(e) => handleKeyNav(e, "save")}
-                disabled={loading}
-            >
-                {loading ? "Loading..." : "Submit"}
-            </button>
+            <div className="flex hidden">
+                <button
+                    className='trans-submit-btn'
+                    ref={submitRef}
+                    onClick={handleSubmit}
+                    onKeyDown={(e) => handleKeyNav(e, "save")}
+                    disabled={loading}
+                >
+                    {loading ? "Loading..." : editMode ? "Update" : "Submit"}
+                </button>
+                <button
+                    className="trans-cancel-btn"
+                    onClick={handleCancel}
+                    style={editMode ? { display: "block" } : { display: "none" }}
+                    disabled={loading}
+                >
+                    cancel
+                </button>
+            </div>
         </div>
     );
 }

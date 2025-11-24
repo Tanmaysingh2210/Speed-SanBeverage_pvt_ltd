@@ -182,7 +182,9 @@ const LatestPrice = () => {
     };
 
     const handleDelete = async (id) => {
-        await deletePrice(id);
+        if (window.confirm("Are you sure you want to delete this price?")) {
+            await deletePrice(id);
+        }
     };
 
     const handleEdit = (price) => {
