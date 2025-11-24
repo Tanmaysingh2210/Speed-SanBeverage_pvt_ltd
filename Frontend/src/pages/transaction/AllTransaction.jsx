@@ -19,24 +19,10 @@ const AllTransaction = () => {
     trip: 1
   });
 
-  const [editId, setEditId] = useState(null);
-  const [activeEdit, setActiveEdit] = useState({
-    type: null,
-    data: null
-  })
+  const [transactions, setTransactions] = useState([
+  ]);
 
-  // const handleEdit = (transaction) => {
-  //   if (!transaction || !transaction.type) return;
 
-  //   let t = transaction.type.toLowerCase();
-  //   if (t.includes("load out")) {
-  //     setActiveEdit({ type: "loadout", data: loadout });
-  //   } else if (t.includes("load in")) {
-  //     setActiveEdit({ type: "loadin", data: loadin });
-  //   } else if (t.includes("cash/credit")) {
-  //     setActiveEdit({ type: "cashcredit", data: cashCredit });
-  //   }
-  // };
 
   const handleEdit = (transaction) => {
     if (!transaction || !transaction.type) return;
@@ -86,8 +72,7 @@ const AllTransaction = () => {
     }
   };
 
-  const [transactions, setTransactions] = useState([
-  ]);
+
 
   const dateRef = useRef(null);
   const codeRef = useRef(null);

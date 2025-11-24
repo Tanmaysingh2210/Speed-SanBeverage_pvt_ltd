@@ -33,7 +33,7 @@ export function TransactionProvider({ children }) {
             setLoadout(res.data);
             return res.data;
         } catch (err) {
-            toast.error(err.response?.data?.message || "Error getting loadout");
+            // toast.error(err.response?.data?.message || "Error getting loadout");
             throw err;
         } finally {
             setLoading(false);
@@ -108,7 +108,7 @@ export function TransactionProvider({ children }) {
             setLoadin(res.data);
             return res.data;
         } catch (err) {
-            toast.error(err.response?.data?.message || "Error adding loadin");
+            // toast.error(err.response?.data?.message || "Error adding loadin");
             throw err;
         } finally {
             setLoading(false);
@@ -181,7 +181,7 @@ export function TransactionProvider({ children }) {
             setCashCredit(res.data);
             return res.data;
         } catch (err) {
-            toast.error(err.response?.data?.message || "Error fetching cash/credit");
+            // toast.error(err.response?.data?.message || "Error fetching cash/credit");
             throw err;
         } finally {
             setLoading(false);
