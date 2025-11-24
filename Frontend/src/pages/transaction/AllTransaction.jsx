@@ -66,13 +66,11 @@ const AllTransaction = () => {
       }
 
       // Remove from local state
-      setTransactions(transactions.filter(t => t._id !== id || t.id !== id));
+      setTransactions(transactions.filter(t => t._id !== id));
     } catch (error) {
       console.error('Error deleting transaction:', error);
     }
   };
-
-
 
   const dateRef = useRef(null);
   const codeRef = useRef(null);
@@ -121,7 +119,6 @@ const AllTransaction = () => {
       }
     }
   };
-
 
   const handleFind = async (e) => {
     e.preventDefault();
