@@ -8,7 +8,7 @@ import { useSKU } from '../../context/SKUContext';
 
 const AllTransaction = () => {
   const navigate = useNavigate();
-  const { FormatDate, loadout, getLoadout, updateLoadout, deleteLoadout, loadin, getLoadIn, updateLoadIn, deleteLoadin, cashCredit, getCash_credit, updateCash_credit, deleteCash_credit, loading } = useTransaction();
+  const { FormatDate, getLoadout, deleteLoadout, getLoadIn, deleteLoadin, getCash_credit, deleteCash_credit, loading } = useTransaction();
   const { salesmans } = useSalesman();
   const { items } = useSKU();
 
