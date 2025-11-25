@@ -9,6 +9,21 @@
   overflow-x: hidden;
 }
 
+
+.actions{
+  cursor: pointer;
+  margin-right: 8px;
+  font-weight: 500;
+}
+
+.actions .edit {
+  color: #007bff;
+}
+
+.actions .delete {
+  color: #dc3545;
+}
+
 .purchase-entry-container {
   background: #fff;
   padding: 2rem;

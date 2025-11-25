@@ -1,0 +1,407 @@
+import React, { useState, useEffect, useRef } from 'react';
+import toast from 'react-hot-toast';
+import "../transaction/transaction.css";
+import api from '../../api/api';
+import {useSKU} from '../../context/SKUContext'
+
+const PurchaseItemwise = () => {
+
+    const { getAllItems } = useSKU();
+    const [skuItems, setSkuItems] = useState([]);
+    const [items, setItems] = useState([]);
+    const [editingIndex, setEditingIndex] = useState(null);
+
+    const [loading, setLoading] = useState(false);
+        const modalDateRef = useRef(null);
+        const modalCodeRef = useRef(null);
+        const modalQtyRef = useRef(null);
+        const modalExpDateRef = useRef(null);
+        const modalAddRef=useRef(null)
+        const modalSubmitRef=useRef(null)
+
+     const [formData, setFormData] = useState({
+        date: '',
+        itemCode: '',
+        qty: '',
+        expiryDate: ''
+    });
+
+    useEffect(() => {  
+         fetchSkuItems()
+    }, []);
+
+     const fetchSkuItems = async () => {
+        try {
+            const response = await getAllItems();
+            const data =response.data;
+            console.log(data);
+            
+            setSkuItems(data);
+        } catch (error) {
+            console.error('Error fetching SKU items:', error);
+            showToast('Failed to fetch SKU items', 'error');
+        }
+    };
+
+    const getItemName = (code) => {
+        const item = skuItems.find(sku => sku.code.toLowerCase() === code.toLowerCase());
+        return item ? item.name : 'Unknown Item';
+    };
+
+     const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setFormData(prev => ({ ...prev,[name]: value}));
+    };
+
+    const validateForm = () => {
+        if (!formData.date) {
+            showToast('Please select a date', 'error');
+            return false;
+        }
+        if (!formData.itemCode) {
+            showToast('Please enter item code', 'error');
+            return false;
+        }
+        if (!formData.qty || formData.qty <= 0) {
+            showToast('Please enter valid quantity', 'error');
+            return false;
+        }
+        if (!formData.expiryDate) {
+            showToast('Please select expiry date', 'error');
+            return false;
+        }
+        
+        // Check if item code exists in SKU items
+        const itemExists = skuItems.some(sku => sku.code.toLowerCase() === formData.itemCode.toLowerCase());
+        if (!itemExists) {
+            showToast('Item code not found in SKU items', 'error');
+            return false;
+        }
+        
+        return true;
+    };
+
+     const handleAddItem = () => {
+        if (!validateForm()) return;
+
+        const newItem = {
+            ...formData,
+            name: getItemName(formData.itemCode),
+            id: Date.now() // Temporary ID for frontend
+        };
+
+        if (editingIndex !== null) {
+            // Update existing item
+            const updatedItems = [...items];
+            updatedItems[editingIndex] = newItem;
+            setItems(updatedItems);
+            setEditingIndex(null);
+            showToast('Item updated successfully');
+        } else {
+            // Add new item
+            setItems([...items, newItem]);
+            showToast('Item added successfully');
+        }
+
+        // Reset form
+        setFormData({
+            date: '',
+            itemCode: '',
+            qty: '',
+            expiryDate: ''
+        });
+    };
+
+    const handleEdit = (index) => {
+        const item = items[index];
+        setFormData({
+            date: item.date,
+            itemCode: item.itemCode,
+            qty: item.qty,
+            expiryDate: item.expiryDate
+        });
+        setEditingIndex(index);
+        showToast('Edit mode activated', 'info');
+    };
+
+      const handleDelete = (index) => {
+        if (true) {
+            const updatedItems = items.filter((_, i) => i !== index);
+            setItems(updatedItems);
+            showToast('Item deleted successfully');
+            
+            // Reset edit mode if deleting the item being edited
+            if (editingIndex === index) {
+                setEditingIndex(null);
+                setFormData({
+                    date: '',
+                    itemCode: '',
+                    qty: '',
+                    expiryDate: ''
+                });
+            }
+        }
+    };
+
+     const handleSubmit = async () => {
+        if (items.length === 0) {
+            showToast('Please add at least one item', 'error');
+            return;
+        }
+
+        // Check if all items have the same date
+        const mainDate = items[0].date;
+        const allSameDate = items.every(item => item.date === mainDate);
+        
+        if (!allSameDate) {
+            showToast('All items must have the same purchase date', 'error');
+            return;
+        }
+
+        // Format items according to backend model (array of objects with itemCode, qty, expiryDate)
+        const formattedItems = items.map(item => ({
+            itemCode: item.itemCode,
+            qty: parseInt(item.qty),
+            expiryDate: item.expiryDate
+        }));
+
+        const finalPayload = {
+            date: mainDate,
+            items: formattedItems
+        };
+
+        console.log('Sending payload:', finalPayload); // Debug log
+
+        setLoading(true);
+        try {
+            const response = await api.post('/purchase/itemwise', finalPayload);
+
+            if (response.data) {
+                showToast('Purchase saved successfully');
+                setItems([]);
+                setFormData({
+                    date: '',
+                    itemCode: '',
+                    qty: '',
+                    expiryDate: ''
+                });
+            }
+        } catch (error) {
+            console.error('Error saving purchase:', error);
+            const errorMessage = error.response?.data?.message || 'Failed to save purchase';
+            showToast(errorMessage, 'error');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+
+     const showToast = (message, type = 'success') => {
+        // Simple toast notification
+        const toast = document.createElement('div');
+        toast.className = `toast toast-${type}`;
+        toast.textContent = message;
+        toast.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            background: ${type === 'success' ? '#10b981' : '#ef4444'};
+            color: white;
+            border-radius: 8px;
+            z-index: 9999;
+            animation: slideIn 0.3s ease-out;
+        `;
+        document.body.appendChild(toast);
+        setTimeout(() => {
+            toast.remove();
+        }, 3000);
+    };
+
+    const handleKeyNav = (e, currentField) => {
+        if (["ArrowRight", "ArrowDown", "Enter"].includes(e.key)) {
+            e.preventDefault();
+
+            if (e.key === "Enter" && currentField === "submit") {
+                modalSubmitRef.current?.click();
+                return;
+            }
+
+            switch (currentField) {
+                case "date":
+                    modalCodeRef.current?.focus();
+                    break;
+                case "itemcode":
+                    modalQtyRef.current?.focus();
+                    break;
+                case "qty":
+                    modalExpDateRef.current?.focus();
+                    break;
+                case "expdate":
+                    if (e.key === "Enter") {
+                        modalAddRef.current?.click();
+                    } else {
+                        modalAddRef.current?.focus();
+                    }
+                    break;
+                case "add":
+                    if(e.key==="Enter"){
+                        modalAddRef.current?.click();
+                        modalSubmitRef.current?.focus();
+                    }
+                    else{
+                        modalSubmitRef.current?.focus();
+                    }
+                    break;
+                case "submit":
+                        modalDateRef.current?.focus();
+                    break;
+                default:
+                    break;
+            }
+
+        } else if (["ArrowUp", "ArrowLeft"].includes(e.key)) {
+            e.preventDefault();
+            switch (currentField) {
+                case "add":
+                    modalExpDateRef.current?.focus();
+                    break;
+                case "expdate":
+                    modalQtyRef.current?.focus();
+                    break;
+                case "qty":
+                    modalCodeRef.current?.focus();
+                    break;
+                case "itemcode":
+                    modalDateRef.current?.focus();
+                    break;
+                case "submit":                    
+                        modalAddRef.current?.focus();
+                    break;
+                case "date":
+                    modalSubmitRef.current?.focus();
+                    break;
+                
+                
+            }
+        }
+    }
+    
+ return (
+     <div className="trans">
+        
+            <div className='trans-container'>
+                <div className="trans-left">
+                    
+                        <div className="item-inputs">
+                        <div className="flex">
+                             <div className="form-group">
+                                <label>Date</label>
+                                <input
+                                    type="date"
+                                    name="date"
+                                    value={formData.date}
+                                    onChange={handleInputChange}
+                                    ref={modalDateRef}
+                                    onKeyDown={(e) => handleKeyNav(e, "date")}
+                                />
+                            </div>
+                            <div className="form-group">
+                                <label>Item Code</label>
+                                <input
+                                    type="text"
+                                    name="itemCode"
+                                    placeholder='Enter Item code'
+                                    value={formData.itemCode}
+                                    onChange={handleInputChange}
+                                   ref={modalCodeRef}
+                                    onKeyDown={(e) => handleKeyNav(e, "itemcode")}
+                                />
+                            </div>
+                            
+                            <div className="form-group">
+                                <label>Qty</label>
+                                <input
+                                    type="number"
+                                    name="qty"
+                                    placeholder='Enter qty'
+                                    value={formData.qty}
+                                    onChange={handleInputChange}
+                                    min="1"
+                                    ref={modalQtyRef}
+                                    onKeyDown={(e) => handleKeyNav(e, "qty")}
+                                    
+                                />
+                            </div>
+                            <div className="form-group">
+                                <label>Expiry Date</label>
+                                <input
+                                    type="date"
+                                    name="expiryDate"
+                                    value={formData.expiryDate}
+                                    onChange={handleInputChange}
+                                    ref={modalExpDateRef}
+                                    onKeyDown={(e) => handleKeyNav(e, "expdate")}
+                                />
+                            </div>
+                            <button type="button" className=" add-btn" onClick={handleAddItem} 
+                            ref={modalAddRef}
+                                    onKeyDown={(e) => handleKeyNav(e, "add")}>
+                            ➕ {editingIndex !== null ? 'Update Item' : 'Add Item'}
+                            </button>
+                        </div>
+                        
+                        <div className="table">
+                            <div className="trans-table-grid-purchaseItemwise trans-table-header-purchaseItemwise">
+                                {/* <div>SL.NO.</div> */}
+                                <div>CODE</div>
+                                <div>NAME</div>
+                                <div>Qty</div>
+                                <div>Expiry</div>
+                                <div>ACTION</div>
+                            </div>
+                            {items.length === 0 ? (
+                                <div className="empty-state">
+                                    No items added yet. Add items using the form above.
+                                </div>
+                            ) : (
+                                items.map((item, index) => (
+                                    <div key={item.id} className="trans-table-grid-purchaseItemwise table-row">
+                                        <div>{item.itemCode}</div>
+                                        <div>{item.name}</div>
+                                        <div>{item.qty}</div>
+                                        <div>{new Date(item.expiryDate).toLocaleDateString()}</div>
+                                        <div className="actions">
+                                            <span className="edit" onClick={() => handleEdit(index)}>
+                                            Edit
+                                            </span>
+                                            {" | "}
+                                            <span className="delete" onClick={() => handleDelete(index)}>
+                                            Delete
+                                            </span>
+                                        </div>
+                                    </div>
+                                ))
+                            )}
+
+                        </div>
+                    </div>
+                    
+                    
+                    
+                </div>
+            </div>
+            <button 
+                        className='trans-submit-btn'
+                        onClick={handleSubmit}
+                        disabled={loading || items.length === 0}
+                         ref={modalSubmitRef}
+                        onKeyDown={(e) => handleKeyNav(e, "submit")}
+                    >
+                        {loading ? 'Saving...' : 'Submit'}
+                    </button>
+        </div>
+  )
+}
+
+export default PurchaseItemwise

@@ -116,6 +116,15 @@
   padding: 10px 14px;
   min-width: 700px;
 }
+.trans-table-grid-purchaseItemwise {
+  display: grid;
+  grid-template-columns: 0.6fr 2fr 0.5fr 0.8fr 0.8fr;
+  align-items: center;
+  text-align: left;
+  font-size: 14px;
+  padding: 10px 14px;
+  min-width: 700px;
+}
 
 .trans-loadin-table-grid {
   display: grid;
@@ -128,6 +137,11 @@
 }
 
 .trans-table-header {
+  background-color: #f9fafb;
+  font-weight: 600;
+  border-bottom: 2px solid #e5e7eb;
+}
+.trans-table-header-purchaseItemwise {
   background-color: #f9fafb;
   font-weight: 600;
   border-bottom: 2px solid #e5e7eb;
