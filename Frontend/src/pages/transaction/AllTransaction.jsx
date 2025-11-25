@@ -19,8 +19,7 @@ const AllTransaction = () => {
     trip: 1
   });
 
-  const [transactions, setTransactions] = useState([
-  ]);
+  const [transactions, setTransactions] = useState([ ]);
 
 
 
@@ -255,7 +254,6 @@ const AllTransaction = () => {
       }
     }
   };
-
 
   const renderDetails = (transaction) => {
     if (transaction.type === 'Load Out') {
