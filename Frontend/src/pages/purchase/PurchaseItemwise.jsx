@@ -39,7 +39,7 @@ const PurchaseItemwise = () => {
             setSkuItems(data);
         } catch (error) {
             console.error('Error fetching SKU items:', error);
-            showToast('Failed to fetch SKU items', 'error');
+        toast.error('Failed to fetch SKU items', 'error');
         }
     };
 
@@ -55,26 +55,26 @@ const PurchaseItemwise = () => {
 
     const validateForm = () => {
         if (!formData.date) {
-            showToast('Please select a date', 'error');
+        toast.error('Please select a date', 'error');
             return false;
         }
         if (!formData.itemCode) {
-            showToast('Please enter item code', 'error');
+        toast.error('Please enter item code', 'error');
             return false;
         }
         if (!formData.qty || formData.qty <= 0) {
-            showToast('Please enter valid quantity', 'error');
+        toast.error('Please enter valid quantity', 'error');
             return false;
         }
         if (!formData.expiryDate) {
-            showToast('Please select expiry date', 'error');
+        toast.error('Please select expiry date', 'error');
             return false;
         }
         
         // Check if item code exists in SKU items
         const itemExists = skuItems.some(sku => sku.code.toLowerCase() === formData.itemCode.toLowerCase());
         if (!itemExists) {
-            showToast('Item code not found in SKU items', 'error');
+        toast.error('Item code not found in SKU items', 'error');
             return false;
         }
         
@@ -96,16 +96,16 @@ const PurchaseItemwise = () => {
             updatedItems[editingIndex] = newItem;
             setItems(updatedItems);
             setEditingIndex(null);
-            showToast('Item updated successfully');
+        toast.success('Item updated successfully');
         } else {
             // Add new item
             setItems([...items, newItem]);
-            showToast('Item added successfully');
+        toast.success('Item added successfully');
         }
 
         // Reset form
         setFormData({
-            date: '',
+            date:formData.date,
             itemCode: '',
             qty: '',
             expiryDate: ''
@@ -121,14 +121,14 @@ const PurchaseItemwise = () => {
             expiryDate: item.expiryDate
         });
         setEditingIndex(index);
-        showToast('Edit mode activated', 'info');
+    toast.success('Edit mode activated', 'info');
     };
 
       const handleDelete = (index) => {
         if (true) {
             const updatedItems = items.filter((_, i) => i !== index);
             setItems(updatedItems);
-            showToast('Item deleted successfully');
+        toast.success('Item deleted successfully');
             
             // Reset edit mode if deleting the item being edited
             if (editingIndex === index) {
@@ -145,7 +145,7 @@ const PurchaseItemwise = () => {
 
      const handleSubmit = async () => {
         if (items.length === 0) {
-            showToast('Please add at least one item', 'error');
+        toast.error('Please add at least one item', 'error');
             return;
         }
 
@@ -154,7 +154,7 @@ const PurchaseItemwise = () => {
         const allSameDate = items.every(item => item.date === mainDate);
         
         if (!allSameDate) {
-            showToast('All items must have the same purchase date', 'error');
+        toast.error('All items must have the same purchase date', 'error');
             return;
         }
 
@@ -177,7 +177,7 @@ const PurchaseItemwise = () => {
             const response = await api.post('/purchase/itemwise', finalPayload);
 
             if (response.data) {
-                showToast('Purchase saved successfully');
+            toast.error('Purchase saved successfully');
                 setItems([]);
                 setFormData({
                     date: '',
@@ -189,34 +189,14 @@ const PurchaseItemwise = () => {
         } catch (error) {
             console.error('Error saving purchase:', error);
             const errorMessage = error.response?.data?.message || 'Failed to save purchase';
-            showToast(errorMessage, 'error');
+        toast.error(errorMessage, 'error');
         } finally {
             setLoading(false);
         }
     };
 
 
-     const showToast = (message, type = 'success') => {
-        // Simple toast notification
-        const toast = document.createElement('div');
-        toast.className = `toast toast-${type}`;
-        toast.textContent = message;
-        toast.style.cssText = `
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            padding: 15px 20px;
-            background: ${type === 'success' ? '#10b981' : '#ef4444'};
-            color: white;
-            border-radius: 8px;
-            z-index: 9999;
-            animation: slideIn 0.3s ease-out;
-        `;
-        document.body.appendChild(toast);
-        setTimeout(() => {
-            toast.remove();
-        }, 3000);
-    };
+    
 
     const handleKeyNav = (e, currentField) => {
         if (["ArrowRight", "ArrowDown", "Enter"].includes(e.key)) {
