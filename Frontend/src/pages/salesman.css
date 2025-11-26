@@ -139,6 +139,63 @@
  
 }
 
+
+/* print css */
+
+
+.salesman-excel-btn {
+  background-color: #16a34a;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: background-color 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.salesman-excel-btn:hover:not(:disabled) {
+  background-color: #15803d;
+}
+
+.salesman-excel-btn:disabled {
+  background-color: #9ca3af;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.salesman-print-btn {
+  background-color: #2563eb;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: background-color 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.salesman-print-btn:hover:not(:disabled) {
+  background-color: #1e40af;
+}
+
+.salesman-print-btn:disabled {
+  background-color: #9ca3af;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+
+
+
 /* ===== Responsive Adjustments ===== */
 @media (max-width: 1024px) {
   .salesman-table-grid {

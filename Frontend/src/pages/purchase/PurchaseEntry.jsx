@@ -1,4 +1,4 @@
-import React, { useState, useEffect , useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import "../purchase/purchase.css"; // New separate CSS file
 import { usePurchase } from '../../context/PurchaseContext.jsx';
 
@@ -26,29 +26,29 @@ const PurchaseEntry = () => {
 
     const [netAmt, setNetAmt] = useState(0);
 
-        const modalPartyRef = useRef(null);
-        const modalSlnoRef = useRef(null);
-        const modalDateRef = useRef(null);
-        const modalGraRef = useRef(null);
-        const modalNameaddRef = useRef(null);
-        const modalVehiclenoRef = useRef(null);
-        const modalVnodtRef = useRef(null);
-        const modalVnoRef = useRef(null);
-        const modalBillRef = useRef(null);
-        const modalErcRef = useRef(null);
-        const modalFrcRef = useRef(null);
-        const modalValueRef = useRef(null);
-        const modalDiscRef = useRef(null);
-        const modalPervatRef = useRef(null);
-        const modalPurchaseagstRef = useRef(null);
-        const modalFormissueRef = useRef(null);
-        const SubmitRef = useRef(null);
+    const modalPartyRef = useRef(null);
+    const modalSlnoRef = useRef(null);
+    const modalDateRef = useRef(null);
+    const modalGraRef = useRef(null);
+    const modalNameaddRef = useRef(null);
+    const modalVehiclenoRef = useRef(null);
+    const modalVnodtRef = useRef(null);
+    const modalVnoRef = useRef(null);
+    const modalBillRef = useRef(null);
+    const modalErcRef = useRef(null);
+    const modalFrcRef = useRef(null);
+    const modalValueRef = useRef(null);
+    const modalDiscRef = useRef(null);
+    const modalPervatRef = useRef(null);
+    const modalPurchaseagstRef = useRef(null);
+    const modalFormissueRef = useRef(null);
+    const SubmitRef = useRef(null);
 
     // Calculate Net Amount
     useEffect(() => {
         const calculated = calculateNetAmount(
-            formData.value, 
-            formData.disc, 
+            formData.value,
+            formData.disc,
             formData.percentVat
         );
         setNetAmt(calculated);
@@ -122,7 +122,7 @@ const PurchaseEntry = () => {
                 case "vehicleno":
                     modalBillRef.current?.focus();
                     break;
-               
+
                 case "bill":
                     modalVnodtRef.current?.focus();
                     break;
@@ -229,9 +229,9 @@ const PurchaseEntry = () => {
                                 name="party"
                                 value={formData.party}
                                 onChange={handleChange}
-                                placeholder="enter party"
+                                placeholder="Enter Party"
                                 ref={modalPartyRef}
-                                    onKeyDown={(e) => handleKeyNav(e, "party")}
+                                onKeyDown={(e) => handleKeyNav(e, "party")}
                             />
                         </div>
 
@@ -242,9 +242,9 @@ const PurchaseEntry = () => {
                                 name="slno"
                                 value={formData.slno}
                                 onChange={handleChange}
-                                placeholder="enter slno."
-                               ref={modalSlnoRef}
-                                    onKeyDown={(e) => handleKeyNav(e, "slno")}
+                                placeholder="Enter Slno."
+                                ref={modalSlnoRef}
+                                onKeyDown={(e) => handleKeyNav(e, "slno")}
                             />
                         </div>
 
@@ -255,9 +255,8 @@ const PurchaseEntry = () => {
                                 name="date"
                                 value={formData.date}
                                 onChange={handleChange}
-                                data-placeholder="dd/mm/yyyy"
-                               ref={modalDateRef}
-                                    onKeyDown={(e) => handleKeyNav(e, "date")}
+                                ref={modalDateRef}
+                                onKeyDown={(e) => handleKeyNav(e, "date")}
                             />
                         </div>
 
@@ -270,7 +269,7 @@ const PurchaseEntry = () => {
                                 onChange={handleChange}
                                 placeholder="Enter GRA no."
                                 ref={modalGraRef}
-                                    onKeyDown={(e) => handleKeyNav(e, "gra")}
+                                onKeyDown={(e) => handleKeyNav(e, "gra")}
                             />
                         </div>
                     </div>
@@ -290,7 +289,7 @@ const PurchaseEntry = () => {
                                 />
                             </div>
                         </div>
-                        
+
                         <div className="purchase-entry-row">
                             <div className="purchase-form-group">
                                 <label>Vehicle no.</label>
@@ -312,7 +311,6 @@ const PurchaseEntry = () => {
                                     name="vnoDt"
                                     value={formData.vnoDt}
                                     onChange={handleChange}
-                                    placeholder="dd/mm/yyyy"
                                     ref={modalVnodtRef}
                                     onKeyDown={(e) => handleKeyNav(e, "vnodt")}
                                 />
@@ -387,7 +385,7 @@ const PurchaseEntry = () => {
                                 onChange={handleChange}
                                 placeholder="Enter"
                                 ref={modalValueRef}
-                                    onKeyDown={(e) => handleKeyNav(e, "value")}
+                                onKeyDown={(e) => handleKeyNav(e, "value")}
                             />
                         </div>
 
@@ -400,7 +398,7 @@ const PurchaseEntry = () => {
                                 onChange={handleChange}
                                 placeholder="Enter"
                                 ref={modalDiscRef}
-                                    onKeyDown={(e) => handleKeyNav(e, "disc")}
+                                onKeyDown={(e) => handleKeyNav(e, "disc")}
                             />
                         </div>
 
@@ -414,7 +412,7 @@ const PurchaseEntry = () => {
                             />
                         </div>
                     </div>
-                    
+
                     <div className="purchase-entry-row">
                         <div className="purchase-form-group">
                             <label>%VAT</label>
@@ -425,7 +423,7 @@ const PurchaseEntry = () => {
                                 onChange={handleChange}
                                 placeholder="Enter"
                                 ref={modalPervatRef}
-                                    onKeyDown={(e) => handleKeyNav(e, "pervat")}
+                                onKeyDown={(e) => handleKeyNav(e, "pervat")}
                             />
                         </div>
 
@@ -449,7 +447,7 @@ const PurchaseEntry = () => {
                             />
                         </div>
                     </div>
-                    
+
                     <div className="purchase-entry-row">
                         <div className="purchase-form-group purchase-form-group-half">
                             <label>PURCHASE AGST</label>
@@ -460,7 +458,7 @@ const PurchaseEntry = () => {
                                 onChange={handleChange}
                                 placeholder="Enter"
                                 ref={modalPurchaseagstRef}
-                                    onKeyDown={(e) => handleKeyNav(e, "purchaseagst")}
+                                onKeyDown={(e) => handleKeyNav(e, "purchaseagst")}
                             />
                         </div>
 
@@ -473,22 +471,22 @@ const PurchaseEntry = () => {
                                 onChange={handleChange}
                                 placeholder="Enter"
                                 ref={modalFormissueRef}
-                                    onKeyDown={(e) => handleKeyNav(e, "formissue")}
+                                onKeyDown={(e) => handleKeyNav(e, "formissue")}
                             />
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div className="purchase-button-container">
-                <button 
+            <div className="flex hidden">
+                <button
                     ref={SubmitRef}
                     onKeyDown={(e) => handleKeyNav(e, "submit")}
                     onClick={handleSubmit}
                     disabled={loading}
-                    className="purchase-submit-button"
+                    className="trans-submit-btn"
                 >
-                    {loading ? 'Submitting...' : 'Submit'}
+                    {loading ? 'Saving...' : 'Submit'}
                 </button>
             </div>
         </div>

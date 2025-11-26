@@ -2,12 +2,17 @@ import React, { useState, useRef, useEffect } from "react";
 import { useSalesman } from "../context/SalesmanContext";
 import toast from 'react-hot-toast';
 import './salesman.css'
+import { usePrint } from "../context/PrintContext";
+import { useExcel } from "../context/ExcelContext";
 
 
 const Salesman = () => {
   const [showModal, setShowModal] = useState(false);
   const handleOpen = () => setShowModal(true);
   const handleClose = () => setShowModal(false);
+
+  const { print, isPrinting } = usePrint();
+  const { exportToExcel, isExporting } = useExcel();
 
   const { salesmans, loading, getAllSalesmen, updateSalesman, addSalesman, getSalesmanByID, deleteSalesman } = useSalesman();
 
@@ -112,6 +117,54 @@ const Salesman = () => {
     i.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+
+  const handlePrint = () => {
+    // Prepare data for printing
+    const printData = {
+      salesmans: filteredSalesmans, // Use filtered data
+      summary: {
+        total: filteredSalesmans.length,
+        active: filteredSalesmans.filter(s => s.status === 'Active').length,
+        inactive: filteredSalesmans.filter(s => s.status === 'Inactive').length,
+      }
+    };
+
+    // Call print function with data and config
+    print(printData, {
+      title: 'Salesman Masters Report',
+      pageType: 'salesman', // We'll add this new type
+      orientation: 'portrait',
+      showHeader: true,
+      showFooter: true
+    });
+  };
+
+  const handleExcelExport = async () => {
+    const excelData = {
+      salesmans: filteredSalesmans,
+      summary: {
+        total: filteredSalesmans.length,
+        active: filteredSalesmans.filter(s => s.status === 'Active').length,
+        inactive: filteredSalesmans.filter(s => s.status === 'Inactive').length,
+      }
+    };
+
+    const result = await exportToExcel(excelData, {
+      fileName: 'Salesman_Masters',
+      sheetName: 'Salesman Data',
+      dataType: 'salesman',
+      includeHeader: true,
+      includeSummary: true,
+      autoWidth: true
+    });
+
+    if (result.success) {
+      toast.success(`Excel file downloaded: ${result.fileName}`);
+    } else {
+      toast.error('Failed to export Excel file');
+    }
+  };
+
   const handleKeyNavigation = (e, nextField) => {
     if (["ArrowRight", "ArrowDown", "Enter"].includes(e.key)) {
       e.preventDefault();
@@ -201,6 +254,22 @@ const Salesman = () => {
             onChange={(e) => setSearchTerm(e.target.value)}
             value={searchTerm}
           />
+          <button
+            className="salesman-excel-btn"
+            onClick={handleExcelExport}
+            disabled={isExporting || filteredSalesmans.length === 0}
+            title="Export to Excel"
+          >
+            📊 {isExporting ? 'Exporting...' : 'Excel'}
+          </button>
+          <button
+            className="salesman-print-btn"
+            onClick={handlePrint}
+            disabled={isPrinting || filteredSalesmans.length === 0}
+            title="Print Salesman List"
+          >
+            🖨️ Print
+          </button>
           <button className="salesman-new-item-btn" onClick={() => setShowModal(true)}>
             + New
           </button>
