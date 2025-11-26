@@ -6,6 +6,7 @@
   border-radius: 10px;
   font-family: "Segoe UI", sans-serif;
   width: 90%;
+  scrollbar-width: none;
   max-width: 1200px;
   margin: 10vh auto;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);

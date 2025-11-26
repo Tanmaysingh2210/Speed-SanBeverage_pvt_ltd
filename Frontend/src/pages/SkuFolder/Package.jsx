@@ -59,7 +59,7 @@ const Package = () => {
           placeholder="🔍 Search Packages..."
           className="search-input"
         />
-        <button className="add-btn" onClick={() => setShowForm(true)}>+ New Package</button>
+        <button className="add-btn-con" onClick={() => setShowForm(true)}>+ New </button>
       </div>
       {/* Add New Container Form */}
       {showForm && (

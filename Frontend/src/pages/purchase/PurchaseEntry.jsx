@@ -480,15 +480,15 @@ const PurchaseEntry = () => {
                 </div>
             </div>
 
-            <div className="purchase-button-container">
+            <div className="hidden flex">
                 <button 
                     ref={SubmitRef}
                     onKeyDown={(e) => handleKeyNav(e, "submit")}
                     onClick={handleSubmit}
                     disabled={loading}
-                    className="purchase-submit-button"
+                    className="trans-submit-btn"
                 >
-                    {loading ? 'Submitting...' : 'Submit'}
+                    {loading ? 'Saving...' : 'Submit'}
                 </button>
             </div>
         </div>

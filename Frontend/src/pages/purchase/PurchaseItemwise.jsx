@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import toast from 'react-hot-toast';
 import "../transaction/transaction.css";
 import api from '../../api/api';
-import {useSKU} from '../../context/SKUContext'
+import { useSKU } from '../../context/SKUContext'
 
 const PurchaseItemwise = () => {
 
@@ -12,34 +12,34 @@ const PurchaseItemwise = () => {
     const [editingIndex, setEditingIndex] = useState(null);
 
     const [loading, setLoading] = useState(false);
-        const modalDateRef = useRef(null);
-        const modalCodeRef = useRef(null);
-        const modalQtyRef = useRef(null);
-        const modalExpDateRef = useRef(null);
-        const modalAddRef=useRef(null)
-        const modalSubmitRef=useRef(null)
+    const modalDateRef = useRef(null);
+    const modalCodeRef = useRef(null);
+    const modalQtyRef = useRef(null);
+    const modalExpDateRef = useRef(null);
+    const modalAddRef = useRef(null)
+    const modalSubmitRef = useRef(null)
 
-     const [formData, setFormData] = useState({
+    const [formData, setFormData] = useState({
         date: '',
         itemCode: '',
         qty: '',
         expiryDate: ''
     });
 
-    useEffect(() => {  
-         fetchSkuItems()
+    useEffect(() => {
+        fetchSkuItems()
     }, []);
 
-     const fetchSkuItems = async () => {
+    const fetchSkuItems = async () => {
         try {
             const response = await getAllItems();
-            const data =response.data;
+            const data = response.data;
             console.log(data);
-            
+
             setSkuItems(data);
         } catch (error) {
             console.error('Error fetching SKU items:', error);
-        toast.error('Failed to fetch SKU items', 'error');
+            toast.error('Failed to fetch SKU items', 'error');
         }
     };
 
@@ -48,40 +48,40 @@ const PurchaseItemwise = () => {
         return item ? item.name : 'Unknown Item';
     };
 
-     const handleInputChange = (e) => {
+    const handleInputChange = (e) => {
         const { name, value } = e.target;
-        setFormData(prev => ({ ...prev,[name]: value}));
+        setFormData(prev => ({ ...prev, [name]: value }));
     };
 
     const validateForm = () => {
         if (!formData.date) {
-        toast.error('Please select a date', 'error');
+            toast.error('Please select a date', 'error');
             return false;
         }
         if (!formData.itemCode) {
-        toast.error('Please enter item code', 'error');
+            toast.error('Please enter item code', 'error');
             return false;
         }
         if (!formData.qty || formData.qty <= 0) {
-        toast.error('Please enter valid quantity', 'error');
+            toast.error('Please enter valid quantity', 'error');
             return false;
         }
         if (!formData.expiryDate) {
-        toast.error('Please select expiry date', 'error');
+            toast.error('Please select expiry date', 'error');
             return false;
         }
-        
+
         // Check if item code exists in SKU items
         const itemExists = skuItems.some(sku => sku.code.toLowerCase() === formData.itemCode.toLowerCase());
         if (!itemExists) {
-        toast.error('Item code not found in SKU items', 'error');
+            toast.error('Item code not found in SKU items', 'error');
             return false;
         }
-        
+
         return true;
     };
 
-     const handleAddItem = () => {
+    const handleAddItem = () => {
         if (!validateForm()) return;
 
         const newItem = {
@@ -96,16 +96,16 @@ const PurchaseItemwise = () => {
             updatedItems[editingIndex] = newItem;
             setItems(updatedItems);
             setEditingIndex(null);
-        toast.success('Item updated successfully');
+            toast.success('Item updated successfully');
         } else {
             // Add new item
             setItems([...items, newItem]);
-        toast.success('Item added successfully');
+            toast.success('Item added successfully');
         }
 
         // Reset form
         setFormData({
-            date:formData.date,
+            date: formData.date,
             itemCode: '',
             qty: '',
             expiryDate: ''
@@ -121,15 +121,15 @@ const PurchaseItemwise = () => {
             expiryDate: item.expiryDate
         });
         setEditingIndex(index);
-    toast.success('Edit mode activated', 'info');
+        toast.success('Edit mode activated', 'info');
     };
 
-      const handleDelete = (index) => {
+    const handleDelete = (index) => {
         if (true) {
             const updatedItems = items.filter((_, i) => i !== index);
             setItems(updatedItems);
-        toast.success('Item deleted successfully');
-            
+            toast.success('Item deleted successfully');
+
             // Reset edit mode if deleting the item being edited
             if (editingIndex === index) {
                 setEditingIndex(null);
@@ -143,18 +143,18 @@ const PurchaseItemwise = () => {
         }
     };
 
-     const handleSubmit = async () => {
+    const handleSubmit = async () => {
         if (items.length === 0) {
-        toast.error('Please add at least one item', 'error');
+            toast.error('Please add at least one item', 'error');
             return;
         }
 
         // Check if all items have the same date
         const mainDate = items[0].date;
         const allSameDate = items.every(item => item.date === mainDate);
-        
+
         if (!allSameDate) {
-        toast.error('All items must have the same purchase date', 'error');
+            toast.error('All items must have the same purchase date', 'error');
             return;
         }
 
@@ -177,7 +177,7 @@ const PurchaseItemwise = () => {
             const response = await api.post('/purchase/itemwise', finalPayload);
 
             if (response.data) {
-            toast.error('Purchase saved successfully');
+                toast.error('Purchase saved successfully');
                 setItems([]);
                 setFormData({
                     date: '',
@@ -189,14 +189,14 @@ const PurchaseItemwise = () => {
         } catch (error) {
             console.error('Error saving purchase:', error);
             const errorMessage = error.response?.data?.message || 'Failed to save purchase';
-        toast.error(errorMessage, 'error');
+            toast.error(errorMessage, 'error');
         } finally {
             setLoading(false);
         }
     };
 
 
-    
+
 
     const handleKeyNav = (e, currentField) => {
         if (["ArrowRight", "ArrowDown", "Enter"].includes(e.key)) {
@@ -225,16 +225,16 @@ const PurchaseItemwise = () => {
                     }
                     break;
                 case "add":
-                    if(e.key==="Enter"){
+                    if (e.key === "Enter") {
                         modalAddRef.current?.click();
                         modalSubmitRef.current?.focus();
                     }
-                    else{
+                    else {
                         modalSubmitRef.current?.focus();
                     }
                     break;
                 case "submit":
-                        modalDateRef.current?.focus();
+                    modalDateRef.current?.focus();
                     break;
                 default:
                     break;
@@ -255,27 +255,27 @@ const PurchaseItemwise = () => {
                 case "itemcode":
                     modalDateRef.current?.focus();
                     break;
-                case "submit":                    
-                        modalAddRef.current?.focus();
+                case "submit":
+                    modalAddRef.current?.focus();
                     break;
                 case "date":
                     modalSubmitRef.current?.focus();
                     break;
-                
-                
+
+
             }
         }
     }
-    
- return (
-     <div className="trans">
-        
+
+    return (
+        <div className="trans">
+
             <div className='trans-container'>
                 <div className="trans-left">
-                    
-                        <div className="item-inputs">
+
+                    <div className="item-inputs">
                         <div className="flex">
-                             <div className="form-group">
+                            <div className="form-group">
                                 <label>Date</label>
                                 <input
                                     type="date"
@@ -294,11 +294,11 @@ const PurchaseItemwise = () => {
                                     placeholder='Enter Item code'
                                     value={formData.itemCode}
                                     onChange={handleInputChange}
-                                   ref={modalCodeRef}
+                                    ref={modalCodeRef}
                                     onKeyDown={(e) => handleKeyNav(e, "itemcode")}
                                 />
                             </div>
-                            
+
                             <div className="form-group">
                                 <label>Qty</label>
                                 <input
@@ -310,7 +310,7 @@ const PurchaseItemwise = () => {
                                     min="1"
                                     ref={modalQtyRef}
                                     onKeyDown={(e) => handleKeyNav(e, "qty")}
-                                    
+
                                 />
                             </div>
                             <div className="form-group">
@@ -324,13 +324,13 @@ const PurchaseItemwise = () => {
                                     onKeyDown={(e) => handleKeyNav(e, "expdate")}
                                 />
                             </div>
-                            <button type="button" className=" add-btn" onClick={handleAddItem} 
-                            ref={modalAddRef}
-                                    onKeyDown={(e) => handleKeyNav(e, "add")}>
-                            ➕ {editingIndex !== null ? 'Update Item' : 'Add Item'}
+                            <button type="button" className=" add-btn" onClick={handleAddItem}
+                                ref={modalAddRef}
+                                onKeyDown={(e) => handleKeyNav(e, "add")}>
+                                ➕ {editingIndex !== null ? 'Update Item' : 'Add Item'}
                             </button>
                         </div>
-                        
+
                         <div className="table">
                             <div className="trans-table-grid-purchaseItemwise trans-table-header-purchaseItemwise">
                                 {/* <div>SL.NO.</div> */}
@@ -353,11 +353,11 @@ const PurchaseItemwise = () => {
                                         <div>{new Date(item.expiryDate).toLocaleDateString()}</div>
                                         <div className="actions">
                                             <span className="edit" onClick={() => handleEdit(index)}>
-                                            Edit
+                                                Edit
                                             </span>
                                             {" | "}
                                             <span className="delete" onClick={() => handleDelete(index)}>
-                                            Delete
+                                                Delete
                                             </span>
                                         </div>
                                     </div>
@@ -366,22 +366,25 @@ const PurchaseItemwise = () => {
 
                         </div>
                     </div>
-                    
-                    
-                    
+
+
+
                 </div>
             </div>
-            <button 
-                        className='trans-submit-btn'
-                        onClick={handleSubmit}
-                        disabled={loading || items.length === 0}
-                         ref={modalSubmitRef}
-                        onKeyDown={(e) => handleKeyNav(e, "submit")}
-                    >
-                        {loading ? 'Saving...' : 'Submit'}
-                    </button>
+            <div className="hidden flex">
+                <button
+                    className='trans-submit-btn'
+                    onClick={handleSubmit}
+                    disabled={loading || items.length === 0}
+                    ref={modalSubmitRef}
+                    onKeyDown={(e) => handleKeyNav(e, "submit")}
+                >
+                    {loading ? 'Saving...' : 'Submit'}
+                </button>
+            </div>
+
         </div>
-  )
+    )
 }
 
 export default PurchaseItemwise
