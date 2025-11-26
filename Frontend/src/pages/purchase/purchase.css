@@ -9,6 +9,27 @@
   overflow-x: hidden;
 }
 
+.flex {
+  display: flex;
+  gap: 2vw;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.hidden{
+  overflow: hidden;
+}
+
+.trans-submit-btn {
+  background-color: #54bd7b;
+  color: white;
+  border: none;
+  padding: 8px 15px;
+  overflow: hidden;
+  border-radius: 6px;
+  cursor: pointer;
+}
 
 .actions{
   cursor: pointer;

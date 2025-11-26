@@ -66,8 +66,8 @@ const Container = () => {
           placeholder="🔍 Search Containers..."
           className="search-input"
         />
-        <button className="add-btn" onClick={() => setShowForm(true)}>
-          + New Container
+        <button className="add-btn-con" onClick={() => setShowForm(true)}>
+          + New
         </button>
       </div>
 
