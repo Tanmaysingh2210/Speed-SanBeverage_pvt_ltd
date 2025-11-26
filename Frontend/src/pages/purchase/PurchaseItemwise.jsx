@@ -371,7 +371,7 @@ const PurchaseItemwise = () => {
 
                 </div>
             </div>
-            <div className="flex hidden">
+            <div className="hidden flex">
                 <button
                     className='trans-submit-btn'
                     onClick={handleSubmit}

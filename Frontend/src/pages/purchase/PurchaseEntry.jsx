@@ -478,8 +478,8 @@ const PurchaseEntry = () => {
                 </div>
             </div>
 
-            <div className="flex hidden">
-                <button
+            <div className="hidden flex">
+                <button 
                     ref={SubmitRef}
                     onKeyDown={(e) => handleKeyNav(e, "submit")}
                     onClick={handleSubmit}

@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useSKU } from '../../context/SKUContext';
+import './Container.css';
 
 const Flavour = () => {
   const { flavours, addFlavour, getFlavourByID, deleteFlavour, updateFlavour, getAllFlavours, loading } = useSKU();
@@ -58,7 +59,7 @@ const Flavour = () => {
           placeholder="🔍 Search flavours..."
           className="search-input"
         />
-        <button className="add-btn" onClick={() => setShowForm(true)}>+ New Flavour</button>
+        <button className="add-btn-con" onClick={() => setShowForm(true)}>+ New</button>
       </div>
 
       {/* Add New Container Form */}
