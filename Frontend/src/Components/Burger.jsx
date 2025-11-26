@@ -1,5 +1,6 @@
 import React from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import {NavLink} from 'react-router-dom';
 import { useAuth } from '../context/AuthContext'
 import toast from "react-hot-toast";
 
@@ -28,11 +29,15 @@ const Burger = () => {
             <div className="line"></div>
 
             <ul className="burger-ul">
-                <li><Link to={'/purchase'}>Purchase</Link></li>
-                <li><Link to={`/transaction`}>Transaction</Link></li>
-                <li><Link to={`/prices`}>Prices</Link> </li>
-                <li><Link to={`/salesman`}>Salesman</Link></li>
-                <li><Link to={`/sku`}>SKQ</Link></li>
+                <li><NavLink to={'/purchase'} className={({ isActive }) => (isActive ? 'active-link' : '')}>Purchase</NavLink></li>
+
+                <li><NavLink to={`/transaction`} className={({ isActive }) => (isActive ? 'active-link' : '')}>Transaction</NavLink></li>
+
+                <li><NavLink to={`/prices`} className={({ isActive }) => (isActive ? 'active-link' : '')}>Prices</NavLink> </li>
+
+                <li><NavLink to={`/salesman`} className={({ isActive }) => (isActive ? 'active-link' : '')}>Salesman</NavLink></li>
+
+                <li><NavLink to={`/sku`} className={({ isActive }) => (isActive ? 'active-link' : '')}>SKQ</NavLink></li>
 
             </ul>
 

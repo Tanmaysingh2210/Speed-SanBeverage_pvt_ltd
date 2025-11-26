@@ -152,6 +152,7 @@ body {
 
 }
 
+
 .burger-ul li:hover {
   background-color: var(--gray);
 }
@@ -159,6 +160,10 @@ body {
 
 .burger-ul li a:hover {
   color: #10b981;
+}
+.active-link{
+    color: #10b981;
+
 }
 
 .user-info {
