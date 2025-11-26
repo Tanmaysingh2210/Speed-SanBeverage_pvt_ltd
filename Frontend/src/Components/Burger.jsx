@@ -1,10 +1,12 @@
 import React from 'react'
+import {useState} from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import {NavLink} from 'react-router-dom';
 import { useAuth } from '../context/AuthContext'
 import toast from "react-hot-toast";
-
-const Burger = () => {
+import { FaWineBottle } from "react-icons/fa";
+import { IoMenu ,IoClose } from "react-icons/io5";  
+const Burger = ({onMenuToggle}) => {
     const { user, logout } = useAuth();
     const navigate = useNavigate();
 
@@ -20,14 +22,36 @@ const Burger = () => {
         }
     };
     
+    const [open,setOpen]=useState(false);
+    const handleMenuToggle = (isOpen) => {
+        setOpen(isOpen);
+        if (onMenuToggle) {
+            onMenuToggle(isOpen);  // Pass state to parent
+        }
+    };
+
+
     return (
-        <div className="burger-box">
+        <>
+       <button 
+                onClick={() => handleMenuToggle(true)} 
+                className={`menu-btn text-3xl p-2 ${open ? "hidden-menu" : ""}`}
+            >
+                <IoMenu />
+            </button>
+
+
+        <div className={`burger-box ${open ? "show" : "hide"}`}>
             <div className="heading">
-                <i className="fas fa-wine-bottle text-blue-600 text-2xl"></i>
+                <FaWineBottle className="text-blue-600 text-2xl" />
                 <h3 >SAN Beverages</h3>
+
+            <IoClose className="text-3xl cursor-pointer hover:text-red-500"
+            onClick={() => handleMenuToggle(false)}
+            />
+
             </div>
             <div className="line"></div>
-
             <ul className="burger-ul">
                 <li><NavLink to={'/purchase'} className={({ isActive }) => (isActive ? 'active-link' : '')}>Purchase</NavLink></li>
 
@@ -59,6 +83,7 @@ const Burger = () => {
             )}
 
         </div>
+    </>
     )
 }
 
