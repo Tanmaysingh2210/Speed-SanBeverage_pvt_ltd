@@ -14,6 +14,9 @@ const LoadOut = () => {
     const { items, getAllItems } = useSKU();
     const { salesmans, getAllSalesmen } = useSalesman();
 
+    const [showSalesmanModal, setShowSalesmanModal] = useState(false);
+    const [salesmanSearch, setSalesmanSearch] = useState("");
+
     const editMode = location.state?.editMode || false;
     const editData = location.state?.editData || null;
 
@@ -194,7 +197,9 @@ const LoadOut = () => {
                         <div className="salesman-detail">
                             <div className="form-group">
                                 <label>Salesman Code</label>
-                                <input
+
+                                <div className="input-with-btn">
+                                    <input
                                     type="text"
                                     placeholder="Enter Salesman code"
                                     value={newLoadOut.salesmanCode}
@@ -203,8 +208,18 @@ const LoadOut = () => {
                                     }
                                     ref={modalCodeRef}
                                     onKeyDown={(e) => handleKeyNav(e, "code")}
-                                />
-                            </div>
+                                    />
+
+                                    <button
+                                    type="button"
+                                    className="dropdown-btn"
+                                    onClick={() => setShowSalesmanModal(true)}
+                                    >
+                                    ⌄
+                                    </button>
+                                </div>
+                                </div>
+
                             <div className="form-group">
                                 <label>Salesman Name</label>
                                 <input
@@ -340,6 +355,68 @@ const LoadOut = () => {
                     Cancel
                 </button>
             </div>
+            {showSalesmanModal && (
+            <div className="modal-overlay">
+            <div className="modal-box">
+
+      <div className="modal-header">
+        <h3>Select Salesman</h3>
+        <button
+            className="modal-close-btn"
+            onClick={() => setShowSalesmanModal(false)}
+            >
+            ✕
+        </button>
+
+      </div>
+
+      <input
+        type="text"
+        placeholder="Search by code or name"
+        value={salesmanSearch}
+        onChange={(e) => setSalesmanSearch(e.target.value)}
+        className="modal-search"
+      />
+
+      <div className="modal-table">
+        <div className="modal-row modal-head">
+          <div>Code</div>
+          <div>Name</div>
+          <div>Status</div>
+        </div>
+
+        {salesmans
+          .filter(sm =>
+            sm.codeNo?.toLowerCase().includes(salesmanSearch.toLowerCase()) ||
+            sm.name?.toLowerCase().includes(salesmanSearch.toLowerCase())
+          )
+          .map((sm) => (
+            <div
+              key={sm._id}
+              className="modal-row"
+              onClick={() => {
+                setNewLoadOut(prev => ({
+                  ...prev,
+                  salesmanCode: sm.codeNo
+                }));
+                setShowSalesmanModal(false);
+                modalDateRef.current?.focus();
+              }}
+            >
+              <div>{sm.codeNo}</div>
+              <div>{sm.name}</div>
+              <div className={`status-badge ${sm.status === "Inactive" ? "inactive" : "active"}`}>
+                {sm.status || "Active"}
+                </div>
+
+            </div>
+          ))}
+      </div>
+
+    </div>
+  </div>
+)}
+
         </div>
     )
 }

@@ -429,3 +429,185 @@ input.short{
     width: 100%;
   }
 }
+
+
+/* ----------------Loadout updated--------------------------- */
+
+
+/* ONLY Salesman Code control */
+.input-with-btn {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.input-with-btn input[type="text"] {
+  flex: 1;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.input-with-btn .dropdown-btn {
+  width: 38px;
+  height: 38px;
+  border: 1px solid #d0d0d0;
+  border-left: none;
+  border-radius: 0 6px 6px 0;
+  background: #ffffff;
+  cursor: pointer;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  font-size: 17px;
+  color: #000000;overflow: hidden;
+  font-weight: 900;
+}
+
+.input-with-btn .dropdown-btn:hover {
+  background: #0b0b0b;
+  color: #ffffff;
+}
+
+/* 
+.dropdown-btn {
+  height: 38px;
+  width: 38px;
+  border-radius: 6px;
+  border: 1px solid #d0d0d0;
+  background: #ffffff;
+  cursor: pointer;
+  font-size: 16px;
+  transition: all 0.2s ease;
+}
+
+.dropdown-btn:hover {
+  background: #f0f4ff;
+  border-color: #4f7cff;
+} */
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+.modal-box {
+  background: #ffffff;
+  width: 520px;
+  border-radius: 12px;
+  padding: 18px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.25);
+  animation: fadeIn 0.2s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.modal-header h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.modal-close-btn {
+  border: none;
+  background: transparent;
+  font-size: 20px;
+  cursor: pointer;
+  color: #555;
+  transition: color 0.2s;
+}
+
+.modal-close-btn:hover {
+  color: #ff3b3b;
+}
+
+.modal-search {
+  width: 100%;
+  padding: 8px 10px;
+  margin-bottom: 12px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  background: #ffffff;
+  outline: none;
+}
+
+.modal-search:focus {
+  border-color: #4f7cff;
+  box-shadow: 0 0 0 2px rgba(79, 124, 255, 0.15);
+}
+
+.modal-table {
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.modal-row {
+  display: grid;
+  grid-template-columns: 1fr 2fr 1fr;
+  padding: 10px;
+  cursor: pointer;
+  align-items: center;
+  border-radius: 6px;
+  transition: background 0.15s ease;
+}
+
+.modal-row:hover {
+  background: #f5f8ff;
+}
+
+.modal-head {
+  font-weight: 600;
+  background: #f1f1f1;
+  cursor: default;
+}
+
+.status-badge {
+  text-align: center;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  width: fit-content;
+}
+
+.status-badge.active {
+  background: #e6f8ee;
+  color: #1e8e3e;
+}
+
+.status-badge.inactive {
+  background: #fdeaea;
+  color: #d93025;
+}
+
+.modal-search {
+  width: 100%;
+  padding: 8px 10px;
+  margin-bottom: 12px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  background: #ffffff;
+
+  color: #000000;          /* ✅ THIS FIXES IT */
+  font-size: 14px;
+}
