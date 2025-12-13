@@ -177,7 +177,7 @@ const PurchaseItemwise = () => {
             const response = await api.post('/purchase/itemwise', finalPayload);
 
             if (response.data) {
-                toast.error('Purchase saved successfully');
+            toast.success('Purchase saved successfully');
                 setItems([]);
                 setFormData({
                     date: '',
