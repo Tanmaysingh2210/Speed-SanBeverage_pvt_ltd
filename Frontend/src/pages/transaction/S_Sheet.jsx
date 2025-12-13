@@ -60,7 +60,8 @@ const S_Sheet = () => {
       setSheet({
         salesmanCode: "",
         date: "",
-        trip: 1
+        trip: 1,
+        schm:""
       });
     } catch (err) {
       console.log(err);
@@ -215,7 +216,8 @@ const S_Sheet = () => {
                   <label>SMP,DSC,INCM,SCME</label>
                   <input
                     type="number"
-                    value={sheetData?.totals?.totalDiscount || ""}
+                    value={sheetData?.schm || sheet.schm ||  ""}
+                    onChange={(e)=> setSheet({...sheet, schm:e.target.value})}
                     placeholder="Enter"
                   />
                 </div>
@@ -226,7 +228,7 @@ const S_Sheet = () => {
                   <input
                     readOnly
                     type="number"
-                    value={sheetData?.totals?.totalDiscount || ""}
+                    value={sheetData?.schm || ""}
                     placeholder="Enter"
                   />
                 </div>
