@@ -48,7 +48,7 @@ router.post("/settlement", async (req, res) => {
                 ? loadin.items.find(li => li.itemCode === item.itemCode)
                 : null;
 
-            const finalQty = item.qty - (loadinItem?.qty || 0);
+            const finalQty = item.qty - ((loadinItem?.Filled + loadinItem?.Burst) || 0);
 
             // 4) FETCH LATEST PRICE
             const latestRate = await Rate.findOne({

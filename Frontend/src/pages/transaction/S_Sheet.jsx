@@ -19,7 +19,8 @@ const S_Sheet = () => {
   const [sheet, setSheet] = useState({
     salesmanCode: "",
     date: "",
-    trip: 1
+    trip: 1,
+    schm: ""
   });
 
   // const handleSubmit = async (e) => {
@@ -51,6 +52,7 @@ const S_Sheet = () => {
         salesmanCode: sheet.salesmanCode,
         date: sheet.date,
         trip: Number(sheet.trip) || 1,
+        schm: Number(sheet.schm) || 0,
       });
 
       setSheetData(data); // store settlement details in UI
@@ -212,7 +214,6 @@ const S_Sheet = () => {
                 <div className="form-group">
                   <label>SMP,DSC,INCM,SCME</label>
                   <input
-                    readOnly
                     type="number"
                     value={sheetData?.totals?.totalDiscount || ""}
                     placeholder="Enter"
