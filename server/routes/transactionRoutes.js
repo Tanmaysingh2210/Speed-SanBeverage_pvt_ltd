@@ -8,7 +8,7 @@ const LoadOut = require('../models/transaction/LoadOut');
 const Loadin = require('../models/transaction/loadIn');
 const CashCredit = require('../models/transaction/CashCredit');
 const Rate = require('../models/rates')
-
+const S_sheet=require('../models/transaction/s_sheet');
 
 router.use('/loadout', loadoutRoutes);
 router.use('/loadin', loadinRoutes);
@@ -16,8 +16,24 @@ router.use('/cashcredit', cashcreditRoutes);
 
 router.post("/settlement", async (req, res) => {
     try {
-        const { salesmanCode, date, trip } = req.body;
+        const { salesmanCode, date, trip,schm } = req.body;
         const selectedDate = new Date(date);
+
+        if(!salesmanCode || !date || !trip || !schm)return res.status(400).json({message:"All field required"});
+
+        const s_sheet = await S_sheet.findOne({
+            salesmanCode,
+            date,
+            trip
+        });
+        if(!s_sheet){
+           await s_sheet.create({
+            salesmanCode,
+            date,
+            trip,
+            schm
+           });
+        }
 
         // 1) FETCH LOADOUT
         const loadout = await LoadOut.findOne({
@@ -114,7 +130,7 @@ router.post("/settlement", async (req, res) => {
             salesmanCode,
             date,
             trip,
-
+            schm:s_sheet.schm,
             items: settlementItems,
 
             totals: {

@@ -12,4 +12,4 @@ const loadOutSchema = new mongoose.Schema({
     ],
 }, { timestamps: false });
 
-module.exports = mongoose.model('Transation_LoadOut', loadOutSchema);
+module.exports = mongoose.model('Transaction_LoadOut', loadOutSchema);
