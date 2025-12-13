@@ -8,7 +8,7 @@ const LoadOut = require('../models/transaction/LoadOut');
 const Loadin = require('../models/transaction/loadIn');
 const CashCredit = require('../models/transaction/CashCredit');
 const Rate = require('../models/rates')
-const S_sheet=require('../models/transaction/s_sheet');
+const S_sheet = require('../models/transaction/s_sheet');
 
 router.use('/loadout', loadoutRoutes);
 router.use('/loadin', loadinRoutes);
@@ -16,24 +16,34 @@ router.use('/cashcredit', cashcreditRoutes);
 
 router.post("/settlement", async (req, res) => {
     try {
-        const { salesmanCode, date, trip,schm } = req.body;
+        const { salesmanCode, date, trip, schm } = req.body;
         const selectedDate = new Date(date);
 
-        if(!salesmanCode || !date || !trip || !schm)return res.status(400).json({message:"All field required"});
+        if (!salesmanCode || !date || !trip) return res.status(400).json({ message: "All field required" });
 
-        const s_sheet = await S_sheet.findOne({
+        let s_sheet = await S_sheet.findOne({
             salesmanCode,
             date,
             trip
         });
-        if(!s_sheet){
-           await s_sheet.create({
-            salesmanCode,
-            date,
-            trip,
-            schm
-           });
+
+        if (!s_sheet && schm != 0) {
+            await S_sheet.create({
+                salesmanCode,
+                date,
+                trip,
+                schm
+            });
+            
+            s_sheet = await S_sheet.findOne({
+                salesmanCode,
+                date,
+                trip
+            });
         }
+
+
+
 
         // 1) FETCH LOADOUT
         const loadout = await LoadOut.findOne({
@@ -126,28 +136,51 @@ router.post("/settlement", async (req, res) => {
         const shortOrExcess = parseFloat((totalDeposited - grandTotal).toFixed(2));
 
         // 8) SEND FINAL RESPONSE
-        return res.json({
-            salesmanCode,
-            date,
-            trip,
-            schm:s_sheet.schm,
-            items: settlementItems,
+        if (s_sheet) {
+            return res.json({
+                salesmanCode,
+                date,
+                trip,
+                schm: s_sheet.schm,
+                items: settlementItems,
 
-            totals: {
-                totalSale,
-                grandTotal,
-                totalDiscount,
-                totalDeposited,
-                shortOrExcess,   // + means excess, - means short
-            },
+                totals: {
+                    totalSale,
+                    grandTotal,
+                    totalDiscount,
+                    totalDeposited,
+                    shortOrExcess,   // + means excess, - means short
+                },
 
-            cashCreditDetails: {
-                cashDeposited,
-                chequeDeposited,
-                ref
-            }
-        });
+                cashCreditDetails: {
+                    cashDeposited,
+                    chequeDeposited,
+                    ref
+                }
+            });
+        }
+        else {
+            return res.json({
+                salesmanCode,
+                date,
+                trip,
+                items: settlementItems,
 
+                totals: {
+                    totalSale,
+                    grandTotal,
+                    totalDiscount,
+                    totalDeposited,
+                    shortOrExcess,   // + means excess, - means short
+                },
+
+                cashCreditDetails: {
+                    cashDeposited,
+                    chequeDeposited,
+                    ref
+                }
+            });
+        }
     } catch (err) {
         console.error(err);
         return res.status(500).json({ message: "Settlement error", error: err.message });
