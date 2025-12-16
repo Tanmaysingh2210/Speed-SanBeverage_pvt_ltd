@@ -5,11 +5,12 @@ import { useSalesman } from '../../context/SalesmanContext';
 import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 import { useSKU } from '../../context/SKUContext';
+import { useSalesmanModal } from '../../context/SalesmanModalContext';
 
 const AllTransaction = () => {
   const navigate = useNavigate();
   const { FormatDate, getLoadout, deleteLoadout, getLoadIn, deleteLoadin, getCash_credit, deleteCash_credit, loading } = useTransaction();
-  const { salesmans } = useSalesman();
+  const { salesmans, getAllSalesmen } = useSalesman();
   const { items } = useSKU();
 
   const [find, setFind] = useState({
@@ -19,7 +20,11 @@ const AllTransaction = () => {
     trip: 1
   });
 
-  const [transactions, setTransactions] = useState([ ]);
+  const [transactions, setTransactions] = useState([]);
+
+  const { openSalesmanModal } = useSalesmanModal();
+
+  
 
 
 
@@ -778,6 +783,17 @@ const AllTransaction = () => {
                 onKeyDown={(e) => handleKeyNav(e, "code")}
                 placeholder='Enter Salesman code'
               />
+              {/* <button
+                type="button"
+                className="dropdown-btn"
+                onClick={() =>
+                  openSalesmanModal((code) =>
+                    setNewLoadOut(prev => ({ ...prev, salesmanCode: code }))
+                  )
+                }
+              >
+                ⌄
+              </button> */}
             </div>
             <div className="form-group">
               <label>Date</label>

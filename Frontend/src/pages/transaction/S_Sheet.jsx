@@ -3,7 +3,7 @@ import { useState, useEffect, useRef } from 'react'
 import "./transaction.css";
 import { useTransaction } from '../../context/TransactionContext';
 import { useSalesman } from '../../context/SalesmanContext';
-
+import { useSalesmanModal } from '../../context/SalesmanModalContext';
 const S_Sheet = () => {
 
   const { getSettlement, loading } = useTransaction();
@@ -15,6 +15,8 @@ const S_Sheet = () => {
   const dateRef = useRef(null);
   const tripRef = useRef(null);
   const findRef = useRef(null);
+
+  const { openSalesmanModal } = useSalesmanModal();
 
   const [sheet, setSheet] = useState({
     salesmanCode: "",
@@ -61,7 +63,7 @@ const S_Sheet = () => {
         salesmanCode: "",
         date: "",
         trip: 1,
-        schm:""
+        schm: ""
       });
     } catch (err) {
       console.log(err);
@@ -129,6 +131,7 @@ const S_Sheet = () => {
             <div className="salesman-detail">
               <div className="form-group">
                 <label>Salesman Code</label>
+                <div className="input-with-btn">
                 <input
                   type="text"
                   placeholder='Enter Salesman code'
@@ -137,6 +140,18 @@ const S_Sheet = () => {
                   onKeyDown={(e) => handleKeyNav(e, "code")}
                   ref={codeRef}
                 />
+                <button
+                  type="button"
+                  className="dropdown-btn"
+                  onClick={() =>
+                    openSalesmanModal((code) =>
+                     setSheetData(prev => ({ ...prev, salesmanCode: code }))
+                    )
+                  }
+                >
+                  ⌄
+                </button>
+                </div>
               </div>
               <div className="form-group">
                 <label>Salesman Name</label>
@@ -216,8 +231,8 @@ const S_Sheet = () => {
                   <label>SMP,DSC,INCM,SCME</label>
                   <input
                     type="number"
-                    value={sheetData?.schm || sheet.schm ||  ""}
-                    onChange={(e)=> setSheet({...sheet, schm:e.target.value})}
+                    value={sheetData?.schm || sheet.schm || ""}
+                    onChange={(e) => setSheet({ ...sheet, schm: e.target.value })}
                     placeholder="Enter"
                   />
                 </div>

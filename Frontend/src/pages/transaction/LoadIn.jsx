@@ -5,6 +5,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { useSKU } from '../../context/SKUContext';
 import { useSalesman } from '../../context/SalesmanContext';
 import "./transaction.css";
+import { useSalesmanModal } from '../../context/SalesmanModalContext';
 
 const LoadIn = () => {
     const navigate = useNavigate();
@@ -27,6 +28,8 @@ const LoadIn = () => {
     const saveRef = useRef(null);
     const addRef = useRef(null);
 
+    
+    const { openSalesmanModal } = useSalesmanModal();
     const [newLoadItem, setNewLoadItem] = useState({
         itemcode: "",
         Filled: "",
@@ -227,12 +230,25 @@ const LoadIn = () => {
                             </div>
                             <div className="form-group">
                                 <label>Salesman Name</label>
+                                 <div className="input-with-btn">
                                 <input
                                     readOnly
                                     type="text"
                                     value={matchedSalesman ? matchedSalesman.name : ""}
                                     style={{ backgroundColor: "#f5f5f5" }}
                                 />
+                                <button
+                                    type="button"
+                                    className="dropdown-btn"
+                                     onClick={() =>
+                                        openSalesmanModal((code) =>
+                                       setNewLoadIn(prev => ({ ...prev, salesmanCode: code }))
+                                        )
+                                    }
+                                    >
+                                    ⌄
+                                    </button>
+                                    </div>
                             </div>
                             <div className="form-group">
                                 <label>Route No.</label>
