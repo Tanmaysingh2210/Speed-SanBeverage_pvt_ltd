@@ -520,6 +520,7 @@ input.short{
   justify-content: space-between;
   align-items: center;
   margin-bottom: 10px;
+  color: #000000;
 }
 
 .modal-header h3 {
@@ -562,6 +563,7 @@ input.short{
 }
 
 .modal-row {
+  color: #000000;
   display: grid;
   grid-template-columns: 1fr 2fr 1fr;
   padding: 10px;

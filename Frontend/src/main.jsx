@@ -11,15 +11,18 @@ import { TransactionProvider } from './context/TransactionContext.jsx';
 import { PurchaseProvider } from './context/PurchaseContext.jsx';
 import { PrintProvider } from './context/PrintContext.jsx';
 import { ExcelProvider } from './context/ExcelContext.jsx';
+import { SalesmanModalProvider } from './context/SalesmanModalContext.jsx';
 
 createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <BrowserRouter>
+    <SalesmanProvider>
+    <SalesmanModalProvider>
       <PrintProvider>
         <ExcelProvider>
           <SKUProvider>
             <PricesProvider>
-              <SalesmanProvider>
+              
                 <PurchaseProvider>
                   <TransactionProvider>
                     <AuthProvider>
@@ -27,11 +30,14 @@ createRoot(document.getElementById('root')).render(
                     </AuthProvider>
                   </TransactionProvider>
                 </PurchaseProvider>
-              </SalesmanProvider>
+              
             </PricesProvider>
           </SKUProvider>
         </ExcelProvider>
       </PrintProvider>
+    
+      </SalesmanModalProvider>
+      </SalesmanProvider>
     </BrowserRouter>
   </React.StrictMode>
 )
