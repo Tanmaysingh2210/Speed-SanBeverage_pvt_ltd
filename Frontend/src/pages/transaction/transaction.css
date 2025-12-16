@@ -572,6 +572,26 @@ input.short{
   border-radius: 6px;
   transition: background 0.15s ease;
 }
+.modal-row4 {
+  color: #000000;
+  display: grid;
+  grid-template-columns: 1fr 2fr 1fr 1fr;
+  padding: 10px;
+  cursor: pointer;
+  align-items: center;
+  border-radius: 6px;
+  transition: background 0.15s ease;
+}
+.modal-row5 {
+  color: #000000;
+  display: grid;
+  grid-template-columns: 1fr 2fr 1fr 1fr 1fr;
+  padding: 10px;
+  cursor: pointer;
+  align-items: center;
+  border-radius: 6px;
+  transition: background 0.15s ease;
+}
 
 .modal-row:hover {
   background: #f5f8ff;

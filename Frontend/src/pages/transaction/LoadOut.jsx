@@ -7,10 +7,16 @@ import { useSalesman } from '../../context/SalesmanContext';
 import "./transaction.css";
 import { useSalesmanModal } from '../../context/SalesmanModalContext';
 
+
 const LoadOut = () => {
     const navigate = useNavigate();
     const location = useLocation();
 
+    const [modalQtyMap, setModalQtyMap] = useState({});
+
+
+    const [itemShow, setItemShow] = useState(false);
+    const [search, setSearch] = useState("");
     const { loading, addLoadout, updateLoadout } = useTransaction();
     const { items, getAllItems } = useSKU();
     const { salesmans, getAllSalesmen } = useSalesman();
@@ -50,6 +56,9 @@ const LoadOut = () => {
         getAllItems();
         getAllSalesmen();
     }, []);
+
+
+
 
     const handleAddItem = () => {
         const qtyNum = Number(newLoadItem.qty);
@@ -200,29 +209,29 @@ const LoadOut = () => {
 
                                 <div className="input-with-btn">
                                     <input
-                                    type="text"
-                                    placeholder="Enter Salesman code"
-                                    value={newLoadOut.salesmanCode}
-                                    onChange={(e) =>
-                                        setNewLoadOut({ ...newLoadOut, salesmanCode: e.target.value })
-                                    }
-                                    ref={modalCodeRef}
-                                    onKeyDown={(e) => handleKeyNav(e, "code")}
+                                        type="text"
+                                        placeholder="Enter Salesman code"
+                                        value={newLoadOut.salesmanCode}
+                                        onChange={(e) =>
+                                            setNewLoadOut({ ...newLoadOut, salesmanCode: e.target.value })
+                                        }
+                                        ref={modalCodeRef}
+                                        onKeyDown={(e) => handleKeyNav(e, "code")}
                                     />
 
                                     <button
-                                    type="button"
-                                    className="dropdown-btn"
-                                     onClick={() =>
-                                        openSalesmanModal((code) =>
-                                        setNewLoadOut(prev => ({ ...prev, salesmanCode: code }))
-                                        )
-                                    }
+                                        type="button"
+                                        className="dropdown-btn"
+                                        onClick={() =>
+                                            openSalesmanModal((code) =>
+                                                setNewLoadOut(prev => ({ ...prev, salesmanCode: code }))
+                                            )
+                                        }
                                     >
-                                    ⌄
+                                        ⌄
                                     </button>
                                 </div>
-                                </div>
+                            </div>
 
                             <div className="form-group">
                                 <label>Salesman Name</label>
@@ -269,15 +278,27 @@ const LoadOut = () => {
                     <div className="item-inputs">
                         <div className="flex">
                             <div className="form-group">
-                                <label>Item Code</label>
-                                <input
-                                    type="text"
-                                    placeholder='Enter Item code'
-                                    value={newLoadItem.itemCode}
-                                    ref={modalItemRef}
-                                    onChange={(e) => setNewLoadItem({ ...newLoadItem, itemCode: e.target.value })}
-                                    onKeyDown={(e) => handleKeyNav(e, "item")}
-                                />
+                                    <label>Item Code</label>
+                                <div className="input-with-btn">
+                                    <input
+                                        type="text"
+                                        placeholder='Enter Item code'
+                                        value={newLoadItem.itemCode}
+                                        ref={modalItemRef}
+                                        onChange={(e) => setNewLoadItem({ ...newLoadItem, itemCode: e.target.value })}
+                                        onKeyDown={(e) => handleKeyNav(e, "item")}
+                                    />
+                                    <button
+                                        type="button"
+                                        className="dropdown-btn"
+                                        onClick={() =>
+                                            setItemShow(true)
+
+                                        }
+                                    >
+                                        ⌄
+                                    </button>
+                                </div>
                             </div>
                             <div className="form-group">
                                 <label>Qty</label>
@@ -359,10 +380,113 @@ const LoadOut = () => {
                     Cancel
                 </button>
             </div>
-            
-            
+
+            {/* item modal */}
+
+            {itemShow && (
+                <div className="modal-overlay">
+                    <div className="modal-box">
+                        <div className="modal-header">
+                            <h3>Select Items</h3>
+                            <button
+                                className="modal-close-btn"
+                                onClick={() => setItemShow(false)}
+                            >
+                                ✕
+                            </button>
+                        </div>
+
+                        <input
+                            className="modal-search"
+                            placeholder="Search by code or name"
+                            value={search}
+                            onChange={(e) => setSearch(e.target.value)}
+                        />
+
+                        <div className="modal-table">
+                            <div className="modal-row4 modal-head">
+                                <div>Code</div>
+                                <div>Name</div>
+                                <div>Status</div>
+                                <div>Qty</div>
+                            </div>
+
+                            {items
+                                .filter(itm =>
+                                    itm.code.toLowerCase().includes(search.toLowerCase()) ||
+                                    itm.name.toLowerCase().includes(search.toLowerCase())
+                                )
+                                .map(itm => (
+                                    <div key={itm._id} className="modal-row4">
+                                        <div>{itm.code}</div>
+                                        <div>{itm.name}</div>
+
+                                        <div
+                                            className={`status-badge ${itm.status === "Inactive" ? "inactive" : "active"
+                                                }`}
+                                        >
+                                            {itm.status}
+                                        </div>
+
+                                        <input
+                                            type="number"
+                                            min="0"
+                                            placeholder="Qty"
+                                            value={modalQtyMap[itm.code] || ""}
+                                            onChange={(e) =>
+                                                setModalQtyMap(prev => ({
+                                                    ...prev,
+                                                    [itm.code]: e.target.value
+                                                }))
+                                            }
+                                            style={{
+                                                width: "70px",
+                                                padding: "6px 8px",
+                                                backgroundColor: "#fff",
+                                                border: "1px solid #d1d5db",
+                                                borderRadius: "6px",
+                                                color: "#111",
+                                                fontSize: "14px"
+                                            }}
+                                        />
+                                    </div>
+                                ))}
+
+                            <button
+                                className="add-btn"
+                                onClick={() => {
+                                    const itemsToAdd = Object.entries(modalQtyMap)
+                                        .filter(([_, qty]) => Number(qty) > 0)
+                                        .map(([code, qty]) => ({
+                                            itemCode: code,
+                                            qty: Number(qty)
+                                        }));
+
+                                    if (itemsToAdd.length === 0) {
+                                        toast.error("Enter qty for at least one item");
+                                        return;
+                                    }
+
+                                    setNewLoadOut(prev => ({
+                                        ...prev,
+                                        items: [...prev.items, ...itemsToAdd]
+                                    }));
+
+                                    setModalQtyMap({});
+                                    setItemShow(false);
+                                }}
+                            >
+                                Add Items
+                            </button>
+
+
+                        </div>
+                    </div>
+                </div>
+            )}
 
         </div>
+
     )
 }
 

@@ -11,6 +11,13 @@ const LoadIn = () => {
     const navigate = useNavigate();
     const location = useLocation();
 
+    const [modalQtyMapFill, setModalQtyMapFill] = useState({});
+    const [modalQtyMapBurst, setModalQtyMapBurst] = useState({});
+
+
+    const [itemShow, setItemShow] = useState(false);
+    const [search, setSearch] = useState("");
+
     const { loading, addLoadIn, updateLoadIn } = useTransaction();
     const { items, getAllItems } = useSKU();
     const { salesmans, getAllSalesmen } = useSalesman();
@@ -28,7 +35,7 @@ const LoadIn = () => {
     const saveRef = useRef(null);
     const addRef = useRef(null);
 
-    
+
     const { openSalesmanModal } = useSalesmanModal();
     const [newLoadItem, setNewLoadItem] = useState({
         itemcode: "",
@@ -230,25 +237,25 @@ const LoadIn = () => {
                             </div>
                             <div className="form-group">
                                 <label>Salesman Name</label>
-                                 <div className="input-with-btn">
-                                <input
-                                    readOnly
-                                    type="text"
-                                    value={matchedSalesman ? matchedSalesman.name : ""}
-                                    style={{ backgroundColor: "#f5f5f5" }}
-                                />
-                                <button
-                                    type="button"
-                                    className="dropdown-btn"
-                                     onClick={() =>
-                                        openSalesmanModal((code) =>
-                                       setNewLoadIn(prev => ({ ...prev, salesmanCode: code }))
-                                        )
-                                    }
+                                <div className="input-with-btn">
+                                    <input
+                                        readOnly
+                                        type="text"
+                                        value={matchedSalesman ? matchedSalesman.name : ""}
+                                        style={{ backgroundColor: "#f5f5f5" }}
+                                    />
+                                    <button
+                                        type="button"
+                                        className="dropdown-btn"
+                                        onClick={() =>
+                                            openSalesmanModal((code) =>
+                                                setNewLoadIn(prev => ({ ...prev, salesmanCode: code }))
+                                            )
+                                        }
                                     >
-                                    ⌄
+                                        ⌄
                                     </button>
-                                    </div>
+                                </div>
                             </div>
                             <div className="form-group">
                                 <label>Route No.</label>
@@ -287,14 +294,26 @@ const LoadIn = () => {
                         <div className="flex">
                             <div className="form-group">
                                 <label>Item Code</label>
-                                <input
-                                    type="text"
-                                    placeholder='Enter Item code'
-                                    value={newLoadItem.itemcode}
-                                    ref={modalItemRef}
-                                    onChange={(e) => setNewLoadItem({ ...newLoadItem, itemcode: e.target.value })}
-                                    onKeyDown={(e) => handleKeyNav(e, "itemcode")}
-                                />
+                                <div className="input-with-btn">
+                                    <input
+                                        type="text"
+                                        placeholder='Enter Item code'
+                                        value={newLoadItem.itemcode}
+                                        ref={modalItemRef}
+                                        onChange={(e) => setNewLoadItem({ ...newLoadItem, itemcode: e.target.value })}
+                                        onKeyDown={(e) => handleKeyNav(e, "itemcode")}
+                                    />
+                                    <button
+                                        type="button"
+                                        className="dropdown-btn"
+                                        onClick={() =>
+                                            setItemShow(true)
+
+                                        }
+                                    >
+                                        ⌄
+                                    </button>
+                                </div>
                             </div>
                             <div className="form-group">
                                 <label>Filled</label>
@@ -394,6 +413,144 @@ const LoadIn = () => {
                     Cancel
                 </button>
             </div>
+            {/* item modal */}
+
+            {itemShow && (
+                <div className="modal-overlay">
+                    <div className="modal-box">
+                        <div className="modal-header">
+                            <h3>Select Items</h3>
+                            <button
+                                className="modal-close-btn"
+                                onClick={() => setItemShow(false)}
+                            >
+                                ✕
+                            </button>
+                        </div>
+
+                        <input
+                            className="modal-search"
+                            placeholder="Search by code or name"
+                            value={search}
+                            onChange={(e) => setSearch(e.target.value)}
+                        />
+
+                        <div className="modal-table">
+                            <div className="modal-row5 modal-head">
+                                <div>Code</div>
+                                <div>Name</div>
+                                <div>Status</div>
+                                <div>Filled</div>
+                                <div>Burst</div>
+                            </div>
+
+                            {items
+                                .filter(itm =>
+                                    itm.code.toLowerCase().includes(search.toLowerCase()) ||
+                                    itm.name.toLowerCase().includes(search.toLowerCase())
+                                )
+                                .map(itm => (
+                                    <div key={itm._id} className="modal-row5">
+                                        <div>{itm.code}</div>
+                                        <div>{itm.name}</div>
+
+                                        <div
+                                            className={`status-badge ${itm.status === "Inactive" ? "inactive" : "active"
+                                                }`}
+                                        >
+                                            {itm.status}
+                                        </div>
+
+                                        <input
+                                            type="number"
+                                            min="0"
+                                            placeholder="Qty"
+                                            value={modalQtyMapFill[itm.code] || ""}
+                                            onChange={(e) =>
+                                                setModalQtyMapFill(prev => ({
+                                                    ...prev,
+                                                    [itm.code]: e.target.value
+                                                }))
+                                            }
+                                            style={{
+                                                width: "70px",
+                                                padding: "6px 8px",
+                                                backgroundColor: "#fff",
+                                                border: "1px solid #d1d5db",
+                                                borderRadius: "6px",
+                                                color: "#111",
+                                                fontSize: "14px"
+                                            }}
+                                        />
+                                        <input
+                                            type="number"
+                                            min="0"
+                                            placeholder="Qty"
+                                            value={modalQtyMapBurst[itm.code] || ""}
+                                            onChange={(e) =>
+                                                setModalQtyMapBurst(prev => ({
+                                                    ...prev,
+                                                    [itm.code]: e.target.value
+                                                }))
+                                            }
+                                            style={{
+                                                width: "70px",
+                                                padding: "6px 8px",
+                                                backgroundColor: "#fff",
+                                                border: "1px solid #d1d5db",
+                                                borderRadius: "6px",
+                                                color: "#111",
+                                                fontSize: "14px"
+                                            }}
+                                        />
+                                    </div>
+                                ))}
+
+                            <button
+                                className="add-btn"
+                                onClick={() => {
+
+                                    const itemsToAdd = items
+                                        .map(itm => {
+                                            const filled = Number(modalQtyMapFill[itm.code]) || 0;
+                                            const burst = Number(modalQtyMapBurst[itm.code]) || 0;
+
+                                            // agar dono zero hain → skip
+                                            if (filled <= 0 && burst <= 0) return null;
+
+                                            return {
+                                                itemCode: itm.code,
+                                                Filled: filled,
+                                                Burst: burst
+                                            };
+                                        })
+                                        .filter(Boolean); // null hata deta hai
+
+                                    if (itemsToAdd.length === 0) {
+                                        toast.error("Enter Filled or Burst qty for at least one item");
+                                        return;
+                                    }
+
+                                    setNewLoadIn(prev => ({
+                                        ...prev,
+                                        items: [...prev.items, ...itemsToAdd]
+                                    }));
+
+                                    // reset modal state
+                                    setModalQtyMapFill({});
+                                    setModalQtyMapBurst({});
+                                    setItemShow(false);
+                                }}
+                            >
+                                Add Items
+                            </button>
+
+
+
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     )
 }
