@@ -12,31 +12,33 @@ import { PurchaseProvider } from './context/PurchaseContext.jsx';
 import { PrintProvider } from './context/PrintContext.jsx';
 import { ExcelProvider } from './context/ExcelContext.jsx';
 import { SalesmanModalProvider } from './context/SalesmanModalContext.jsx';
+import { DepoProvider } from './context/depoContext.jsx';
 
 createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <BrowserRouter>
-    <SalesmanProvider>
-    <SalesmanModalProvider>
-      <PrintProvider>
-        <ExcelProvider>
-          <SKUProvider>
-            <PricesProvider>
-              
-                <PurchaseProvider>
-                  <TransactionProvider>
-                    <AuthProvider>
-                      <App />
-                    </AuthProvider>
-                  </TransactionProvider>
-                </PurchaseProvider>
-              
-            </PricesProvider>
-          </SKUProvider>
-        </ExcelProvider>
-      </PrintProvider>
-    
-      </SalesmanModalProvider>
+      <SalesmanProvider>
+        <SalesmanModalProvider>
+          <DepoProvider>
+          <PrintProvider>
+            <ExcelProvider>
+              <SKUProvider>
+                <PricesProvider>
+
+                  <PurchaseProvider>
+                    <TransactionProvider>
+                      <AuthProvider>
+                        <App />
+                      </AuthProvider>
+                    </TransactionProvider>
+                  </PurchaseProvider>
+
+                </PricesProvider>
+              </SKUProvider>
+            </ExcelProvider>
+          </PrintProvider>
+          </DepoProvider>
+        </SalesmanModalProvider>
       </SalesmanProvider>
     </BrowserRouter>
   </React.StrictMode>
