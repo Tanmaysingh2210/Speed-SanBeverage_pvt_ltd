@@ -1,82 +1,88 @@
-import React , {createContext , useContext , useState , useEffect} from "react";
+import React, { createContext, useContext, useState, useEffect } from "react";
 import toast from 'react-hot-toast'
 import api from '../api/api';
 
 const DepoContext = createContext();
 
-export function DepoProvider({children}){
-    const[depos,setDepos]= useState([]);
-    const[loading, setLoading]=useState(false);
+export function DepoProvider({ children }) {
+    const [depos, setDepos] = useState([]);
+    const [loading, setLoading] = useState(false);
 
-    const addDepo= async (payload)=>{
-        try{
+    const addDepo = async (payload) => {
+        try {
             setLoading(true);
-            const res =await api.post('/depo/');
-            setDepos(...depos , res.data);
+            const res = await api.post('/depo/', payload);
+            await getAllDepo(); 
+            setDepos((prev) => [...prev, res.data]);
             return res;
         }
-        catch(err){
-          toast.error(err.response?.data?.message || "Error adding depos");
+        catch (err) {
+            toast.error(err.response?.data?.message || "Error adding depos");
 
         }
-        finally{
+        finally {
             setLoading(false);
         }
     };
 
-    const getAllDepo = async ()=>{
-        try{
+    const getAllDepo = async () => {
+        try {
             setLoading(true);
-            const res= await api.get('/depo/');
+            const res = await api.get('/depo/');
             setDepos(res.data);
             return res;
         }
-        catch(err){
-         toast.error(err.response?.data?.message || "Error fetching depos");
+        catch (err) {
+            toast.error(err.response?.data?.message || "Error fetching depos");
 
         }
-        finally{
+        finally {
             setLoading(false);
         }
     };
-    const updateDepo =async(id,payload)=>{
-        try{
+    const updateDepo = async (id, payload) => {
+        try {
             setLoading(true);
-            const res = await api.patch(`/depo/${id}`,payload , {withCredentials:true});
+            const res = await api.patch(`/depo/${id}`, payload, { withCredentials: true });
             toast.success(res.data.message || "depo update successfully");
-            setDepos(...depos , res.data);
+            setDepos((prev) =>
+                prev.map((d) => (d._id === id ? res.data : d))
+            );
             return res;
 
-        }catch(err){
-         toast.error(err.response.data.messsage || "Error updating depo");
+        } catch (err) {
+             toast.error(err.response?.data?.message || "Error updating depo");
 
         }
-        finally{
+        finally {
             setLoading(false);
         }
     };
-    const deleteDepo=async (id)=>{
-        try{
+    const deleteDepo = async (id) => {
+        try {
             setLoading(true);
-            const res =  await api.delete(`/depo/delete/${id}`);
+            const res = await api.delete(`/depo/delete/${id}`);
             toast.success(res.data.message || "depo deleted successfully");
-            setDepos(depos.filter((c)=>c._id!==id));
+            setDepos(prev => prev.filter(c => c._id !== id));
             return res;
         }
-        catch(err){
-           toast.error(err.response.data.message || "Error deleting depo");
+        catch (err) {
+            toast.error(err.response.data.message || "Error deleting depo");
         }
-        finally{
+        finally {
             setLoading(false);
         }
     };
-    useEffect(()=>{
-        getAllDepo();
-    },[]);
+   useEffect(() => {
+        const fetchDepos = async () => {
+            await getAllDepo();
+        };
+        fetchDepos();
+    }, []);
 
-    return(
-        <DepoContext.Provider value={{loading,depos,addDepo,deleteDepo,updateDepo,getAllDepo}}>{children}</DepoContext.Provider>
+    return (
+        <DepoContext.Provider value={{ loading, depos, addDepo, deleteDepo, updateDepo, getAllDepo }}>{children}</DepoContext.Provider>
     );
 }
 
-export const useDepo = ()=> useContext(DepoContext);
+export const useDepo = () => useContext(DepoContext);
