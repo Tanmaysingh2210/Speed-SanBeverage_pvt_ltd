@@ -504,6 +504,14 @@ input.short{
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.25);
   animation: fadeIn 0.2s ease-in-out;
 }
+.modal-box-itemwise {
+  background: #ffffff;
+  width: 700px;
+  border-radius: 12px;
+  padding: 18px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.25);
+  animation: fadeIn 0.2s ease-in-out;
+}
 
 @keyframes fadeIn {
   from {
@@ -587,6 +595,26 @@ input.short{
   color: #000000;
   display: grid;
   grid-template-columns: 1fr 2fr 1fr 1fr 1fr;
+  padding: 10px;
+  cursor: pointer;
+  align-items: center;
+  border-radius: 6px;
+  transition: background 0.15s ease;
+}
+.modal-row5-itemwise {
+  color: #000000;
+  display: grid;
+  grid-template-columns: 1fr 2fr 1fr 1fr 1fr;
+  padding: 10px;
+  cursor: pointer;
+  align-items: center;
+  border-radius: 6px;
+  transition: background 0.15s ease;
+}
+.modal-row5-itemwise-head {
+  color: #000000;
+  display: grid;
+  grid-template-columns: 1fr 1.5fr 1fr 1fr 1fr;
   padding: 10px;
   cursor: pointer;
   align-items: center;

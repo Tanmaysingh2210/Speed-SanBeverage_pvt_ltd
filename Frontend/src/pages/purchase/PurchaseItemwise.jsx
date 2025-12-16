@@ -3,6 +3,7 @@ import toast from 'react-hot-toast';
 import "../transaction/transaction.css";
 import api from '../../api/api';
 import { useSKU } from '../../context/SKUContext'
+import "../transaction/transaction.css"
 
 const PurchaseItemwise = () => {
 
@@ -10,6 +11,12 @@ const PurchaseItemwise = () => {
     const [skuItems, setSkuItems] = useState([]);
     const [items, setItems] = useState([]);
     const [editingIndex, setEditingIndex] = useState(null);
+    const [itemShow, setItemShow] = useState(false);
+    const [search, setSearch] = useState("");
+
+    // modal ke inputs ke liye
+    const [modalQtyMap, setModalQtyMap] = useState({});
+    const [modalExpiryMap, setModalExpiryMap] = useState({});
 
     const [loading, setLoading] = useState(false);
     const modalDateRef = useRef(null);
@@ -177,7 +184,7 @@ const PurchaseItemwise = () => {
             const response = await api.post('/purchase/itemwise', finalPayload);
 
             if (response.data) {
-            toast.success('Purchase saved successfully');
+                toast.success('Purchase saved successfully');
                 setItems([]);
                 setFormData({
                     date: '',
@@ -288,15 +295,24 @@ const PurchaseItemwise = () => {
                             </div>
                             <div className="form-group">
                                 <label>Item Code</label>
-                                <input
-                                    type="text"
-                                    name="itemCode"
-                                    placeholder='Enter Item code'
-                                    value={formData.itemCode}
-                                    onChange={handleInputChange}
-                                    ref={modalCodeRef}
-                                    onKeyDown={(e) => handleKeyNav(e, "itemcode")}
-                                />
+                                <div className="input-with-btn">
+                                    <input
+                                        type="text"
+                                        name="itemCode"
+                                        placeholder='Enter Item code'
+                                        value={formData.itemCode}
+                                        onChange={handleInputChange}
+                                        ref={modalCodeRef}
+                                        onKeyDown={(e) => handleKeyNav(e, "itemcode")}
+                                    />
+                                    <button
+                                        type="button"
+                                        className="dropdown-btn"
+                                        onClick={() => setItemShow(true)}
+                                    >
+                                        ⌄
+                                    </button>
+                                </div>
                             </div>
 
                             <div className="form-group">
@@ -382,6 +398,136 @@ const PurchaseItemwise = () => {
                     {loading ? 'Saving...' : 'Submit'}
                 </button>
             </div>
+            {itemShow && (
+                <div className="modal-overlay">
+                    <div className="modal-box-itemwise">
+
+                        <div className="modal-header">
+                            <h3>Select Items</h3>
+                            <button className="modal-close-btn" onClick={() => setItemShow(false)}>
+                                ✕
+                            </button>
+                        </div>
+
+                        <input
+                            className="modal-search"
+                            placeholder="Search by code or name"
+                            value={search}
+                            onChange={(e) => setSearch(e.target.value)}
+                        />
+
+                        <div className="modal-table">
+                            <div className="modal-row5-itemwise-head modal-head">
+                                <div>Code</div>
+                                <div>Name</div>
+                                <div>Status</div>
+                                <div>Qty</div>
+                                <div>Expiry</div>
+                            </div>
+
+                            {skuItems
+                                .filter(itm =>
+                                    itm.code.toLowerCase().includes(search.toLowerCase()) ||
+                                    itm.name.toLowerCase().includes(search.toLowerCase())
+                                )
+                                .map(itm => (
+                                    <div key={itm._id} className="modal-row5-itemwise">
+                                        <div>{itm.code}</div>
+                                        <div>{itm.name}</div>
+
+                                        <div className={`status-badge ${itm.status === "Inactive" ? "inactive" : "active"}`}>
+                                            {itm.status}
+                                        </div>
+
+                                        {/* Qty */}
+                                        <input
+                                            type="number"
+                                            min="0"
+                                            placeholder="Qty"
+                                            value={modalQtyMap[itm.code] || ""}
+                                            onChange={(e) =>
+                                                setModalQtyMap(prev => ({
+                                                    ...prev,
+                                                    [itm.code]: e.target.value
+                                                }))
+                                            }
+                                            className="modal-qty-input"
+
+                                            style={{
+                                                width: "70px",
+                                                padding: "6px 8px",
+                                                backgroundColor: "#fff",
+                                                border: "1px solid #d1d5db",
+                                                borderRadius: "6px",
+                                                color: "#111",
+                                                fontSize: "14px"
+                                            }}
+                                        />
+
+                                        {/* Expiry */}
+                                        <input
+                                            type="date"
+                                            value={modalExpiryMap[itm.code] || ""}
+                                            onChange={(e) =>
+                                                setModalExpiryMap(prev => ({
+                                                    ...prev,
+                                                    [itm.code]: e.target.value
+                                                }))
+                                            }
+                                            className="modal-exp-input"
+
+                                            style={{
+                                                padding: "6px 8px",
+                                                backgroundColor: "#fff",
+                                                border: "1px solid #d1d5db",
+                                                borderRadius: "6px",
+                                                color: "#111",
+                                                fontSize: "14px"
+                                            }}
+                                        />
+                                    </div>
+                                ))}
+                        </div>
+
+                        <button
+                            className="add-btn"
+                            onClick={() => {
+                                const itemsToAdd = skuItems
+                                    .map(itm => {
+                                        const qty = Number(modalQtyMap[itm.code]) || 0;
+                                        const expiry = modalExpiryMap[itm.code];
+
+                                        if (qty <= 0 || !expiry) return null;
+
+                                        return {
+                                            itemCode: itm.code,
+                                            name: itm.name,
+                                            qty,
+                                            expiryDate: expiry,
+                                            date: formData.date,
+                                            id: Date.now() + Math.random()
+                                        };
+                                    })
+                                    .filter(Boolean);
+
+                                if (itemsToAdd.length === 0) {
+                                    toast.error("Enter qty and expiry for at least one item");
+                                    return;
+                                }
+
+                                setItems(prev => [...prev, ...itemsToAdd]);
+
+                                setModalQtyMap({});
+                                setModalExpiryMap({});
+                                setItemShow(false);
+                            }}
+                        >
+                            Add Items
+                        </button>
+
+                    </div>
+                </div>
+            )}
 
         </div>
     )
