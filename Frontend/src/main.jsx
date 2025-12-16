@@ -11,27 +11,30 @@ import { TransactionProvider } from './context/TransactionContext.jsx';
 import { PurchaseProvider } from './context/PurchaseContext.jsx';
 import { PrintProvider } from './context/PrintContext.jsx';
 import { ExcelProvider } from './context/ExcelContext.jsx';
+import { DepoProvider } from './context/depoContext.jsx';
 
 createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <BrowserRouter>
-      <PrintProvider>
-        <ExcelProvider>
-          <SKUProvider>
-            <PricesProvider>
-              <SalesmanProvider>
-                <PurchaseProvider>
-                  <TransactionProvider>
-                    <AuthProvider>
-                      <App />
-                    </AuthProvider>
-                  </TransactionProvider>
-                </PurchaseProvider>
-              </SalesmanProvider>
-            </PricesProvider>
-          </SKUProvider>
-        </ExcelProvider>
-      </PrintProvider>
+      <DepoProvider>
+        <PrintProvider>
+          <ExcelProvider>
+            <SKUProvider>
+              <PricesProvider>
+                <SalesmanProvider>
+                  <PurchaseProvider>
+                    <TransactionProvider>
+                      <AuthProvider>
+                        <App />
+                      </AuthProvider>
+                    </TransactionProvider>
+                  </PurchaseProvider>
+                </SalesmanProvider>
+              </PricesProvider>
+            </SKUProvider>
+          </ExcelProvider>
+        </PrintProvider>
+      </DepoProvider>
     </BrowserRouter>
   </React.StrictMode>
 )
