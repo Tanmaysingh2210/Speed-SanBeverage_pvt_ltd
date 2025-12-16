@@ -5,7 +5,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useSKU } from '../../context/SKUContext';
 import { useSalesman } from '../../context/SalesmanContext';
 import "./transaction.css";
-
+import { useSalesmanModal } from '../../context/SalesmanModalContext';
 
 const Credit = () => {
     const navigate = useNavigate();
@@ -14,7 +14,7 @@ const Credit = () => {
     const { loading, addCash_credit, updateCash_credit } = useTransaction();
     const { salesmans, getAllSalesmen } = useSalesman();
 
-
+    const { openSalesmanModal } = useSalesmanModal();
     const editMode = location.state?.editMode || false;
     const editData = location.state?.editData || null;
 
@@ -212,6 +212,7 @@ const Credit = () => {
                         </div>
                         <div className="form-group">
                             <label>Salesman Code</label>
+                            <div className="input-with-btn">
                             <input
                                 type="text"
                                 placeholder="Enter Salesman Code"
@@ -220,6 +221,18 @@ const Credit = () => {
                                 onChange={(e) => setNewCredit({ ...newCredit, salesmanCode: e.target.value })}
                                 onKeyDown={(e) => handleKeyNav(e, "code")}
                             />
+                            <button
+                                    type="button"
+                                    className="dropdown-btn"
+                                     onClick={() =>
+                                        openSalesmanModal((code) =>
+                                        setNewCredit(prev => ({ ...prev, salesmanCode: code }))
+                                        )
+                                    }
+                                    >
+                                    ⌄
+                            </button>
+                        </div>
                         </div>
                         <div className="form-group">
                             <label>Salesman Name</label>
