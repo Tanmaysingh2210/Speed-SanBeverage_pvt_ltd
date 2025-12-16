@@ -445,6 +445,7 @@ input.short{
   flex: 1;
   border-top-right-radius: 0;
   border-bottom-right-radius: 0;
+  min-width:0;
 }
 
 .input-with-btn .dropdown-btn {
