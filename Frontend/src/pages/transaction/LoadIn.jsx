@@ -13,6 +13,9 @@ const LoadIn = () => {
 
     const [modalQtyMapFill, setModalQtyMapFill] = useState({});
     const [modalQtyMapBurst, setModalQtyMapBurst] = useState({});
+    const [modalQtyMapEmt, setModalQtyMapEmt] = useState({});
+
+
 
 
     const [itemShow, setItemShow] = useState(false);
@@ -21,6 +24,7 @@ const LoadIn = () => {
     const { loading, addLoadIn, updateLoadIn } = useTransaction();
     const { items, getAllItems } = useSKU();
     const { salesmans, getAllSalesmen } = useSalesman();
+
 
     const editMode = location.state?.editMode || false;
     const editData = location.state?.editData || null;
@@ -31,7 +35,6 @@ const LoadIn = () => {
     const modalItemRef = useRef(null);
     const modalFilledRef = useRef(null);
     const modalBurstRef = useRef(null);
-    const modalEmtRef = useRef(null);
     const saveRef = useRef(null);
     const addRef = useRef(null);
 
@@ -59,7 +62,7 @@ const LoadIn = () => {
     useEffect(() => {
         getAllItems();
         getAllSalesmen();
-    }, []);
+    }, [getAllItems, getAllSalesmen]);
 
     const handleAddItem = (e) => {
         e.preventDefault();
@@ -205,7 +208,7 @@ const LoadIn = () => {
                 case "Burst":
                     modalFilledRef.current?.focus();
                     break;
-                
+
                 case "add":
                     modalBurstRef.current?.focus();
                     break;
@@ -340,7 +343,7 @@ const LoadIn = () => {
                                     placeholder="Enter Qty/-"
                                 />
                             </div>
-                            
+
                             <button type="button" className="add-btn add-btn-load-in" onKeyDown={(e) => handleKeyNav(e, "add")} onClick={handleAddItem} ref={addRef} >
                                 ➕ Add
                             </button>
@@ -358,7 +361,7 @@ const LoadIn = () => {
                                 {/* <div>SL.NO.</div> */}
                                 <div>CODE</div>
                                 <div>NAME</div>
-                                <div>Filled</div>
+                                <div>Filled/Emt</div>
                                 <div>Burst</div>
                                 <div>ACTION</div>
                             </div>
@@ -373,7 +376,8 @@ const LoadIn = () => {
                                         <div key={index} className="trans-loadin-table-grid trans-table-row">
                                             <div>{it.itemCode}</div>
                                             <div>{matchedItem ? matchedItem.name : "-"}</div>
-                                            <div>{it.Filled}</div>
+                                            <div>{ matchedItem?(matchedItem.container.toLowerCase()==="emt" ? it.Emt : it.Filled):"-" }
+                                            </div>
                                             <div>{it.Burst}</div>
                                             <div className="actions">
                                                 <span
@@ -418,7 +422,7 @@ const LoadIn = () => {
 
             {itemShow && (
                 <div className="modal-overlay">
-                    <div className="modal-box">
+                    <div className="modal-box2">
                         <div className="modal-header">
                             <h3>Select Items</h3>
                             <button
@@ -437,21 +441,24 @@ const LoadIn = () => {
                         />
 
                         <div className="modal-table">
-                            <div className="modal-row5 modal-head">
+                            <div className="modal-row6 modal-head">
                                 <div>Code</div>
                                 <div>Name</div>
-                                <div>Status</div>
-                                <div>Filled</div>
+                                <div>Status</div>                              
+                                <div>Filled/Emt</div>
                                 <div>Burst</div>
+                                
                             </div>
 
                             {items
+                                .filter(itm => itm.container.toLowerCase() !== "mt" 
+                                )
                                 .filter(itm =>
                                     itm.code.toLowerCase().includes(search.toLowerCase()) ||
                                     itm.name.toLowerCase().includes(search.toLowerCase())
                                 )
                                 .map(itm => (
-                                    <div key={itm._id} className="modal-row5">
+                                    <div key={itm._id} className="modal-row6 ">
                                         <div>{itm.code}</div>
                                         <div>{itm.name}</div>
 
@@ -462,7 +469,11 @@ const LoadIn = () => {
                                             {itm.status}
                                         </div>
 
+                                        {itm.container.toLowerCase() !== "emt" ?
+                                            
+                                            (<>
                                         <input
+
                                             type="number"
                                             min="0"
                                             placeholder="Qty"
@@ -504,6 +515,31 @@ const LoadIn = () => {
                                                 fontSize: "14px"
                                             }}
                                         />
+                                        </>
+                                        ): (<input
+                                                type="number"
+                                                min="0"
+                                                placeholder="Emt"
+                                                value={modalQtyMapEmt[itm.code] || ""}
+                                                onChange={(e) =>
+                                                    setModalQtyMapEmt(prev => ({
+                                                        ...prev,
+                                                        [itm.code]: e.target.value
+                                                    }))
+                                                }
+                                                style={{
+                                                    width: "70px",
+                                                    padding: "6px 8px",
+                                                    backgroundColor: "#fff",
+                                                    border: "1px solid #d1d5db",
+                                                    borderRadius: "6px",
+                                                    color: "#111",
+                                                    fontSize: "14px"
+                                                }}
+                                            />)
+
+
+                                        }
                                     </div>
                                 ))}
 
@@ -540,6 +576,7 @@ const LoadIn = () => {
                                     // reset modal state
                                     setModalQtyMapFill({});
                                     setModalQtyMapBurst({});
+                                    setModalQtyMapEmt({});
                                     setItemShow(false);
                                 }}
                             >

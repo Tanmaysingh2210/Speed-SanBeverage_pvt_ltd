@@ -412,7 +412,7 @@ const LoadOut = () => {
                             </div>
 
                             {items
-                                .filter(itm => itm.container !== "EMT")
+                                .filter(itm => itm.container.toUpperCase()!== "EMT")
                                 .filter(itm =>
                                     itm.code.toLowerCase().includes(search.toLowerCase()) ||
                                     itm.name.toLowerCase().includes(search.toLowerCase())

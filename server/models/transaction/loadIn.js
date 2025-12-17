@@ -17,7 +17,8 @@ const LoadInSchema = new mongoose.Schema({
     {
       itemCode: { type: String, required: true },
       Filled: { type: Number, default: 0 },
-      Burst: { type: Number, default: 0 }
+      Burst: { type: Number, default: 0 },
+      Emt:{type:Number, default:0 }
     }
   ],
 },
