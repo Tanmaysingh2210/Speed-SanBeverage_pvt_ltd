@@ -230,6 +230,7 @@ const LoadIn = () => {
                         <div className="salesman-detail">
                             <div className="form-group">
                                 <label>Salesman Code</label>
+                                <div className="input-with-btn">
                                 <input
                                     type="text"
                                     placeholder="Enter Salesman code"
@@ -240,17 +241,7 @@ const LoadIn = () => {
                                     ref={modalCodeRef}
                                     onKeyDown={(e) => handleKeyNav(e, "code")}
                                 />
-                            </div>
-                            <div className="form-group">
-                                <label>Salesman Name</label>
-                                <div className="input-with-btn">
-                                    <input
-                                        readOnly
-                                        type="text"
-                                        value={matchedSalesman ? matchedSalesman.name : ""}
-                                        style={{ backgroundColor: "#f5f5f5" }}
-                                    />
-                                    <button
+                                <button
                                         type="button"
                                         className="dropdown-btn"
                                         onClick={() =>
@@ -261,7 +252,19 @@ const LoadIn = () => {
                                     >
                                         ⌄
                                     </button>
-                                </div>
+                                    </div>
+                            </div>
+                            <div className="form-group">
+                                <label>Salesman Name</label>
+                                
+                                    <input
+                                        readOnly
+                                        type="text"
+                                        value={matchedSalesman ? matchedSalesman.name : ""}
+                                        style={{ backgroundColor: "#f5f5f5" }}
+                                    />
+                                    
+                                
                             </div>
                             <div className="form-group">
                                 <label>Route No.</label>
