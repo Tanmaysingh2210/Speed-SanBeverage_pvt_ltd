@@ -62,7 +62,7 @@ const LoadIn = () => {
     useEffect(() => {
         getAllItems();
         getAllSalesmen();
-    }, [getAllItems, getAllSalesmen]);
+    }, []);
 
     const handleAddItem = (e) => {
         e.preventDefault();
