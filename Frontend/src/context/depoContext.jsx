@@ -13,7 +13,6 @@ export function DepoProvider({ children }) {
             setLoading(true);
             const res = await api.post('/depo/', payload);
             await getAllDepo(); 
-            setDepos((prev) => [...prev, res.data]);
             return res;
         }
         catch (err) {

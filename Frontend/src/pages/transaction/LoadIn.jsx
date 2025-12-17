@@ -31,7 +31,7 @@ const LoadIn = () => {
     const modalItemRef = useRef(null);
     const modalFilledRef = useRef(null);
     const modalBurstRef = useRef(null);
-
+    const modalEmtRef = useRef(null);
     const saveRef = useRef(null);
     const addRef = useRef(null);
 
@@ -40,7 +40,8 @@ const LoadIn = () => {
     const [newLoadItem, setNewLoadItem] = useState({
         itemcode: "",
         Filled: "",
-        Burst: ""
+        Burst: "",
+        Emt: ""
     });
 
     const [newLoadIn, setNewLoadIn] = useState({
@@ -81,6 +82,7 @@ const LoadIn = () => {
             itemCode: newLoadItem.itemcode,
             Filled: Number(newLoadItem.Filled) || 0,
             Burst: Number(newLoadItem.Burst) || 0,
+            Emt: Number(newLoadItem.Emt) || 0
         };
 
         setNewLoadIn((prev) => ({
@@ -134,7 +136,7 @@ const LoadIn = () => {
             });
 
         } catch (err) {
-            console.error(err.response.data.message || "Error adding LoadIn");
+            console.error(err?.response?.data?.message || "Error adding LoadIn");
         }
     };
 
@@ -203,6 +205,7 @@ const LoadIn = () => {
                 case "Burst":
                     modalFilledRef.current?.focus();
                     break;
+                
                 case "add":
                     modalBurstRef.current?.focus();
                     break;
@@ -337,9 +340,7 @@ const LoadIn = () => {
                                     placeholder="Enter Qty/-"
                                 />
                             </div>
-
-
-
+                            
                             <button type="button" className="add-btn add-btn-load-in" onKeyDown={(e) => handleKeyNav(e, "add")} onClick={handleAddItem} ref={addRef} >
                                 ➕ Add
                             </button>

@@ -43,7 +43,7 @@ body {
 }
 .san-logo{
     color: #14b886;  /* Green fill */
-    -webkit-text-stroke: 1px #fff;  /* White outline */
+    -webkit-text-stroke: 0.6px #fff;  /* White outline */
     text-shadow:
         0 0 1px #14b886,
         0 0 2px #14b886,
@@ -51,6 +51,7 @@ body {
     font-weight: 600;
     font-size: 20px;
 }
+
 .space-between{
   display:flex;
   justify-content: space-between;
