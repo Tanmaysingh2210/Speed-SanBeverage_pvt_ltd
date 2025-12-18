@@ -53,6 +53,8 @@ const Burger = ({onMenuToggle}) => {
             </div>
             <div className="line"></div>
             <ul className="burger-ul">
+                <li><NavLink to={'/stock'} className={({ isActive }) => (isActive ? 'active-link' : '')}>Stock</NavLink></li>
+
                 <li><NavLink to={'/purchase'} className={({ isActive }) => (isActive ? 'active-link' : '')}>Purchase</NavLink></li>
 
                 <li><NavLink to={`/transaction`} className={({ isActive }) => (isActive ? 'active-link' : '')}>Transaction</NavLink></li>

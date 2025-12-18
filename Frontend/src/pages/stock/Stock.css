@@ -1,0 +1,275 @@
+/* =================== CONTAINER =================== */
+/* .box {
+  background: #f9fbff;
+  padding: 20px;
+  border-radius: 10px;
+  font-family: "Segoe UI", sans-serif;
+  width: 90%;
+  max-width: 1200px;
+  margin: 10vh auto;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+  color: #000;
+} */
+
+/* =================== HEADER =================== */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+  height: 10vh;
+  gap: 10px;
+}
+
+.title {
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.cleanup-btn {
+  background: #dc3545;
+  color: #fff;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.cleanup-btn:hover {
+  background: #b02a37;
+}
+
+/* =================== TABS + SEARCH =================== */
+.head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.tabs {
+  display: flex;
+  gap: 8px;
+}
+
+.tab {
+  padding: 6px 14px;
+  border-radius: 20px;
+  border: 1px solid #ccc;
+  background: #fff;
+  cursor: pointer;
+  font-size: 14px;
+  color: black;
+}
+
+.tab-active {
+  background: #007bff;
+  color: #fff;
+  border-color: #007bff;
+}
+
+.search-input {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.search-input,
+.select {
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  background-color: transparent;
+  color:black ;
+  font-size: 14px;
+  outline: none;
+}
+
+/* =================== STATS =================== */
+.stats-bar {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 12px;
+}
+
+.stat-label {
+  font-size: 13px;
+  color: #555;
+}
+
+.stat-value {
+  font-weight: 600;
+  margin-left: 4px;
+}
+
+/* =================== TABLE =================== */
+.table-container {
+  width: 100%;
+  scrollbar-width: none;
+}
+
+.grid-row,
+.grid-header {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 2fr 1.5fr;
+  align-items: center;
+  padding: 10px 6px;
+  border-bottom: 1px solid #e0e0e0;
+  font-size: 14px;
+  text-wrap: nowrap;
+}
+
+.grid-header {
+  background: #f0f3f9;
+  font-weight: 600;
+  border-bottom: 2px solid #d0d0d0;
+}
+
+.grid-row-even {
+  background: #fcfdff;
+}
+
+.grid-row-critical {
+  background: #fff1f1;
+}
+
+.grid-cell{
+  scrollbar-width: none;
+  overflow: hidden;
+}
+
+/* =================== BADGES =================== */
+.qty-badge {
+  background: #e7f1ff;
+  color: #005ec9;
+  padding: 3px 8px;
+  border-radius: 12px;
+  font-weight: 600;
+}
+
+.expiry-badge {
+  background: #e6f7ea;
+  color: #137333;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+}
+
+.expiry-warning {
+  background: #fff3cd;
+  color: #856404;
+}
+
+.days-badge {
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  background: #e6f7ea;
+  color: #137333;
+}
+
+.days-warning {
+  background: #fff3cd;
+  color: #856404;
+}
+
+.days-critical {
+  background: #f8d7da;
+  color: #842029;
+}
+
+/* =================== ACTION BUTTON =================== */
+.view-btn {
+  background: #007bff;
+  color: #fff;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.view-btn:hover {
+  background: #005ec9;
+}
+
+/* =================== BATCHES =================== */
+.batches-container {
+  background: #f9fbff;
+  padding: 12px;
+  margin: 8px 0 16px;
+  border-radius: 8px;
+  border: 1px solid #e0e0e0;
+}
+
+.batches-title {
+  font-size: 14px;
+  margin-bottom: 8px;
+  font-weight: 600;
+}
+
+.batch-grid-header,
+.batch-grid-row {
+  display: grid;
+  grid-template-columns: 2fr 1fr 2fr 1fr;
+  padding: 8px 6px;
+  font-size: 13px;
+}
+
+.batch-grid-header {
+  background: #f0f3f9;
+  font-weight: 600;
+}
+
+.batch-grid-row-even {
+  background: #fcfdff;
+}
+
+/* =================== ALERT / EMPTY =================== */
+.alert-box {
+  background: #fff3cd;
+  color: #856404;
+  padding: 10px;
+  border-radius: 6px;
+  margin-bottom: 10px;
+}
+
+.no-data {
+  padding: 15px;
+  text-align: center;
+  color: #777;
+}
+
+.loading {
+  text-align: center;
+  padding: 20px;
+}
+
+/* =================== RESPONSIVE =================== */
+@media (max-width: 768px) {
+  .grid-row,
+  .grid-header {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+
+  .grid-header {
+    display: none;
+  }
+
+  .batch-grid-header {
+    display: none;
+  }
+
+  .batch-grid-row {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+}

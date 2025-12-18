@@ -99,3 +99,5 @@ router.get('/:itemCode', async (req, res) => {
         });
     }
 });
+
+module.exports = router;

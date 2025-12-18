@@ -11,6 +11,7 @@ import PriceRoutes from './pricesMarter/PriceRoutes';
 import Transaction from'./transaction/TransactionRoutes';
 import Purchase from './purchase/PurchaseRoutes';
 import Depo from './Depo';
+import StockDashboard from './stock/Stock'
 
 const Dashboard = () => {
 
@@ -30,6 +31,7 @@ const Dashboard = () => {
           <Route path="/transaction/*" element={<Transaction />} /> 
           <Route path="/purchase/*" element={<Purchase />} />
           <Route path = "/depo" element = {<Depo />} />
+          <Route path = "/stock" element = {<StockDashboard />} />
         </Routes>
       </div>
     </>
