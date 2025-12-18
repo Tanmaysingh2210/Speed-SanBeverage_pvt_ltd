@@ -551,20 +551,35 @@ const LoadIn = () => {
                                 onClick={() => {
 
                                     const itemsToAdd = items
-                                        .map(itm => {
-                                            const filled = Number(modalQtyMapFill[itm.code]) || 0;
-                                            const burst = Number(modalQtyMapBurst[itm.code]) || 0;
+  .map(itm => {
+    const container = itm.container.toLowerCase();
 
-                                            // agar dono zero hain → skip
-                                            if (filled <= 0 && burst <= 0) return null;
+    if (container === "emt") {
+      const emt = Number(modalQtyMapEmt[itm.code]) || 0;
+      if (emt <= 0) return null;
 
-                                            return {
-                                                itemCode: itm.code,
-                                                Filled: filled,
-                                                Burst: burst
-                                            };
-                                        })
-                                        .filter(Boolean); // null hata deta hai
+      return {
+        itemCode: itm.code,
+        Filled: 0,
+        Burst: 0,
+        Emt: emt
+      };
+    }
+
+    const filled = Number(modalQtyMapFill[itm.code]) || 0;
+    const burst = Number(modalQtyMapBurst[itm.code]) || 0;
+
+    if (filled <= 0 && burst <= 0) return null;
+
+    return {
+      itemCode: itm.code,
+      Filled: filled,
+      Burst: burst,
+      Emt: 0
+    };
+  })
+  .filter(Boolean);
+ // null hata deta hai
 
                                     if (itemsToAdd.length === 0) {
                                         toast.error("Enter Filled or Burst qty for at least one item");
