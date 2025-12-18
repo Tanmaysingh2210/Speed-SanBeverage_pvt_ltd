@@ -1,4 +1,5 @@
 const LoadOut = require("../../models/transaction/LoadOut");
+const StockService = require('../../services/StockCalculator.js');
 
 exports.addLoadout = async (req, res) => {
     try {
@@ -10,6 +11,23 @@ exports.addLoadout = async (req, res) => {
 
         if (existing) return res.status(400).json({ message: `Loadout record exists` });
 
+
+        // Clean up expired items first
+        await StockService.cleanupExpiredItems();
+        // Process loadout with FIFO logic
+        const allocations = await StockService.processLoadout(items);
+        // Check for shortfalls
+        const hasShortfall = allocations.some(a => a.shortfall > 0);
+
+        if (hasShortfall) {
+            return res.status(400).json({
+                success: false,
+                message: 'Insufficient stock for some items',
+                allocations
+            });
+        }
+
+        // Create loadout record
         await LoadOut.create({
             salesmanCode: salesmanCode,
             date: date,
@@ -17,10 +35,10 @@ exports.addLoadout = async (req, res) => {
             items
         });
 
-        res.status(200).json({ message: "loadout added sucessfully" });
+        res.status(200).json({ message: "loadout added sucessfully" ,success:true , allocations});
 
     } catch (err) {
-        res.status(500).json({ message: "Error adding loadOut", error: err.message });
+        res.status(500).json({ message: "Error adding loadOut", error: err.message , success:false});
     }
 };
 

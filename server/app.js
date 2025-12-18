@@ -12,6 +12,8 @@ const ratesRoutes=require('./routes/ratesRoutes.js')
 const transactionRoutes=require('./routes/transactionRoutes.js')
 const purchaseRoutes=require('./routes/purchaseRoutes/purchaseRoutes.js')
 const depoRoutes = require('./routes/depoRoutes.js');
+const stockRoutes = require('./routes/stockRoutes.js');
+
 
 connectDB();
 const app = express();
@@ -43,6 +45,7 @@ app.use('/rates', ratesRoutes);
 app.use('/transaction' , transactionRoutes);
 app.use('/purchase' , purchaseRoutes);
 app.use('/depo',depoRoutes);
+app.use('/stock', stockRoutes);
 
 
 const port = 3000;

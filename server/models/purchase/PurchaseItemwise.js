@@ -9,6 +9,11 @@ const itemSchema = new mongoose.Schema({
     type: Number,
     required: true
   },
+  remainingQty: {
+    type: Number,
+    required: true,
+    default: function () { return this.qty; }
+  },
   expiryDate: {
     type: Date,
     required: true
@@ -25,7 +30,15 @@ const purchaseItemSchema = new mongoose.Schema({
   items: {
     type: [itemSchema],   // Array of objects
     default: []
+  },
+  isFullyProcessed: {
+    type: Boolean,
+    default: false,
+    index: true  // Index for faster queries
   }
 });
+
+// Add index for efficient querying
+purchaseItemSchema.index({ isFullyProcessed: 1, 'items.expiryDate': 1 });
 
 module.exports = mongoose.model('PurchaseItemwise', purchaseItemSchema);
