@@ -63,7 +63,7 @@ const Burger = ({onMenuToggle}) => {
 
                 <li><NavLink to={`/salesman`} className={({ isActive }) => (isActive ? 'active-link' : '')}>Salesman</NavLink></li>
 
-                <li><NavLink to={`/sku`} className={({ isActive }) => (isActive ? 'active-link' : '')}>SKQ</NavLink></li>
+                <li><NavLink to={`/sku`} className={({ isActive }) => (isActive ? 'active-link' : '')}>SKU</NavLink></li>
 
                 <li><NavLink to={`/depo`} className={({isActive})=>(isActive ? 'active-link' : '')}>Depo</NavLink></li>
 
