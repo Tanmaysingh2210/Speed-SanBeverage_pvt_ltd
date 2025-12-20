@@ -13,6 +13,7 @@ const transactionRoutes=require('./routes/transactionRoutes.js')
 const purchaseRoutes=require('./routes/purchaseRoutes/purchaseRoutes.js')
 const depoRoutes = require('./routes/depoRoutes.js');
 const stockRoutes = require('./routes/stockRoutes.js');
+const summaryRoutes = require('./routes/summaryRoutes.js');
 
 
 connectDB();
@@ -46,6 +47,7 @@ app.use('/transaction' , transactionRoutes);
 app.use('/purchase' , purchaseRoutes);
 app.use('/depo',depoRoutes);
 app.use('/stock', stockRoutes);
+app.use( '/summary',summaryRoutes);
 
 
 const port = 3000;
