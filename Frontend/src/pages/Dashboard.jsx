@@ -4,14 +4,15 @@ import { Routes, Route } from 'react-router-dom'
 import Navbar from '../Components/Navbar'
 import Burger from '../Components/Burger'
 import Statistics from './Statistics'
-import Summary from './Summary'
 import Sku from './SkuFolder/Sku'
 import Salesman from './Salesman'
 import PriceRoutes from './pricesMarter/PriceRoutes';
 import Transaction from'./transaction/TransactionRoutes';
 import Purchase from './purchase/PurchaseRoutes';
 import Depo from './Depo';
-import StockDashboard from './stock/Stock'
+import StockDashboard from './stock/Stock';
+import SummaryRoutes from './Summary/SummaryRoutes';
+
 
 const Dashboard = () => {
 
@@ -24,7 +25,7 @@ const Dashboard = () => {
 
         <Routes>
           <Route path="/statistics" element={<Statistics />} />
-          <Route path="/summary" element={<Summary />} />
+          <Route path="/summary/*" element={<SummaryRoutes />} />
           <Route path="/sku/*" element={<Sku />} />
           <Route path="/salesman" element={<Salesman />} />
           <Route path="/prices/*" element={<PriceRoutes />} />
