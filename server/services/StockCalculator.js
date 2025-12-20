@@ -167,12 +167,12 @@ class StockService {
                         qty: item.remainingQty,
                         expiryDate: item.expiryDate,
                         purchaseDate: purchase.date,
-                        daysUntilExpiry:Math.ceil((item.expiryDate - now)/(1000*60*60*24))
+                        daysUntilExpiry: Math.ceil((item.expiryDate - now) / (1000 * 60 * 60 * 24))
                     });
                 }
             }
         }
-        return expiringItems.sort((a,b)=>a.expiryDate - b.expiryDate);
+        return expiringItems.sort((a, b) => a.expiryDate - b.expiryDate);
     }
 }
 
