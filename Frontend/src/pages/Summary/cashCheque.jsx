@@ -109,6 +109,7 @@ const CashChequeSummary = () => {
                             <input
                                 ref={endRef}
                                 type="date"
+                                value={period.endDate}
                                 onChange={(e) => setPeriod({ ...period, endDate: e.target.value })}
                                 onKeyDown={(e) => handleKeyNav(e, "endDate")}
                             />
@@ -177,15 +178,9 @@ const CashChequeSummary = () => {
                             <div><strong>₹ {grandTotal.toFixed(2)}</strong></div>
                         </div>
                     )}
-
-
-
                 </div>
-
             </div>
-
         </div>
-
     )
 }
 export default CashChequeSummary;
