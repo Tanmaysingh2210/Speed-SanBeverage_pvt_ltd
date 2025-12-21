@@ -9,6 +9,7 @@ const SalesmanWiseItemWise = () => {
   const [endDate, setEndDate] = useState("");
   const [rows, setRows] = useState([]);
   const [loading, setLoading] = useState(false);
+  const { openSalesmanModal } = useSalesmanModal();
 
 
   const handleFind = async () => {
@@ -42,11 +43,24 @@ const SalesmanWiseItemWise = () => {
           <div className="flex">
             <div className="form-group">
               <label>Salesman Code</label>
+              <div className="input-with-btn">
               <input
                 type="text"
                 value={salesmanCode}
                 onChange={(e) => setSalesmanCode(e.target.value)}
               />
+              <button
+                type="button"
+                className="dropdown-btn"
+                onClick={() =>
+                  openSalesmanModal((code) =>
+                    setNewLoadOut(prev => ({ ...prev, salesmanCode: code }))
+                  )
+                }
+              >
+                ⌄
+              </button>
+              </div>
             </div>
             <div className="form-group">
               <label>Start-date</label>
@@ -77,7 +91,7 @@ const SalesmanWiseItemWise = () => {
       </div>
       <div className="trans-container set-margin">
         <div className="all-table">
-          <div className="all-row header">
+          <div className="all-row2 header">
             <div>ItemCode</div>
             <div>ItemName</div>
             <div>Qty Sale</div>
@@ -91,7 +105,7 @@ const SalesmanWiseItemWise = () => {
           )}
 
           {rows.map((r, i) => (
-            <div className="all-row" key={i}>
+            <div className="all-row2" key={i}>
               <div>{r.itemCode}</div>
               <div>{r.itemName}</div>
               <div>{r.qtySale}</div>
