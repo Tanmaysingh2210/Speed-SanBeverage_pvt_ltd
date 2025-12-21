@@ -13,9 +13,14 @@ const transactionRoutes=require('./routes/transactionRoutes.js')
 const purchaseRoutes=require('./routes/purchaseRoutes/purchaseRoutes.js')
 const depoRoutes = require('./routes/depoRoutes.js');
 const stockRoutes = require('./routes/stockRoutes.js');
+<<<<<<< HEAD
 const _summaryModule = require("./Summary/SalesmanwiseItemwise.js");
 const summaryRoutes = (_summaryModule && _summaryModule.default) ? _summaryModule.default : _summaryModule;
 console.log('[ROUTE-DEBUG] final summaryRoutes type:', typeof summaryRoutes, summaryRoutes && summaryRoutes.constructor && summaryRoutes.constructor.name, 'hasDefault?', !!_summaryModule.default);
+=======
+const summaryRoutes = require('./routes/summaryRoutes.js');
+
+>>>>>>> 651bd1cccf5598e3523043a5ff4c5ddb7f7ddee8
 
 connectDB();
 const app = express();
@@ -48,9 +53,13 @@ app.use('/transaction' , transactionRoutes);
 app.use('/purchase' , purchaseRoutes);
 app.use('/depo',depoRoutes);
 app.use('/stock', stockRoutes);
+<<<<<<< HEAD
 const isExpressRouter = (r) => {
     return !!r && (typeof r === 'function' || typeof r.use === 'function' || typeof r.handle === 'function');
 };
+=======
+app.use( '/summary',summaryRoutes);
+>>>>>>> 651bd1cccf5598e3523043a5ff4c5ddb7f7ddee8
 
 if (isExpressRouter(summaryRoutes)) {
     app.use("/summary", summaryRoutes);

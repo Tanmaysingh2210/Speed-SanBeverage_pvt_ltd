@@ -4,14 +4,11 @@ import "../transaction/transaction.css";
 import api from "../../api/api";
 import toast from "react-hot-toast";
 
-
-const ItemWiseSummary = () => {
+const CashChequeSummary = () => {
 
     const [period, setPeriod] = useState({ startDate: "", endDate: "" });
     const [summary, setSummary] = useState([]);
     const [loading, setLoading] = useState(false);
-    const [grandTotal,setGrandTotal] = useState(null);
-
 
     const getSummary = async (e) => {
         e.preventDefault();
@@ -21,24 +18,31 @@ const ItemWiseSummary = () => {
         }
         try {
             setLoading(true);
-            const res = await api.post('/summary/itemwise', period);
+            const res = await api.post('/summary/cashcheque', period);
             if (res?.data?.success) {
                 setSummary(res?.data?.data);
-                setGrandTotal(res?.data?.grandTotal.amount)
-            }
-            toast.success("item-wise summary fetch successfull");
 
+            }
+            toast.success("cash-cheque summary fetch successfull");
         }
         catch (err) {
             toast.error(err.response?.data?.message || "Error fetching summary");
-        }
-        finally {
+
+        } finally {
             setLoading(false);
         }
     }
+    const grandTotalCash = summary.reduce(
+        (sum, item) => sum + Number(item.totalCash || 0),
+        0
+    );
 
-    console.log("summary is:", summary);
-    
+    const grandTotalCheque = summary.reduce(
+        (sum, item) => sum + Number(item.totalCheque || 0),
+        0
+    );
+
+    const grandTotal = grandTotalCash + grandTotalCheque;
 
 
     const startRef = useRef(null);
@@ -48,8 +52,6 @@ const ItemWiseSummary = () => {
     useEffect(() => {
         startRef.current?.focus();
     }, []);
-
-
     const handleKeyNav = (e, currentField) => {
         if (["ArrowRight", "ArrowDown", "Enter"].includes(e.key)) {
             e.preventDefault();
@@ -128,11 +130,12 @@ const ItemWiseSummary = () => {
             </div>
             <div className="trans-container set-margin">
                 <div className="all-table">
-                    <div className="all-row2 header">
+                    <div className="all-row3 header">
                         <div>CODE</div>
-                        <div>NAME</div>
-                        <div>QUANTITY</div>
-                        <div>AMOUNT</div>
+                        <div>SALESMAN NAME</div>
+                        <div>CASH</div>
+                        <div>CHEQUE</div>
+                        <div>Total</div>
                     </div>
                     {loading && (
                         <div style={{ textAlign: "center", padding: "20px" }}>
@@ -154,23 +157,27 @@ const ItemWiseSummary = () => {
                     }
                     {/* Data Rows */}
                     {summary.map((p, i) => {
+                        const rowTotal = Number(p.totalCash || 0) + Number(p.totalCheque || 0);
                         return (
-                            <div key={i} className="all-row2">
-                                <div>{p.itemCode}</div>
+                            <div key={i} className="all-row3">
+                                <div>{p.salesmanCode}</div>
                                 <div>{p.name}</div>
-                                <div>{p.qty}</div>
-                                <div>₹ {p.amount}</div>
+                                <div>₹{p.totalCash}</div>
+                                <div>₹ {p.totalCheque}</div>
+                                <div>₹ {rowTotal.toFixed(2)}</div>
                             </div>
                         )
                     })}
                     {summary.length > 0 && (
-                        <div className="all-row2 total-row">
-                            <div></div>                          
-                            <div><strong>TOTAL</strong></div>
+                        <div className="all-row3 total-row">
                             <div></div>
+                            <div><strong>TOTAL</strong></div>
+                            <div><strong>₹ {grandTotalCash.toFixed(2)}</strong></div>
+                            <div><strong>₹ {grandTotalCheque.toFixed(2)}</strong></div>
                             <div><strong>₹ {grandTotal.toFixed(2)}</strong></div>
                         </div>
                     )}
+
 
 
                 </div>
@@ -178,7 +185,7 @@ const ItemWiseSummary = () => {
             </div>
 
         </div>
+
     )
 }
-
-export default ItemWiseSummary
+export default CashChequeSummary;
