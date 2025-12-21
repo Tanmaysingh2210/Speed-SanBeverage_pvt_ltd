@@ -30,9 +30,10 @@ exports.ItemWiseSummary = async (req, res) => {
                 if (!rate) continue;
 
                 const baseAmount = rate.basePrice * item.qty;
-                const taxAmount = baseAmount * ((rate.perTax || 0) / 100);
-                const discAmount = baseAmount * ((rate.perDisc || 0) / 100);
-                const finalAmount = baseAmount + taxAmount - discAmount;
+                const taxableAmount = baseAmount - (baseAmount * ((rate.perDisc || 0) / 100));
+                const taxAmount = taxableAmount * ((rate.perTax || 0) / 100);
+               
+                const finalAmount = taxableAmount + taxAmount ;
                 console.log(`finalAmount: ${finalAmount}`);
 
                 if (!itemMap.has(item.itemCode)) {
@@ -86,6 +87,9 @@ exports.ItemWiseSummary = async (req, res) => {
     }
     catch (err) {
         console.error('Error in itemwise summary:', err);
-        res.status(500).json({ error: 'Internal server error' });
+        return res.status(500).json({
+            success: false,
+            message: "Internal server error"
+        });
     }
 }
