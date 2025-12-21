@@ -13,7 +13,9 @@ const transactionRoutes=require('./routes/transactionRoutes.js')
 const purchaseRoutes=require('./routes/purchaseRoutes/purchaseRoutes.js')
 const depoRoutes = require('./routes/depoRoutes.js');
 const stockRoutes = require('./routes/stockRoutes.js');
-const summaryRoutes = require("./Summary/SalesmanwiseItemwise.js");
+const _summaryModule = require("./Summary/SalesmanwiseItemwise.js");
+const summaryRoutes = (_summaryModule && _summaryModule.default) ? _summaryModule.default : _summaryModule;
+console.log('[ROUTE-DEBUG] final summaryRoutes type:', typeof summaryRoutes, summaryRoutes && summaryRoutes.constructor && summaryRoutes.constructor.name, 'hasDefault?', !!_summaryModule.default);
 
 connectDB();
 const app = express();
@@ -46,7 +48,15 @@ app.use('/transaction' , transactionRoutes);
 app.use('/purchase' , purchaseRoutes);
 app.use('/depo',depoRoutes);
 app.use('/stock', stockRoutes);
-app.use("/summary", summaryRoutes);
+const isExpressRouter = (r) => {
+    return !!r && (typeof r === 'function' || typeof r.use === 'function' || typeof r.handle === 'function');
+};
+
+if (isExpressRouter(summaryRoutes)) {
+    app.use("/summary", summaryRoutes);
+} else {
+    console.error('[ROUTE-DEBUG] summaryRoutes is not a router/middleware — skipping mount.', 'type:', typeof summaryRoutes, 'constructor:', summaryRoutes && summaryRoutes.constructor && summaryRoutes.constructor.name);
+}
 
 const port = 3000;
 app.listen(port, () => (`server running at port ${port}`));
