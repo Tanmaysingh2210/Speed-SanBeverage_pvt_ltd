@@ -1,9 +1,106 @@
 import React from 'react'
+import api from "../../api/api.js";
+import "../transaction/transaction.css"
+import { useState } from 'react';
 
 const SalesmanWiseItemWise = () => {
+  const [salesmanCode, setSalesmanCode] = useState("");
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
+  const [rows, setRows] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+
+  const handleFind = async () => {
+    if (!salesmanCode || !startDate || !endDate) {
+      alert("Please fill all fields");
+      return;
+    }
+
+    try {
+      setLoading(true);
+
+      const res = await api.get(
+        `/summary/salesman-wise-item-wise?salesmanCode=${salesmanCode}&startDate=${startDate}&endDate=${endDate}`
+      );
+
+      console.log("SUMMARY DATA:", res.data); // 👈 must see this
+      setRows(res.data);
+
+    } catch (err) {
+      console.error(err);
+      alert("Error fetching summary");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
-    <div>
-      
+    <div className='trans'>
+      <div className="trans-container">
+        <div className="trans-up">
+          <div className="flex">
+            <div className="form-group">
+              <label>Salesman Code</label>
+              <input
+                type="text"
+                value={salesmanCode}
+                onChange={(e) => setSalesmanCode(e.target.value)}
+              />
+            </div>
+            <div className="form-group">
+              <label>Start-date</label>
+              <input
+                type="date"
+                value={startDate}
+                onChange={(e) => setStartDate(e.target.value)}
+              />
+
+            </div>
+            <div className="form-group">
+              <label>End-date</label>
+              <input
+                type="date"
+                value={endDate}
+                onChange={(e) => setEndDate(e.target.value)}
+              />
+            </div>
+            <div className="form-group">
+              <button onClick={handleFind}
+                className="padd trans-submit-btn"
+              >
+                {loading ? "Loading..." : "Find"}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div className="trans-container set-margin">
+        <div className="all-table">
+          <div className="all-row header">
+            <div>ItemCode</div>
+            <div>ItemName</div>
+            <div>Qty Sale</div>
+            <div>Net Price</div>
+          </div>
+
+          {rows.length === 0 && (
+            <div style={{ padding: "20px", textAlign: "center" }}>
+              No data found
+            </div>
+          )}
+
+          {rows.map((r, i) => (
+            <div className="all-row" key={i}>
+              <div>{r.itemCode}</div>
+              <div>{r.itemName}</div>
+              <div>{r.qtySale}</div>
+              <div>₹{r.netPrice}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+
     </div>
   )
 }
