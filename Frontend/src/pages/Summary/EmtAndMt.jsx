@@ -149,7 +149,7 @@ const EmtAndMtSummary = () => {
                     }
                     {/* Data Rows */}
                     {summary.map((p, i) => {
-                        const rowTotal = Number(p.totalMt || 0) - Number(p.totalEmt || 0);
+                        const rowTotal = Number(p.totalEmt || 0) - Number(p.totalMt || 0);
                       grandTotalShortExcess+=rowTotal;
                         return (
                             <div key={i} className="all-row3">

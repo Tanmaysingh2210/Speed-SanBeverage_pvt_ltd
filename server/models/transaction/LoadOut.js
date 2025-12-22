@@ -6,7 +6,6 @@ const loadOutSchema = new mongoose.Schema({
     trip: { type: Number },
     items: [
         {
-            container:{type:String },
             itemCode: { type: String, required: true },
             qty: { type: Number, required: true },
         },
