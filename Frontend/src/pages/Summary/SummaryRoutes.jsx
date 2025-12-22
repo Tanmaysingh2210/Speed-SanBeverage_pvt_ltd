@@ -12,9 +12,9 @@ const SummaryRoutes = () => {
                 <h2>Summary Report</h2>
                 <div className="options">
                     <ul>
-                        <li><NavLink to={`/summary/item-wise`} className={({ isActive }) => (isActive ? 'active' : '')}>Item-wise</NavLink></li>
-                        <li><NavLink to={`/summary/salesman-wise-item-wise`} className={({ isActive }) => (isActive ? 'active' : '')}>SalesmanWise-ItemWise</NavLink></li>
-                        <li><NavLink to={`/summary/cash-cheque`} className={({ isActive }) => (isActive ? 'active' : '')}>Cash-Cheque-Summary</NavLink></li>
+                        <li><NavLink to={`/summary/item-wise`} className={({ isActive }) => (isActive ? 'active' : '')}>Itemwise</NavLink></li>
+                        <li><NavLink to={`/summary/salesman-wise-item-wise`} className={({ isActive }) => (isActive ? 'active' : '')}>Salesmanwise Itemwise</NavLink></li>
+                        <li><NavLink to={`/summary/cash-cheque`} className={({ isActive }) => (isActive ? 'active' : '')}>Cash-Cheque Summary</NavLink></li>
                         <li><NavLink to={`/summary/emt-mt`} className={({ isActive }) => (isActive ? 'active' : '')}>Emt And Mt Summary</NavLink></li>
 
 
