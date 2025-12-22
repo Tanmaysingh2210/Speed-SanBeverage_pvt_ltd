@@ -1,8 +1,7 @@
 const express = require("express");
-const LoadOut = require("../models/transaction/LoadOut");
+const LoadOut = require("../models/transaction/LoadOut.js");
 
-// TEST LOG (optional but useful)
-console.log("✅ SalesmanWiseItemWise Router Loaded");
+console.log("✅ SalesmanWiseItemWise Summary Loaded");
 
 exports.salesmanwiseItemwiseSummary=async (req, res) => {
   try {
@@ -15,6 +14,7 @@ exports.salesmanwiseItemwiseSummary=async (req, res) => {
     }
 
     const result = await LoadOut.aggregate([
+      
       {
         $match: {
           salesmanCode,
@@ -25,8 +25,10 @@ exports.salesmanwiseItemwiseSummary=async (req, res) => {
         }
       },
 
+      
       { $unwind: "$items" },
 
+      
       {
         $lookup: {
           from: "rates",
@@ -57,13 +59,9 @@ exports.salesmanwiseItemwiseSummary=async (req, res) => {
         }
       },
 
-      {
-        $unwind: {
-          path: "$price",
-          preserveNullAndEmptyArrays: false
-        }
-      },
+      { $unwind: "$price" },
 
+      
       {
         $addFields: {
           safePerDisc: { $ifNull: ["$price.perDisc", 0] },
@@ -71,6 +69,7 @@ exports.salesmanwiseItemwiseSummary=async (req, res) => {
         }
       },
 
+   
       {
         $addFields: {
           taxablePrice: {
@@ -86,7 +85,6 @@ exports.salesmanwiseItemwiseSummary=async (req, res) => {
           }
         }
       },
-
       {
         $addFields: {
           netRate: {
@@ -103,19 +101,82 @@ exports.salesmanwiseItemwiseSummary=async (req, res) => {
         }
       },
 
+     
       {
         $addFields: {
-          amount: {
+          loadOutAmount: {
             $multiply: ["$items.qty", "$netRate"]
           }
         }
       },
 
+     
       {
         $group: {
           _id: "$items.itemCode",
-          qtySale: { $sum: "$items.qty" },
-          netPrice: { $sum: "$amount" }
+          loadOutQty: { $sum: "$items.qty" },
+          loadOutAmount: { $sum: "$loadOutAmount" },
+          netRate: { $first: "$netRate" }
+        }
+      },
+
+     
+      {
+        $lookup: {
+          from: "transaction_loadins",
+          let: { itemCode: "$_id" },
+          pipeline: [
+            {
+              $match: {
+                salesmanCode,
+                date: {
+                  $gte: new Date(startDate),
+                  $lte: new Date(endDate)
+                },
+                $expr: {
+                  $eq: [
+                    { $toUpper: "$itemCode" },
+                    { $toUpper: "$$itemCode" }
+                  ]
+                }
+              }
+            },
+            {
+              $addFields: {
+                returnQty: { $add: ["$filled", "$leaked"] }
+              }
+            },
+            {
+              $group: {
+                _id: null,
+                totalReturnQty: { $sum: "$returnQty" }
+              }
+            }
+          ],
+          as: "loadin"
+        }
+      },
+
+ 
+      {
+        $addFields: {
+          loadInQty: {
+            $ifNull: [{ $arrayElemAt: ["$loadin.totalReturnQty", 0] }, 0]
+          }
+        }
+      },
+
+      
+      {
+        $addFields: {
+          netQty: { $subtract: ["$loadOutQty", "$loadInQty"] }
+        }
+      },
+      {
+        $addFields: {
+          netPrice: {
+            $multiply: ["$netQty", "$netRate"]
+          }
         }
       },
 
@@ -127,15 +188,15 @@ exports.salesmanwiseItemwiseSummary=async (req, res) => {
           as: "item"
         }
       },
-
       { $unwind: "$item" },
 
+    
       {
         $project: {
           _id: 0,
           itemCode: "$_id",
           itemName: "$item.name",
-          qtySale: 1,
+          qtySale: "$netQty",
           netPrice: { $round: ["$netPrice", 2] }
         }
       }
@@ -148,5 +209,4 @@ exports.salesmanwiseItemwiseSummary=async (req, res) => {
     res.status(500).json({ message: "Internal Server Error" });
   }
 };
-
 

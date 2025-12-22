@@ -164,7 +164,7 @@ const ItemWiseSummary = () => {
                         )
                     })}
                     {summary.length > 0 && (
-                        <div className="all-row2 total-row">
+                        <div className="all-row4 total-row">
                             <div></div>                          
                             <div><strong>TOTAL</strong></div>
                             <div></div>
