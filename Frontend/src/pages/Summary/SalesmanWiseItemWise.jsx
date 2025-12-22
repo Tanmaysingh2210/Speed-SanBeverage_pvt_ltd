@@ -1,7 +1,9 @@
 import React from 'react'
 import api from "../../api/api.js";
-import "../transaction/transaction.css"
-import { useState } from 'react';
+import { useState ,useEffect} from 'react';
+import { useSalesmanModal } from '../../context/SalesmanModalContext.jsx';
+import "../transaction/transaction.css";
+import { useSalesman } from '../../context/SalesmanContext.jsx';
 
 const SalesmanWiseItemWise = () => {
   const [salesmanCode, setSalesmanCode] = useState("");
@@ -10,6 +12,9 @@ const SalesmanWiseItemWise = () => {
   const [rows, setRows] = useState([]);
   const [loading, setLoading] = useState(false);
   const { openSalesmanModal } = useSalesmanModal();
+  const {  getAllSalesmen } = useSalesman();
+
+
 
 
   const handleFind = async () => {
@@ -36,6 +41,10 @@ const SalesmanWiseItemWise = () => {
     }
   };
 
+   useEffect(() => {
+          getAllSalesmen();
+      }, []);
+
   return (
     <div className='trans'>
       <div className="trans-container">
@@ -54,7 +63,7 @@ const SalesmanWiseItemWise = () => {
                 className="dropdown-btn"
                 onClick={() =>
                   openSalesmanModal((code) =>
-                    setNewLoadOut(prev => ({ ...prev, salesmanCode: code }))
+                    setSalesmanCode(code)
                   )
                 }
               >
@@ -91,7 +100,7 @@ const SalesmanWiseItemWise = () => {
       </div>
       <div className="trans-container set-margin">
         <div className="all-table">
-          <div className="all-row2 header">
+          <div className="all-row header">
             <div>ItemCode</div>
             <div>ItemName</div>
             <div>Qty Sale</div>
@@ -105,7 +114,7 @@ const SalesmanWiseItemWise = () => {
           )}
 
           {rows.map((r, i) => (
-            <div className="all-row2" key={i}>
+            <div className="all-row4" key={i}>
               <div>{r.itemCode}</div>
               <div>{r.itemName}</div>
               <div>{r.qtySale}</div>
