@@ -25,7 +25,6 @@ exports.ItemWiseSummary = async (req, res) => {
                     date: { $lte: loadout.date }
                 }).sort({ date: -1 });
 
-                console.log(rate);
 
                 if (!rate) continue;
 
@@ -34,7 +33,6 @@ exports.ItemWiseSummary = async (req, res) => {
                 const taxAmount = taxableAmount * ((rate.perTax || 0) / 100);
                
                 const finalAmount = taxableAmount + taxAmount ;
-                console.log(`finalAmount: ${finalAmount}`);
 
                 if (!itemMap.has(item.itemCode)) {
                     itemMap.set(item.itemCode, {
@@ -45,7 +43,6 @@ exports.ItemWiseSummary = async (req, res) => {
                 }
 
                 const agg = itemMap.get(item.itemCode);
-                console.log(`agg: ${agg}`);
                 agg.qty += item.qty;
                 agg.amount += finalAmount;
             }
@@ -60,7 +57,7 @@ exports.ItemWiseSummary = async (req, res) => {
                 code: itemCode.trim().toUpperCase(),
             });
 
-            if (!itemDetails) continue;
+            if (!itemDetails) continue;  
 
             summary.push({
                 itemCode,

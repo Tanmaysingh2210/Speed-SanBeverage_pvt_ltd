@@ -37,7 +37,8 @@ const LoadOut = () => {
 
     const [newLoadItem, setNewLoadItem] = useState({
         itemCode: "",
-        qty: ""
+        qty: "",
+        container: ""
     });
 
     const [newLoadOut, setNewLoadOut] = useState({
@@ -62,14 +63,27 @@ const LoadOut = () => {
 
     const handleAddItem = () => {
         const qtyNum = Number(newLoadItem.qty);
+
         if (!newLoadItem.itemCode || !newLoadItem.qty || qtyNum <= 0) {
             toast.error("Enter valid item code and quantity");
             return;
         }
 
+
         const exists = newLoadOut.items.find(
             (it) => it.itemCode.toUpperCase() === newLoadItem.itemCode.toUpperCase()
+
         );
+        const matchedSKU = items.find(
+            sku => sku.code.toUpperCase() === newLoadItem.itemCode.toUpperCase()
+        );
+
+        if (!matchedSKU) {
+            toast.error("Invalid item code");
+            return;
+        }
+
+
 
         if (exists) {
             toast.error("Item already exist");
@@ -78,10 +92,11 @@ const LoadOut = () => {
 
         setNewLoadOut((prev) => ({
             ...prev,
-            items: [...prev.items, { ...newLoadItem, qty: qtyNum }]
+            items: [...prev.items, { ...newLoadItem, qty: qtyNum, container: matchedSKU.container }]
         }));
+        console.log("item",newLoadItem );
 
-        setNewLoadItem({ itemCode: "", qty: "" });
+        setNewLoadItem({ itemCode: "", qty: "", container: "" });
         modalItemRef.current?.focus();
     };
 
@@ -278,7 +293,7 @@ const LoadOut = () => {
                     <div className="item-inputs">
                         <div className="flex">
                             <div className="form-group">
-                                    <label>Item Code</label>
+                                <label>Item Code</label>
                                 <div className="input-with-btn">
                                     <input
                                         type="text"
@@ -412,7 +427,7 @@ const LoadOut = () => {
                             </div>
 
                             {items
-                                .filter(itm => itm.container.toUpperCase()!== "EMT")
+                                .filter(itm => itm.container.toUpperCase() !== "EMT")
                                 .filter(itm =>
                                     itm.code.toLowerCase().includes(search.toLowerCase()) ||
                                     itm.name.toLowerCase().includes(search.toLowerCase())
@@ -458,10 +473,15 @@ const LoadOut = () => {
                                 onClick={() => {
                                     const itemsToAdd = Object.entries(modalQtyMap)
                                         .filter(([_, qty]) => Number(qty) > 0)
-                                        .map(([code, qty]) => ({
-                                            itemCode: code,
-                                            qty: Number(qty)
-                                        }));
+                                        .map(([code, qty]) => {
+                                        
+                                            return {
+                                                itemCode: code,
+                                                qty: Number(qty),
+                                               
+                                            };
+                                        });
+
 
                                     if (itemsToAdd.length === 0) {
                                         toast.error("Enter qty for at least one item");

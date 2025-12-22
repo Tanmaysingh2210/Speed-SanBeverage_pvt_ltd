@@ -4,7 +4,7 @@ import "../transaction/transaction.css";
 import api from "../../api/api";
 import toast from "react-hot-toast";
 
-const CashChequeSummary = () => {
+const EmtAndMtSummary = () => {
 
     const [period, setPeriod] = useState({ startDate: "", endDate: "" });
     const [summary, setSummary] = useState([]);
@@ -18,32 +18,22 @@ const CashChequeSummary = () => {
         }
         try {
             setLoading(true);
-            const res = await api.post('/summary/cashcheque', period);
+            const res = await api.post('/summary/emtandmt', period);
             if (res?.data?.success) {
                 setSummary(res?.data?.data);
-
             }
-            toast.success("cash-cheque summary fetch successfull");
+            toast.success("Emt and mt fetch successfully");
         }
         catch (err) {
             toast.error(err.response?.data?.message || "Error fetching summary");
-
-        } finally {
+        }
+        finally {
             setLoading(false);
         }
     }
-    const grandTotalCash = summary.reduce(
-        (sum, item) => sum + Number(item.totalCash || 0),
-        0
-    );
 
-    const grandTotalCheque = summary.reduce(
-        (sum, item) => sum + Number(item.totalCheque || 0),
-        0
-    );
-
-    const grandTotal = grandTotalCash + grandTotalCheque;
-
+    
+    let grandTotalShortExcess=0;
 
     const startRef = useRef(null);
     const endRef = useRef(null);
@@ -52,6 +42,7 @@ const CashChequeSummary = () => {
     useEffect(() => {
         startRef.current?.focus();
     }, []);
+
     const handleKeyNav = (e, currentField) => {
         if (["ArrowRight", "ArrowDown", "Enter"].includes(e.key)) {
             e.preventDefault();
@@ -134,9 +125,9 @@ const CashChequeSummary = () => {
                     <div className="all-row3 header">
                         <div>CODE</div>
                         <div>SALESMAN NAME</div>
-                        <div>CASH</div>
-                        <div>CHEQUE</div>
-                        <div>Total</div>
+                        <div>MT</div>
+                        <div>EMT</div>
+                        <div>SHORT/EXCESS</div>
                     </div>
                     {loading && (
                         <div style={{ textAlign: "center", padding: "20px" }}>
@@ -158,14 +149,30 @@ const CashChequeSummary = () => {
                     }
                     {/* Data Rows */}
                     {summary.map((p, i) => {
-                        const rowTotal = Number(p.totalCash || 0) + Number(p.totalCheque || 0);
+                        const rowTotal = Number(p.totalMt || 0) - Number(p.totalEmt || 0);
+                      grandTotalShortExcess+=rowTotal;
                         return (
                             <div key={i} className="all-row3">
                                 <div>{p.salesmanCode}</div>
                                 <div>{p.name}</div>
-                                <div>₹{p.totalCash}</div>
-                                <div>₹ {p.totalCheque}</div>
-                                <div>₹ {rowTotal.toFixed(2)}</div>
+                                <div>{p.totalMt}</div>
+                                <div>{p.totalEmt}</div>
+
+
+                                {(rowTotal >= 0) &&
+
+
+                                    (<div style={{
+                                        color: "green"
+                                    }}> {rowTotal.toFixed(2)}</div>)}
+
+                                {(rowTotal < 0) &&
+                                    (
+                                    <div style={{
+                                        color: "red"
+                                    }}> {rowTotal.toFixed(2)}</div>)}
+
+
                             </div>
                         )
                     })}
@@ -173,16 +180,24 @@ const CashChequeSummary = () => {
                         <div className="all-row3 total-row">
                             <div></div>
                             <div><strong>TOTAL</strong></div>
-                            <div><strong>₹ {grandTotalCash.toFixed(2)}</strong></div>
-                            <div><strong>₹ {grandTotalCheque.toFixed(2)}</strong></div>
-                            <div><strong>₹ {grandTotal.toFixed(2)}</strong></div>
+
+                            {
+                                grandTotalShortExcess>0 &&
+                                <div style={{
+                                color:"green"
+                            }}><strong>{grandTotalShortExcess.toFixed(2)}</strong></div>
+                            }
+                            { 
+                            grandTotalShortExcess<0 &&
+                            <div style={{
+                                color:"red"
+                            }}><strong>{grandTotalShortExcess.toFixed(2)}</strong></div>
+                        }
                         </div>
                     )}
-
                 </div>
             </div>
         </div>
-
     )
 }
-export default CashChequeSummary;
+export default EmtAndMtSummary; 
