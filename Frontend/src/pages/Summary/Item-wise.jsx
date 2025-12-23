@@ -10,7 +10,7 @@ const ItemWiseSummary = () => {
     const [period, setPeriod] = useState({ startDate: "", endDate: "" });
     const [summary, setSummary] = useState([]);
     const [loading, setLoading] = useState(false);
-    const [grandTotal,setGrandTotal] = useState(null);
+    const [grandTotal, setGrandTotal] = useState(null);
 
 
     const getSummary = async (e) => {
@@ -38,7 +38,7 @@ const ItemWiseSummary = () => {
     }
 
     console.log("summary is:", summary);
-    
+
 
 
     const startRef = useRef(null);
@@ -165,7 +165,7 @@ const ItemWiseSummary = () => {
                     })}
                     {summary.length > 0 && (
                         <div className="all-row4 total-row">
-                            <div></div>                          
+                            <div></div>
                             <div><strong>TOTAL</strong></div>
                             <div></div>
                             <div><strong>₹ {grandTotal.toFixed(2)}</strong></div>

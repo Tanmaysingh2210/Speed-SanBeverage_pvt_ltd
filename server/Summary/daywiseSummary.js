@@ -8,6 +8,7 @@ const Rates = require('../models/rates.js');
 
 
 exports.DaywiseSummary = async (req, res) => {
+    const normalize = v => v?.trim().toLowerCase();
     try {
         const { startDate, endDate } = req.body;
         if (!startDate || !endDate || startDate > endDate) return res.status(400).json({ message: "Fill all fields properly", success: false });
@@ -29,24 +30,30 @@ exports.DaywiseSummary = async (req, res) => {
         const rateMap = new Map();
 
         for (const r of rates) {
-            if (!rateMap.has(r.itemCode)) {
-                rateMap.set(r.itemCode, [])
+            const code = normalize(r.itemCode);
+            if (!rateMap.has(code)) {
+                rateMap.set(code, [])
             }
-            rateMap.get(r.itemCode).push(r);
+            rateMap.get(code).push(r);
         }
+
+        console.log(rateMap);
 
         const itemMap = new Map();
 
         for (const i of items) {
-            itemMap.set(i.code, {
-                itemCode: i.code,
-                container: i.container
+            const code = normalize(i.code);
+            itemMap.set(code, {
+                itemCode: code,
+                container: normalize(i.container)
             });
-            console.log(i.container);
+
         }
 
+        console.log(itemMap);
+
         const getRateforDate = (itemCode, saleDate) => {
-            const list = rateMap.get(itemCode);
+            const list = rateMap.get(normalize(itemCode));
             if (!list) return null;
 
 
@@ -71,7 +78,9 @@ exports.DaywiseSummary = async (req, res) => {
                     cashDeposited: 0,
                     chequeDeposited: 0,
                     refunds: 0,
-                    disc: 0
+                    disc: 0,
+                    missingRates: new Set(),
+                    missingItems: new Set()
                 });
             }
             return dayMap.get(key);
@@ -97,17 +106,31 @@ exports.DaywiseSummary = async (req, res) => {
         for (const li of loadins) {
             const day = ensureDay(li.date);
             for (const item of li.items) {
-                const rate = getRateforDate(item.itemCode, li.date);
-                if (!rate) continue;
+                const rate = getRateforDate(normalize(item.itemCode), li.date);
+
+                if (!rate) {
+                    console.log("price not found for: ", normalize(item.itemCode));
+                    continue;
+                };
 
                 const base = rate.basePrice;
                 const disc = (base * (rate.perDisc || 0)) / 100;
                 const tax = ((base - disc) * (rate.perTax || 0)) / 100;
                 const finalPrice = base - disc + tax;
 
-                const it = itemMap.get(item.itemCode.trim().toUpperCase());
+                const it = itemMap.get(normalize(item.itemCode));
+
+                if (!it) {
+                    day.missingItems.add(normalize(item.itemCode));
+                    console.log(day.missingItems);
+                    continue;
+                }
+
+
+
                 if (!it) continue;
-                if (it.container.trim().toUpperCase() === "EMT") {
+                console.log(it);
+                if (normalize(it.container) ===normalize("EMT") ) {
                     day.refunds += (item.Emt * finalPrice);
                     console.log(`refunds : ${day.refunds}`);
                 } else {
