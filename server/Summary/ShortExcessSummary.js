@@ -281,8 +281,6 @@ exports.shortExcessSummary = async (req, res) => {
                     from: "transaction_cash_credits",
                     let: {
                         salesmanCode: "$_id",
-                        startDate: new Date(startDate),
-                        endDate: new Date(endDate)
                     },
                     pipeline: [
                         {
@@ -320,26 +318,61 @@ exports.shortExcessSummary = async (req, res) => {
                         {
                             $lookup: {
                                 from: "transaction_s_sheets",
-                                localField: "$$salesmanCode",
-                                foreignField: "$salesmanCode",
+                                let: { salesmanCode: "$salesmanCode" },
+                                pipeline: [
+                                    {
+                                        $match: {
+                                            $expr: {
+                                                $eq: ["$salesmanCode", "$$salesmanCode"]
+                                            }
+                                        }
+                                    }
+                                ],
                                 as: "sheets"
                             }
                         },
 
-                    { $unwind: "$sheets" },
+                        {
+                            $addFields: {
+                                schm: { $ifNull: [{ $arrayElemAt: ["$sheets.schm", 0] }, 0] }
+                            }
+                        },
 
-                    {
-                        $addFields:{
-                            netvalue:{
-                                $add:
+                        {
+                            $addFields: {
+                                netvalue: { $add: ["$value", "$schm"] }
+                            }
+                        },
+
+                        {
+                            $group: {
+                                _id: null,
+                                totalDeposit: { $sum: "$netvalue" }
                             }
                         }
-                    }
 
-                    ]
+                    ],
+                    as: "deposits"
                 }
             },
 
+            {
+                $addFields: {
+                    totalDeposit: {
+                        $ifNull: [{ $arrayElemAt: ["$deposits.totalDeposit", 0] }, 0]
+                    }
+                }
+            },
+
+            {
+                $addFields: {
+                    shortExcess: {
+                        $subtract: [
+                            "$totalDeposit", "$netSaleAmount"
+                        ]
+                    }
+                }
+            },
 
             {
                 $project: {
@@ -347,7 +380,9 @@ exports.shortExcessSummary = async (req, res) => {
                     salesmanCode: "$_id",
                     salesmanName: "$salesmen.name",
                     qtySale: "$netQty",
-                    netSaleAmount: { $round: ["$netSaleAmount", 2] }
+                    netSaleAmount: { $round: ["$netSaleAmount", 2] },
+                    totalDeposit: 1,
+                    shortExcess: 1
                 }
             }
         ]);
