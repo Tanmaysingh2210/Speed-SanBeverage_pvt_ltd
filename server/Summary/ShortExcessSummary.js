@@ -328,13 +328,13 @@ exports.shortExcessSummary = async (req, res) => {
 
                     { $unwind: "$sheets" },
 
-                    {
-                        $addFields:{
-                            netvalue:{
-                                $add:
-                            }
-                        }
-                    }
+                    // {
+                    //     $addFields:{
+                    //         netvalue:{
+                    //             $add:
+                    //         }
+                    //     }
+                    // }
 
                     ]
                 }
