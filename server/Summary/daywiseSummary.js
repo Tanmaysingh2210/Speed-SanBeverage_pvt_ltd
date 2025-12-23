@@ -79,8 +79,8 @@ exports.DaywiseSummary = async (req, res) => {
                     chequeDeposited: 0,
                     refunds: 0,
                     disc: 0,
-                    missingRates: new Set(),
-                    missingItems: new Set()
+                    schm: 0,
+                    ref:0
                 });
             }
             return dayMap.get(key);
@@ -109,7 +109,6 @@ exports.DaywiseSummary = async (req, res) => {
                 const rate = getRateforDate(normalize(item.itemCode), li.date);
 
                 if (!rate) {
-                    console.log("price not found for: ", normalize(item.itemCode));
                     continue;
                 };
 
@@ -145,14 +144,21 @@ exports.DaywiseSummary = async (req, res) => {
             if (cc.crNo === 1) {
                 day.cashDeposited += cc.cashDeposited || 0;
                 day.chequeDeposited += cc.chequeDeposited || 0;
+                day.ref += cc.ref || 0;
             } else {
                 day.creditSale += cc.value || 0;
+                day.ref += cc.ref || 0;
             }
+        }
+
+        for(const s of sheets){
+            const day = ensureDay(s.date);
+            day.schm += (s.schm || 0);
         }
 
         const summary = Array.from(dayMap.values()).map(d => {
             const deposited = d.cashDeposited + d.chequeDeposited;
-            const shortExcess = deposited - d.sale;
+            const shortExcess = deposited + d.schm + d.ref - d.sale;
 
             return {
                 date: d.date,
@@ -161,6 +167,7 @@ exports.DaywiseSummary = async (req, res) => {
                 chequeDeposited: Number(d.chequeDeposited.toFixed(2)),
                 creditSale: Number(d.creditSale.toFixed(2)),
                 refund: Number(d.refunds.toFixed(2)),
+                schm: Number((d.schm).toFixed(2)),
                 shortExcess: Number(shortExcess.toFixed(2))
             };
         });
