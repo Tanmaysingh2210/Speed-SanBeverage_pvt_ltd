@@ -35,12 +35,15 @@ exports.ItemWiseSummary = async (req, res) => {
 
         for (const i of items) {
             const code = normalize(i.code);
-            itemMap.set(code, {
-                itemCode: code,
-                container: normalize(i.container),
-                qty: 0,
-                amount: 0
-            });
+            if (normalize(i.container) === normalize("emt")) continue;
+            else {
+                itemMap.set(code, {
+                    itemCode: code,
+                    container: normalize(i.container),
+                    qty: 0,
+                    amount: 0
+                });
+            }
         }
 
         const getRateforDate = (itemCode, saleDate) => {
@@ -68,6 +71,7 @@ exports.ItemWiseSummary = async (req, res) => {
                 const finalAmount = taxableAmount + taxAmount;
 
                 const agg = itemMap.get(normalize(item.itemCode));
+                if(!agg) continue;
                 agg.qty += item.qty;
                 agg.amount += (item.qty) * finalAmount;
             }
@@ -85,10 +89,11 @@ exports.ItemWiseSummary = async (req, res) => {
                 const finalAmount = taxableAmount + taxAmount;
 
                 const agg = itemMap.get(normalize(item.itemCode));
+                if(!agg) continue;
                 if (agg.container === normalize("emt")) {
                     continue;
                 } else {
-                    agg.qty -= item.qty;
+                    agg.qty -= (item.Filled + item.Burst);
                     agg.amount -= (item.qty) * finalAmount;
                 }
             }
