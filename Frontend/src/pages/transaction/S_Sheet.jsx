@@ -87,7 +87,6 @@ const S_Sheet = () => {
         salesmanCode: sheet.salesmanCode,
         date: sheet.date,
         trip: Number(sheet.trip) || 1,
-        schm: Number(sheet.schm) || 0,
       });
 
       setSheetData(data); // store settlement details in UI
