@@ -1,13 +1,15 @@
 const express = require("express");
 const router = express.Router();
-const {ItemWiseSummary} = require('../Summary/ItemWise.js');
-const {CashChequeSummary}= require('../Summary/cashCheque.js');
-const {salesmanwiseItemwiseSummary}= require('../Summary/SalesmanwiseItemwise.js');
-const {EmtAndMtSummary} =require('../Summary/emtAndMt.js');
+const { ItemWiseSummary } = require('../Summary/ItemWise.js');
+const { CashChequeSummary } = require('../Summary/cashCheque.js');
+const { salesmanwiseItemwiseSummary } = require('../Summary/SalesmanwiseItemwise.js');
+const { EmtAndMtSummary } = require('../Summary/emtAndMt.js');
+const { DaywiseSummary } = require('../Summary/daywiseSummary.js');
 
-router.post('/itemwise' , ItemWiseSummary);
+router.post('/itemwise', ItemWiseSummary);
 router.post('/cashcheque', CashChequeSummary);
 router.get('/salesman-wise-item-wise', salesmanwiseItemwiseSummary);
-router.post('/emtandmt' , EmtAndMtSummary);
+router.post('/emtandmt', EmtAndMtSummary);
+router.post('/daywise', DaywiseSummary);
 
 module.exports = router;
