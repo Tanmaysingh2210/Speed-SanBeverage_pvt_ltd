@@ -68,8 +68,10 @@ exports.ItemWiseSummary = async (req, res) => {
                 const finalAmount = taxableAmount + taxAmount;
 
                 const agg = itemMap.get(normalize(item.itemCode));
+                if (!agg) continue;
+
                 agg.qty += item.qty;
-                agg.amount += (item.qty) * finalAmount;
+                agg.amount +=  finalAmount;
             }
         }
 
@@ -85,11 +87,13 @@ exports.ItemWiseSummary = async (req, res) => {
                 const finalAmount = taxableAmount + taxAmount;
 
                 const agg = itemMap.get(normalize(item.itemCode));
+                if (!agg) continue;
+
                 if (agg.container === normalize("emt")) {
                     continue;
                 } else {
                     agg.qty -= item.qty;
-                    agg.amount -= (item.qty) * finalAmount;
+                    agg.amount -=  finalAmount;
                 }
             }
         }
