@@ -143,7 +143,7 @@ exports.salesmanwiseItemwiseSummary=async (req, res) => {
             },
             {
               $addFields: {
-                returnQty: { $add: ["$filled", "$leaked"] }
+                returnQty: { $add: ["$filled", "$Burst"] }
               }
             },
             {

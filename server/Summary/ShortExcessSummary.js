@@ -285,59 +285,78 @@ exports.shortExcessSummary = async (req, res) => {
                         endDate: new Date(endDate)
                     },
                     pipeline: [
-                      {
-                        $match: {
-                            $expr: {
-                                $eq: ["$salesmanCode", "$$salesmanCode"]
-                            },
-                            date: {
-                                $gte: new Date(startDate),
-                                $lte: new Date(endDate)
+                        {
+                            $match: {
+                                $expr: {
+                                    $eq: ["$salesmanCode", "$$salesmanCode"]
+                                },
+                                date: {
+                                    $gte: new Date(startDate),
+                                    $lte: new Date(endDate)
+                                }
                             }
-                        }
-                    },
-                    
+                        },
+
+
+                        {
+                            $addFields: {
+                                value: {
+                                    $add: ["$ref",
+                                        {
+                                            $add: [
+                                                "$value", {
+                                                    $multiply: [
+                                                        "$value",
+                                                        { $divide: ["$tax", 100] }
+                                                    ]
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }
+                            }
+                        },
+
+                        {
+                            $lookup: {
+                                from: "transaction_s_sheets",
+                                localField: "$$salesmanCode",
+                                foreignField: "$salesmanCode",
+                                as: "sheets"
+                            }
+                        },
+
+                    { $unwind: "$sheets" },
 
                     {
-                $addFields: {
-                    value: {
-                        $add:[ "$ref" , 
-                        {$add: [
-                            "$value", {
-                                $multiply: [
-                                    "$value",
-                                    { $divide: ["$tax", 100] }
-                                ]
+                        $addFields:{
+                            netvalue:{
+                                $add:
                             }
-                        ]}
-                    ]
+                        }
                     }
+
+                    ]
                 }
             },
 
 
-
-        ]
+            {
+                $project: {
+                    _id: 0,
+                    salesmanCode: "$_id",
+                    salesmanName: "$salesmen.name",
+                    qtySale: "$netQty",
+                    netSaleAmount: { $round: ["$netSaleAmount", 2] }
                 }
-            },
-
-
-{
-    $project: {
-        _id: 0,
-        salesmanCode: "$_id",
-        salesmanName: "$salesmen.name",
-        qtySale: "$netQty",
-        netSaleAmount: { $round: ["$netSaleAmount", 2] }
-    }
-}
+            }
         ]);
 
-res.json(result);
+        res.json(result);
 
     } catch (error) {
-    console.error("❌ Summary error:", error);
-    res.status(500).json({ message: "Internal Server Error" });
-}
+        console.error("❌ Summary error:", error);
+        res.status(500).json({ message: "Internal Server Error" });
+    }
 };
 
