@@ -5,10 +5,12 @@ const { CashChequeSummary } = require('../Summary/cashCheque.js');
 const { salesmanwiseItemwiseSummary } = require('../Summary/SalesmanwiseItemwise.js');
 const { EmtAndMtSummary } = require('../Summary/emtAndMt.js');
 const { DaywiseSummary } = require('../Summary/daywiseSummary.js');
+const {shortExcessSummary} =require('../Summary/ShortExcessSummary.js')
 
 router.post('/itemwise', ItemWiseSummary);
 router.post('/cashcheque', CashChequeSummary);
 router.get('/salesman-wise-item-wise', salesmanwiseItemwiseSummary);
+router.get('/short-excess-summary', shortExcessSummary);
 router.post('/emtandmt', EmtAndMtSummary);
 router.post('/daywise', DaywiseSummary);
 
