@@ -16,7 +16,7 @@ router.use('/cashcredit', cashcreditRoutes);
 
 router.post("/settlement", async (req, res) => {
     try {
-        const { salesmanCode, date, trip, schm } = req.body;
+        const { salesmanCode, date, trip } = req.body;
         const selectedDate = new Date(date);
 
         if (!salesmanCode || !date || !trip) return res.status(400).json({ message: "All field required" });
@@ -26,23 +26,6 @@ router.post("/settlement", async (req, res) => {
             date,
             trip
         });
-
-        if (!s_sheet && schm != 0) {
-            await S_sheet.create({
-                salesmanCode,
-                date,
-                trip,
-                schm
-            });
-            
-            s_sheet = await S_sheet.findOne({
-                salesmanCode,
-                date,
-                trip
-            });
-        }
-
-
 
 
         // 1) FETCH LOADOUT
@@ -186,6 +169,37 @@ router.post("/settlement", async (req, res) => {
         return res.status(500).json({ message: "Settlement error", error: err.message });
     }
 });
+
+
+
+router.post("/settlement/save-schm", async (req, res) => {
+  try {
+    const { salesmanCode, date, trip, schm } = req.body;
+
+    if (!salesmanCode || !date || !trip) {
+      return res.status(400).json({ message: "Missing fields" });
+    }
+
+    const updated = await S_sheet.findOneAndUpdate(
+      { salesmanCode, date, trip },
+      { $set: { schm } },
+      { upsert: true, new: true }
+    );
+
+    return res.json({
+      success: true,
+      schm: updated.schm
+    });
+
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({
+      message: "Failed to save discount",
+      error: err.message
+    });
+  }
+});
+
 
 
 

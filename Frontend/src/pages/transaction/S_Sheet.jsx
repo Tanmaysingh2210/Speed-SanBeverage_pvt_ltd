@@ -4,12 +4,16 @@ import "./transaction.css";
 import { useTransaction } from '../../context/TransactionContext';
 import { useSalesman } from '../../context/SalesmanContext';
 import { useSalesmanModal } from '../../context/SalesmanModalContext';
+import toast from 'react-hot-toast';
+import api from '../../api/api';
+
 const S_Sheet = () => {
 
   const { getSettlement, loading } = useTransaction();
   const { salesmans } = useSalesman();
 
   const [sheetData, setSheetData] = useState(null);
+  const [discount, setDiscount] = useState("");    // editable schm
 
   const codeRef = useRef(null);
   const dateRef = useRef(null);
@@ -41,6 +45,35 @@ const S_Sheet = () => {
   //   }
   // };
 
+  const handleSaveDiscount = async () => {
+    if (!discount) {
+      alert("Enter discount before saving");
+      return;
+    }
+
+    try {
+      await api.post('/transaction/settlement/save-schm', {
+        salesmanCode: sheetData.salesmanCode,
+        date: sheetData.date,
+        trip: sheetData.trip,
+        schm: Number(discount)
+      });
+
+      toast.success("Discount saved successfully");
+
+      // update UI without reload
+      setSheetData(prev => ({
+        ...prev,
+        schm: Number(discount)
+      }));
+
+    } catch (err) {
+      console.error(err);
+      toast.error("Failed to save discount");
+    }
+  };
+
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -58,6 +91,7 @@ const S_Sheet = () => {
       });
 
       setSheetData(data); // store settlement details in UI
+      setDiscount(data.schm || "");
 
       setSheet({
         salesmanCode: "",
@@ -132,25 +166,25 @@ const S_Sheet = () => {
               <div className="form-group">
                 <label>Salesman Code</label>
                 <div className="input-with-btn">
-                <input
-                  type="text"
-                  placeholder='Enter Salesman code'
-                  value={sheet.salesmanCode || sheetData?.salesmanCode || ""}
-                  onChange={(e) => setSheet({ ...sheet, salesmanCode: e.target.value })}
-                  onKeyDown={(e) => handleKeyNav(e, "code")}
-                  ref={codeRef}
-                />
-                <button
-                  type="button"
-                  className="dropdown-btn"
-                  onClick={() =>
-                    openSalesmanModal((code) =>
-                     setSheetData(prev => ({ ...prev, salesmanCode: code }))
-                    )
-                  }
-                >
-                  ⌄
-                </button>
+                  <input
+                    type="text"
+                    placeholder='Enter Salesman code'
+                    value={sheet.salesmanCode || sheetData?.salesmanCode || ""}
+                    onChange={(e) => setSheet({ ...sheet, salesmanCode: e.target.value })}
+                    onKeyDown={(e) => handleKeyNav(e, "code")}
+                    ref={codeRef}
+                  />
+                  <button
+                    type="button"
+                    className="dropdown-btn"
+                    onClick={() =>
+                      openSalesmanModal((code) =>
+                        setSheetData(prev => ({ ...prev, salesmanCode: code }))
+                      )
+                    }
+                  >
+                    ⌄
+                  </button>
                 </div>
               </div>
               <div className="form-group">
@@ -231,9 +265,9 @@ const S_Sheet = () => {
                   <label>SMP,DSC,INCM,SCME</label>
                   <input
                     type="number"
-                    value={sheetData?.schm || sheet.schm || ""}
-                    onChange={(e) => setSheet({ ...sheet, schm: e.target.value })}
-                    placeholder="Enter"
+                    value={discount}
+                    onChange={(e) => setDiscount(e.target.value)}
+                    placeholder="Enter discount"
                   />
                 </div>
 
@@ -325,15 +359,25 @@ const S_Sheet = () => {
           </div>
         </div>
       </div>
-      <button
-        className='trans-submit-btn'
-        ref={findRef}
-        onClick={handleSubmit}
-        onKeyDown={(e) => handleKeyNav(e, "find")}
-        disabled={loading}
-      >
-        {loading ? "Loading..." : "Find"}
-      </button>
+      <div className="flex">
+        <button
+          className='trans-submit-btn'
+          ref={findRef}
+          onClick={handleSubmit}
+          onKeyDown={(e) => handleKeyNav(e, "find")}
+          disabled={loading}
+        >
+          {loading ? "Loading..." : "Find"}
+        </button>
+        {sheetData && (
+          <button
+            className="trans-submit-btn"
+            onClick={handleSaveDiscount}
+          >
+            Save Discount
+          </button>
+        )}
+      </div>
     </div >
   )
 }
