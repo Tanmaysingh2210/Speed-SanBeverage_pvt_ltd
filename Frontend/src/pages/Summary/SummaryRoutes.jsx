@@ -4,6 +4,7 @@ import ItemWiseSummary from './Item-wise';
 import SalesmanWiseItemWise from './SalesmanWiseItemWise';
 import CashChequeSummary from './cashCheque';
 import EmtAndMtSummary from './EmtAndMt';
+import DayWise from './Daywise';
 
 const SummaryRoutes = () => {
     return (
@@ -16,6 +17,7 @@ const SummaryRoutes = () => {
                         <li><NavLink to={`/summary/salesman-wise-item-wise`} className={({ isActive }) => (isActive ? 'active' : '')}>Salesmanwise Itemwise</NavLink></li>
                         <li><NavLink to={`/summary/cash-cheque`} className={({ isActive }) => (isActive ? 'active' : '')}>Cash-Cheque Summary</NavLink></li>
                         <li><NavLink to={`/summary/emt-mt`} className={({ isActive }) => (isActive ? 'active' : '')}>Emt And Mt Summary</NavLink></li>
+                        <li><NavLink to={`/summary/daywise`} className={({ isActive }) => (isActive ? 'active' : '')}>DayWise </NavLink></li>
 
 
                     </ul>
@@ -28,6 +30,7 @@ const SummaryRoutes = () => {
                     <Route path="salesman-wise-item-wise" element={<SalesmanWiseItemWise />} />
                     <Route path="cash-cheque" element={<CashChequeSummary />} />
                     <Route path="emt-mt" element={<EmtAndMtSummary />} />
+                    <Route path="daywise" element={<DayWise />} />
 
 
                 </Routes>
