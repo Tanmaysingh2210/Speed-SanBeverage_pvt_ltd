@@ -71,9 +71,9 @@ exports.ItemWiseSummary = async (req, res) => {
                 const finalAmount = taxableAmount + taxAmount;
 
                 const agg = itemMap.get(normalize(item.itemCode));
-                if(!agg) continue;
+                if (!agg) continue;
                 agg.qty += item.qty;
-                agg.amount += (item.qty) * finalAmount;
+                agg.amount += finalAmount;
             }
         }
 
@@ -82,19 +82,19 @@ exports.ItemWiseSummary = async (req, res) => {
                 const rate = getRateforDate(item.itemCode, loadin.date);
                 if (!rate) continue;
 
-                const baseAmount = rate.basePrice * item.qty;
+                const baseAmount = rate.basePrice * ((item.Filled || 0) + (item.Burst || 0));
                 const taxableAmount = baseAmount - (baseAmount * ((rate.perDisc || 0) / 100));
                 const taxAmount = taxableAmount * ((rate.perTax || 0) / 100);
 
                 const finalAmount = taxableAmount + taxAmount;
 
                 const agg = itemMap.get(normalize(item.itemCode));
-                if(!agg) continue;
+                if (!agg) continue;
                 if (agg.container === normalize("emt")) {
                     continue;
                 } else {
-                    agg.qty -= (item.Filled + item.Burst);
-                    agg.amount -= (item.qty) * finalAmount;
+                    agg.qty -= ((item.Filled || 0) + (item.Burst || 0));
+                    agg.amount -= finalAmount;
                 }
             }
         }
