@@ -1,6 +1,6 @@
 import React from 'react'
 import api from "../../api/api.js";
-import { useState, useEffect } from 'react';
+import { useState, useEffect , useRef } from 'react';
 import "../transaction/transaction.css";
 import { useSalesman } from '../../context/SalesmanContext.jsx';
 
