@@ -1,6 +1,6 @@
 import React from 'react'
 import api from "../../api/api.js";
-import { useState, useEffect } from 'react';
+import { useState, useEffect , useRef } from 'react';
 import "../transaction/transaction.css";
 import { useSalesman } from '../../context/SalesmanContext.jsx';
 
@@ -10,6 +10,51 @@ const ShortExcess = () => {
     const [rows, setRows] = useState([]);
     const [loading, setLoading] = useState(false);
     const { getAllSalesmen } = useSalesman();
+
+    const startRef = useRef(null);
+    const endRef = useRef(null);
+    const findRef = useRef(null);
+
+    useEffect(() => {
+        startRef.current?.focus();
+    }, []);
+    const handleKeyNav = (e, currentField) => {
+        if (["ArrowRight", "ArrowDown", "Enter"].includes(e.key)) {
+            e.preventDefault();
+            if (e.key === "Enter" && currentField === "find") {
+                findRef.current?.click();
+                return;
+            }
+            switch (currentField) {
+                case "startDate":
+                    endRef.current?.focus();
+                    break;
+                case "endDate":
+                    if (e.key === "Enter") {
+                        findRef.current?.click();
+                    } else {
+                        findRef.current?.focus();
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
+        else if (["ArrowUp", "ArrowLeft"].includes(e.key)) {
+            e.preventDefault();
+            switch (currentField) {
+                case "find":
+                    endRef.current?.focus();
+                    break;
+                case "endDate":
+                    startRef.current?.focus();
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+
 
     const handleFind = async () => {
         if (!startDate || !endDate) {
@@ -48,22 +93,28 @@ const ShortExcess = () => {
                         <div className="form-group">
                             <label>Start-date</label>
                             <input
+                                ref={startRef}
                                 type="date"
                                 value={startDate}
                                 onChange={(e) => setStartDate(e.target.value)}
+                                onKeyDown={(e) => handleKeyNav(e, "startDate")}
                             />
 
                         </div>
                         <div className="form-group">
                             <label>End-date</label>
                             <input
+                                ref={endRef}
                                 type="date"
                                 value={endDate}
                                 onChange={(e) => setEndDate(e.target.value)}
+                                onKeyDown={(e) => handleKeyNav(e, "endDate")}
                             />
                         </div>
                         <div className="form-group">
                             <button onClick={handleFind}
+                                ref={findRef}
+                                onKeyDown={(e) => handleKeyNav(e, "find")}
                                 className="padd trans-submit-btn"
                             >
                                 {loading ? "Loading..." : "Find"}
