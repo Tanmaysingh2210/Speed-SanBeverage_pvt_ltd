@@ -84,7 +84,7 @@ const S_Sheet = () => {
 
     try {
       const data = await getSettlement({
-        salesmanCode: sheet.salesmanCode,
+        salesmanCode: sheet.salesmanCode.trim().toLowerCase(),
         date: sheet.date,
         trip: Number(sheet.trip) || 1,
       });
@@ -178,7 +178,7 @@ const S_Sheet = () => {
                     className="dropdown-btn"
                     onClick={() =>
                       openSalesmanModal((code) =>
-                        setSheetData(prev => ({ ...prev, salesmanCode: code }))
+                        setSheet(prev => ({ ...prev, salesmanCode: code }))
                       )
                     }
                   >

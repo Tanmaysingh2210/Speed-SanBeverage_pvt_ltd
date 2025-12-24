@@ -12,9 +12,9 @@ exports.addDepo= async(req,res)=>{
         if(depo)return res.status(400).json({message:"Depo already exist"});
 
         await Depo.create({
-            depoCode,
-            depoName,
-            depoAddress
+            depoCode: depoCode.trim().toUpperCase(),
+            depoName:depoName.trim().toUpperCase() ,
+            depoAddress: depoAddress.trim().toUpperCase()
         });
         res.status(200).json({message:"Depo created successfully", success:true});
 
