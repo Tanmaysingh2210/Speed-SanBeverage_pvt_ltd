@@ -146,8 +146,7 @@ const LatestPrice = () => {
         }
 
         const payload = {
-            code: newPrice.code,
-            name: newPrice.name,
+            code: newPrice.code.trim().toUpperCase(),
             basePrice: Number(newPrice.basePrice),
             perTax: Number(newPrice.perTax),
             perDisc: Number(newPrice.perDisc),
@@ -191,8 +190,7 @@ const LatestPrice = () => {
         setEditId(price._id);
 
         setNewPrice({
-            code: price.itemCode || "",
-            name: price.name || "",
+            code: price.itemCode.trim().toUpperCase() || "",
             basePrice: price.basePrice || "",
             perDisc: price.perDisc || "",
             perTax: price.perTax || "",
