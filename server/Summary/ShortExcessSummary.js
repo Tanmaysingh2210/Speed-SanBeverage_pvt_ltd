@@ -131,7 +131,10 @@ exports.shortExcessSummary = async (req, res) => {
                         {
                             $match: {
                                 $expr: {
-                                    $eq: ["$salesmanCode", "$$salesmanCode"]
+                                    $eq: [
+                                        { $toUpper: "$salesmanCode" },
+                                        { $toUpper: "$$salesmanCode" }
+                                    ]
                                 },
                                 date: {
                                     $gte: new Date(startDate),
@@ -287,7 +290,11 @@ exports.shortExcessSummary = async (req, res) => {
                         {
                             $match: {
                                 $expr: {
-                                    $eq: ["$salesmanCode", "$$salesmanCode"]
+                                    $eq: [
+                                        { $toUpper: "$salesmanCode" },
+                                        { $toUpper: "$$salesmanCode" }
+                                    ]
+
                                 },
                                 date: {
                                     $gte: new Date(startDate),
