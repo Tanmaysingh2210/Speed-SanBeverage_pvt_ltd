@@ -2,7 +2,7 @@ const express = require("express");
 const LoadOut = require("../models/transaction/LoadOut.js");
 
 exports.shortExcessSummary = async (req, res) => {
-    const normalize = v => v?.trim().toLowerCase();
+    
     try {
         const { startDate, endDate } = req.query;
 
