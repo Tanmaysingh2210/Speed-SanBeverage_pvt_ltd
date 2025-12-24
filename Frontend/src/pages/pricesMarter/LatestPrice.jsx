@@ -240,7 +240,7 @@ const LatestPrice = () => {
                     }}
                 >
                     + New Price
-                </button>
+                </button>   
             </div>
 
             {loading && <div className="loading">Loading...</div>}
