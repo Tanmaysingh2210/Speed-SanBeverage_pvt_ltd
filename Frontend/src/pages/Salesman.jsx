@@ -298,7 +298,7 @@ const Salesman = () => {
                   ref={codeInputRef}
                   value={editSalesman.codeNo}
                   onChange={(e) =>
-                    setEditSalesman({ ...editSalesman, codeNo: e.target.value })
+                    setEditSalesman({ ...editSalesman, codeNo: e.target.value.trim().toUpperCase() })
                   }
                   onKeyDown={(e) => handleKeyNavigation(e, "name")}
                 />
@@ -307,7 +307,7 @@ const Salesman = () => {
                   ref={nameInputRef}
                   value={editSalesman.name}
                   onChange={(e) =>
-                    setEditSalesman({ ...editSalesman, name: e.target.value })
+                    setEditSalesman({ ...editSalesman, name: e.target.value.trim().toUpperCase() })
                   }
                   onKeyDown={(e) => handleKeyNavigation(e, "routeNo")}
                 />
@@ -390,7 +390,7 @@ const Salesman = () => {
                     ref={modalCodeRef}
                     value={newSalesman.codeNo}
                     onChange={(e) =>
-                      setNewSalesman({ ...newSalesman, codeNo: e.target.value })
+                      setNewSalesman({ ...newSalesman, codeNo: e.target.value.trim().toUpperCase() })
                     }
                     onKeyDown={(e) => handleModalKeyNavigation(e, "code")}
                   />
@@ -404,7 +404,7 @@ const Salesman = () => {
                     ref={modalNameRef}
                     value={newSalesman.name}
                     onChange={(e) =>
-                      setNewSalesman({ ...newSalesman, name: e.target.value })
+                      setNewSalesman({ ...newSalesman, name: e.target.value.trim().toUpperCase() })
                     }
                     onKeyDown={(e) => handleModalKeyNavigation(e, "name")}
                   />
