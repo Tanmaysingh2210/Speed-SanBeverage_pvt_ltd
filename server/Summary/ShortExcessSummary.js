@@ -2,7 +2,7 @@ const express = require("express");
 const LoadOut = require("../models/transaction/LoadOut.js");
 
 exports.shortExcessSummary = async (req, res) => {
-    
+
     try {
         const { startDate, endDate } = req.query;
 
@@ -12,13 +12,19 @@ exports.shortExcessSummary = async (req, res) => {
             });
         }
 
+        const start = new Date(startDate);
+        start.setHours(0, 0, 0, 0);
+
+        const end = new Date(endDate);
+        end.setHours(23, 59, 59, 999);
+
         const result = await LoadOut.aggregate([
 
             {
                 $match: {
                     date: {
-                        $gte: new Date(startDate),
-                        $lte: new Date(endDate)
+                        $gte: start,
+                        $lte: end,
                     }
                 }
             },
@@ -124,8 +130,8 @@ exports.shortExcessSummary = async (req, res) => {
                     from: "transaction_loadins",
                     let: {
                         salesmanCode: "$_id",
-                        startDate: new Date(startDate),
-                        endDate: new Date(endDate)
+                        startDate: start,
+                        endDate: end,
                     },
                     pipeline: [
                         {
@@ -137,16 +143,18 @@ exports.shortExcessSummary = async (req, res) => {
                                     ]
                                 },
                                 date: {
-                                    $gte: new Date(startDate),
-                                    $lte: new Date(endDate)
+                                    $gte: start,
+                                    $lte: end
                                 }
                             }
                         },
 
+                        { $unwind: "$items" },
+
                         // returnQty = filled + leaked
                         {
                             $addFields: {
-                                returnQty: { $add: ["$filled", "$leaked"] }
+                                returnQty: { $add: ["$items.Filled", "$items.Burst"] }
                             }
                         },
 
@@ -155,7 +163,7 @@ exports.shortExcessSummary = async (req, res) => {
                             $lookup: {
                                 from: "rates",
                                 let: {
-                                    itemCode: "$itemCode",
+                                    itemCode: "$items.itemCode",
                                     saleDate: "$date"
                                 },
                                 pipeline: [
@@ -180,7 +188,12 @@ exports.shortExcessSummary = async (req, res) => {
                                 as: "price"
                             }
                         },
-                        { $unwind: "$price" },
+                        {
+                            $unwind: {
+                                path: "$price",
+                                preserveNullAndEmptyArrays: true
+                            }
+                        },
 
                         // safe discount & tax
                         {
@@ -297,8 +310,8 @@ exports.shortExcessSummary = async (req, res) => {
 
                                 },
                                 date: {
-                                    $gte: new Date(startDate),
-                                    $lte: new Date(endDate)
+                                    $gte: start,
+                                    $lte: end,
                                 }
                             }
                         },
@@ -326,14 +339,25 @@ exports.shortExcessSummary = async (req, res) => {
                         {
                             $lookup: {
                                 from: "transaction_s_sheets",
-                                let: { salesmanCode: "$salesmanCode" },
+                                let: {
+                                    salesmanCode: "$salesmanCode",
+                                    startDate: start,
+                                    endDate: end
+                                },
                                 pipeline: [
                                     {
                                         $match: {
                                             $expr: {
-
-                                                $eq: [{ $toUpper: "$salesmanCode" },
-                                                { $toUpper: "$$salesmanCode" }]
+                                                $and: [
+                                                    {
+                                                        $eq: [
+                                                            { $toUpper: "$salesmanCode" },
+                                                            { $toUpper: "$$salesmanCode" }
+                                                        ]
+                                                    },
+                                                    { $gte: ["$date", "$$startDate"] },
+                                                    { $lte: ["$date", "$$endDate"] }
+                                                ]
 
                                             }
                                         }

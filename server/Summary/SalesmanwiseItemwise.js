@@ -3,7 +3,7 @@ const LoadOut = require("../models/transaction/LoadOut.js");
 
 console.log("✅ SalesmanWiseItemWise Summary Loaded");
 
-exports.salesmanwiseItemwiseSummary=async (req, res) => {
+exports.salesmanwiseItemwiseSummary = async (req, res) => {
   try {
     const { salesmanCode, startDate, endDate } = req.query;
 
@@ -13,22 +13,28 @@ exports.salesmanwiseItemwiseSummary=async (req, res) => {
       });
     }
 
+    const start = new Date(startDate);
+    start.setHours(0, 0, 0, 0);
+
+    const end = new Date(endDate);
+    end.setHours(23, 59, 59, 999);
+
     const result = await LoadOut.aggregate([
-      
+
       {
         $match: {
           salesmanCode,
           date: {
-            $gte: new Date(startDate),
-            $lte: new Date(endDate)
+            $gte: start,
+            $lte: end
           }
         }
       },
 
-      
+
       { $unwind: "$items" },
 
-      
+
       {
         $lookup: {
           from: "rates",
@@ -61,7 +67,7 @@ exports.salesmanwiseItemwiseSummary=async (req, res) => {
 
       { $unwind: "$price" },
 
-      
+
       {
         $addFields: {
           safePerDisc: { $ifNull: ["$price.perDisc", 0] },
@@ -69,7 +75,7 @@ exports.salesmanwiseItemwiseSummary=async (req, res) => {
         }
       },
 
-   
+
       {
         $addFields: {
           taxablePrice: {
@@ -101,7 +107,7 @@ exports.salesmanwiseItemwiseSummary=async (req, res) => {
         }
       },
 
-     
+
       {
         $addFields: {
           loadOutAmount: {
@@ -110,7 +116,7 @@ exports.salesmanwiseItemwiseSummary=async (req, res) => {
         }
       },
 
-     
+
       {
         $group: {
           _id: "$items.itemCode",
@@ -120,7 +126,7 @@ exports.salesmanwiseItemwiseSummary=async (req, res) => {
         }
       },
 
-     
+
       {
         $lookup: {
           from: "transaction_loadins",
@@ -130,12 +136,17 @@ exports.salesmanwiseItemwiseSummary=async (req, res) => {
               $match: {
                 salesmanCode,
                 date: {
-                  $gte: new Date(startDate),
-                  $lte: new Date(endDate)
-                },
+                  $gte: start,
+                  $lte: end
+                }
+              }
+            },
+            { $unwind: "$items" },
+            {
+              $match: {
                 $expr: {
                   $eq: [
-                    { $toUpper: "$itemCode" },
+                    { $toUpper: "$items.itemCode" },
                     { $toUpper: "$$itemCode" }
                   ]
                 }
@@ -143,7 +154,9 @@ exports.salesmanwiseItemwiseSummary=async (req, res) => {
             },
             {
               $addFields: {
-                returnQty: { $add: ["$filled", "$Burst"] }
+                returnQty: {
+                  $add: ["$items.Filled", "$items.Burst"]
+                }
               }
             },
             {
@@ -157,7 +170,8 @@ exports.salesmanwiseItemwiseSummary=async (req, res) => {
         }
       },
 
- 
+
+
       {
         $addFields: {
           loadInQty: {
@@ -166,7 +180,7 @@ exports.salesmanwiseItemwiseSummary=async (req, res) => {
         }
       },
 
-      
+
       {
         $addFields: {
           netQty: { $subtract: ["$loadOutQty", "$loadInQty"] }
@@ -190,7 +204,7 @@ exports.salesmanwiseItemwiseSummary=async (req, res) => {
       },
       { $unwind: "$item" },
 
-    
+
       {
         $project: {
           _id: 0,
