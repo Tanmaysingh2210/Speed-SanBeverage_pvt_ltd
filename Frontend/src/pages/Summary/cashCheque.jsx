@@ -3,10 +3,12 @@ import { useState, useEffect, useRef } from "react";
 import "../transaction/transaction.css";
 import api from "../../api/api";
 import toast from "react-hot-toast";
+import {useTransaction} from "../../context/TransactionContext"
 
 const CashChequeSummary = () => {
 
     const [period, setPeriod] = useState({ startDate: "", endDate: "" });
+    const {FormatDate} =useTransaction();
     const [summary, setSummary] = useState([]);
     const [loading, setLoading] = useState(false);
 
@@ -131,7 +133,8 @@ const CashChequeSummary = () => {
             </div>
             <div className="trans-container set-margin">
                 <div className="all-table">
-                    <div className="all-row3 header">
+                    <div className="all-row7 header">
+                        <div>DATE</div>
                         <div>CODE</div>
                         <div>SALESMAN NAME</div>
                         <div>CASH</div>
@@ -160,7 +163,8 @@ const CashChequeSummary = () => {
                     {summary.map((p, i) => {
                         const rowTotal = Number(p.totalCash || 0) + Number(p.totalCheque || 0);
                         return (
-                            <div key={i} className="all-row3">
+                            <div key={i} className="all-row7">
+                                 <div>{FormatDate(p.date)}</div>
                                 <div>{p.salesmanCode}</div>
                                 <div>{p.name}</div>
                                 <div>₹{p.totalCash}</div>
@@ -170,7 +174,8 @@ const CashChequeSummary = () => {
                         )
                     })}
                     {summary.length > 0 && (
-                        <div className="all-row3 total-row">
+                        <div className="all-row7 total-row">
+                            <div></div>
                             <div></div>
                             <div><strong>TOTAL</strong></div>
                             <div><strong>₹ {grandTotalCash.toFixed(2)}</strong></div>

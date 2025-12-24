@@ -2,6 +2,8 @@ const CashCredit = require('../models/transaction/CashCredit');
 const Salesman = require('../models/salesman');
 
 exports.CashChequeSummary = async (req, res) => {
+        const normalize = v => v?.trim().toLowerCase();
+
     try {
         const { startDate, endDate } = req.body;
         if (!startDate || !endDate) return res.status(400).json({ message: "All field are required", success: false });
@@ -10,24 +12,39 @@ exports.CashChequeSummary = async (req, res) => {
         const end = new Date(endDate);
         end.setHours(23, 59, 59, 999);
 
+        // const [cashCredits ,salesman] = await Promise.all([
+        //     CashCredit.find({ date :{ $gte : start , $lte :end}}),
+        //     Salesman.find({date: { $gte: start, $lte: end }})
+        // ]);
+
         const cashCredits = await CashCredit.find(
             { date: { $gte: start, $lte: end } }
         );
+        // const dayMap = new Map();
+        // const getDayKey = d => d.toISOString().spilt("T")[0];
+        // const ensureDay =(date)=>{
+        //     const key = getDayKey(date);
+        //     if(!dayMap.has(key)){
+
+        //     }
+        // }
 
         const salesmanMap = new Map();
 
         for (const cashcredit of cashCredits) {
             const cash = cashcredit.cashDeposited;
             const cheque = cashcredit.chequeDeposited;
-            console.log("cash is ;", cash);
-            console.log("cheque is : ", cheque);
+            const date = cashcredit.date;
+            
             const total = cash + cheque;
             if (!salesmanMap.has(cashcredit.salesmanCode)) {
                 salesmanMap.set(cashcredit.salesmanCode,
                     {
+                        date:date,
                         salesmanCode: cashcredit.salesmanCode,
                         totalCash: 0,
-                        totalCheque: 0
+                        totalCheque: 0,
+                        
                     }
                 );
             }
@@ -48,6 +65,7 @@ exports.CashChequeSummary = async (req, res) => {
             if (!salesmanDetails) continue;
 
             summary.push({
+                date : data.date.toISOString().split("T")[0],
                 salesmanCode,
                 name: salesmanDetails.name,
                 totalCash: data.totalCash,
@@ -56,7 +74,7 @@ exports.CashChequeSummary = async (req, res) => {
             grandTotalCash += data.totalCash;
             grandTotalCheque += data.totalCheque;
         }
-        // summary.sort((a, b) => a.salesmanCode.localCompare(b.salesmanCode));
+        summary.sort((a, b) => a.salesmanCode.localeCompare(b.salesmanCode));
         res.status(200).json({
             success: true,
             data: summary,
