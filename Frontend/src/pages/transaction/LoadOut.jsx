@@ -38,7 +38,6 @@ const LoadOut = () => {
     const [newLoadItem, setNewLoadItem] = useState({
         itemCode: "",
         qty: "",
-        container: ""
     });
 
     const [newLoadOut, setNewLoadOut] = useState({
@@ -52,14 +51,6 @@ const LoadOut = () => {
     const matchedSalesman = Array.isArray(salesmans)
         ? salesmans.find((sm) => String(sm.codeNo || sm.code || '').toUpperCase() === String(newLoadOut.salesmanCode || '').toUpperCase())
         : null;
-
-    useEffect(() => {
-        getAllItems();
-        getAllSalesmen();
-    }, []);
-
-
-
 
     const handleAddItem = () => {
         const qtyNum = Number(newLoadItem.qty);
@@ -90,11 +81,10 @@ const LoadOut = () => {
 
         setNewLoadOut((prev) => ({
             ...prev,
-            items: [...prev.items, { ...newLoadItem, qty: qtyNum, container: matchedSKU.container }]
+            items: [...prev.items, { ...newLoadItem, qty: qtyNum }]
         }));
-        console.log("item",newLoadItem );
 
-        setNewLoadItem({ itemCode: "", qty: "", container: "" });
+        setNewLoadItem({ itemCode: "", qty: "" });
         modalItemRef.current?.focus();
     };
 

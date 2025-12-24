@@ -48,7 +48,7 @@ const LoadIn = () => {
     });
 
     const [newLoadIn, setNewLoadIn] = useState({
-        salesmanCode: editData?.salesmanCode || "",
+        salesmanCode: editData?.salesmanCode.trim().toUpperCase() || "",
         date: editData?.date ? editData.date.split('T')[0] : "",
         trip: editData?.trip || 1,
         items: editData?.items || []
@@ -59,10 +59,6 @@ const LoadIn = () => {
         ? salesmans.find((sm) => String(sm.codeNo || sm.code || '').toUpperCase() === String(newLoadIn.salesmanCode || '').toUpperCase())
         : null;
 
-    useEffect(() => {
-        getAllItems();
-        getAllSalesmen();
-    }, []);
 
     const handleAddItem = (e) => {
         e.preventDefault();
@@ -82,7 +78,7 @@ const LoadIn = () => {
 
         // normalize to server schema: itemCode, Filled, Burst
         const normalized = {
-            itemCode: newLoadItem.itemcode,
+            itemCode: newLoadItem.itemcode.trim().toUpperCase(),
             Filled: Number(newLoadItem.Filled) || 0,
             Burst: Number(newLoadItem.Burst) || 0,
             Emt: Number(newLoadItem.Emt) || 0
@@ -93,7 +89,7 @@ const LoadIn = () => {
             items: [...prev.items, normalized]
         }));
 
-        setNewLoadItem({ itemcode: "", Filled: "", Burst: "" });
+        setNewLoadItem({ itemcode: "", Filled: "", Burst: "", Emt: "" });
         modalItemRef.current?.focus();
     };
 
@@ -115,7 +111,7 @@ const LoadIn = () => {
         }
 
         const payload = {
-            salesmanCode: newLoadIn.salesmanCode,
+            salesmanCode: newLoadIn.salesmanCode.trim().toUpperCase(),
             date: newLoadIn.date,
             trip: Number(newLoadIn.trip),
             items: newLoadIn.items
@@ -231,40 +227,40 @@ const LoadIn = () => {
                             <div className="form-group">
                                 <label>Salesman Code</label>
                                 <div className="input-with-btn">
-                                <input
-                                    type="text"
-                                    placeholder="Enter Salesman code"
-                                    value={newLoadIn.salesmanCode}
-                                    onChange={(e) =>
-                                        setNewLoadIn({ ...newLoadIn, salesmanCode: e.target.value })
-                                    }
-                                    ref={modalCodeRef}
-                                    onKeyDown={(e) => handleKeyNav(e, "code")}
-                                />
-                                <button
+                                    <input
+                                        type="text"
+                                        placeholder="Enter Salesman code"
+                                        value={newLoadIn.salesmanCode}
+                                        onChange={(e) =>
+                                            setNewLoadIn({ ...newLoadIn, salesmanCode: e.target.value.trim().toUpperCase() })
+                                        }
+                                        ref={modalCodeRef}
+                                        onKeyDown={(e) => handleKeyNav(e, "code")}
+                                    />
+                                    <button
                                         type="button"
                                         className="dropdown-btn"
                                         onClick={() =>
                                             openSalesmanModal((code) =>
-                                                setNewLoadIn(prev => ({ ...prev, salesmanCode: code }))
+                                                setNewLoadIn(prev => ({ ...prev, salesmanCode: code.trim().toUpperCase() }))
                                             )
                                         }
                                     >
                                         ⌄
                                     </button>
-                                    </div>
+                                </div>
                             </div>
                             <div className="form-group">
                                 <label>Salesman Name</label>
-                                
-                                    <input
-                                        readOnly
-                                        type="text"
-                                        value={matchedSalesman ? matchedSalesman.name : ""}
-                                        style={{ backgroundColor: "#f5f5f5" }}
-                                    />
-                                    
-                                
+
+                                <input
+                                    readOnly
+                                    type="text"
+                                    value={matchedSalesman ? matchedSalesman.name : ""}
+                                    style={{ backgroundColor: "#f5f5f5" }}
+                                />
+
+
                             </div>
                             <div className="form-group">
                                 <label>Route No.</label>
@@ -309,7 +305,7 @@ const LoadIn = () => {
                                         placeholder='Enter Item code'
                                         value={newLoadItem.itemcode}
                                         ref={modalItemRef}
-                                        onChange={(e) => setNewLoadItem({ ...newLoadItem, itemcode: e.target.value })}
+                                        onChange={(e) => setNewLoadItem({ ...newLoadItem, itemcode: e.target.value.trim().toUpperCase()})}
                                         onKeyDown={(e) => handleKeyNav(e, "itemcode")}
                                     />
                                     <button
@@ -317,7 +313,6 @@ const LoadIn = () => {
                                         className="dropdown-btn"
                                         onClick={() =>
                                             setItemShow(true)
-
                                         }
                                     >
                                         ⌄
@@ -377,9 +372,9 @@ const LoadIn = () => {
                                     );
                                     return (
                                         <div key={index} className="trans-loadin-table-grid trans-table-row">
-                                            <div>{it.itemCode}</div>
+                                            <div>{it.itemCode.trim().toUpperCase()}</div>
                                             <div>{matchedItem ? matchedItem.name : "-"}</div>
-                                            <div>{ matchedItem?(matchedItem.container.toLowerCase()==="emt" ? it.Emt : it.Filled):"-" }
+                                            <div>{matchedItem ? (matchedItem.container.toLowerCase() === "emt" ? it.Emt : it.Filled) : "-"}
                                             </div>
                                             <div>{it.Burst}</div>
                                             <div className="actions">
@@ -447,14 +442,14 @@ const LoadIn = () => {
                             <div className="modal-row6 modal-head">
                                 <div>Code</div>
                                 <div>Name</div>
-                                <div>Status</div>                              
+                                <div>Status</div>
                                 <div>Filled/Emt</div>
                                 <div>Burst</div>
-                                
+
                             </div>
 
                             {items
-                                .filter(itm => itm.container.toLowerCase() !== "mt" 
+                                .filter(itm => itm.container.toLowerCase() !== "mt"
                                 )
                                 .filter(itm =>
                                     itm.code.toLowerCase().includes(search.toLowerCase()) ||
@@ -473,53 +468,52 @@ const LoadIn = () => {
                                         </div>
 
                                         {itm.container.toLowerCase() !== "emt" ?
-                                            
                                             (<>
-                                        <input
+                                                <input
 
-                                            type="number"
-                                            min="0"
-                                            placeholder="Qty"
-                                            value={modalQtyMapFill[itm.code] || ""}
-                                            onChange={(e) =>
-                                                setModalQtyMapFill(prev => ({
-                                                    ...prev,
-                                                    [itm.code]: e.target.value
-                                                }))
-                                            }
-                                            style={{
-                                                width: "70px",
-                                                padding: "6px 8px",
-                                                backgroundColor: "#fff",
-                                                border: "1px solid #d1d5db",
-                                                borderRadius: "6px",
-                                                color: "#111",
-                                                fontSize: "14px"
-                                            }}
-                                        />
-                                        <input
-                                            type="number"
-                                            min="0"
-                                            placeholder="Qty"
-                                            value={modalQtyMapBurst[itm.code] || ""}
-                                            onChange={(e) =>
-                                                setModalQtyMapBurst(prev => ({
-                                                    ...prev,
-                                                    [itm.code]: e.target.value
-                                                }))
-                                            }
-                                            style={{
-                                                width: "70px",
-                                                padding: "6px 8px",
-                                                backgroundColor: "#fff",
-                                                border: "1px solid #d1d5db",
-                                                borderRadius: "6px",
-                                                color: "#111",
-                                                fontSize: "14px"
-                                            }}
-                                        />
-                                        </>
-                                        ): (<input
+                                                    type="number"
+                                                    min="0"
+                                                    placeholder="Qty"
+                                                    value={modalQtyMapFill[itm.code] || ""}
+                                                    onChange={(e) =>
+                                                        setModalQtyMapFill(prev => ({
+                                                            ...prev,
+                                                            [itm.code]: e.target.value
+                                                        }))
+                                                    }
+                                                    style={{
+                                                        width: "70px",
+                                                        padding: "6px 8px",
+                                                        backgroundColor: "#fff",
+                                                        border: "1px solid #d1d5db",
+                                                        borderRadius: "6px",
+                                                        color: "#111",
+                                                        fontSize: "14px"
+                                                    }}
+                                                />
+                                                <input
+                                                    type="number"
+                                                    min="0"
+                                                    placeholder="Qty"
+                                                    value={modalQtyMapBurst[itm.code] || ""}
+                                                    onChange={(e) =>
+                                                        setModalQtyMapBurst(prev => ({
+                                                            ...prev,
+                                                            [itm.code]: e.target.value
+                                                        }))
+                                                    }
+                                                    style={{
+                                                        width: "70px",
+                                                        padding: "6px 8px",
+                                                        backgroundColor: "#fff",
+                                                        border: "1px solid #d1d5db",
+                                                        borderRadius: "6px",
+                                                        color: "#111",
+                                                        fontSize: "14px"
+                                                    }}
+                                                />
+                                            </>
+                                            ) : (<input
                                                 type="number"
                                                 min="0"
                                                 placeholder="Emt"
@@ -545,47 +539,43 @@ const LoadIn = () => {
                                         }
                                     </div>
                                 ))}
-
                             <button
                                 className="add-btn"
                                 onClick={() => {
-
                                     const itemsToAdd = items
-  .map(itm => {
-    const container = itm.container.toLowerCase();
+                                        .map(itm => {
+                                            const container = itm.container.toLowerCase();
 
-    if (container === "emt") {
-      const emt = Number(modalQtyMapEmt[itm.code]) || 0;
-      if (emt <= 0) return null;
+                                            if (container === "emt") {
+                                                const emt = Number(modalQtyMapEmt[itm.code]) || 0;
+                                                if (emt <= 0) return null;
 
-      return {
-        itemCode: itm.code,
-        Filled: 0,
-        Burst: 0,
-        Emt: emt
-      };
-    }
+                                                return {
+                                                    itemCode: itm.code.trim().toUpperCase(),
+                                                    Filled: 0,
+                                                    Burst: 0,
+                                                    Emt: emt
+                                                };
+                                            }
+                                            const filled = Number(modalQtyMapFill[itm.code]) || 0;
+                                            const burst = Number(modalQtyMapBurst[itm.code]) || 0;
 
-    const filled = Number(modalQtyMapFill[itm.code]) || 0;
-    const burst = Number(modalQtyMapBurst[itm.code]) || 0;
+                                            if (filled <= 0 && burst <= 0) return null;
 
-    if (filled <= 0 && burst <= 0) return null;
-
-    return {
-      itemCode: itm.code,
-      Filled: filled,
-      Burst: burst,
-      Emt: 0
-    };
-  })
-  .filter(Boolean);
- // null hata deta hai
+                                            return {
+                                                itemCode: itm.code.trim().toUpperCase(),
+                                                Filled: filled,
+                                                Burst: burst,
+                                                Emt: 0
+                                            };
+                                        })
+                                        .filter(Boolean);
+                                    // null hata deta hai
 
                                     if (itemsToAdd.length === 0) {
                                         toast.error("Enter Filled or Burst qty for at least one item");
                                         return;
                                     }
-
                                     setNewLoadIn(prev => ({
                                         ...prev,
                                         items: [...prev.items, ...itemsToAdd]
@@ -600,9 +590,6 @@ const LoadIn = () => {
                             >
                                 Add Items
                             </button>
-
-
-
                         </div>
                     </div>
                 </div>
