@@ -53,7 +53,7 @@ const S_Sheet = () => {
 
     try {
       await api.post('/transaction/settlement/save-schm', {
-        salesmanCode: sheetData.salesmanCode,
+        salesmanCode: sheetData.salesmanCode.trim().toUpperCase(),
         date: sheetData.date,
         trip: sheetData.trip,
         schm: Number(discount)
@@ -84,7 +84,7 @@ const S_Sheet = () => {
 
     try {
       const data = await getSettlement({
-        salesmanCode: sheet.salesmanCode.trim().toLowerCase(),
+        salesmanCode: sheet.salesmanCode.trim().toUpperCase(),
         date: sheet.date,
         trip: Number(sheet.trip) || 1,
       });
@@ -169,7 +169,7 @@ const S_Sheet = () => {
                     type="text"
                     placeholder='Enter Salesman code'
                     value={sheet.salesmanCode || sheetData?.salesmanCode || ""}
-                    onChange={(e) => setSheet({ ...sheet, salesmanCode: e.target.value })}
+                    onChange={(e) => setSheet({ ...sheet, salesmanCode: e.target.value.trim().toUpperCase() })}
                     onKeyDown={(e) => handleKeyNav(e, "code")}
                     ref={codeRef}
                   />
@@ -178,7 +178,7 @@ const S_Sheet = () => {
                     className="dropdown-btn"
                     onClick={() =>
                       openSalesmanModal((code) =>
-                        setSheet(prev => ({ ...prev, salesmanCode: code }))
+                        setSheet(prev => ({ ...prev, salesmanCode: code.trim().toUpperCase()}))
                       )
                     }
                   >
@@ -191,7 +191,7 @@ const S_Sheet = () => {
                 <input
                   readOnly
                   type="text"
-                  value={matchedSalesman ? matchedSalesman.name : ""}
+                  value={matchedSalesman ? matchedSalesman.name.trim().toUpperCase() : ""}
                   style={{ backgroundColor: "#f5f5f5" }}
                 />
               </div>
