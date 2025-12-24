@@ -6,6 +6,12 @@ exports.createCashCredit = async (req, res) => {
 
         if (!crNo || !date || !salesmanCode || !trip || !value || !tax) return res.status(400).json({ message: "All fields are required" });
 
+        const cash_credit = await CashCredit.findOne({
+            crNo , date , salesmanCode , trip
+        })
+
+        if(cash_credit) return res.status(400).json({message: "Record already exist"});
+
         await CashCredit.create({
             crNo,
             salesmanCode,
