@@ -3,12 +3,17 @@ import { useState, useEffect, useRef } from "react";
 import "../transaction/transaction.css";
 import api from "../../api/api";
 import toast from "react-hot-toast";
+import {useTransaction} from "../../context/TransactionContext";
 
 const DayWise = () => {
 
     const [period, setPeriod] = useState({ startDate: "", endDate: "" });
+
+    const {FormatDate} = useTransaction();
     const [summary, setSummary] = useState([]);
     const [loading, setLoading] = useState(false);
+
+
 
     const getSummary = async (e) => {
         e.preventDefault();
@@ -18,7 +23,7 @@ const DayWise = () => {
         }
         try {
             setLoading(true);
-            const res = await api.post('/summary/cashcheque', period);
+            const res = await api.post('/summary/daywise', period);
             if (res?.data?.success) {
                 setSummary(res?.data?.data);
 
@@ -32,17 +37,7 @@ const DayWise = () => {
             setLoading(false);
         }
     }
-    const grandTotalCash = summary.reduce(
-        (sum, item) => sum + Number(item.totalCash || 0),
-        0
-    );
 
-    const grandTotalCheque = summary.reduce(
-        (sum, item) => sum + Number(item.totalCheque || 0),
-        0
-    );
-
-    const grandTotal = grandTotalCash + grandTotalCheque;
 
 
     const startRef = useRef(null);
@@ -131,12 +126,16 @@ const DayWise = () => {
             </div>
             <div className="trans-container set-margin">
                 <div className="all-table">
-                    <div className="all-row3 header">
-                        <div>CODE</div>
-                        <div>SALESMAN NAME</div>
-                        <div>CASH</div>
-                        <div>CHEQUE</div>
-                        <div>Total</div>
+                    <div className="all-row5 header">
+                        <div>DATE</div>
+                        <div>NET SALE</div>
+                        <div>SCHM</div>
+                        <div>GROSS SALE</div>
+                        <div>REFUND</div>
+                        <div>CREDIT SALE</div>
+                        <div>CASH/CHEQUE</div>
+                        <div>SHORT/EXCESS</div>
+
                     </div>
                     {loading && (
                         <div style={{ textAlign: "center", padding: "20px" }}>
@@ -158,18 +157,22 @@ const DayWise = () => {
                     }
                     {/* Data Rows */}
                     {summary.map((p, i) => {
-                        const rowTotal = Number(p.totalCash || 0) + Number(p.totalCheque || 0);
+                        const grossSale = Number(p.sale || 0) - Number(p.schm || 0);
                         return (
-                            <div key={i} className="all-row3">
-                                <div>{p.salesmanCode}</div>
-                                <div>{p.name}</div>
-                                <div>₹{p.totalCash}</div>
-                                <div>₹ {p.totalCheque}</div>
-                                <div>₹ {rowTotal.toFixed(2)}</div>
+                            <div key={i} className="all-row5">
+                                <div>{FormatDate(p.date)}</div>
+                                <div>{p.sale}</div>
+                                <div>₹ {p.schm}</div>
+                                <div>₹{grossSale} </div>
+                                <div>₹ {p.refund}</div>
+                                <div>₹ {p.creditSale}</div>
+                                <div>₹{p.cashDeposited} /₹ {p.chequeDeposited}</div>
+                                                        
+                                <div>₹ {p.shortExcess}</div>
                             </div>
                         )
                     })}
-                    {summary.length > 0 && (
+                    {/* {summary.length > 0 && (
                         <div className="all-row3 total-row">
                             <div></div>
                             <div><strong>TOTAL</strong></div>
@@ -177,7 +180,7 @@ const DayWise = () => {
                             <div><strong>₹ {grandTotalCheque.toFixed(2)}</strong></div>
                             <div><strong>₹ {grandTotal.toFixed(2)}</strong></div>
                         </div>
-                    )}
+                    )} */}
 
                 </div>
             </div>

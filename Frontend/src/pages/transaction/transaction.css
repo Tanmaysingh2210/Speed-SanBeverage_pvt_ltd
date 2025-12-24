@@ -264,7 +264,7 @@
   font-size: 14px;
   align-items:center;
 }
-.all-row3 div:nth-child(1) {
+.all-row3 , .all-row5 div:nth-child(1)  {
   text-align: left;   /* CODE */
 }
 
@@ -283,10 +283,32 @@
   text-align: right;  /* AMOUNT */
 }
 
+.all-row5:hover , .all-row4:hover , .all-row6:hover , .all-row3:hover{
+    background-color: #f1f5f9;
 
+}
+.all-row5{
+  display: grid;
+  grid-template-columns: 0.9fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr; 
+  padding: 10px 16px;
+  white-space: nowrap;
+  font-size: 14px;
+  align-items:center;
+}
+.all-row5 div:nth-child(7) {
+  text-align: center;  /* AMOUNT */
+}
+.all-row5 div:nth-child(8) {
+  text-align: right;  /* AMOUNT */
+}
+.all-row5 div:nth-child(2) {
+  text-align: left;  /* AMOUNT */
+}
+.all-row5 div:nth-child(4) {
+  text-align: left;  /* AMOUNT */
+}
 
-
-.all-row.header ,.all-row2.header ,.all-row3.header{
+.all-row.header ,.all-row2.header ,.all-row3.header , .all-row5.header{
   background-color: #f0f3f9;
   font-weight: bold;
   border-bottom: 2px solid #d0d0d0;
