@@ -20,7 +20,7 @@ const Credit = () => {
 
     const [newCredit, setNewCredit] = useState({
         crNo: editData?.crNo || 1,
-        salesmanCode: editData?.salesmanCode || "",
+        salesmanCode: editData?.salesmanCode.trim().toUpperCase() || "",
         date: editData?.date ? editData?.date.split('T')[0] : "",
         trip: editData?.trip || 1,
         value: editData?.value || null,
@@ -51,7 +51,7 @@ const Credit = () => {
         }
         const payload = {
             crNo: Number(newCredit.crNo) || 1,
-            salesmanCode: newCredit.salesmanCode,
+            salesmanCode: newCredit.salesmanCode.trim().toUpperCase(),
             date: newCredit.date,
             trip: Number(newCredit.trip) || 1,
             value: Number(newCredit.value) || 0,
@@ -71,15 +71,15 @@ const Credit = () => {
                 await addCash_credit(payload);
             }
             setNewCredit({
-                crNo: null,
+                crNo: 1,
                 salesmanCode: "",
                 date: "",
                 trip: 1,
-                value: null,
-                tax: null,
-                cashDeposited: null,
-                chequeDeposited: null,
-                ref: null,
+                value: "",
+                tax: "",
+                cashDeposited: "",
+                chequeDeposited: "",
+                ref: "",
                 remark: ""
             });
         } catch (err) {
@@ -217,8 +217,8 @@ const Credit = () => {
                                 type="text"
                                 placeholder="Enter Salesman Code"
                                 ref={codeRef}
-                                value={newCredit.salesmanCode}
-                                onChange={(e) => setNewCredit({ ...newCredit, salesmanCode: e.target.value })}
+                                value={newCredit.salesmanCode.trim().toUpperCase()}
+                                onChange={(e) => setNewCredit({ ...newCredit, salesmanCode: e.target.value.trim().toUpperCase()})}
                                 onKeyDown={(e) => handleKeyNav(e, "code")}
                             />
                             <button
@@ -226,7 +226,7 @@ const Credit = () => {
                                     className="dropdown-btn"
                                      onClick={() =>
                                         openSalesmanModal((code) =>
-                                        setNewCredit(prev => ({ ...prev, salesmanCode: code }))
+                                        setNewCredit(prev => ({ ...prev, salesmanCode: code.trim().toUpperCase() }))
                                         )
                                     }
                                     >
@@ -239,7 +239,7 @@ const Credit = () => {
                             <input
                                 readOnly
                                 type="text"
-                                value={matchedSalesman ? matchedSalesman.name : ""}
+                                value={matchedSalesman ? matchedSalesman.name.trim().toUpperCase() : ""}
                                 style={{ backgroundColor: "#f5f5f5" }}
                             />
                         </div>
