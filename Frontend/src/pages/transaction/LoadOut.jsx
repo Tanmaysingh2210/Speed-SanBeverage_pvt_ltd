@@ -42,7 +42,7 @@ const LoadOut = () => {
     });
 
     const [newLoadOut, setNewLoadOut] = useState({
-        salesmanCode: editData?.salesmanCode || "",
+        salesmanCode: editData?.salesmanCode.trim().toUpperCase() || "",
         date: editData?.date ? editData.date.split('T')[0] : "",
         trip: editData?.trip || 1,
         items: editData?.items || []
@@ -72,8 +72,8 @@ const LoadOut = () => {
 
         const exists = newLoadOut.items.find(
             (it) => it.itemCode.toUpperCase() === newLoadItem.itemCode.toUpperCase()
-
         );
+
         const matchedSKU = items.find(
             sku => sku.code.toUpperCase() === newLoadItem.itemCode.toUpperCase()
         );
@@ -82,8 +82,6 @@ const LoadOut = () => {
             toast.error("Invalid item code");
             return;
         }
-
-
 
         if (exists) {
             toast.error("Item already exist");
@@ -112,13 +110,12 @@ const LoadOut = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-
         if (!newLoadOut.salesmanCode || !newLoadOut.date || newLoadOut.trip <= 0 || newLoadOut.items.length == 0) {
             toast.error("Fill all fields properly");
             return;
         }
         const paylaod = {
-            salesmanCode: newLoadOut.salesmanCode,
+            salesmanCode: newLoadOut.salesmanCode.trim().toUpperCase(),
             date: newLoadOut.date,
             trip: newLoadOut.trip,
             items: newLoadOut.items
@@ -228,7 +225,7 @@ const LoadOut = () => {
                                         placeholder="Enter Salesman code"
                                         value={newLoadOut.salesmanCode}
                                         onChange={(e) =>
-                                            setNewLoadOut({ ...newLoadOut, salesmanCode: e.target.value })
+                                            setNewLoadOut({ ...newLoadOut, salesmanCode: e.target.value.trim().toUpperCase() })
                                         }
                                         ref={modalCodeRef}
                                         onKeyDown={(e) => handleKeyNav(e, "code")}
@@ -239,7 +236,7 @@ const LoadOut = () => {
                                         className="dropdown-btn"
                                         onClick={() =>
                                             openSalesmanModal((code) =>
-                                                setNewLoadOut(prev => ({ ...prev, salesmanCode: code }))
+                                                setNewLoadOut(prev => ({ ...prev, salesmanCode: code.trim().toUpperCase() }))
                                             )
                                         }
                                     >
@@ -300,7 +297,7 @@ const LoadOut = () => {
                                         placeholder='Enter Item code'
                                         value={newLoadItem.itemCode}
                                         ref={modalItemRef}
-                                        onChange={(e) => setNewLoadItem({ ...newLoadItem, itemCode: e.target.value })}
+                                        onChange={(e) => setNewLoadItem({ ...newLoadItem, itemCode: e.target.value.trim().toUpperCase() })}
                                         onKeyDown={(e) => handleKeyNav(e, "item")}
                                     />
                                     <button
@@ -308,7 +305,6 @@ const LoadOut = () => {
                                         className="dropdown-btn"
                                         onClick={() =>
                                             setItemShow(true)
-
                                         }
                                     >
                                         ⌄
@@ -355,8 +351,8 @@ const LoadOut = () => {
                                     );
                                     return (
                                         <div key={index} className="trans-table-grid trans-table-row">
-                                            <div>{it.itemCode}</div>
-                                            <div>{matchedItem ? matchedItem.name : "-"}</div>
+                                            <div>{it.itemCode.trim().toUpperCase()}</div>
+                                            <div>{matchedItem ? matchedItem.name.trim().toUpperCase() : "-"}</div>
                                             <div>{it.qty}</div>
                                             <div className="actions">
                                                 <span
@@ -448,11 +444,11 @@ const LoadOut = () => {
                                             type="number"
                                             min="0"
                                             placeholder="Qty"
-                                            value={modalQtyMap[itm.code] || ""}
+                                            value={modalQtyMap[itm.code.trim().toUpperCase()] || ""}
                                             onChange={(e) =>
                                                 setModalQtyMap(prev => ({
                                                     ...prev,
-                                                    [itm.code]: e.target.value
+                                                    [itm.code]: e.target.value.trim().toUpperCase()
                                                 }))
                                             }
                                             style={{
@@ -476,7 +472,7 @@ const LoadOut = () => {
                                         .map(([code, qty]) => {
                                         
                                             return {
-                                                itemCode: code,
+                                                itemCode: code.trim().toUpperCase(),
                                                 qty: Number(qty),
                                                
                                             };

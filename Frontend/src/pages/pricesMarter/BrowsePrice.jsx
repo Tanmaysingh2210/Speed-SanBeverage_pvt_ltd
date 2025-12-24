@@ -59,8 +59,7 @@ const BrowsePrice = () => {
   const handleEdit = (price) => {
     setEditId(price._id);
     setEditPrice({
-      code: price.itemCode || "",
-      name: price.name || "",
+      code: price.itemCode.trim().toUpperCase() || "",
       basePrice: price.basePrice || "",
       perDisc: price.perDisc || "",
       perTax: price.perTax || "",
@@ -90,16 +89,13 @@ const BrowsePrice = () => {
     }
 
     const payload = {
-      code: editPrice.code,
-      name: editPrice.name,
+      code: editPrice.code.trim().toUpperCase(),
       basePrice: Number(editPrice.basePrice),
       perTax: Number(editPrice.perTax),
       perDisc: Number(editPrice.perDisc),
       date: editPrice.date,
       status: editPrice.status,
     };
-
-    console.log('Update price payload:', payload);
 
     try {
       if (editId) {
