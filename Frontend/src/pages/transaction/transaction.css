@@ -209,6 +209,15 @@
   font-size: 14px;
   text-wrap: nowrap;
 }
+.all-row6 {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr 0.9fr 1.3fr 1.2fr 0.7fr;
+  align-items: center;
+  padding: 10px 18px;
+  border-bottom: 1px solid #e0e0e0;
+  font-size: 14px;
+  text-wrap: nowrap;
+}
 
 .all-row2{
   display: grid;
