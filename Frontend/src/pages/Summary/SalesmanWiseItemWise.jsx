@@ -102,8 +102,8 @@ const SalesmanWiseItemWise = () => {
               <label>Salesman Code</label>
               <div className="input-with-btn">
                 <input
-                onKeyDown={(e) => handleKeyNav(e, "saleCode")}
-                ref={saleCodeRef}
+                  onKeyDown={(e) => handleKeyNav(e, "saleCode")}
+                  ref={saleCodeRef}
                   type="text"
                   value={salesmanCode}
                   onChange={(e) => setSalesmanCode(e.target.value)}
@@ -173,8 +173,26 @@ const SalesmanWiseItemWise = () => {
             <div className="all-row4" key={i}>
               <div>{r.itemCode}</div>
               <div>{r.itemName}</div>
-              <div>{r.qtySale}</div>
-              <div>₹{r.netPrice}</div>
+              <div>{(r.qtySale >= 0) &&
+                (<div style={{
+                  color: "green"
+                }}> {r.qtySale}</div>)}
+
+                {(r.qtySale < 0) &&
+                  (
+                    <div style={{
+                      color: "red"
+                    }}> {r.qtySale}</div>)}</div>
+              <div>{(r.netPrice >= 0) &&
+                (<div style={{
+                  color: "green"
+                }}> ₹{r.netPrice.toFixed(2)}</div>)}
+
+                {(r.netPrice < 0) &&
+                  (
+                    <div style={{
+                      color: "red"
+                    }}> ₹{r.netPrice.toFixed(2)}</div>)}</div>
             </div>
           ))}
         </div>
