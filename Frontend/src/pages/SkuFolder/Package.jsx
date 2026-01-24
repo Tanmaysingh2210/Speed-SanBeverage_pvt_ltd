@@ -7,13 +7,6 @@ const Package = () => {
   const { packages, addPackage, getPackageByID, deletePackage, updatePackage, getAllPackages, loading } = useSKU();
   const {user} = useAuth();
 
-
-
-  useEffect(() => {
-    getAllPackages();
-  }, []);
-
-
   const [editId, setEditId] = useState(null);
   const [editValue, setEditValue] = useState("");
   const [showForm, setShowForm] = useState(false);

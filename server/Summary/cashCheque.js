@@ -1,7 +1,7 @@
-const CashCredit = require('../models/transaction/CashCredit');
-const Salesman = require('../models/salesman');
+import CashCredit from '../models/transaction/CashCredit.js';
+import Salesman from '../models/salesman.js';
 
-exports.CashChequeSummary = async (req, res) => {
+export const CashChequeSummary = async (req, res) => {
         const normalize = v => v?.trim().toLowerCase();
 
     try {

@@ -1,7 +1,7 @@
-const User = require('../../models/user');
+import User from '../../models/user.js';
 
 
-exports.verify_reset_pass_otp = async (req, res) => {
+export const verify_reset_pass_otp = async (req, res) => {
     try {
         const { email, otp } = req.body;
 

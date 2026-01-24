@@ -1,5 +1,5 @@
-const express = require('express');
-const { addContainer, getAllContainer, getContainerbyID, updateContainer, deleteContainer } = require('../controllers/skuControllers/container.js');
+import express from 'express';
+import { addContainer, getAllContainer, getContainerbyID, updateContainer, deleteContainer } from '../controllers/skuControllers/container.js';
 
 
 
@@ -13,4 +13,4 @@ router.delete('/delete/:id', deleteContainer);
 
 
 
-module.exports = router;
+export default router;

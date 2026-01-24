@@ -1,4 +1,4 @@
-exports.logout  = async (req, res) =>{
+export const logout  = async (req, res) =>{
     req.session.destroy((err)=>{
         if(err) return res.status(500).json({message: 'Error logging out'});
         console.log("session: ",req.session);

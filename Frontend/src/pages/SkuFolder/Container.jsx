@@ -9,11 +9,6 @@ const Container = () => {
   const {user} =useAuth();
   const { containers, addContainer, getContaienerByID, deleteContainer, updateContainer, getAllContainers, loading } = useSKU();
 
-  useEffect(() => {
-    getAllContainers();
-  }, []);
-
-
   const [editId, setEditId] = useState(null);
   const [editValue, setEditValue] = useState("");
   const [showForm, setShowForm] = useState(false);

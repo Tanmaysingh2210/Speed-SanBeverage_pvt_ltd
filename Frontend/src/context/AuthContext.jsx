@@ -7,6 +7,7 @@ const AuthContext = createContext();
 export function AuthProvider({ children }) {
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -14,7 +15,6 @@ export function AuthProvider({ children }) {
             try {
                 const res = await api.get('/auth/me');//check
                 setUser(res.data.user || null);
-
             } catch (err) {
                 setUser(null);
             } finally {
@@ -28,6 +28,7 @@ export function AuthProvider({ children }) {
         try {
             const res = await api.post('/auth/login', payload);
             if (res.data.user) {
+                setIsAuthenticated(true);
                 setUser(res.data.user);
             } else {
                 const me = await api.get('/auth/me');
@@ -43,7 +44,6 @@ export function AuthProvider({ children }) {
         try {
             const res = await api.post('/auth/register', payload);
             const newUser = res.data.user;
-            setUser(newUser);
             return newUser;
         } catch (err) {
             throw err;
@@ -51,22 +51,18 @@ export function AuthProvider({ children }) {
     }
 
     async function resendOtp(email) {
-        try{
-            const res = await api.post('/auth/resend_otp',{email});
-            return res || {message: "Otp resended sucessfully"};
-        }catch(err){
-            throw err.response?.data || {message : "Error resending otp"};
+        try {
+            const res = await api.post('/auth/resend_otp', { email });
+            return res || { message: "Otp resended sucessfully" };
+        } catch (err) {
+            throw err.response?.data || { message: "Error resending otp" };
         }
     }
 
     async function verifyOtp(payload) {
         try {
-            const res = await api.post('/auth/verify_otp', payload, { withCredentials: true });
+            const res = await api.post('/auth/verify_otp', payload);
             const verifiedUser = res.data.user;
-
-            // ✅ Update your context state
-            setUser(verifiedUser);
-
             return res.data.message; // "OTP verified successfully"
         } catch (err) {
             console.error("OTP verification failed:", err.response?.data || err.message);
@@ -76,17 +72,16 @@ export function AuthProvider({ children }) {
 
     async function logout() {
         await api.post('/auth/logout');
+        setIsAuthenticated(false);
         setUser(null);
         if (navigate) navigate('/signin');
     }
 
     return (
-        <AuthContext.Provider value={{ user, loading, login, logout, register, verifyOtp,resendOtp }}>
+        <AuthContext.Provider value={{ user, loading, login, logout, register, verifyOtp, resendOtp, isAuthenticated }}>
             {children}
         </AuthContext.Provider>
     );
-
-
 
 }
 

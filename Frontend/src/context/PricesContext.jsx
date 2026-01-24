@@ -1,17 +1,19 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import toast from 'react-hot-toast'
 import api from '../api/api';
+import { useAuth } from "./AuthContext";
 
 const PriceContext = createContext();
 
 export function PricesProvider({ children }) {
+    const { user, isAuthenticated } = useAuth();
     const [prices, setPrices] = useState([]);
     const [loading, setLoading] = useState(false);
 
     const getAllPrices = async () => {
         try {
             setLoading(true);
-            const res = await api.get('/rates/');
+            const res = await api.get(`/rates?depo=${user.depo}`);
             setPrices(res.data);
             return res;
         } catch (err) {
@@ -21,16 +23,16 @@ export function PricesProvider({ children }) {
         }
     };
 
-    const getPriceByDate = async (code , date) => {
+    const getPriceByDate = async (code, date) => {
         try {
             setLoading(true);
-            const res = await api.get(`/rates/price` , {
-                params: {code , date}
+            const res = await api.get(`/rates/price`, {
+                params: { code, date, depo: user.depo }
             });
             return res.data;
         } catch (err) {
             throw err.response?.data?.message || "Error fetching price";
-        }finally{
+        } finally {
             setLoading(false);
         }
     };
@@ -91,11 +93,12 @@ export function PricesProvider({ children }) {
     };
 
     useEffect(() => {
+        if(!isAuthenticated) return;
         getAllPrices();
-    }, []);
+    }, [isAuthenticated]);
 
     return (
-        <PriceContext.Provider value={{ prices, loading, getAllPrices, updatePrice,getPriceByDate, getPriceByID, deletePrice, addPrice }} >{children}</PriceContext.Provider>
+        <PriceContext.Provider value={{ prices, loading, getAllPrices, updatePrice, getPriceByDate, getPriceByID, deletePrice, addPrice }} >{children}</PriceContext.Provider>
     );
 
 }

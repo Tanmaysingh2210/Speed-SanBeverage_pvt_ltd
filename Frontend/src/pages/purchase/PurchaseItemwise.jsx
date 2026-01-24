@@ -3,10 +3,11 @@ import toast from 'react-hot-toast';
 import "../transaction/transaction.css";
 import api from '../../api/api';
 import { useSKU } from '../../context/SKUContext'
-import "../transaction/transaction.css"
+import "../transaction/transaction.css";
+import { useAuth } from '../../context/AuthContext';
 
 const PurchaseItemwise = () => {
-
+    const { user } = useAuth();
     const { getAllItems } = useSKU();
     const [skuItems, setSkuItems] = useState([]);
     const [items, setItems] = useState([]);
@@ -32,10 +33,6 @@ const PurchaseItemwise = () => {
         qty: '',
         expiryDate: ''
     });
-
-    useEffect(() => {
-        fetchSkuItems()
-    }, []);
 
     const fetchSkuItems = async () => {
         try {
@@ -174,7 +171,8 @@ const PurchaseItemwise = () => {
 
         const finalPayload = {
             date: mainDate,
-            items: formattedItems
+            items: formattedItems,
+            depo: user.depo
         };
 
         console.log('Sending payload:', finalPayload); // Debug log

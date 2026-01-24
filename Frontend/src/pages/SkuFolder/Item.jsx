@@ -22,14 +22,6 @@ const Item = () => {
     getAllFlavours,
   } = useSKU();
 
-  useEffect(() => {
-    getAllItems();
-    getAllContainers();
-    getAllFlavours();
-    getAllPackages();
-  }, [])
-
-
   const [showModal, setShowModal] = useState(false);
   const [editId, setEditId] = useState(null);
   const [editItem, setEditItem] = useState({});

@@ -1,11 +1,12 @@
-const { Item } = require('../../models/SKU');
-const Depo = require('../../models/depoModal');
+import { Item } from '../../models/SKU.js';
+import Depo from "../../models/depoModal.js";
+import mongoose from 'mongoose';
 
-exports.addItem = async (req, res) => {
+export const addItem = async (req, res) => {
     try {
-        const { code, name, container, package, flavour, depo, status } = req.body;
+        const { code, name, container, package: pkg, flavour, depo, status } = req.body;
 
-        if (!code || !name || !container || !package || !flavour || !depo) return res.status(400).json({ message: "Every field is required" });
+        if (!code || !name || !container || !pkg || !flavour || !depo) return res.status(400).json({ message: "Every field is required" });
 
         if (!mongoose.Types.ObjectId.isValid(depo)) {
             return res.status(400).json({ message: "Invalid depo ID" });
@@ -25,7 +26,7 @@ exports.addItem = async (req, res) => {
             code,
             name,
             container,
-            package,
+            package: pkg,
             flavour,
             depo,
             status: status || 'Active'
@@ -37,9 +38,9 @@ exports.addItem = async (req, res) => {
     }
 };
 
-exports.getAllItems = async (req, res) => {
+export const getAllItems = async (req, res) => {
     try {
-        const { depo } = req.body;
+        const { depo } = req.query;
         if (!depo) return res.status(400).json({ message: "Depo is required" });
 
         if (!mongoose.Types.ObjectId.isValid(depo)) {
@@ -58,7 +59,7 @@ exports.getAllItems = async (req, res) => {
     }
 };
 
-exports.getItembyId = async (req, res) => {
+export const getItembyId = async (req, res) => {
     try {
         const item = await Item.findById(req.params.id);
         if (!item) return res.status(404).json({ message: "Not found!" });
@@ -68,7 +69,7 @@ exports.getItembyId = async (req, res) => {
     }
 };
 
-exports.updateItem = async (req, res) => {
+export const updateItem = async (req, res) => {
     try {
         const updated = await Item.findByIdAndUpdate(
             req.params.id,
@@ -82,7 +83,7 @@ exports.updateItem = async (req, res) => {
     }
 };
 
-exports.deleteItem = async (req, res) => {
+export const deleteItem = async (req, res) => {
     try {
         const deleted = await Item.findByIdAndDelete(req.params.id);
         if (!deleted) return res.status(404).json({ message: "Item not found" });

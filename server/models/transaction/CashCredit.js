@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const cash_creditSchema = new mongoose.Schema({
     crNo: {
@@ -21,4 +21,4 @@ const cash_creditSchema = new mongoose.Schema({
     },
 }, { timestamps: false })
 
-module.exports = mongoose.model('Transaction_cash_credit', cash_creditSchema);
+export default mongoose.model('Transaction_cash_credit', cash_creditSchema);

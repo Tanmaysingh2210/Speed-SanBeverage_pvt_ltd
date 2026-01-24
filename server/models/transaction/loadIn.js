@@ -1,4 +1,4 @@
-const mongoose = require("mongoose")
+import mongoose from "mongoose"
 
 const LoadInSchema = new mongoose.Schema({
   salesmanCode: {
@@ -29,5 +29,5 @@ const LoadInSchema = new mongoose.Schema({
 },
   { timestamps: false })
 
-module.exports = mongoose.model('transaction_LoadIn', LoadInSchema)
+export default mongoose.model('transaction_LoadIn', LoadInSchema);
 

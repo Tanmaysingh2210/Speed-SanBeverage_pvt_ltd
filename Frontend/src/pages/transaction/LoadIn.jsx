@@ -5,11 +5,13 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { useSKU } from '../../context/SKUContext';
 import { useSalesman } from '../../context/SalesmanContext';
 import "./transaction.css";
+import {useAuth} from "../../context/AuthContext"; 
 import { useSalesmanModal } from '../../context/SalesmanModalContext';
 
 const LoadIn = () => {
     const navigate = useNavigate();
     const location = useLocation();
+    const {user} = useAuth();
 
     const [modalQtyMapFill, setModalQtyMapFill] = useState({});
     const [modalQtyMapBurst, setModalQtyMapBurst] = useState({});
@@ -114,7 +116,8 @@ const LoadIn = () => {
             salesmanCode: newLoadIn.salesmanCode.trim().toUpperCase(),
             date: newLoadIn.date,
             trip: Number(newLoadIn.trip),
-            items: newLoadIn.items
+            items: newLoadIn.items,
+            depo: user.depo
         };
 
         try {
@@ -305,7 +308,7 @@ const LoadIn = () => {
                                         placeholder='Enter Item code'
                                         value={newLoadItem.itemcode}
                                         ref={modalItemRef}
-                                        onChange={(e) => setNewLoadItem({ ...newLoadItem, itemcode: e.target.value.trim().toUpperCase()})}
+                                        onChange={(e) => setNewLoadItem({ ...newLoadItem, itemcode: e.target.value.trim().toUpperCase() })}
                                         onKeyDown={(e) => handleKeyNav(e, "itemcode")}
                                     />
                                     <button

@@ -1,11 +1,14 @@
 import React, { useState, useRef, useEffect } from 'react'  // Fix: useState, useEffect (lowercase)
 import { usePrice } from '../../context/PricesContext'
 import { useSKU } from '../../context/SKUContext'
-import './Prices.css'
+import './Prices.css';
+import { useAuth } from '../../context/AuthContext';
+
 
 const BrowsePrice = () => {
-  const { prices, getAllPrices, updatePrice, deletePrice, loading } = usePrice();
-  const { items, getAllItems } = useSKU();
+  const {user} = useAuth();
+  const { prices, updatePrice, deletePrice, loading } = usePrice();
+  const { items } = useSKU();
   const [search, setSearch] = useState("")
   const [selectedDate, setSelectedDate] = useState("")
   const [showModal, setShowModal] = useState(false)
@@ -19,11 +22,6 @@ const BrowsePrice = () => {
     date: "",
     status: "Active"
   })
-
-  useEffect(() => {
-    getAllItems();
-    getAllPrices();
-  }, []);
 
   useEffect(() => {
     if (editPrice.code) {
@@ -94,7 +92,7 @@ const BrowsePrice = () => {
       perTax: Number(editPrice.perTax),
       perDisc: Number(editPrice.perDisc),
       date: editPrice.date,
-      status: editPrice.status,
+      status: editPrice.status
     };
 
     try {

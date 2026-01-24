@@ -1,9 +1,9 @@
-const express = require("express");
-const LoadOut = require("../models/transaction/LoadOut.js");
+import express from "express";
+import LoadOut from "../models/transaction/LoadOut.js";
 
 console.log("✅ SalesmanWiseItemWise Summary Loaded");
 
-exports.salesmanwiseItemwiseSummary = async (req, res) => {
+export const salesmanwiseItemwiseSummary = async (req, res) => {
   try {
     const { salesmanCode, startDate, endDate } = req.query;
 

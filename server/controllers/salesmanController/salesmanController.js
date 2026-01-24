@@ -1,8 +1,9 @@
-const Salesman = require('../../models/salesman.js');
-const Depo = require('../../models/depoModal.js');
+import Salesman from '../../models/salesman.js';
+import Depo from '../../models/depoModal.js';
+import mongoose from 'mongoose';
 
 
-exports.addSalesman = async (req, res) => {
+export const addSalesman = async (req, res) => {
     try {
         const { routeNo, name, codeNo, depo, status } = req.body;
 
@@ -17,7 +18,6 @@ exports.addSalesman = async (req, res) => {
         if (!depoExists) {
             return res.status(400).json({ message: "Depo not found" });
         }
-
 
         const existing = await Salesman.findOne({ codeNo, depo });
 
@@ -36,9 +36,9 @@ exports.addSalesman = async (req, res) => {
 };
 
 
-exports.getAllSalesmen = async (req, res) => {
+export const getAllSalesmen = async (req, res) => {
     try {
-        const { depo } = req.body;
+        const { depo } = req.query;
         if (!depo) return res.status(400).json({ message: "Depo is required" });
 
         if (!mongoose.Types.ObjectId.isValid(depo)) {
@@ -57,7 +57,7 @@ exports.getAllSalesmen = async (req, res) => {
     }
 };
 
-exports.getSalesmanById = async (req, res) => {
+export const getSalesmanById = async (req, res) => {
     try {
         const salesman = await Salesman.findById(req.params.id);
         if (!salesman) return res.status(404).json({ message: 'Salesman not found' });
@@ -68,7 +68,7 @@ exports.getSalesmanById = async (req, res) => {
 };
 
 
-exports.updateSalesman = async (req, res) => {
+export const updateSalesman = async (req, res) => {
     try {
         const updated = await Salesman.findByIdAndUpdate(
             req.params.id,
@@ -82,7 +82,7 @@ exports.updateSalesman = async (req, res) => {
     }
 };
 
-exports.deleteSalesman = async (req, res) => {
+export const deleteSalesman = async (req, res) => {
     try {
         const deleted = await Salesman.findByIdAndDelete(req.params.id);
         if (!deleted) return res.status(404).json({ message: "Salesman not found" });

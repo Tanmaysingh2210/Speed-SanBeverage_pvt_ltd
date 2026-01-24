@@ -1,7 +1,8 @@
-const CashCredit = require('../../models/transaction/CashCredit');
-const Depo = require("../../models/depoModal");
+import CashCredit from '../../models/transaction/CashCredit.js';
+import Depo from "../../models/depoModal.js";
+import mongoose from 'mongoose';
 
-exports.createCashCredit = async (req, res) => {
+export const createCashCredit = async (req, res) => {
     try {
         const { crNo, date, salesmanCode, trip, value, ref, cashDeposited, chequeDeposited, tax, remark, depo } = req.body;
 
@@ -42,7 +43,7 @@ exports.createCashCredit = async (req, res) => {
     }
 };
 
-exports.getAllCashCredits = async (req, res) => {
+export const getAllCashCredits = async (req, res) => {
     try {
         const data = await CashCredit.find();
         res.status(200).json(data);
@@ -51,7 +52,7 @@ exports.getAllCashCredits = async (req, res) => {
     }
 };
 
-exports.getOneCashCredit = async (req, res) => {
+export const getOneCashCredit = async (req, res) => {
     try {
         const { salesmanCode, trip, date, depo } = req.body;
         if (!date || !salesmanCode || !trip || !depo) return res.status(400).json({ message: "All fields are required" });
@@ -71,7 +72,7 @@ exports.getOneCashCredit = async (req, res) => {
     }
 };
 
-exports.getCashCreditById = async (req, res) => {
+export const getCashCreditById = async (req, res) => {
     try {
         const data = await CashCredit.findById(req.params.id);
         if (!data) return res.staus(404).json({ message: "Record not found" });
@@ -83,7 +84,7 @@ exports.getCashCreditById = async (req, res) => {
     }
 };
 
-exports.updateCashCredit = async (req, res) => {
+export const updateCashCredit = async (req, res) => {
     try {
         const updated = await CashCredit.findByIdAndUpdate(req.params.id, req.body, {
             new: true, runValidators: true
@@ -95,7 +96,7 @@ exports.updateCashCredit = async (req, res) => {
     }
 };
 
-exports.deleteCashCredit = async (req, res) => {
+export const deleteCashCredit = async (req, res) => {
     try {
         const deleted = CashCredit.findByIdAndDelete(req.params.id);
         if (!deleted) return res.status(404).json({ message: "Record not found" });

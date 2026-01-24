@@ -1,7 +1,8 @@
-const LoadIn = require('../../models/transaction/loadIn');
-const Depo = require('../../models/depoModal');
+import LoadIn from '../../models/transaction/loadIn.js';
+import Depo from '../../models/depoModal.js';
+import mongoose from 'mongoose';
 
-exports.addLoadIn = async (req, res) => {
+export const addLoadIn = async (req, res) => {
     try {
         const { salesmanCode, date, trip, items, depo } = req.body;
 
@@ -37,7 +38,7 @@ exports.addLoadIn = async (req, res) => {
 
 
 
-exports.getAllLoadIn = async (req, res) => {
+export const getAllLoadIn = async (req, res) => {
     try {
         const data = await LoadIn.find();
         res.status(200).json(data);
@@ -56,7 +57,7 @@ exports.getAllLoadIn = async (req, res) => {
 //     }
 // };
 
-exports.getLoadIn = async (req, res) => {
+export const getLoadIn = async (req, res) => {
     try {
 
         const { salesmanCode, date, trip, depo } = req.body;
@@ -80,7 +81,7 @@ exports.getLoadIn = async (req, res) => {
     }
 };
 
-exports.updateLoadIn = async (req, res) => {
+export const updateLoadIn = async (req, res) => {
     try {
         const updated = await LoadIn.findByIdAndUpdate(req.params.id, req.body, {
             new: true,
@@ -93,7 +94,7 @@ exports.updateLoadIn = async (req, res) => {
     }
 };
 
-exports.deleteLoadIn = async (req, res) => {
+export const deleteLoadIn = async (req, res) => {
     try {
         const deleted = await LoadIn.findByIdAndDelete(req.params.id);
         if (!deleted) return res.status(404).json({ message: "LoadIn record not found" });

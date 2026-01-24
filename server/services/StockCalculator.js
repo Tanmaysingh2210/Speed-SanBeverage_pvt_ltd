@@ -1,6 +1,6 @@
-const mongoose = require('mongoose');
-const Loadout = require('../models/transaction/LoadOut.js');
-const PurchaseItemwise = require('../models/purchase/PurchaseItemwise.js');
+import mongoose from 'mongoose';
+import Loadout from '../models/transaction/LoadOut.js';
+import PurchaseItemwise from '../models/purchase/PurchaseItemwise.js';
 
 class StockService {
     static async cleanupExpiredItems() {
@@ -177,4 +177,4 @@ class StockService {
 }
 
 
-module.exports = StockService;
+export default StockService;

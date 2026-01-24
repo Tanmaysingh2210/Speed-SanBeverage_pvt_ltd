@@ -1,9 +1,9 @@
-const LoadOut = require('../models/transaction/LoadOut.js');
-const LoadIn= require('../models/transaction/loadIn.js');
-const {Item} =require('../models/SKU.js');
-const Salesman =require('../models/salesman.js');
+import LoadOut from '../models/transaction/LoadOut.js';
+import LoadIn from '../models/transaction/loadIn.js';
+import {Item} from '../models/SKU.js';
+import Salesman from '../models/salesman.js';
 
-exports.EmtAndMtSummary = async(req,res)=>{
+export const EmtAndMtSummary = async(req,res)=>{
     try{
         const {startDate , endDate} =req.body;
 

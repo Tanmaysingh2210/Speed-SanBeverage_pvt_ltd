@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const containerSchema = new mongoose.Schema({
     serial: { type: Number, required: true },
@@ -50,4 +50,4 @@ const Package = mongoose.model('SKU_Package', packageSchema);
 const Flavour = mongoose.model('SKU_Flavour', flavourSchema);
 const Item = mongoose.model('SKU_Item', itemSchema);
 
-module.exports = { Container, Package, Flavour, Item };
+export { Container, Package, Flavour, Item };

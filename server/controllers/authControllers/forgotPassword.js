@@ -1,11 +1,11 @@
-const User = require('../../models/user');
-const crypto = require('crypto');
-const { transporter } = require('./register');
+import User from '../../models/user.js';
+import crypto from 'crypto';
+import { transporter } from './register.js';
 
 
 const generateOtp = () => crypto.randomInt(100000, 999999).toString();
 
-exports.forgotPassword = async (req, res) => {
+export const forgotPassword = async (req, res) => {
     try {
 
         const { email } = req.body;

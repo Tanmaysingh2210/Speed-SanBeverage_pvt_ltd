@@ -1,11 +1,11 @@
-const User = require('../../models/user');
-const nodemailer = require('nodemailer');
-const { transporter } = require('./register');
-const crypto = require('crypto');
+import User from '../../models/user.js';
+import nodemailer from 'nodemailer';
+import { transporter } from './register.js';
+import crypto from 'crypto';
 
 const generateOtp = () => crypto.randomInt(100000, 999999).toString();
 
-exports.resend_otp = async (req, res) => {
+export const resend_otp = async (req, res) => {
     try {
         const { email } = req.body;
         const user = await User.findOne({ email });

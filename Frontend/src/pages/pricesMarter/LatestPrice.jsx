@@ -2,12 +2,14 @@ import React, { useState, useRef, useEffect } from "react";
 import "./Prices.css";
 import { usePrice } from "../../context/PricesContext";
 import { useSKU } from "../../context/SKUContext";
-import toast from "react-hot-toast"
+import toast from "react-hot-toast";
+import { useAuth } from "../../context/AuthContext";
+
 
 const LatestPrice = () => {
-
-    const { prices, getAllPrices, getPriceByID, updatePrice, deletePrice, addPrice, loading } = usePrice();
-    const { items, getAllItems } = useSKU();
+    const { user } = useAuth();
+    const { prices, updatePrice, deletePrice, addPrice, loading } = usePrice();
+    const { items } = useSKU();
 
     const [showModal, setShowModal] = useState(false);
     const [editId, setEditId] = useState(null);
@@ -35,12 +37,6 @@ const LatestPrice = () => {
         let taxablePrice = (parseFloat(basePrice) - (parseFloat(basePrice) * parseFloat(perDisc) / 100)).toFixed(2);
         return (parseFloat(taxablePrice) + (parseFloat(taxablePrice) * parseFloat(perTax) / 100)).toFixed(2);
     };
-
-    useEffect(() => {
-        getAllItems();
-        getAllPrices();
-    }, []);
-
 
     useEffect(() => {
         if (showModal) {
@@ -152,6 +148,7 @@ const LatestPrice = () => {
             perDisc: Number(newPrice.perDisc),
             date: newPrice.date, // backend expects `date` (lowercase)
             status: editId ? newPrice.status : "Active", //  Force Active for new prices
+            depo:user.depo
         };
         console.log('add/update price payload', payload);
 
@@ -240,7 +237,7 @@ const LatestPrice = () => {
                     }}
                 >
                     + New Price
-                </button>   
+                </button>
             </div>
 
             {loading && <div className="loading">Loading...</div>}

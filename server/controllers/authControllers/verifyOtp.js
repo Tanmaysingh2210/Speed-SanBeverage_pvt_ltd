@@ -1,6 +1,6 @@
-const User = require('../../models/user');
+import User from '../../models/user.js';
 
-exports.verify_otp = async (req, res) => {
+export const verify_otp = async (req, res) => {
     try {
         const { email, otp } = req.body;
         let user = await User.findOne({ email });

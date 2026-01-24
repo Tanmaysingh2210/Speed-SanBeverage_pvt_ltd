@@ -1,5 +1,5 @@
-const express = require('express');
-const {addFlavour, getAllFlavour, getFlavourbyID, updateFlavour, deleteFlavour} = require('../controllers/skuControllers/flavour.js')
+import express from 'express';
+import {addFlavour, getAllFlavour, getFlavourbyID, updateFlavour, deleteFlavour} from '../controllers/skuControllers/flavour.js'
 
 
 
@@ -13,4 +13,4 @@ router.delete('/delete/:id', deleteFlavour);
 
 
 
-module.exports = router;
+export default router;

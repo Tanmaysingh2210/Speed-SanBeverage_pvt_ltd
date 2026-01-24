@@ -1,7 +1,8 @@
-const Rate = require('../../models/rates.js');
-const Depo = require('../../models/depoModal.js');
+import Rate from '../../models/rates.js';
+import Depo from '../../models/depoModal.js';
+import mongoose from 'mongoose';
 
-exports.addRate = async (req, res) => {
+export const addRate = async (req, res) => {
     try {
         const { code, basePrice, perTax, date, perDisc, depo, status } = req.body;
 
@@ -62,7 +63,7 @@ exports.addRate = async (req, res) => {
 };
 
 
-exports.getLatestByDate = async (req, res) => {
+export const getLatestByDate = async (req, res) => {
     try {
         const { code, date, depo } = req.query;
 
@@ -91,9 +92,9 @@ exports.getLatestByDate = async (req, res) => {
 
 
 // Get all rates
-exports.getAllRates = async (req, res) => {
+export const getAllRates = async (req, res) => {
     try {
-        const { depo } = req.body;
+        const { depo } = req.query;
         if (!depo) return res.status(400).json({ message: "Depo is required" });
 
         if (!mongoose.Types.ObjectId.isValid(depo)) {
@@ -113,7 +114,7 @@ exports.getAllRates = async (req, res) => {
 };
 
 // Get rate by ID
-exports.getRateById = async (req, res) => {
+export const getRateById = async (req, res) => {
     try {
         const rate = await Rate.findById(req.params.id);
         if (!rate) return res.status(404).json({ message: "Rate not found" });
@@ -124,7 +125,7 @@ exports.getRateById = async (req, res) => {
 };
 
 // Update rate
-exports.updateRate = async (req, res) => {
+export const updateRate = async (req, res) => {
     try {
         const updatedRate = await Rate.findByIdAndUpdate(
             req.params.id,
@@ -139,7 +140,7 @@ exports.updateRate = async (req, res) => {
 };
 
 // Delete rate
-exports.deleteRate = async (req, res) => {
+export const deleteRate = async (req, res) => {
     try {
         const deletedRate = await Rate.findByIdAndDelete(req.params.id);
         if (!deletedRate) return res.status(404).json({ message: "Rate not found" });

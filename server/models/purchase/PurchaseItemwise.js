@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const itemSchema = new mongoose.Schema({
   itemCode: {
@@ -47,4 +47,4 @@ const purchaseItemSchema = new mongoose.Schema({
 // Add index for efficient querying
 purchaseItemSchema.index({ isFullyProcessed: 1, 'items.expiryDate': 1 });
 
-module.exports = mongoose.model('PurchaseItemwise', purchaseItemSchema);
+export default mongoose.model('PurchaseItemwise', purchaseItemSchema);

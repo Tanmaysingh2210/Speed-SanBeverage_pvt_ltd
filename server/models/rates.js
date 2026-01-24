@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 
 const ratesSchema = new mongoose.Schema({
     itemCode: { type: String, required: true },
@@ -18,4 +18,4 @@ const ratesSchema = new mongoose.Schema({
 // // ✅ create compound unique index
 // ratesSchema.index({ itemCode: 1, date: 1 }, { unique: true });
 
-module.exports = mongoose.model('rates', ratesSchema);
+export default mongoose.model('rates', ratesSchema);

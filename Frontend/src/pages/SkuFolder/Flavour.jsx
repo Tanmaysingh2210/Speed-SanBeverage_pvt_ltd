@@ -15,9 +15,6 @@ const Flavour = () => {
   const addInputRef = useRef(null);
   const searchRef = useRef(null);
 
-  useEffect(() => {
-    getAllFlavours();
-  }, []);
 
   useEffect(() => {
     if (showForm && addInputRef.current) {

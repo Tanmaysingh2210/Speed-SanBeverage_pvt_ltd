@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const loadOutSchema = new mongoose.Schema({
     salesmanCode: { type: String, required: true },
@@ -17,4 +17,4 @@ const loadOutSchema = new mongoose.Schema({
     ],
 }, { timestamps: false });
 
-module.exports = mongoose.model('Transation_LoadOut', loadOutSchema);
+export default mongoose.model('Transation_LoadOut', loadOutSchema);

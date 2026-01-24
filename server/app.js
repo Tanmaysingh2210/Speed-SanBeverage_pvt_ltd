@@ -1,19 +1,20 @@
-const express = require('express');
-const session = require('express-session');
-const cors = require('cors'); 
-const connectDB = require('./config/db');
-const authRoutes = require('./routes/authRoutes');
-const containerRoutes = require('./routes/containerRoutes');
-const flavourRoutes = require('./routes/flavourRoutes');
-const packageRoutes = require('./routes/packageRoutes');
-const itemRoutes = require('./routes/itemRoutes');
-const salesmanRoutes = require('./routes/salesmanRoute.js')
-const ratesRoutes=require('./routes/ratesRoutes.js')
-const transactionRoutes=require('./routes/transactionRoutes.js')
-const purchaseRoutes=require('./routes/purchaseRoutes/purchaseRoutes.js')
-const depoRoutes = require('./routes/depoRoutes.js');
-const stockRoutes = require('./routes/stockRoutes.js');
-const summaryRoutes = require('./routes/summaryRoutes.js');
+import express from 'express';
+import session from 'express-session';
+import cors from 'cors'; 
+import 'dotenv/config';
+import connectDB from './config/db.js';
+import authRoutes from './routes/authRoutes.js';
+import containerRoutes from './routes/containerRoutes.js';
+import flavourRoutes from './routes/flavourRoutes.js';
+import packageRoutes from './routes/packageRoutes.js';
+import itemRoutes from './routes/itemRoutes.js';
+import salesmanRoutes from './routes/salesmanRoute.js';
+import ratesRoutes from './routes/ratesRoutes.js';
+import transactionRoutes from './routes/transactionRoutes.js';
+import purchaseRoutes from './routes/purchaseRoutes/purchaseRoutes.js';
+import depoRoutes from './routes/depoRoutes.js';
+import stockRoutes from './routes/stockRoutes.js';
+import summaryRoutes from './routes/summaryRoutes.js';
 connectDB();
 const app = express();
 app.use(express.json());

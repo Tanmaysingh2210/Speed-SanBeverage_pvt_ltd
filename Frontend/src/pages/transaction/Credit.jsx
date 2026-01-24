@@ -5,11 +5,13 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useSKU } from '../../context/SKUContext';
 import { useSalesman } from '../../context/SalesmanContext';
 import "./transaction.css";
+import { useAuth } from '../../context/AuthContext';
 import { useSalesmanModal } from '../../context/SalesmanModalContext';
 
 const Credit = () => {
     const navigate = useNavigate();
     const location = useLocation();
+    const { user } = useAuth();
 
     const { loading, addCash_credit, updateCash_credit } = useTransaction();
     const { salesmans, getAllSalesmen } = useSalesman();
@@ -59,11 +61,12 @@ const Credit = () => {
             ref: Number(newCredit.ref) || 0,
             cashDeposited: Number(newCredit.cashDeposited) || 0,
             chequeDeposited: Number(newCredit.chequeDeposited) || 0,
-            remark: newCredit.remark || ""
+            remark: newCredit.remark || "",
+            depo: user.depo
         }
         try {
             if (editData && editMode) {
-                await updateCash_credit(editData._id , payload);
+                await updateCash_credit(editData._id, payload);
                 setTimeout(() => {
                     navigate('/transaction/all-transaction')
                 }, 100);
@@ -213,26 +216,26 @@ const Credit = () => {
                         <div className="form-group">
                             <label>Salesman Code</label>
                             <div className="input-with-btn">
-                            <input
-                                type="text"
-                                placeholder="Enter Salesman Code"
-                                ref={codeRef}
-                                value={newCredit.salesmanCode.trim().toUpperCase()}
-                                onChange={(e) => setNewCredit({ ...newCredit, salesmanCode: e.target.value.trim().toUpperCase()})}
-                                onKeyDown={(e) => handleKeyNav(e, "code")}
-                            />
-                            <button
+                                <input
+                                    type="text"
+                                    placeholder="Enter Salesman Code"
+                                    ref={codeRef}
+                                    value={newCredit.salesmanCode.trim().toUpperCase()}
+                                    onChange={(e) => setNewCredit({ ...newCredit, salesmanCode: e.target.value.trim().toUpperCase() })}
+                                    onKeyDown={(e) => handleKeyNav(e, "code")}
+                                />
+                                <button
                                     type="button"
                                     className="dropdown-btn"
-                                     onClick={() =>
+                                    onClick={() =>
                                         openSalesmanModal((code) =>
-                                        setNewCredit(prev => ({ ...prev, salesmanCode: code.trim().toUpperCase() }))
+                                            setNewCredit(prev => ({ ...prev, salesmanCode: code.trim().toUpperCase() }))
                                         )
                                     }
-                                    >
+                                >
                                     ⌄
-                            </button>
-                        </div>
+                                </button>
+                            </div>
                         </div>
                         <div className="form-group">
                             <label>Salesman Name</label>
