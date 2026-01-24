@@ -1,10 +1,11 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useSKU } from '../../context/SKUContext';
 import './Container.css';
+import {useAuth} from '../../context/AuthContext';
 
 const Flavour = () => {
   const { flavours, addFlavour, getFlavourByID, deleteFlavour, updateFlavour, getAllFlavours, loading } = useSKU();
-
+  const {user} =useAuth();
 
   const [editId, setEditId] = useState(null);
   const [editValue, setEditValue] = useState("");
@@ -31,7 +32,7 @@ const Flavour = () => {
 
   const handleAddFlavour = async () => {
     if (newFlavour.trim() === "") return;
-    await addFlavour({ serial: flavours.length + 1, name: newFlavour.toUpperCase() });
+    await addFlavour({ serial: flavours.length + 1, name: newFlavour.toUpperCase(),depo: user.depo });
     setNewFlavour("");
   };
 

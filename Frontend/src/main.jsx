@@ -17,29 +17,34 @@ import { DepoProvider } from './context/depoContext.jsx';
 createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <BrowserRouter>
-      <SalesmanProvider>
-        <SalesmanModalProvider>
-          <DepoProvider>
-            <PrintProvider>
-              <ExcelProvider>
-                <SKUProvider>
-                  <PricesProvider>
+      <DepoProvider>
+        <AuthProvider>
+          <SalesmanProvider>
+            <SalesmanModalProvider>
 
-                    <PurchaseProvider>
-                      <TransactionProvider>
-                        <AuthProvider>
+              <PrintProvider>
+                <ExcelProvider>
+                  <SKUProvider>
+                    <PricesProvider>
+
+                      <PurchaseProvider>
+                        <TransactionProvider>
+
                           <App />
-                        </AuthProvider>
-                      </TransactionProvider>
-                    </PurchaseProvider>
 
-                  </PricesProvider>
-                </SKUProvider>
-              </ExcelProvider>
-            </PrintProvider>
-          </DepoProvider>
-        </SalesmanModalProvider>
-      </SalesmanProvider>
+                        </TransactionProvider>
+                      </PurchaseProvider>
+
+                    </PricesProvider>
+                  </SKUProvider>
+                </ExcelProvider>
+              </PrintProvider>
+
+            </SalesmanModalProvider>
+          </SalesmanProvider>
+        </AuthProvider>
+      </DepoProvider>
+
     </BrowserRouter>
   </React.StrictMode>
 )

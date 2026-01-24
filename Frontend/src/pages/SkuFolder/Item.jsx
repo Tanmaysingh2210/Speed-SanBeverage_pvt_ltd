@@ -2,8 +2,10 @@ import React, { useState, useEffect, useRef } from 'react';
 import './Item.css';
 import { useSKU } from '../../context/SKUContext';
 import toast from 'react-hot-toast';
+import {useAuth} from '../../context/AuthContext';
 
 const Item = () => {
+  const {user} = useAuth();
   const {
     items,
     getAllItems,
@@ -109,6 +111,7 @@ const Item = () => {
         package: newItem.package.toUpperCase(),
         flavour: newItem.flavour.toUpperCase(),
         status: newItem.status,
+        depo: user.depo
       });
 
       setNewItem({

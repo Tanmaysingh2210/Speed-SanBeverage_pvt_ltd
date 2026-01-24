@@ -1,13 +1,18 @@
 import React, { useEffect, useState, useRef } from "react";
 import './Container.css';
 import { useSKU } from '../../context/SKUContext';
+import {useAuth} from '../../context/AuthContext';
+
+
 
 const Container = () => {
+  const {user} =useAuth();
   const { containers, addContainer, getContaienerByID, deleteContainer, updateContainer, getAllContainers, loading } = useSKU();
 
   useEffect(() => {
     getAllContainers();
   }, []);
+
 
   const [editId, setEditId] = useState(null);
   const [editValue, setEditValue] = useState("");
@@ -27,7 +32,7 @@ const Container = () => {
 
   const handleAddContainer = async () => {
     if (newContainer.trim() === "") return;
-    await addContainer({serial: containers.length + 1 , name: newContainer.toUpperCase() });
+    await addContainer({serial: containers.length + 1 , name: newContainer.toUpperCase(), depo: user.depo });
     setNewContainer("");
   };
 
