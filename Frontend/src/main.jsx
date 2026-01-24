@@ -20,23 +20,23 @@ createRoot(document.getElementById('root')).render(
       <SalesmanProvider>
         <SalesmanModalProvider>
           <DepoProvider>
-          <PrintProvider>
-            <ExcelProvider>
-              <SKUProvider>
-                <PricesProvider>
+            <PrintProvider>
+              <ExcelProvider>
+                <SKUProvider>
+                  <PricesProvider>
 
-                  <PurchaseProvider>
-                    <TransactionProvider>
-                      <AuthProvider>
-                        <App />
-                      </AuthProvider>
-                    </TransactionProvider>
-                  </PurchaseProvider>
+                    <PurchaseProvider>
+                      <TransactionProvider>
+                        <AuthProvider>
+                          <App />
+                        </AuthProvider>
+                      </TransactionProvider>
+                    </PurchaseProvider>
 
-                </PricesProvider>
-              </SKUProvider>
-            </ExcelProvider>
-          </PrintProvider>
+                  </PricesProvider>
+                </SKUProvider>
+              </ExcelProvider>
+            </PrintProvider>
           </DepoProvider>
         </SalesmanModalProvider>
       </SalesmanProvider>

@@ -1,15 +1,26 @@
 const { Flavour } = require('../../models/SKU');
+const Depo = require("../../models/depoModal");
 
 exports.addFlavour = async (req, res) => {
     try {
-        const { serial, name } = req.body;
+        const { serial, name, depo } = req.body;
 
-        if(!serial || !name) return res.status(400).json({message: "flavour and serial no. are required"});
+        if (!serial || !name, !depo) return res.status(400).json({ message: "all fields are required" });
+
+        if (!mongoose.Types.ObjectId.isValid(depo)) {
+            return res.status(400).json({ message: "Invalid depo ID" });
+        }
+
+        // 3️⃣ Check if depo exists
+        const depoExists = await Depo.findById(depo);
+        if (!depoExists) {
+            return res.status(400).json({ message: "Depo not found" });
+        }
 
         const existing = await Flavour.findOne({ name });
         if (existing) return res.status(400).json({ message: "flavour already exists, please add different" });
 
-        await Flavour.create({ serial, name });
+        await Flavour.create({ serial, name, depo });
 
         res.status(200).json({ message: "flavour added successfully" });
     } catch (err) {
@@ -20,7 +31,18 @@ exports.addFlavour = async (req, res) => {
 
 exports.getAllFlavour = async (req, res) => {
     try {
-        const flavours = await Flavour.find();
+        const {depo} = req.body;
+        if(!depo) return res.status(400).json({message:"Depo is required"});
+
+        if (!mongoose.Types.ObjectId.isValid(depo)) {
+            return res.status(400).json({ message: "Invalid depo ID" });
+        }
+
+        const depoExists = await Depo.findById(depo);
+        if (!depoExists) {
+            return res.status(400).json({ message: "Depo not found" });
+        }
+        const flavours = await Flavour.find({depo});
         res.status(200).json(flavours);
     } catch (error) {
         res.status(500).json({ message: 'Error fetching flavours', error: error.message });
@@ -51,13 +73,13 @@ exports.updateFlavour = async (req, res) => {
     }
 };
 
-exports.deleteFlavour = async (req,res) => {
-    try{
-        const deleted =await  Flavour.findByIdAndDelete(req.params.id);
-        if(!deleted) return res.status(404).json({message:"flavour not found"});
-        res.status(200).json({message:"flavour deleted sucessfully"});
+exports.deleteFlavour = async (req, res) => {
+    try {
+        const deleted = await Flavour.findByIdAndDelete(req.params.id);
+        if (!deleted) return res.status(404).json({ message: "flavour not found" });
+        res.status(200).json({ message: "flavour deleted sucessfully" });
 
-    }catch(err){
-        res.status(500).json({message:"error delelting flavour", error:err.message});
+    } catch (err) {
+        res.status(500).json({ message: "error delelting flavour", error: err.message });
     }
 };

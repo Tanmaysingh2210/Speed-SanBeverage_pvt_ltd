@@ -1,16 +1,26 @@
 const CashCredit = require('../../models/transaction/CashCredit');
+const Depo = require("../../models/depoModal");
 
 exports.createCashCredit = async (req, res) => {
     try {
-        const { crNo, date, salesmanCode, trip, value, ref, cashDeposited, chequeDeposited, tax, remark } = req.body;
+        const { crNo, date, salesmanCode, trip, value, ref, cashDeposited, chequeDeposited, tax, remark, depo } = req.body;
 
-        if (!crNo || !date || !salesmanCode || !trip || !value || !tax) return res.status(400).json({ message: "All fields are required" });
+        if (!crNo || !date || !salesmanCode || !trip || !value || !tax || !depo) return res.status(400).json({ message: "All fields are required" });
+
+        if (!mongoose.Types.ObjectId.isValid(depo)) {
+            return res.status(400).json({ message: "Invalid depo ID" });
+        }
+
+        const depoExists = await Depo.findById(depo);
+        if (!depoExists) {
+            return res.status(400).json({ message: "Depo not found" });
+        }
 
         const cash_credit = await CashCredit.findOne({
-            crNo , date , salesmanCode , trip
-        })
+            crNo, date, salesmanCode, trip, depo
+        });
 
-        if(cash_credit) return res.status(400).json({message: "Record already exist"});
+        if (cash_credit) return res.status(400).json({ message: "Record already exist" });
 
         await CashCredit.create({
             crNo,
@@ -20,6 +30,7 @@ exports.createCashCredit = async (req, res) => {
             value,
             tax,
             ref,
+            depo,
             cashDeposited,
             chequeDeposited,
             remark
@@ -42,9 +53,17 @@ exports.getAllCashCredits = async (req, res) => {
 
 exports.getOneCashCredit = async (req, res) => {
     try {
-        const { salesmanCode, trip, date } = req.body;
-        if (!date || !salesmanCode || !trip) return res.status(400).json({ message: "All fields are required" });
-        const data = await CashCredit.findOne({ salesmanCode, date, trip });
+        const { salesmanCode, trip, date, depo } = req.body;
+        if (!date || !salesmanCode || !trip || !depo) return res.status(400).json({ message: "All fields are required" });
+        if (!mongoose.Types.ObjectId.isValid(depo)) {
+            return res.status(400).json({ message: "Invalid depo ID" });
+        }
+
+        const depoExists = await Depo.findById(depo);
+        if (!depoExists) {
+            return res.status(400).json({ message: "Depo not found" });
+        }
+        const data = await CashCredit.find({ salesmanCode, date, trip, depo });
         if (!data) return res.status(404).json({ message: "Cash/credit not found" });
         res.status(200).json(data);
     } catch (err) {

@@ -27,6 +27,12 @@ const purchaseItemSchema = new mongoose.Schema({
     default: Date.now
   },
 
+  depo: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'depo-master',
+    required: true
+  },
+
   items: {
     type: [itemSchema],   // Array of objects
     default: []

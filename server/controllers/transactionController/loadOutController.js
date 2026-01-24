@@ -1,13 +1,22 @@
 const LoadOut = require("../../models/transaction/LoadOut");
 const StockService = require('../../services/StockCalculator.js');
+const Depo = require('../../models/depoModal.js');
 
 exports.addLoadout = async (req, res) => {
     try {
-        const { salesmanCode, date, trip, items } = req.body;
+        const { salesmanCode, date, trip, items, depo } = req.body;
 
-        if (!salesmanCode || !date || !Array.isArray(items) || items.length === 0) return res.status(400).json({ message: "All fields are required" });
+        if (!salesmanCode || !date || !Array.isArray(items) || items.length === 0 || !depo) return res.status(400).json({ message: "All fields are required" });
 
-        const existing = await LoadOut.findOne({ salesmanCode: salesmanCode, date: date, trip });
+        if (!mongoose.Types.ObjectId.isValid(depo)) {
+            return res.status(400).json({ message: "Invalid depo ID" });
+        }
+
+        const depoExists = await Depo.findById(depo);
+        if (!depoExists) {
+            return res.status(400).json({ message: "Depo not found" });
+        }
+        const existing = await LoadOut.findOne({ salesmanCode: salesmanCode, date: date, trip, depo });
 
         if (existing) return res.status(400).json({ message: `Loadout record exists` });
 
@@ -32,21 +41,31 @@ exports.addLoadout = async (req, res) => {
             salesmanCode: salesmanCode,
             date: date,
             trip,
-            items
+            items,
+            depo
         });
 
-        res.status(200).json({ message: "loadout added sucessfully" ,success:true , allocations});
+        res.status(200).json({ message: "loadout added sucessfully", success: true, allocations });
 
     } catch (err) {
-        res.status(500).json({ message: "Error adding loadOut", error: err.message , success:false});
+        res.status(500).json({ message: "Error adding loadOut", error: err.message, success: false });
     }
 };
 
 exports.getLoadOut = async (req, res) => {
     try {
-        const { salesmanCode, date, trip } = req.body;
-        if (!salesmanCode || !date || !trip) return res.status(400).json({ message: "All fields are required" });
-        const data = await LoadOut.findOne({ salesmanCode, date, trip });
+        const { salesmanCode, date, trip, depo } = req.body;
+        if (!salesmanCode || !date || !trip || !depo) return res.status(400).json({ message: "All fields are required" });
+
+        if (!mongoose.Types.ObjectId.isValid(depo)) {
+            return res.status(400).json({ message: "Invalid depo ID" });
+        }
+
+        const depoExists = await Depo.findById(depo);
+        if (!depoExists) {
+            return res.status(400).json({ message: "Depo not found" });
+        }
+        const data = await LoadOut.findOne({ salesmanCode, date, trip, depo });
         if (!data) return res.status(404).json({ message: "Loadout record not found" });
         res.status(200).json(data);
     } catch (err) {

@@ -1,11 +1,21 @@
-const Rate = require('../../models/rates.js')
+const Rate = require('../../models/rates.js');
+const Depo = require('../../models/depoModal.js');
 
 exports.addRate = async (req, res) => {
     try {
-        const { code, basePrice, perTax, date, perDisc, status } = req.body;
+        const { code, basePrice, perTax, date, perDisc, depo, status } = req.body;
 
-        if (!code || !basePrice || !perTax || !date || !perDisc) {
+        if (!code || !basePrice || !perTax || !date || !perDisc || !depo) {
             return res.status(400).json({ message: "All fields are required" });
+        }
+
+        if (!mongoose.Types.ObjectId.isValid(depo)) {
+            return res.status(400).json({ message: "Invalid depo ID" });
+        }
+
+        const depoExists = await Depo.findById(depo);
+        if (!depoExists) {
+            return res.status(400).json({ message: "Depo not found" });
         }
 
         const existing = await Rate.findOne({
@@ -52,9 +62,19 @@ exports.addRate = async (req, res) => {
 
 exports.getLatestByDate = async (req, res) => {
     try {
-        const { code, date } = req.query;
+        const { code, date, depo } = req.query;
+
+        if (!mongoose.Types.ObjectId.isValid(depo)) {
+            return res.status(400).json({ message: "Invalid depo ID" });
+        }
+
+        const depoExists = await Depo.findById(depo);
+        if (!depoExists) {
+            return res.status(400).json({ message: "Depo not found" });
+        }
 
         const price = await Rate.find({
+            depo,
             code,
             effectiveDate: { $lte: new Date(date) }
         })
@@ -63,7 +83,7 @@ exports.getLatestByDate = async (req, res) => {
 
         res.status(200).json(price[0]);
     } catch (err) {
-        res.status(500).json({message: "Error fetching price", error:err.message});
+        res.status(500).json({ message: "Error fetching price", error: err.message });
     }
 }
 
@@ -71,7 +91,19 @@ exports.getLatestByDate = async (req, res) => {
 // Get all rates
 exports.getAllRates = async (req, res) => {
     try {
-        const rates = await Rate.find();
+        const { depo } = req.body;
+        if (!depo) return res.status(400).json({ message: "Depo is required" });
+
+        if (!mongoose.Types.ObjectId.isValid(depo)) {
+            return res.status(400).json({ message: "Invalid depo ID" });
+        }
+
+        const depoExists = await Depo.findById(depo);
+        if (!depoExists) {
+            return res.status(400).json({ message: "Depo not found" });
+        }
+
+        const rates = await Rate.find({ depo });
         res.status(200).json(rates);
     } catch (err) {
         res.status(500).json({ message: "Error fetching rates", error: err.message });

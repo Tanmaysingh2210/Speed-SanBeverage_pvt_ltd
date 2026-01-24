@@ -24,7 +24,7 @@ const AllTransaction = () => {
 
   const { openSalesmanModal } = useSalesmanModal();
 
-  
+
 
 
 
@@ -274,25 +274,78 @@ const AllTransaction = () => {
     } else if (transaction.type === 'Load In') {
       return (
         <div style={{ fontSize: '14px' }}>
-          {transaction.items?.map((item, idx) => (
-            <div key={idx} style={{ color: '#666', marginBottom: '4px' }}>
-              {item.itemCode?.toUpperCase()}: Filled {item.Filled}, Burst {item.Burst}
-            </div>
-          ))}
+          {transaction.items?.map((item, idx) => {
+            const rowItem = Array.isArray(items) ?
+              items.find((it) =>
+                String(it.code || "").toUpperCase() === String(item.itemCode || "").toUpperCase()
+              ) : null;
+            if (rowItem.container.toUpperCase() !== "EMT") {
+              return (
+                <div key={idx} style={{ color: '#666', marginBottom: '4px' }}>
+                  {item.itemCode?.toUpperCase()}: Filled {item.Filled}, Burst {item.Burst}
+                </div>)
+            } else {
+              return (
+                <div key={idx} style={{ color: '#666', marginBottom: '4px' }}>
+                  {item.itemCode?.toUpperCase()}: EMT {item.Emt}
+                </div>
+              )
+            }
+
+          })}
         </div>
       );
     } else if (transaction.type === 'Cash/Credit') {
-      const netValue = transaction.value - transaction.tax - transaction.ref;
-      return (
-        <div style={{ fontSize: '14px', color: '#666' }}>
-          <div>CR No: {transaction.crNo}</div>
-          <div>Value: ₹{transaction.value}</div>
-          <div>Tax: ₹{transaction.tax} | Ref: ₹{transaction.ref}</div>
-          <div>Net: ₹{netValue}</div>
-          <div>Cash: ₹{transaction.cashDeposited} | Cheque: ₹{transaction.chequeDeposited}</div>
-          {transaction.remark && <div>Remark: {transaction.remark}</div>}
-        </div>
-      );
+      // const netValue = transaction.value - transaction.tax - transaction.ref;
+      // return (
+      //   <div style={{ fontSize: '14px', color: '#666' }}>
+      //     <div>CR No: {transaction.crNo}</div>
+      //     <div>Value: ₹{transaction.value}</div>
+      //     <div>Tax: ₹{transaction.tax} | Ref: ₹{transaction.ref}</div>
+      //     <div>Net: ₹{netValue}</div>
+      //     <div>Cash: ₹{transaction.cashDeposited} | Cheque: ₹{transaction.chequeDeposited}</div>
+      //     {transaction.remark && <div>Remark: {transaction.remark}</div>}
+      //   </div>
+      // );
+
+      if (transaction && transaction.length > 0) {
+        return (
+          <div style={{ fontSize: '14px' }}>
+            {transaction.map((record, idx) => {
+              const netValue = record.value - record.tax - record.ref;
+              return (
+                <div key={idx} style={{
+                  color: '#666',
+                  marginBottom: idx < transaction.length - 1 ? '12px' : '0',
+                  paddingBottom: idx < transaction.length - 1 ? '12px' : '0',
+                  borderBottom: idx < transaction.length - 1 ? '1px solid #e5e7eb' : 'none'
+                }}>
+                  <div style={{ fontWeight: '600', color: '#374151' }}>CR No: {record.crNo}</div>
+                  <div>Value: ₹{record.value}</div>
+                  <div>Tax: ₹{record.tax} | Ref: ₹{record.ref}</div>
+                  <div>Net: ₹{netValue}</div>
+                  <div>Cash: ₹{record.cashDeposited} | Cheque: ₹{record.chequeDeposited}</div>
+                  {record.remark && <div style={{ fontStyle: 'italic' }}>Remark: {record.remark}</div>}
+                </div>
+              );
+            })}
+          </div>
+        );
+
+
+        // Single cash/credit record (backward compatibility)
+        const netValue = transaction.value - transaction.tax - (transaction.ref || 0);
+        return (
+          <div style={{ fontSize: '14px', color: '#666' }}>
+            <div style={{ fontWeight: '600', color: '#374151' }}>CR No: {transaction.crNo}</div>
+            <div>Value: ₹{transaction.value}</div>
+            <div>Tax: ₹{transaction.tax} | Ref: ₹{transaction.ref || 0}</div>
+            <div>Net: ₹{netValue}</div>
+            <div>Cash: ₹{transaction.cashDeposited} | Cheque: ₹{transaction.chequeDeposited}</div>
+            {transaction.remark && <div style={{ fontStyle: 'italic' }}>Remark: {transaction.remark}</div>}
+          </div>
+        );
+      }
     }
   };
 

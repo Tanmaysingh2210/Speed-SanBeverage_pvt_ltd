@@ -1,19 +1,30 @@
-const  Salesman  = require('../../models/salesman.js')
+const Salesman = require('../../models/salesman.js');
+const Depo = require('../../models/depoModal.js');
 
 
 exports.addSalesman = async (req, res) => {
     try {
-        const { routeNo, name, codeNo , status} = req.body;
+        const { routeNo, name, codeNo, depo, status } = req.body;
 
-        if (!routeNo || !name || !codeNo)
+        if (!routeNo || !name || !codeNo || !depo)
             return res.status(400).json({ message: "routeNo, name, and codeNo are required" });
+
+        if (!mongoose.Types.ObjectId.isValid(depo)) {
+            return res.status(400).json({ message: "Invalid depo ID" });
+        }
+
+        const depoExists = await Depo.findById(depo);
+        if (!depoExists) {
+            return res.status(400).json({ message: "Depo not found" });
+        }
+
 
         const existing = await Salesman.findOne({ codeNo });
 
         if (existing)
             return res.status(400).json({ message: "Salesman with this codeNo already exists" });
 
-        await Salesman.create({ routeNo, name, codeNo ,status: status || 'Active'});
+        await Salesman.create({ routeNo, name, codeNo, status: status || 'Active' });
 
         res.status(200).json({ message: "Salesman added successfully" });
     } catch (err) {
@@ -27,7 +38,19 @@ exports.addSalesman = async (req, res) => {
 
 exports.getAllSalesmen = async (req, res) => {
     try {
-        const salesmen = await Salesman.find();
+        const { depo } = req.body;
+        if (!depo) return res.status(400).json({ message: "Depo is required" });
+
+        if (!mongoose.Types.ObjectId.isValid(depo)) {
+            return res.status(400).json({ message: "Invalid depo ID" });
+        }
+
+        const depoExists = await Depo.findById(depo);
+        if (!depoExists) {
+            return res.status(400).json({ message: "Depo not found" });
+        }
+
+        const salesmen = await Salesman.find({ depo });
         res.status(200).json(salesmen);
     } catch (error) {
         res.status(500).json({ message: 'Error fetching salesmen', error: error.message });

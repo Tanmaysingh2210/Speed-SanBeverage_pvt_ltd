@@ -13,6 +13,11 @@ const LoadInSchema = new mongoose.Schema({
     type: Number,
     default: 1
   },
+  depo: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'depo-master',
+        required: true
+    },
   items: [
     {
       itemCode: { type: String, required: true },

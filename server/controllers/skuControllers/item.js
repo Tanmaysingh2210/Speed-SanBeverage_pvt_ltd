@@ -1,10 +1,21 @@
 const { Item } = require('../../models/SKU');
+const Depo = require('../../models/depoModal');
 
 exports.addItem = async (req, res) => {
     try {
-        const { code, name, container, package, flavour, status } = req.body;
+        const { code, name, container, package, flavour, depo, status } = req.body;
 
-        if (!code || !name || !container || !package || !flavour) return res.status(400).json({ message: "Every field is required" });
+        if (!code || !name || !container || !package || !flavour || !depo) return res.status(400).json({ message: "Every field is required" });
+
+        if (!mongoose.Types.ObjectId.isValid(depo)) {
+            return res.status(400).json({ message: "Invalid depo ID" });
+        }
+
+        // 3️⃣ Check if depo exists
+        const depoExists = await Depo.findById(depo);
+        if (!depoExists) {
+            return res.status(400).json({ message: "Depo not found" });
+        }
 
         const existing = await Item.findOne({ code });
 
@@ -16,6 +27,7 @@ exports.addItem = async (req, res) => {
             container,
             package,
             flavour,
+            depo,
             status: status || 'Active'
         });
 
@@ -27,7 +39,18 @@ exports.addItem = async (req, res) => {
 
 exports.getAllItems = async (req, res) => {
     try {
-        const items = await Item.find();
+        const { depo } = req.body;
+        if (!depo) return res.status(400).json({ message: "Depo is required" });
+
+        if (!mongoose.Types.ObjectId.isValid(depo)) {
+            return res.status(400).json({ message: "Invalid depo ID" });
+        }
+
+        const depoExists = await Depo.findById(depo);
+        if (!depoExists) {
+            return res.status(400).json({ message: "Depo not found" });
+        }
+        const items = await Item.find({depo});
         res.status(200).json(items);
 
     } catch (err) {

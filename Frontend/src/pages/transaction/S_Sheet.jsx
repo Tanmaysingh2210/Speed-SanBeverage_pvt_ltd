@@ -103,9 +103,26 @@ const S_Sheet = () => {
     }
   };
 
-  const calculateTotalA = (sale, ref) => {
-    if (!sale || !ref) return;
-    return sale - ref;
+  let totalA = 0;
+  let totalB = 0;
+
+  const calculateTotalA = (sale, tax) => {
+    if (!sale || !tax) return;
+    totalA = sale + tax;
+    return sale + tax;
+  }
+
+  const calculateTotalB = (credit, ref, priceDisc, schm) => {
+    if (!credit || !ref || !priceDisc || !schm) return;
+    totalB = credit + ref + priceDisc + schm;
+    return credit + ref + priceDisc + schm;
+  }
+
+  let shortOrExcess = 0;
+  const calculateShortOrExcess = (totalA, cashDeposited, chequeDeposited) => {
+    if (!totalA || !cashDeposited || !chequeDeposited) return;
+    shortOrExcess = cashDeposited + chequeDeposited - totalA;
+    return cashDeposited + chequeDeposited - totalA;
   }
 
   const handleKeyNav = (e, currentField) => {
@@ -178,7 +195,7 @@ const S_Sheet = () => {
                     className="dropdown-btn"
                     onClick={() =>
                       openSalesmanModal((code) =>
-                        setSheet(prev => ({ ...prev, salesmanCode: code.trim().toUpperCase()}))
+                        setSheet(prev => ({ ...prev, salesmanCode: code.trim().toUpperCase() }))
                       )
                     }
                   >
@@ -228,23 +245,23 @@ const S_Sheet = () => {
             </div>
           </form>
 
-          <div className="item-inputs gap3">
+          <div className="item-inputs">
             <div className="gap1">
               <div className="flex">
                 <div className="form-group">
                   <label>Sale</label>
                   <input
                     readOnly
-                    value={sheetData?.totals?.totalSale || ""}
+                    value={sheetData?.totals?.totalSale || 0}
                     type="number"
                     placeholder="Enter Sale Price"
                   />
                 </div>
                 <div className="form-group">
-                  <label>DEP/REF</label>
+                  <label>TAX</label>
                   <input
                     readOnly
-                    value={sheetData?.cashCreditDetails?.ref || ""}
+                    value={sheetData?.totals?.totalTax || 0}
                     type="number"
                     placeholder="Enter"
                   />
@@ -253,7 +270,33 @@ const S_Sheet = () => {
                   <label>TOTAL A</label>
                   <input
                     readOnly
-                    value={calculateTotalA(sheetData?.totals?.totalSale, sheetData?.cashCreditDetails?.ref) || ""}
+                    value={calculateTotalA(sheetData?.totals?.totalSale, sheetData?.totals?.totalTax) || 0}
+                    type="number"
+                  />
+                </div>
+              </div>
+              <div className="flex">
+                <div className="form-group">
+                  <label>CREDIT SALE</label>
+                  <input
+                    readOnly
+                    type="number"
+                    value={sheetData?.cashCreditDetails?.creditSale || 0}
+                  />
+                </div>
+                <div className="form-group">
+                  <label>PRICE DISCOUNT</label>
+                  <input
+                    readOnly
+                    type="number"
+                    value={sheetData?.totals?.totalDiscount || 0}
+                  />
+                </div>
+                <div className="form-group">
+                  <label>DEP/REF</label>
+                  <input
+                    readOnly
+                    value={sheetData?.cashCreditDetails?.ref || ""}
                     type="number"
                     placeholder="Enter"
                   />
@@ -269,15 +312,12 @@ const S_Sheet = () => {
                     placeholder="Enter discount"
                   />
                 </div>
-
-
                 <div className="form-group">
                   <label>TOTAL B</label>
                   <input
                     readOnly
                     type="number"
-                    value={sheetData?.schm || ""}
-                    placeholder="Enter"
+                    value={calculateTotalB(sheetData?.cashCreditDetails?.creditSale || 0, sheetData?.cashCreditDetails?.ref || 0, sheetData?.totals?.totalDiscount || 0, sheetData?.schm || 0) || 0}
                   />
                 </div>
               </div>
@@ -290,10 +330,7 @@ const S_Sheet = () => {
                   <input
                     readOnly
                     type="number"
-                    placeholder="Enter"
-                    value={
-                      sheetData?.cashCreditDetails?.ref ?
-                        (sheetData?.totals?.grandTotal - sheetData?.cashCreditDetails?.ref).toFixed(2) : ""}
+                    value={totalA - totalB}
                   />
                 </div>
 
@@ -302,8 +339,8 @@ const S_Sheet = () => {
                   <input
                     readOnly
                     type="number"
-                    placeholder="Enter"
-                    value={sheetData?.totals?.grandTotal || ""}
+                    // value={sheetData?.totals?.grandTotal || 0}
+                    value={totalA + sheetData?.cashCreditDetails?.creditSale || 0}
                   />
                 </div>
                 <div className="form-group">
@@ -311,8 +348,7 @@ const S_Sheet = () => {
                   <input
                     readOnly
                     type="number"
-                    value={(sheetData?.cashCreditDetails?.chequeDeposited) || ""}
-                    placeholder="Enter"
+                    value={(sheetData?.cashCreditDetails?.chequeDeposited) || 0}
                   />
                 </div>
               </div>
@@ -324,8 +360,7 @@ const S_Sheet = () => {
                     type="number"
                     value={
                       (sheetData?.totals?.shortOrExcess < 0) ?
-                        -(sheetData?.totals?.shortOrExcess) : ""}
-                    placeholder="Enter"
+                        -(sheetData?.totals?.shortOrExcess) : 0}
                   />
                 </div>
                 <div className="form-group">
@@ -333,13 +368,13 @@ const S_Sheet = () => {
                   <input
                     readOnly
                     type="number"
-                    className={sheetData?.totals?.shortOrExcess > 0 ? "excess" : "short"}
+                    className={calculateShortOrExcess(totalA || 0, sheetData?.cashCreditDetails?.cashDeposited || 0, sheetData?.cashCreditDetails?.chequeDeposited || 0) > 0 ? "excess" : "short"}
                     style={{
-                      color: sheetData?.totals?.shortOrExcess > 0 ? 'green' :
-                        sheetData?.totals?.shortOrExcess < 0 ? 'red' : 'black'
+                      color: calculateShortOrExcess(totalA || 0, sheetData?.cashCreditDetails?.cashDeposited || 0, sheetData?.cashCreditDetails?.chequeDeposited || 0) > 0 ? 'green' :
+                        calculateShortOrExcess(totalA || 0, sheetData?.cashCreditDetails?.cashDeposited || 0, sheetData?.cashCreditDetails?.chequeDeposited || 0) < 0 ? 'red' : 'black'
                     }}
-                    value={(sheetData?.totals?.shortOrExcess) || ""}
-                    placeholder="Enter"
+                    // value={(sheetData?.totals?.shortOrExcess) || 0}
+                    value={calculateShortOrExcess(totalA || 0, sheetData?.cashCreditDetails?.cashDeposited || 0, sheetData?.cashCreditDetails?.chequeDeposited || 0)}
                   />
                 </div>
                 <div className="form-group">
@@ -347,8 +382,7 @@ const S_Sheet = () => {
                   <input
                     readOnly
                     type="number"
-                    value={(sheetData?.cashCreditDetails?.cashDeposited) || ""}
-                    placeholder="Enter"
+                    value={(sheetData?.cashCreditDetails?.cashDeposited) || 0}
                   />
                 </div>
 

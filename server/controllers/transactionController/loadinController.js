@@ -1,12 +1,22 @@
 const LoadIn = require('../../models/transaction/loadIn');
+const Depo = require('../../models/depoModal');
 
 exports.addLoadIn = async (req, res) => {
     try {
-        const { salesmanCode, date, trip, items } = req.body;
+        const { salesmanCode, date, trip, items, depo } = req.body;
 
-        if (!salesmanCode || !date || !trip || !Array.isArray(items) || items.length === 0) return res.status(400).json({ message: "All fields are required" });
+        if (!salesmanCode || !date || !trip || !Array.isArray(items) || items.length === 0 || !depo) return res.status(400).json({ message: "All fields are required" });
 
-        const existing = await LoadIn.findOne({ salesmanCode, date, trip });
+        if (!mongoose.Types.ObjectId.isValid(depo)) {
+            return res.status(400).json({ message: "Invalid depo ID" });
+        }
+
+        const depoExists = await Depo.findById(depo);
+        if (!depoExists) {
+            return res.status(400).json({ message: "Depo not found" });
+        }
+
+        const existing = await LoadIn.findOne({ salesmanCode, date, trip, depo });
 
         if (existing) return res.status(400).json({ message: `Loadin record of ${salesmanCode} at ${date} exists for ${trip}` });
 
@@ -14,7 +24,8 @@ exports.addLoadIn = async (req, res) => {
             salesmanCode: salesmanCode,
             date,
             trip,
-            items
+            items,
+            depo
         });
 
         res.status(200).json({ message: "loadin added sucessfully" });
@@ -47,9 +58,21 @@ exports.getAllLoadIn = async (req, res) => {
 
 exports.getLoadIn = async (req, res) => {
     try {
-        const { salesmanCode, date, trip } = req.body;
-        if (!salesmanCode || !date || !trip) return res.status(400).json({ message: "All fields are required" });
-        const data = await LoadIn.findOne({ salesmanCode, date, trip });
+
+        const { salesmanCode, date, trip, depo } = req.body;
+
+        if (!salesmanCode || !date || !trip || !depo) return res.status(400).json({ message: "All fields are required" });
+
+
+        if (!mongoose.Types.ObjectId.isValid(depo)) {
+            return res.status(400).json({ message: "Invalid depo ID" });
+        }
+
+        const depoExists = await Depo.findById(depo);
+        if (!depoExists) {
+            return res.status(400).json({ message: "Depo not found" });
+        }
+        const data = await LoadIn.findOne({ salesmanCode, date, trip, depo });
         if (!data) return res.status(404).json({ message: "Loadin record not found" });
         res.status(200).json(data);
     } catch (err) {

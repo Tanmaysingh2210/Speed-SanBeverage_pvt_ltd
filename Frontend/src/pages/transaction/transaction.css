@@ -29,11 +29,6 @@
   overflow: hidden;
 }
 
-.gap3 {
-  display: flex;
-  gap: 75px;
-  flex-direction: column;
-}
 
 .name-address {
   display: flex;

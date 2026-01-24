@@ -21,33 +21,20 @@ router.post("/settlement", async (req, res) => {
 
         if (!salesmanCode || !date || !trip) return res.status(400).json({ message: "All field required" });
 
-        let s_sheet = await S_sheet.findOne({
-            salesmanCode,
-            date,
-            trip
-        });
-
-
-        // 1) FETCH LOADOUT
-        const loadout = await LoadOut.findOne({
-            salesmanCode,
-            date,
-            trip
-        });
+        const [s_sheet, loadout, loadin, cashCredit] = await Promise.all([
+            S_sheet.findOne({ salesmanCode, date, trip }),
+            LoadOut.findOne({ salesmanCode, date, trip }),
+            Loadin.findOne({ salesmanCode, date, trip }),
+            CashCredit.find({ salesmanCode, date, trip })
+        ])
 
         if (!loadout)
             return res.status(404).json({ message: "No loadout found" });
 
-        // 2) FETCH LOADIN (may not exist)
-        const loadin = await Loadin.findOne({
-            salesmanCode,
-            date,
-            trip
-        });
-
         let settlementItems = [];
         let grandTotal = 0;
         let totalSale = 0;
+        let totalTax = 0;
         let totalDiscount = 0;
 
         // 3) LOOP THROUGH ALL LOADOUT ITEMS
@@ -72,6 +59,7 @@ router.post("/settlement", async (req, res) => {
             const perTax = parseFloat((latestRate?.perTax || 0).toFixed(2));
 
             const sale = parseFloat((finalQty * basePrice).toFixed(2));
+
             const discAmount = parseFloat(((basePrice * perDisc) / 100).toFixed(2));
             const taxAmount = parseFloat((((basePrice - discAmount) * perTax) / 100).toFixed(2));
 
@@ -81,6 +69,7 @@ router.post("/settlement", async (req, res) => {
 
             totalSale += sale;
             grandTotal += amount;
+            totalTax += taxAmount;
             totalDiscount += finalQty * discAmount;
 
             settlementItems.push({
@@ -100,20 +89,29 @@ router.post("/settlement", async (req, res) => {
 
         totalSale = parseFloat(totalSale.toFixed(2));
         grandTotal = parseFloat(grandTotal.toFixed(2));
+        totalTax = parseFloat(totalTax.toFixed(2));
         totalDiscount = parseFloat(totalDiscount.toFixed(2));
 
-        // 6) FETCH CASH/CREDIT ENTRY FOR THAT DATE
-        const cashCredit = await CashCredit.findOne({
-            salesmanCode,
-            date,
-            trip: trip
-        });
+        let cashDeposited = 0;
+        let chequeDeposited = 0;
+        let ref = 0;
+        let creditSale = 0;
 
-        const cashDeposited = parseFloat((cashCredit?.cashDeposited || 0).toFixed(2));
-        const chequeDeposited = parseFloat((cashCredit?.chequeDeposited || 0).toFixed(2));
-        const ref = parseFloat((cashCredit?.ref || 0).toFixed(2));
+        for (const cc of cashCredit) {
+            if (cc.crNo === 1) {
+                cashDeposited += parseFloat((cc?.cashDeposited || 0).toFixed(2));
+                chequeDeposited += parseFloat((cc?.chequeDeposited || 0).toFixed(2));
+                ref += parseFloat((cc?.ref || 0).toFixed(2));
+                console.log(ref);
+            } else {
+                creditSale += parseFloat((cc.value + (cc.value * (cc.tax) || 0) / 100).toFixed(2));
+                ref += parseFloat((cc?.ref || 0).toFixed(2));
+                console.log(ref);
+            }
+        }
 
-        const totalDeposited = parseFloat((cashDeposited + chequeDeposited).toFixed(2));
+
+        const totalDeposited = parseFloat((cashDeposited + chequeDeposited + creditSale + ref).toFixed(2));
 
         // 7) CALCULATE SHORT / EXCESS
         const shortOrExcess = parseFloat((totalDeposited - grandTotal).toFixed(2));
@@ -131,6 +129,7 @@ router.post("/settlement", async (req, res) => {
                     totalSale,
                     grandTotal,
                     totalDiscount,
+                    totalTax,
                     totalDeposited,
                     shortOrExcess,   // + means excess, - means short
                 },
@@ -138,6 +137,7 @@ router.post("/settlement", async (req, res) => {
                 cashCreditDetails: {
                     cashDeposited,
                     chequeDeposited,
+                    creditSale,
                     ref
                 }
             });
@@ -160,6 +160,7 @@ router.post("/settlement", async (req, res) => {
                 cashCreditDetails: {
                     cashDeposited,
                     chequeDeposited,
+                    creditSale,
                     ref
                 }
             });
@@ -173,31 +174,31 @@ router.post("/settlement", async (req, res) => {
 
 
 router.post("/settlement/save-schm", async (req, res) => {
-  try {
-    const { salesmanCode, date, trip, schm } = req.body;
+    try {
+        const { salesmanCode, date, trip, schm } = req.body;
 
-    if (!salesmanCode || !date || !trip) {
-      return res.status(400).json({ message: "Missing fields" });
+        if (!salesmanCode || !date || !trip) {
+            return res.status(400).json({ message: "Missing fields" });
+        }
+
+        const updated = await S_sheet.findOneAndUpdate(
+            { salesmanCode, date, trip },
+            { $set: { schm } },
+            { upsert: true, new: true }
+        );
+
+        return res.json({
+            success: true,
+            schm: updated.schm
+        });
+
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({
+            message: "Failed to save discount",
+            error: err.message
+        });
     }
-
-    const updated = await S_sheet.findOneAndUpdate(
-      { salesmanCode, date, trip },
-      { $set: { schm } },
-      { upsert: true, new: true }
-    );
-
-    return res.json({
-      success: true,
-      schm: updated.schm
-    });
-
-  } catch (err) {
-    console.error(err);
-    return res.status(500).json({
-      message: "Failed to save discount",
-      error: err.message
-    });
-  }
 });
 
 

@@ -6,6 +6,11 @@ const ratesSchema = new mongoose.Schema({
     perTax: { type: Number, required: true },
     perDisc: { type: Number },
     date: { type: Date, required: true },
+    depo: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'depo-master',
+        required: true
+    },
     status: { type: String, default: 'Active' }
 
 }, { timestamps: false })

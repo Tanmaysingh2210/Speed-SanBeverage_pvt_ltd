@@ -1,4 +1,4 @@
-const mongoose =require("mongoose")
+const mongoose = require("mongoose")
 
 const salesmanSchema = new mongoose.Schema({
   routeNo: {
@@ -14,6 +14,11 @@ const salesmanSchema = new mongoose.Schema({
     type: String,
     required: true,
     unique: true
+  },
+  depo: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'depo-master',
+    required: true
   },
   status: { type: String, enum: ['Active', 'Inactive'], default: 'Active' }
 }, {
