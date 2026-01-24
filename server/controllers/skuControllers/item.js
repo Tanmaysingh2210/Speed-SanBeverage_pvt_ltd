@@ -17,7 +17,7 @@ exports.addItem = async (req, res) => {
             return res.status(400).json({ message: "Depo not found" });
         }
 
-        const existing = await Item.findOne({ code });
+        const existing = await Item.findOne({ code, depo });
 
         if (existing) return res.status(400).json({ message: "this item already exists try adding different one" });
 

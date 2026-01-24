@@ -17,7 +17,7 @@ exports.addFlavour = async (req, res) => {
             return res.status(400).json({ message: "Depo not found" });
         }
 
-        const existing = await Flavour.findOne({ name });
+        const existing = await Flavour.findOne({ name , depo});
         if (existing) return res.status(400).json({ message: "flavour already exists, please add different" });
 
         await Flavour.create({ serial, name, depo });

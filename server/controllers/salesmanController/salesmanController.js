@@ -19,12 +19,12 @@ exports.addSalesman = async (req, res) => {
         }
 
 
-        const existing = await Salesman.findOne({ codeNo });
+        const existing = await Salesman.findOne({ codeNo, depo });
 
         if (existing)
             return res.status(400).json({ message: "Salesman with this codeNo already exists" });
 
-        await Salesman.create({ routeNo, name, codeNo, status: status || 'Active' });
+        await Salesman.create({ routeNo, name, codeNo, depo, status: status || 'Active' });
 
         res.status(200).json({ message: "Salesman added successfully" });
     } catch (err) {

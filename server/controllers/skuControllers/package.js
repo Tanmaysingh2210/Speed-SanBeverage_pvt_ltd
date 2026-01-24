@@ -16,7 +16,7 @@ exports.addPackage = async (req, res) => {
             return res.status(400).json({ message: "Depo not found" });
         }
 
-        const existing = await Package.findOne({ name });
+        const existing = await Package.findOne({ name, depo });
         if (existing) return res.status(400).json({ message: "package already exists, please add different" });
 
         await Package.create({ serial, name, depo });

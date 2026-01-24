@@ -20,6 +20,7 @@ exports.addRate = async (req, res) => {
 
         const existing = await Rate.findOne({
             itemCode: code,
+            depo,
             date: new Date(date).toISOString()
         });
 
@@ -31,7 +32,7 @@ exports.addRate = async (req, res) => {
 
         // NEW: Mark all existing prices for this item as Inactive
         await Rate.updateMany(
-            { itemCode: code }, // Find all prices with same item code
+            { itemCode: code, depo: depo },
             { $set: { status: "Inactive" } } // Set them to Inactive
         );
 
@@ -42,6 +43,7 @@ exports.addRate = async (req, res) => {
             perTax,
             perDisc,
             date,
+            depo,
             status: "Active", // Always Active for new prices
         });
 

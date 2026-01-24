@@ -1,22 +1,30 @@
 const PurchaseItemwise = require('../../models/purchase/PurchaseItemwise.js');
+const Depo = require("../../models/depoModal.js");
 
 // CREATE - New Purchase Itemwise Entry
 exports.createPurchaseItemwise = async (req, res) => {
     try {
-        const { date, items } = req.body;
+        const { date, items, depo } = req.body;
 
         // Validation
-        if (!date || !items || items.length === 0) {
-            return res.status(400).json({ 
-                message: 'Please provide date and items' 
+        if (!date || !items || items.length === 0 || !depo) {
+            return res.status(400).json({
+                message: 'Please provide date and items'
             });
         }
 
+        if (!mongoose.Types.ObjectId.isValid(depo)) {
+            return res.status(400).json({ message: "Invalid depo ID" });
+        }
+        const depoExists = await Depo.findById(depo);
+        if (!depoExists) {
+            return res.status(400).json({ message: "Depo not found" });
+        }
         // Validate each item
         for (let item of items) {
             if (!item.itemCode || !item.qty || !item.expiryDate) {
-                return res.status(400).json({ 
-                    message: 'Each item must have itemCode, qty, and expiryDate' 
+                return res.status(400).json({
+                    message: 'Each item must have itemCode, qty, and expiryDate'
                 });
             }
         }
@@ -24,6 +32,7 @@ exports.createPurchaseItemwise = async (req, res) => {
         // Create new purchase itemwise
         const newPurchase = new PurchaseItemwise({
             date,
+            depo,
             items
         });
 
@@ -37,9 +46,9 @@ exports.createPurchaseItemwise = async (req, res) => {
 
     } catch (error) {
         console.error('Error creating purchase itemwise:', error);
-        res.status(500).json({ 
-            message: 'Server error', 
-            error: error.message 
+        res.status(500).json({
+            message: 'Server error',
+            error: error.message
         });
     }
 };
@@ -47,7 +56,8 @@ exports.createPurchaseItemwise = async (req, res) => {
 // READ - Get All Purchase Itemwise
 exports.getAllPurchaseItemwise = async (req, res) => {
     try {
-        const purchases = await PurchaseItemwise.find().sort({ createdAt: -1 });
+        const { depo } = req.body;
+        const purchases = await PurchaseItemwise.find({depo}).sort({ date: -1 });
 
         res.status(200).json({
             message: 'Purchase itemwise fetched successfully',
@@ -57,9 +67,9 @@ exports.getAllPurchaseItemwise = async (req, res) => {
 
     } catch (error) {
         console.error('Error fetching purchase itemwise:', error);
-        res.status(500).json({ 
-            message: 'Server error', 
-            error: error.message 
+        res.status(500).json({
+            message: 'Server error',
+            error: error.message
         });
     }
 };
@@ -72,8 +82,8 @@ exports.getPurchaseItemwiseById = async (req, res) => {
         const purchase = await PurchaseItemwise.findById(id);
 
         if (!purchase) {
-            return res.status(404).json({ 
-                message: 'Purchase itemwise not found' 
+            return res.status(404).json({
+                message: 'Purchase itemwise not found'
             });
         }
 
@@ -84,9 +94,9 @@ exports.getPurchaseItemwiseById = async (req, res) => {
 
     } catch (error) {
         console.error('Error fetching purchase itemwise:', error);
-        res.status(500).json({ 
-            message: 'Server error', 
-            error: error.message 
+        res.status(500).json({
+            message: 'Server error',
+            error: error.message
         });
     }
 };
@@ -104,8 +114,8 @@ exports.updatePurchaseItemwise = async (req, res) => {
         );
 
         if (!updatedPurchase) {
-            return res.status(404).json({ 
-                message: 'Purchase itemwise not found' 
+            return res.status(404).json({
+                message: 'Purchase itemwise not found'
             });
         }
 
@@ -116,9 +126,9 @@ exports.updatePurchaseItemwise = async (req, res) => {
 
     } catch (error) {
         console.error('Error updating purchase itemwise:', error);
-        res.status(500).json({ 
-            message: 'Server error', 
-            error: error.message 
+        res.status(500).json({
+            message: 'Server error',
+            error: error.message
         });
     }
 };
@@ -131,8 +141,8 @@ exports.deletePurchaseItemwise = async (req, res) => {
         const deletedPurchase = await PurchaseItemwise.findByIdAndDelete(id);
 
         if (!deletedPurchase) {
-            return res.status(404).json({ 
-                message: 'Purchase itemwise not found' 
+            return res.status(404).json({
+                message: 'Purchase itemwise not found'
             });
         }
 
@@ -143,9 +153,9 @@ exports.deletePurchaseItemwise = async (req, res) => {
 
     } catch (error) {
         console.error('Error deleting purchase itemwise:', error);
-        res.status(500).json({ 
-            message: 'Server error', 
-            error: error.message 
+        res.status(500).json({
+            message: 'Server error',
+            error: error.message
         });
     }
 };

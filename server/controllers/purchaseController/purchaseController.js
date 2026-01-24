@@ -1,5 +1,6 @@
 
-const Purchase =require('../../models/purchase/purchaseEntry.js');
+const Purchase = require('../../models/purchase/purchaseEntry.js');
+const Depo = require("../../models/depoModal.js");
 
 // CREATE - New Purchase Entry
 exports.createPurchase = async (req, res) => {
@@ -20,16 +21,24 @@ exports.createPurchase = async (req, res) => {
             disc,
             percentVat,
             purchaseAgst,
-            formIssue
+            formIssue,
+            depo
         } = req.body;
 
         // Validation
-        if (!party || !slno || !date || !gra) {
-            return res.status(400).json({ 
-                message: 'Please provide all required fields' 
+        if (!party || !slno || !date || !gra || !depo) {
+            return res.status(400).json({
+                message: 'Please provide all required fields'
             });
         }
+        if (!mongoose.Types.ObjectId.isValid(depo)) {
+            return res.status(400).json({ message: "Invalid depo ID" });
+        }
 
+        const depoExists = await Depo.findById(depo);
+        if (!depoExists) {
+            return res.status(400).json({ message: "Depo not found" });
+        }
         // Create new purchase
         const newPurchase = new Purchase({
             party,
@@ -47,7 +56,8 @@ exports.createPurchase = async (req, res) => {
             disc: disc || 0,
             percentVat,
             purchaseAgst,
-            formIssue
+            formIssue,
+            depo
         });
 
         // Save to database
@@ -60,9 +70,9 @@ exports.createPurchase = async (req, res) => {
 
     } catch (error) {
         console.error('Error creating purchase:', error);
-        res.status(500).json({ 
-            message: 'Server error', 
-            error: error.message 
+        res.status(500).json({
+            message: 'Server error',
+            error: error.message
         });
     }
 };
@@ -70,7 +80,17 @@ exports.createPurchase = async (req, res) => {
 // READ - Get All Purchases
 exports.getAllPurchases = async (req, res) => {
     try {
-        const purchases = await Purchase.find().sort({ createdAt: -1 });
+        const { depo } = req.body;
+        if (!mongoose.Types.ObjectId.isValid(depo)) {
+            return res.status(400).json({ message: "Invalid depo ID" });
+        }
+
+        const depoExists = await Depo.findById(depo);
+        if (!depoExists) {
+            return res.status(400).json({ message: "Depo not found" });
+        }
+
+        const purchases = await Purchase.find({depo}).sort({ date: -1 });
 
         res.status(200).json({
             message: 'Purchases fetched successfully',
@@ -80,9 +100,9 @@ exports.getAllPurchases = async (req, res) => {
 
     } catch (error) {
         console.error('Error fetching purchases:', error);
-        res.status(500).json({ 
-            message: 'Server error', 
-            error: error.message 
+        res.status(500).json({
+            message: 'Server error',
+            error: error.message
         });
     }
 };
@@ -95,8 +115,8 @@ exports.getPurchaseById = async (req, res) => {
         const purchase = await Purchase.findById(id);
 
         if (!purchase) {
-            return res.status(404).json({ 
-                message: 'Purchase not found' 
+            return res.status(404).json({
+                message: 'Purchase not found'
             });
         }
 
@@ -107,9 +127,9 @@ exports.getPurchaseById = async (req, res) => {
 
     } catch (error) {
         console.error('Error fetching purchase:', error);
-        res.status(500).json({ 
-            message: 'Server error', 
-            error: error.message 
+        res.status(500).json({
+            message: 'Server error',
+            error: error.message
         });
     }
 };
@@ -127,8 +147,8 @@ exports.updatePurchase = async (req, res) => {
         );
 
         if (!updatedPurchase) {
-            return res.status(404).json({ 
-                message: 'Purchase not found' 
+            return res.status(404).json({
+                message: 'Purchase not found'
             });
         }
 
@@ -139,9 +159,9 @@ exports.updatePurchase = async (req, res) => {
 
     } catch (error) {
         console.error('Error updating purchase:', error);
-        res.status(500).json({ 
-            message: 'Server error', 
-            error: error.message 
+        res.status(500).json({
+            message: 'Server error',
+            error: error.message
         });
     }
 };
@@ -154,8 +174,8 @@ exports.deletePurchase = async (req, res) => {
         const deletedPurchase = await Purchase.findByIdAndDelete(id);
 
         if (!deletedPurchase) {
-            return res.status(404).json({ 
-                message: 'Purchase not found' 
+            return res.status(404).json({
+                message: 'Purchase not found'
             });
         }
 
@@ -166,9 +186,9 @@ exports.deletePurchase = async (req, res) => {
 
     } catch (error) {
         console.error('Error deleting purchase:', error);
-        res.status(500).json({ 
-            message: 'Server error', 
-            error: error.message 
+        res.status(500).json({
+            message: 'Server error',
+            error: error.message
         });
     }
 };
