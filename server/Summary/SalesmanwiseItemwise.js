@@ -65,7 +65,12 @@ exports.salesmanwiseItemwiseSummary = async (req, res) => {
         }
       },
 
-      { $unwind: "$price" },
+      {
+        $unwind: {
+          path: "$price",
+          preserveNullAndEmptyArrays: true
+        }
+      },
 
 
       {
@@ -120,63 +125,131 @@ exports.salesmanwiseItemwiseSummary = async (req, res) => {
       {
         $group: {
           _id: "$items.itemCode",
+          itemCode: { $first: "$items.itemCode" },
           loadOutQty: { $sum: "$items.qty" },
-          loadOutAmount: { $sum: "$loadOutAmount" },
+          loadInQty: { $sum: 0 },
           netRate: { $first: "$netRate" }
         }
       },
 
 
       {
-        $lookup: {
-          from: "transaction_loadins",
-          let: { itemCode: "$_id" },
+        $unionWith: {
+          coll: "transaction_loadins",
           pipeline: [
             {
               $match: {
                 salesmanCode,
-                date: {
-                  $gte: start,
-                  $lte: end
-                }
+                date: { $gte: start, $lte: end }
               }
             },
             { $unwind: "$items" },
+
+            {
+              $addFields: {
+                itemCode: "$items.itemCode",
+                loadOutQty: 0,
+                saleDate: "$date",
+                loadInQty: {
+                  $add: ["$items.Filled", "$items.Burst"]
+                }
+              }
+            }
+          ]
+        }
+      },
+
+      {
+        $group: {
+          _id: "$itemCode",
+          saleDate: { $max: "$saleDate" },
+          loadOutQty: { $sum: "$loadOutQty" },
+          loadInQty: { $sum: "$loadInQty" },
+          netRate: { $first: "$netRate" }
+        }
+      },
+
+      {
+        $lookup: {
+          from: "rates",
+          let: {
+            itemCode: "$_id",
+            saleDate: "$saleDate"
+          },
+          pipeline: [
             {
               $match: {
                 $expr: {
-                  $eq: [
-                    { $toUpper: "$items.itemCode" },
-                    { $toUpper: "$$itemCode" }
+                  $and: [
+                    {
+                      $eq: [
+                        { $toUpper: "$itemCode" },
+                        { $toUpper: "$$itemCode" }
+                      ]
+                    },
+                    { $lte: ["$date", "$$saleDate"] }
                   ]
                 }
               }
             },
-            {
-              $addFields: {
-                returnQty: {
-                  $add: ["$items.Filled", "$items.Burst"]
-                }
-              }
-            },
-            {
-              $group: {
-                _id: null,
-                totalReturnQty: { $sum: "$returnQty" }
-              }
-            }
+            { $sort: { date: -1 } },
+            { $limit: 1 }
           ],
-          as: "loadin"
+          as: "price"
+        }
+      },
+
+      {
+        $unwind: {
+          path: "$price",
+          preserveNullAndEmptyArrays: true
+        }
+      },
+
+      {
+        $addFields: {
+          safePerDisc: { $ifNull: ["$price.perDisc", 0] },
+          safePerTax: { $ifNull: ["$price.perTax", 0] }
+        }
+      },
+      {
+        $addFields: {
+          taxablePrice: {
+            $subtract: [
+              "$price.basePrice",
+              {
+                $multiply: [
+                  "$price.basePrice",
+                  { $divide: ["$safePerDisc", 100] }
+                ]
+              }
+            ]
+          }
+        }
+      },
+      {
+        $addFields: {
+          netRate: {
+            $add: [
+              "$taxablePrice",
+              {
+                $multiply: [
+                  "$taxablePrice",
+                  { $divide: ["$safePerTax", 100] }
+                ]
+              }
+            ]
+          }
         }
       },
 
 
 
+
+
       {
         $addFields: {
-          loadInQty: {
-            $ifNull: [{ $arrayElemAt: ["$loadin.totalReturnQty", 0] }, 0]
-          }
+          netRate: { $ifNull: ["$netRate", 0] }
         }
       },
 
