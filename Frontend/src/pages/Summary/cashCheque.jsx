@@ -6,7 +6,7 @@ import toast from "react-hot-toast";
 import {useTransaction} from "../../context/TransactionContext"
 
 const CashChequeSummary = () => {
-
+    
     const [period, setPeriod] = useState({ startDate: "", endDate: "" });
     const {FormatDate} =useTransaction();
     const [summary, setSummary] = useState([]);

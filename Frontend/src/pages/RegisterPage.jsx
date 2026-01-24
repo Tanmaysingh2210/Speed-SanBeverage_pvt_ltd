@@ -4,6 +4,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import toast, { Toaster } from 'react-hot-toast';
 import './RegisterPage.css';
+import { useDepo } from "../context/depoContext";
 
 export default function RegisterPage() {
     const [showPassword, setShowPassword] = useState(false);
@@ -14,13 +15,18 @@ export default function RegisterPage() {
     const [error, setError] = useState(null);
     const [submitting, setSubmitting] = useState(false);
     const [otpStep, setOtpStep] = useState(false);
-
+    const { depos, loading } = useDepo();
     // OTP state
     const [otp, setOtp] = useState(['', '', '', '', '', '']);
     const [countdown, setCountdown] = useState(10);
 
     const { register, verifyOtp, resendOtp, user } = useAuth();
     const navigate = useNavigate();
+
+
+    const matchedDepo = Array.isArray(depos)
+        ? depos.find((sm) => String(sm.depoName || '').toUpperCase() === String(depo || '').toUpperCase())
+        : null;
 
     // Handle OTP input change
     const handleOtpChange = (index, value) => {
@@ -49,8 +55,13 @@ export default function RegisterPage() {
         e.preventDefault();
         setError(null);
         setSubmitting(true);
+        if (!matchedDepo) {
+            toast.error("Please select a valid depo");
+            setSubmitting(false);
+            return;
+        }
         try {
-            await register({ name, email, password, depo });
+            await register({ name, email, password, depo: matchedDepo._id });
             toast.success(`OTP sent to ${email}`);
             setOtpStep(true);
             setCountdown(10);
@@ -95,6 +106,7 @@ export default function RegisterPage() {
         if (user) navigate('/');
     }, [user, navigate]);
 
+    
     return (
         <div className='register'>
             <Toaster position="top-center" />
@@ -138,9 +150,27 @@ export default function RegisterPage() {
                                         </span>
                                     </div>
 
-                                    <div className="input-group">
-                                        <input value={depo} onChange={e => setDepo(e.target.value)} type="text" id="depo" required />
-                                        <label htmlFor="depo">Depo. Name</label>
+                                    <div className="input-group depo-group">
+                                        {/* <input value={depo} onChange={e => setDepo(e.target.value)} type="text" id="depo" required />
+                                            <label htmlFor="depo">Depo. Name</label> */}
+                                        {/* <label htmlFor = "depo">Depo. Name</label> */}
+                                        <select
+                                            value={depo}
+                                            onChange={(e) => setDepo(e.target.value)}
+
+                                        >
+                                            <option value="">
+                                                Depo. Name
+                                            </option>
+                                            {loading ? (
+                                                <option disabled>Loading...</option>
+                                            ) : (
+                                                depos.map((c) => (
+                                                    <option key={c._id || c} value={c.depoName || c}>{c.depoName || c}</option>
+                                                ))
+                                            )
+                                            }
+                                        </select>
                                     </div>
 
                                     <div style={{ marginTop: 12 }}>
