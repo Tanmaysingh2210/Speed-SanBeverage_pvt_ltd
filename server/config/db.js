@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const User = require('../models/user');
 
-const MONGO_URI= `mongodb://127.0.0.1:27017/speed`;
+const MONGO_URI= `mongodb+srv://wallbookservice_db_user:kqNT5kXUnwHnqYHy@cluster0.jlglxtw.mongodb.net/Speed`;
 
 const connectDB = async ()=>{
     try{

@@ -19,7 +19,6 @@ exports.EmtAndMtSummary = async(req,res)=>{
 
         const salesmanMap = new Map();
         
-        
 
         for(const loadout of loadouts){
             let mt = 0;

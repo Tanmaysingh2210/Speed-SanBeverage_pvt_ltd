@@ -244,9 +244,6 @@ exports.salesmanwiseItemwiseSummary = async (req, res) => {
       },
 
 
-
-
-
       {
         $addFields: {
           netRate: { $ifNull: ["$netRate", 0] }
