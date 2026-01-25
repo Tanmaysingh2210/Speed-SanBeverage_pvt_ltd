@@ -136,7 +136,7 @@ const LatestPrice = () => {
     const handleSave = async (e) => {
         e.preventDefault();
 
-        if (!newPrice.basePrice || !newPrice.perTax || !newPrice.date || !user || !user.depo) {
+        if (!newPrice.basePrice || !newPrice.code || !newPrice.date || !user || !user.depo) {
             toast.error("⚠️ Please fill all fields!");
             return;
         }
@@ -150,7 +150,7 @@ const LatestPrice = () => {
             status: editId ? newPrice.status : "Active", //  Force Active for new prices
             depo:user?.depo
         };
-        console.log('add/update price payload', payload);
+        
 
         try {
             if (editId) {
@@ -274,9 +274,9 @@ const LatestPrice = () => {
                             <div>{i + 1}</div>
                             <div>{p?.itemCode?.toUpperCase() || ''}</div>
                             <div>{rowItem?.name || ''}</div>
-                            <div>{p?.basePrice || ''}</div>
-                            <div>{p?.perDisc || ''}%</div>
-                            <div>{p?.perTax || ''}%</div>
+                            <div>{p?.basePrice ||0}</div>
+                            <div>{p?.perDisc || 0}%</div>
+                            <div>{p?.perTax || 0}%</div>
                             <div>{calculateNetRate(p?.basePrice, p?.perTax, p?.perDisc)}</div>
                             <div>{formatDate(p?.date) || ''}</div>
                             <div className="status">

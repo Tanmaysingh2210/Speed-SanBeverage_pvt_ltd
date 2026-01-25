@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import toast from 'react-hot-toast';
 import "../transaction/transaction.css";
 import api from '../../api/api';
-import { useSKU } from '../../context/SKUContext'
+import { useSKU } from '../../context/SKUContext';
 import "../transaction/transaction.css";
 import { useAuth } from '../../context/AuthContext';
 
@@ -34,18 +34,18 @@ const PurchaseItemwise = () => {
         expiryDate: ''
     });
 
-    const fetchSkuItems = async () => {
-        try {
-            const response = await getAllItems();
-            const data = response.data;
-            console.log(data);
+    // const fetchSkuItems = async () => {
+    //     try {
+    //         const response = await getAllItems();
+    //         const data = response.data;
+    //         console.log(data);
 
-            setSkuItems(data);
-        } catch (error) {
-            console.error('Error fetching SKU items:', error);
-            toast.error('Failed to fetch SKU items', 'error');
-        }
-    };
+    //         setSkuItems(data);
+    //     } catch (error) {
+    //         console.error('Error fetching SKU items:', error);
+    //         toast.error('Failed to fetch SKU items', 'error');
+    //     }
+    // };
 
     const getItemName = (code) => {
         const item = skuItems.find(sku => sku.code.toLowerCase() === code.toLowerCase());

@@ -11,8 +11,9 @@ export const PurchaseProvider = ({ children }) => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
-    if (user) {
-        const API_URL = `http://localhost:3000/purchase?depo=${user.depo}`;
+    let API_URL;
+    if (user && user.depo) {
+         API_URL = `http://localhost:3000/purchase?depo=${user.depo}`;
     }
 
 
