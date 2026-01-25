@@ -28,8 +28,8 @@ const PurchaseItemwise = () => {
     const modalSubmitRef = useRef(null)
 
     useEffect(() => {
-    fetchSkuItems();
-}, []);
+        fetchSkuItems();
+    }, []);
     const [formData, setFormData] = useState({
         date: '',
         itemCode: '',
@@ -428,8 +428,11 @@ const PurchaseItemwise = () => {
 
                             {skuItems
                                 .filter(itm =>
-                                    itm.code.toLowerCase().includes(search.toLowerCase()) ||
-                                    itm.name.toLowerCase().includes(search.toLowerCase())
+                                    !itm.code.toLowerCase().includes("emt") &&   // ❌ hide EMT items
+                                    (
+                                        itm.code.toLowerCase().includes(search.toLowerCase()) ||
+                                        itm.name.toLowerCase().includes(search.toLowerCase())
+                                    )
                                 )
                                 .map(itm => (
                                     <div key={itm._id} className="modal-row5-itemwise">
