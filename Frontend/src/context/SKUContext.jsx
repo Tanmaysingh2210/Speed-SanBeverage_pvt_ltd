@@ -6,7 +6,7 @@ import { useAuth } from "./AuthContext";
 const SKUContext = createContext();
 
 export function SKUProvider({ children }) {
-  const { user, isAuthenticated } = useAuth;
+  const { user, isAuthenticated } = useAuth();
   const [containers, setContainers] = useState([]);
   const [packages, setPackages] = useState([]);
   const [flavours, setFlavours] = useState([]);
@@ -15,8 +15,10 @@ export function SKUProvider({ children }) {
 
 
   const getAllContainers = async () => {
+    if (!user || !user.depo) return;
     try {
       setLoading(true);
+      console.log(user.depo);
       const res = await api.get(`/container?depo=${user.depo}`);
       setContainers(res.data);
       return res;
@@ -92,6 +94,7 @@ export function SKUProvider({ children }) {
 
 
   const getAllPackages = async () => {
+    if (!user || !user.depo) return;
     try {
       setLoading(true);
       const res = await api.get(`/package?depo=${user.depo}`);
@@ -171,6 +174,7 @@ export function SKUProvider({ children }) {
 
 
   const getAllFlavours = async () => {
+    if (!user || !user.depo) return;
     try {
       setLoading(true);
       const res = await api.get(`/flavour?depo=${user.depo}`);
@@ -249,6 +253,7 @@ export function SKUProvider({ children }) {
 
 
   const getAllItems = async () => {
+    if (!user || !user.depo) return;
     try {
       setLoading(true);
       const res = await api.get(`/item?depo=${user.depo}`);
@@ -322,12 +327,12 @@ export function SKUProvider({ children }) {
   };
 
   useEffect(() => {
-    if (!isAuthenticated) return;
+    if (!isAuthenticated || !user.depo) return;
 
     const fetchAll = async () => {
       try {
         setLoading(true);
-        
+
         await Promise.all([
           getAllContainers(),
           getAllFlavours(),
@@ -343,7 +348,7 @@ export function SKUProvider({ children }) {
     };
 
     fetchAll();
-  }, [isAuthenticated]);
+  }, [isAuthenticated, user]);
 
 
   return (

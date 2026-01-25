@@ -55,7 +55,7 @@ export const getAllItems = async (req, res) => {
         res.status(200).json(items);
 
     } catch (err) {
-        res.staus(500).json({ message: "Error fetching items", error: err.message });
+        res.status(500).json({ message: "Error fetching items", error: err.message });
     }
 };
 

@@ -13,6 +13,7 @@ export function SalesmanProvider({ children }) {
     const [loading, setLoading] = useState(false);
 
     const getAllSalesmen = async () => {
+        if (!user || !user.depo) return;
         try {
             setLoading(true);
             const res = await api.get(`/salesman?depo=${user.depo}`);
@@ -82,7 +83,7 @@ export function SalesmanProvider({ children }) {
     };
 
     useEffect(() => {
-        if (!isAuthenticated) return;
+        if (!isAuthenticated || !user.depo) return;
         getAllSalesmen();
     }, [isAuthenticated]);
 
