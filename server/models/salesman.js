@@ -1,4 +1,4 @@
-const mongoose = require("mongoose")
+import mongoose from "mongoose"
 
 const salesmanSchema = new mongoose.Schema({
   routeNo: {
@@ -25,5 +25,5 @@ const salesmanSchema = new mongoose.Schema({
   timestamps: false
 })
 
-module.exports = mongoose.model("salesman", salesmanSchema)
+export default mongoose.model("salesman", salesmanSchema)
 

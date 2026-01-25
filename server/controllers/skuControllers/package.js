@@ -1,7 +1,8 @@
-const { Package } = require('../../models/SKU');
-const Depo = require("../../models/depoModal");
+import { Package } from '../../models/SKU.js';
+import Depo from "../../models/depoModal.js";
+import mongoose from 'mongoose';
 
-exports.addPackage = async (req, res) => {
+export const addPackage = async (req, res) => {
     try {
         const { serial, name, depo } = req.body;
         if (!serial || !name || !depo) return res.status(400).json({ message: "all fields are required" });
@@ -28,9 +29,9 @@ exports.addPackage = async (req, res) => {
 };
 
 
-exports.getAllPackage = async (req, res) => {
+export const getAllPackage = async (req, res) => {
     try {
-        const { depo } = req.body;
+        const { depo } = req.query;
         if (!depo) return res.status(400).json({ message: "Depo is required" });
 
         if (!mongoose.Types.ObjectId.isValid(depo)) {
@@ -48,17 +49,17 @@ exports.getAllPackage = async (req, res) => {
     }
 };
 
-exports.getPackagebyID = async (req, res) => {
+export const getPackagebyID = async (req, res) => {
     try {
-        const package = await Package.findById(req.params.id);
-        if (!package) return res.status(404).json({ message: 'package Not found' });
-        res.status(200).json(package);
+        const pkg = await Package.findById(req.params.id);
+        if (!pkg) return res.status(404).json({ message: 'package Not found' });
+        res.status(200).json(pkg);
     } catch (err) {
         res.status(500).json({ message: "Error fetching package ", error: err.message });
     }
 };
 
-exports.updatePackage = async (req, res) => {
+export const updatePackage = async (req, res) => {
     try {
         const updated = await Package.findByIdAndUpdate(
             req.params.id,
@@ -72,7 +73,7 @@ exports.updatePackage = async (req, res) => {
     }
 };
 
-exports.deletePackage = async (req, res) => {
+export const deletePackage = async (req, res) => {
     try {
         const deleted = await Package.findByIdAndDelete(req.params.id);
         if (!deleted) return res.status(404).json({ message: "package not found" });

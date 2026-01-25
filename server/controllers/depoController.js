@@ -1,6 +1,6 @@
-const Depo =require("../models/depoModal");
+import Depo from "../models/depoModal.js";
 
-exports.addDepo= async(req,res)=>{
+export const addDepo= async(req,res)=>{
     try{
         const {depoCode, depoName , depoAddress}= req.body;
 
@@ -23,7 +23,7 @@ exports.addDepo= async(req,res)=>{
     }
 };
 
-exports.getAllDepo=async(req,res)=>{
+export const getAllDepo=async(req,res)=>{
     try{
         const data = await Depo.find();
         if(!data)return res.status(404).json({message : "depo not found"});
@@ -34,7 +34,7 @@ exports.getAllDepo=async(req,res)=>{
     }
 };
 
-exports.updateDepo= async (req,res)=>{
+export const updateDepo= async (req,res)=>{
     try{
          const updated = await Depo.findByIdAndUpdate(req.params.id , req.body , {
             new : true , 
@@ -49,7 +49,7 @@ exports.updateDepo= async (req,res)=>{
     }
 };
 
-exports.deleteDepo = async (req,res)=>{
+export const deleteDepo = async (req,res)=>{
     try{
         const deleted =await Depo.findByIdAndDelete(req.params.id);
         if (!deleted) return res.status(404).json({ message: "depo record not found" });

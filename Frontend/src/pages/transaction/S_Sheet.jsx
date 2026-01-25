@@ -6,9 +6,10 @@ import { useSalesman } from '../../context/SalesmanContext';
 import { useSalesmanModal } from '../../context/SalesmanModalContext';
 import toast from 'react-hot-toast';
 import api from '../../api/api';
+import { useAuth } from '../../context/AuthContext';
 
 const S_Sheet = () => {
-
+  const { user } = useAuth();
   const { getSettlement, loading } = useTransaction();
   const { salesmans } = useSalesman();
 
@@ -56,7 +57,8 @@ const S_Sheet = () => {
         salesmanCode: sheetData.salesmanCode.trim().toUpperCase(),
         date: sheetData.date,
         trip: sheetData.trip,
-        schm: Number(discount)
+        schm: Number(discount),
+        depo: user.depo
       });
 
       toast.success("Discount saved successfully");
@@ -87,6 +89,7 @@ const S_Sheet = () => {
         salesmanCode: sheet.salesmanCode.trim().toUpperCase(),
         date: sheet.date,
         trip: Number(sheet.trip) || 1,
+        depo: user.depo
       });
 
       setSheetData(data); // store settlement details in UI

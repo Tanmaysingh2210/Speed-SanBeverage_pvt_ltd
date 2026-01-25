@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const s_sheetSchema = new mongoose.Schema({
 
@@ -14,4 +14,4 @@ const s_sheetSchema = new mongoose.Schema({
 
 }, { timestamps: false });
 
-module.exports = mongoose.model('Transaction_s_sheet', s_sheetSchema);
+export default mongoose.model('Transaction_s_sheet', s_sheetSchema);

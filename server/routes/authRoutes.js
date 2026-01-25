@@ -1,12 +1,12 @@
-const express = require('express');
-const { register } = require('../controllers/authControllers/register.js');
-const { verify_otp } = require('../controllers/authControllers/verifyOtp.js');
-const { login } = require('../controllers/authControllers/login.js');
-const { resend_otp } = require('../controllers/authControllers/resendOtp.js');
-const { logout } = require('../controllers/authControllers/logout.js');
-const { forgotPassword } = require('../controllers/authControllers/forgotPassword.js');
-const { verify_reset_pass_otp } = require('../controllers/authControllers/verifyresetPassOtp.js');
-const { resetPassword } = require('../controllers/authControllers/resetPassword.js');
+import express from 'express';
+import { register } from '../controllers/authControllers/register.js';
+import { verify_otp } from '../controllers/authControllers/verifyOtp.js';
+import { login } from '../controllers/authControllers/login.js';
+import { resend_otp } from '../controllers/authControllers/resendOtp.js';
+import { logout } from '../controllers/authControllers/logout.js';
+import { forgotPassword } from '../controllers/authControllers/forgotPassword.js';
+import { verify_reset_pass_otp } from '../controllers/authControllers/verifyresetPassOtp.js';
+import { resetPassword } from '../controllers/authControllers/resetPassword.js';
 
 const router = express.Router();
 
@@ -27,4 +27,4 @@ router.get('/me', (req, res) => {
 });
 
 
-module.exports = router;
+export default router;

@@ -2,36 +2,56 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import api from '../api/api';
 import { useNavigate } from 'react-router-dom';
 
-const AuthContext = createContext();
+const AuthContext = createContext({
+    user: null,
+    isAuthenticated: false,
+    loading: false,
+    login: () => { },
+    logout: () => { },
+});
 
 export function AuthProvider({ children }) {
     const [user, setUser] = useState(null);
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(false);
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
     const navigate = useNavigate();
 
     useEffect(() => {
         async function fetchUser() {
             try {
-                const res = await api.get('/auth/me');//check
-                setUser(res.data.user || null);
-
-            } catch (err) {
+                const res = await api.get('/auth/me');
+                if (res.data.user) {
+                    setUser(res.data.user);
+                    setIsAuthenticated(true);
+                } else {
+                    setUser(null);
+                    setIsAuthenticated(false);
+                }
+            } catch {
                 setUser(null);
-            } finally {
-                setLoading(false);
+                setIsAuthenticated(false);
             }
         }
         fetchUser();
     }, []);
 
+    useEffect(() => {
+        console.log("Logged user", user)
+    }, [user]
+    );
+
     async function login(payload) {
         try {
             const res = await api.post('/auth/login', payload);
             if (res.data.user) {
-                setUser(res.data.user);
+                setIsAuthenticated(true);
+                console.log("Res.data.user: ", res.data.user);
+                const loggedUser = res.data.user;
+                setUser(loggedUser);
             } else {
                 const me = await api.get('/auth/me');
                 setUser(me.data.user);
+                setIsAuthenticated(true);
             }
             return res.data.message;
         } catch (err) {
@@ -43,7 +63,6 @@ export function AuthProvider({ children }) {
         try {
             const res = await api.post('/auth/register', payload);
             const newUser = res.data.user;
-            setUser(newUser);
             return newUser;
         } catch (err) {
             throw err;
@@ -51,22 +70,18 @@ export function AuthProvider({ children }) {
     }
 
     async function resendOtp(email) {
-        try{
-            const res = await api.post('/auth/resend_otp',{email});
-            return res || {message: "Otp resended sucessfully"};
-        }catch(err){
-            throw err.response?.data || {message : "Error resending otp"};
+        try {
+            const res = await api.post('/auth/resend_otp', { email });
+            return res || { message: "Otp resended sucessfully" };
+        } catch (err) {
+            throw err.response?.data || { message: "Error resending otp" };
         }
     }
 
     async function verifyOtp(payload) {
         try {
-            const res = await api.post('/auth/verify_otp', payload, { withCredentials: true });
+            const res = await api.post('/auth/verify_otp', payload);
             const verifiedUser = res.data.user;
-
-            // ✅ Update your context state
-            setUser(verifiedUser);
-
             return res.data.message; // "OTP verified successfully"
         } catch (err) {
             console.error("OTP verification failed:", err.response?.data || err.message);
@@ -75,18 +90,21 @@ export function AuthProvider({ children }) {
     }
 
     async function logout() {
-        await api.post('/auth/logout');
-        setUser(null);
-        if (navigate) navigate('/signin');
+        try {
+            await api.post('/auth/logout');
+        } finally {
+            setIsAuthenticated(false);
+            setUser(null);
+            navigate('/signin', { replace: true });
+        }
+
     }
 
     return (
-        <AuthContext.Provider value={{ user, loading, login, logout, register, verifyOtp,resendOtp }}>
+        <AuthContext.Provider value={{ user, loading, login, logout, register, verifyOtp, resendOtp, isAuthenticated }}>
             {children}
         </AuthContext.Provider>
     );
-
-
 
 }
 

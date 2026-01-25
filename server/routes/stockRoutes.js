@@ -1,8 +1,8 @@
-const express = require('express');
+import express from 'express';
 const router = express.Router();
-const LoadOut = require('../models/transaction/LoadOut.js');
-const PurchaseItemwise = require('../models/purchase/PurchaseItemwise.js');
-const StockService = require('../services/StockCalculator.js');
+import LoadOut from '../models/transaction/LoadOut.js';
+import PurchaseItemwise from '../models/purchase/PurchaseItemwise.js';
+import StockService from '../services/StockCalculator.js';
 
 router.get('/', async (req, res) => {
     try {
@@ -100,4 +100,4 @@ router.get('/:itemCode', async (req, res) => {
     }
 });
 
-module.exports = router;
+export default router;

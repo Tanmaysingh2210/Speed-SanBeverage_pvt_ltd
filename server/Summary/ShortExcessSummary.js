@@ -1,7 +1,7 @@
-const express = require("express");
-const LoadOut = require("../models/transaction/LoadOut.js");
+import express from "express";
+import LoadOut from "../models/transaction/LoadOut.js";
 
-exports.shortExcessSummary = async (req, res) => {
+export const shortExcessSummary = async (req, res) => {
 
     try {
         const { startDate, endDate } = req.query;

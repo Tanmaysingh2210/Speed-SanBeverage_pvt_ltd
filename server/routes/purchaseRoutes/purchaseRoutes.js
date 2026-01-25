@@ -1,22 +1,22 @@
-const express =require( 'express');
+import express from 'express';
 
 //purchaseEntry
-const { 
+import { 
     createPurchase, 
     getAllPurchases, 
     getPurchaseById, 
     updatePurchase, 
     deletePurchase 
-} =require('../../controllers/purchaseController/purchaseController.js');
+} from '../../controllers/purchaseController/purchaseController.js';
 
 //purchaseItemwise
-const {
+import {
     createPurchaseItemwise,
     getAllPurchaseItemwise,
     getPurchaseItemwiseById,
     updatePurchaseItemwise,
     deletePurchaseItemwise
-} = require('../../controllers/purchaseController/purchaseItemwise.js');
+} from '../../controllers/purchaseController/purchaseItemwise.js';
 
 //purchaseEntry
 const router = express.Router();
@@ -38,4 +38,4 @@ router.get('/itemwise/:id', getPurchaseItemwiseById);
 router.put('/itemwise/update/:id', updatePurchaseItemwise);
 router.delete('/itemwise/delete/:id', deletePurchaseItemwise);
 
-module.exports = router;
+export default router;

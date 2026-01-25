@@ -1,10 +1,12 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import api from "../api/api";
 import toast from "react-hot-toast";
+import { useAuth } from "./AuthContext";
 
 const SKUContext = createContext();
 
 export function SKUProvider({ children }) {
+  const { user, isAuthenticated } = useAuth();
   const [containers, setContainers] = useState([]);
   const [packages, setPackages] = useState([]);
   const [flavours, setFlavours] = useState([]);
@@ -12,15 +14,14 @@ export function SKUProvider({ children }) {
   const [loading, setLoading] = useState(false);
 
 
-  //containers
-
-
-
   const getAllContainers = async () => {
+    if (!user || !user.depo) return;
     try {
       setLoading(true);
-      const res = await api.get("/container/");
+      console.log(user.depo);
+      const res = await api.get(`/container?depo=${user.depo}`);
       setContainers(res.data);
+      return res;
     } catch (err) {
       toast.error(err.response?.data?.message || "Error fetching containers");
       throw err;
@@ -93,9 +94,10 @@ export function SKUProvider({ children }) {
 
 
   const getAllPackages = async () => {
+    if (!user || !user.depo) return;
     try {
       setLoading(true);
-      const res = await api.get("/package/");
+      const res = await api.get(`/package?depo=${user.depo}`);
       setPackages(res.data);
       return res;
     } catch (err) {
@@ -172,9 +174,10 @@ export function SKUProvider({ children }) {
 
 
   const getAllFlavours = async () => {
+    if (!user || !user.depo) return;
     try {
       setLoading(true);
-      const res = await api.get("/flavour/");
+      const res = await api.get(`/flavour?depo=${user.depo}`);
       setFlavours(res.data);
       return res;
     } catch (err) {
@@ -250,9 +253,10 @@ export function SKUProvider({ children }) {
 
 
   const getAllItems = async () => {
+    if (!user || !user.depo) return;
     try {
       setLoading(true);
-      const res = await api.get("/item/");
+      const res = await api.get(`/item?depo=${user.depo}`);
       setItems(res.data);
       return res;
     } catch (err) {
@@ -323,11 +327,29 @@ export function SKUProvider({ children }) {
   };
 
   useEffect(() => {
-    getAllContainers();
-    getAllFlavours();
-    getAllPackages();
-    getAllItems();
-  }, []);
+    if (!isAuthenticated || !user.depo) return;
+
+    const fetchAll = async () => {
+      try {
+        setLoading(true);
+
+        await Promise.all([
+          getAllContainers(),
+          getAllFlavours(),
+          getAllPackages(),
+          getAllItems()
+        ]);
+
+      } catch (err) {
+        console.error("Failed to load initial data", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchAll();
+  }, [isAuthenticated, user]);
+
 
   return (
     <SKUContext.Provider

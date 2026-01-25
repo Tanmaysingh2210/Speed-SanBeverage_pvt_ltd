@@ -1,9 +1,9 @@
-const LoadOut = require('../models/transaction/LoadOut.js');
-const LoadIn = require('../models/transaction/loadIn.js');
-const Rates = require('../models/rates.js');
-const { Item } = require('../models/SKU.js');
+import LoadOut from '../models/transaction/LoadOut.js';
+import LoadIn from '../models/transaction/loadIn.js';
+import Rates from '../models/rates.js';
+import { Item } from '../models/SKU.js';
 
-exports.ItemWiseSummary = async (req, res) => {
+export const ItemWiseSummary = async (req, res) => {
     const normalize = v => v?.trim().toLowerCase();
     try {
         const { startDate, endDate } = req.body;

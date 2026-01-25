@@ -1,8 +1,9 @@
-const LoadOut = require("../../models/transaction/LoadOut");
-const StockService = require('../../services/StockCalculator.js');
-const Depo = require('../../models/depoModal.js');
+import LoadOut from "../../models/transaction/LoadOut.js";
+import StockService from '../../services/StockCalculator.js';
+import Depo from '../../models/depoModal.js';
+import mongoose from 'mongoose';
 
-exports.addLoadout = async (req, res) => {
+export const addLoadout = async (req, res) => {
     try {
         const { salesmanCode, date, trip, items, depo } = req.body;
 
@@ -52,7 +53,7 @@ exports.addLoadout = async (req, res) => {
     }
 };
 
-exports.getLoadOut = async (req, res) => {
+export const getLoadOut = async (req, res) => {
     try {
         const { salesmanCode, date, trip, depo } = req.body;
         if (!salesmanCode || !date || !trip || !depo) return res.status(400).json({ message: "All fields are required" });
@@ -73,7 +74,7 @@ exports.getLoadOut = async (req, res) => {
     }
 };
 
-exports.getAllLoadOuts = async (req, res) => {
+export const getAllLoadOuts = async (req, res) => {
     try {
         const data = await LoadOut.find();
         if (!data) return res.status(404).json({ message: "Record not found" });
@@ -83,7 +84,7 @@ exports.getAllLoadOuts = async (req, res) => {
     }
 };
 
-exports.updateLoadOut = async (req, res) => {
+export const updateLoadOut = async (req, res) => {
     try {
         const updated = await LoadOut.findByIdAndUpdate(req.params.id, req.body, {
             new: true,
@@ -96,7 +97,7 @@ exports.updateLoadOut = async (req, res) => {
     }
 };
 
-exports.deleteLoadOut = async (req, res) => {
+export const deleteLoadOut = async (req, res) => {
     try {
         const deleted = await LoadOut.findByIdAndDelete(req.params.id);
         if (!deleted) return res.status(404).json({ message: "Loadout record not found" });

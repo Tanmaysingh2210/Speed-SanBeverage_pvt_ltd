@@ -6,9 +6,11 @@ import { useSKU } from '../../context/SKUContext';
 import { useSalesman } from '../../context/SalesmanContext';
 import "./transaction.css";
 import { useSalesmanModal } from '../../context/SalesmanModalContext';
+import { useAuth } from "../../context/AuthContext";
 
 
 const LoadOut = () => {
+    const { user } = useAuth();
     const navigate = useNavigate();
     const location = useLocation();
 
@@ -60,7 +62,6 @@ const LoadOut = () => {
             return;
         }
 
-
         const exists = newLoadOut.items.find(
             (it) => it.itemCode.toUpperCase() === newLoadItem.itemCode.toUpperCase()
         );
@@ -108,7 +109,8 @@ const LoadOut = () => {
             salesmanCode: newLoadOut.salesmanCode.trim().toUpperCase(),
             date: newLoadOut.date,
             trip: newLoadOut.trip,
-            items: newLoadOut.items
+            items: newLoadOut.items,
+            depo: user.depo
         };
 
         try {
@@ -460,11 +462,11 @@ const LoadOut = () => {
                                     const itemsToAdd = Object.entries(modalQtyMap)
                                         .filter(([_, qty]) => Number(qty) > 0)
                                         .map(([code, qty]) => {
-                                        
+
                                             return {
                                                 itemCode: code.trim().toUpperCase(),
                                                 qty: Number(qty),
-                                               
+
                                             };
                                         });
 

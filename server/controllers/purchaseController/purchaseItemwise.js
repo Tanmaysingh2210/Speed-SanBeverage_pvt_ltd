@@ -1,8 +1,9 @@
-const PurchaseItemwise = require('../../models/purchase/PurchaseItemwise.js');
-const Depo = require("../../models/depoModal.js");
+import PurchaseItemwise from '../../models/purchase/PurchaseItemwise.js';
+import Depo from "../../models/depoModal.js";
+import mongoose from 'mongoose';
 
 // CREATE - New Purchase Itemwise Entry
-exports.createPurchaseItemwise = async (req, res) => {
+export const createPurchaseItemwise = async (req, res) => {
     try {
         const { date, items, depo } = req.body;
 
@@ -54,9 +55,9 @@ exports.createPurchaseItemwise = async (req, res) => {
 };
 
 // READ - Get All Purchase Itemwise
-exports.getAllPurchaseItemwise = async (req, res) => {
+export const getAllPurchaseItemwise = async (req, res) => {
     try {
-        const { depo } = req.body;
+        const { depo } = req.query;
         const purchases = await PurchaseItemwise.find({depo}).sort({ date: -1 });
 
         res.status(200).json({
@@ -75,7 +76,7 @@ exports.getAllPurchaseItemwise = async (req, res) => {
 };
 
 // READ - Get Single Purchase Itemwise by ID
-exports.getPurchaseItemwiseById = async (req, res) => {
+export const getPurchaseItemwiseById = async (req, res) => {
     try {
         const { id } = req.params;
 
@@ -102,7 +103,7 @@ exports.getPurchaseItemwiseById = async (req, res) => {
 };
 
 // UPDATE - Update Purchase Itemwise
-exports.updatePurchaseItemwise = async (req, res) => {
+export const updatePurchaseItemwise = async (req, res) => {
     try {
         const { id } = req.params;
         const updateData = req.body;
@@ -134,7 +135,7 @@ exports.updatePurchaseItemwise = async (req, res) => {
 };
 
 // DELETE - Delete Purchase Itemwise
-exports.deletePurchaseItemwise = async (req, res) => {
+export const deletePurchaseItemwise = async (req, res) => {
     try {
         const { id } = req.params;
 

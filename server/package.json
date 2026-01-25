@@ -1,6 +1,7 @@
 {
   "name": "server",
   "version": "1.0.0",
+  "type": "module",
   "main": "app.js",
   "scripts": {
     "dev": "nodemon app.js"
@@ -13,8 +14,8 @@
     "bcrypt": "^6.0.0",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
-    "crypto": "^1.0.1",
-    "express": "^5.1.0",
+    "dotenv": "^17.2.3",
+    "express": "^5.2.1",
     "express-session": "^1.18.2",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.19.0",

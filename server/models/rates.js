@@ -1,9 +1,9 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 
 const ratesSchema = new mongoose.Schema({
     itemCode: { type: String, required: true },
     basePrice: { type: Number, required: true },
-    perTax: { type: Number, required: true },
+    perTax: { type: Number },
     perDisc: { type: Number },
     date: { type: Date, required: true },
     depo: {
@@ -16,6 +16,6 @@ const ratesSchema = new mongoose.Schema({
 }, { timestamps: false })
 
 // // ✅ create compound unique index
-// ratesSchema.index({ itemCode: 1, date: 1 }, { unique: true });
+ratesSchema.index({ depo: 1, itemCode: 1, date: 1 }, { unique: true });
 
-module.exports = mongoose.model('rates', ratesSchema);
+export default mongoose.model('rates', ratesSchema);

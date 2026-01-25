@@ -1,9 +1,10 @@
 
-const Purchase = require('../../models/purchase/purchaseEntry.js');
-const Depo = require("../../models/depoModal.js");
+import Purchase from '../../models/purchase/purchaseEntry.js';
+import Depo from "../../models/depoModal.js";
+import mongoose from 'mongoose';
 
 // CREATE - New Purchase Entry
-exports.createPurchase = async (req, res) => {
+export const createPurchase = async (req, res) => {
     try {
         const {
             party,
@@ -78,9 +79,9 @@ exports.createPurchase = async (req, res) => {
 };
 
 // READ - Get All Purchases
-exports.getAllPurchases = async (req, res) => {
+export const getAllPurchases = async (req, res) => {
     try {
-        const { depo } = req.body;
+        const { depo } = req.query;
         if (!mongoose.Types.ObjectId.isValid(depo)) {
             return res.status(400).json({ message: "Invalid depo ID" });
         }
@@ -108,7 +109,7 @@ exports.getAllPurchases = async (req, res) => {
 };
 
 // READ - Get Single Purchase by ID
-exports.getPurchaseById = async (req, res) => {
+export const getPurchaseById = async (req, res) => {
     try {
         const { id } = req.params;
 
@@ -135,7 +136,7 @@ exports.getPurchaseById = async (req, res) => {
 };
 
 // UPDATE - Update Purchase
-exports.updatePurchase = async (req, res) => {
+export const updatePurchase = async (req, res) => {
     try {
         const { id } = req.params;
         const updateData = req.body;
@@ -167,7 +168,7 @@ exports.updatePurchase = async (req, res) => {
 };
 
 // DELETE - Delete Purchase
-exports.deletePurchase = async (req, res) => {
+export const deletePurchase = async (req, res) => {
     try {
         const { id } = req.params;
 

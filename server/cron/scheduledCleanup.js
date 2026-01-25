@@ -1,5 +1,5 @@
-const cron = require('node-cron');
-const StockService = require('../services/StockCalculator.js')
+import cron from 'node-cron';
+import StockService from '../services/StockCalculator.js';
 // Run cleanup every day at midnight
 cron.schedule('0 0 * * *', async () => {
     console.log('Running scheduled stock cleanup...');

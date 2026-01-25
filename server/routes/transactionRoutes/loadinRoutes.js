@@ -1,5 +1,5 @@
-const express = require('express');
-const { addLoadIn, getAllLoadIn, getLoadIn, updateLoadIn, deleteLoadIn } = require('../../controllers/transactionController/loadinController');
+import express from 'express';
+import { addLoadIn, getAllLoadIn, getLoadIn, updateLoadIn, deleteLoadIn } from '../../controllers/transactionController/loadinController.js';
 
 const router = express.Router();
 
@@ -9,4 +9,4 @@ router.post('/', getLoadIn);
 router.patch('/update/:id', updateLoadIn);
 router.delete('/delete/:id', deleteLoadIn);
 
-module.exports = router;
+export default router;

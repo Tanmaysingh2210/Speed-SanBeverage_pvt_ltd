@@ -1,10 +1,12 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import { useSalesman } from "./SalesmanContext";
-import "../pages/transaction/transaction.css"
+import "../pages/transaction/transaction.css";
+import { useAuth } from "./AuthContext";
 
 const SalesmanModalContext = createContext();
 
 export const SalesmanModalProvider = ({ children }) => {
+  const {user, isAuthenticated} = useAuth();
   const { salesmans, getAllSalesmen } = useSalesman();
 
   const [show, setShow] = useState(false);

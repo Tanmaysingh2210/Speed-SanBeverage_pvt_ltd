@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const depoSchema= new mongoose.Schema({
     depoCode:{type:String , required: true},
@@ -6,4 +6,4 @@ const depoSchema= new mongoose.Schema({
     depoAddress: {type:String }
 },{timestamps:false});
 
-module.exports = mongoose.model('depo-master', depoSchema);
+export default mongoose.model('depo-master', depoSchema);

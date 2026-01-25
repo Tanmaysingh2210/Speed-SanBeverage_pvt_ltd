@@ -8,22 +8,6 @@ export function DepoProvider({ children }) {
     const [depos, setDepos] = useState([]);
     const [loading, setLoading] = useState(false);
 
-    const addDepo = async (payload) => {
-        try {
-            setLoading(true);
-            const res = await api.post('/depo/', payload);
-            await getAllDepo(); 
-            return res;
-        }
-        catch (err) {
-            toast.error(err.response?.data?.message || "Error adding depos");
-
-        }
-        finally {
-            setLoading(false);
-        }
-    };
-
     const getAllDepo = async () => {
         try {
             setLoading(true);
@@ -39,24 +23,39 @@ export function DepoProvider({ children }) {
             setLoading(false);
         }
     };
-    const updateDepo = async (id, payload) => {
+
+    const addDepo = async (payload) => {
         try {
             setLoading(true);
-            const res = await api.patch(`/depo/${id}`, payload, { withCredentials: true });
-            toast.success(res.data.message || "depo update successfully");
-            setDepos((prev) =>
-                prev.map((d) => (d._id === id ? res.data : d))
-            );
+            const res = await api.post('/depo/', payload);
+            await getAllDepo();
             return res;
-
-        } catch (err) {
-             toast.error(err.response?.data?.message || "Error updating depo");
-
+        }
+        catch (err) {
+            toast.error(err.response?.data?.message || "Error adding depos");
         }
         finally {
             setLoading(false);
         }
     };
+
+    const updateDepo = async (id, payload) => {
+        try {
+            setLoading(true);
+            const res = await api.patch(`/depo/${id}`, payload);
+            toast.success(res.data.message || "depo update successfully");
+            setDepos((prev) =>
+                prev.map((d) => (d._id === id ? res.data : d))
+            );
+            return res;
+        } catch (err) {
+            toast.error(err.response?.data?.message || "Error updating depo");
+        }
+        finally {
+            setLoading(false);
+        }
+    };
+    
     const deleteDepo = async (id) => {
         try {
             setLoading(true);
@@ -72,7 +71,7 @@ export function DepoProvider({ children }) {
             setLoading(false);
         }
     };
-   useEffect(() => {
+    useEffect(() => {
         const fetchDepos = async () => {
             await getAllDepo();
         };

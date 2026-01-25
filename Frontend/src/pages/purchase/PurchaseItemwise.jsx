@@ -2,11 +2,12 @@ import React, { useState, useEffect, useRef } from 'react';
 import toast from 'react-hot-toast';
 import "../transaction/transaction.css";
 import api from '../../api/api';
-import { useSKU } from '../../context/SKUContext'
-import "../transaction/transaction.css"
+import { useSKU } from '../../context/SKUContext';
+import "../transaction/transaction.css";
+import { useAuth } from '../../context/AuthContext';
 
 const PurchaseItemwise = () => {
-
+    const { user } = useAuth();
     const { getAllItems } = useSKU();
     const [skuItems, setSkuItems] = useState([]);
     const [items, setItems] = useState([]);
@@ -33,22 +34,18 @@ const PurchaseItemwise = () => {
         expiryDate: ''
     });
 
-    useEffect(() => {
-        fetchSkuItems()
-    }, []);
+    // const fetchSkuItems = async () => {
+    //     try {
+    //         const response = await getAllItems();
+    //         const data = response.data;
+    //         console.log(data);
 
-    const fetchSkuItems = async () => {
-        try {
-            const response = await getAllItems();
-            const data = response.data;
-            console.log(data);
-
-            setSkuItems(data);
-        } catch (error) {
-            console.error('Error fetching SKU items:', error);
-            toast.error('Failed to fetch SKU items', 'error');
-        }
-    };
+    //         setSkuItems(data);
+    //     } catch (error) {
+    //         console.error('Error fetching SKU items:', error);
+    //         toast.error('Failed to fetch SKU items', 'error');
+    //     }
+    // };
 
     const getItemName = (code) => {
         const item = skuItems.find(sku => sku.code.toLowerCase() === code.toLowerCase());
@@ -174,7 +171,8 @@ const PurchaseItemwise = () => {
 
         const finalPayload = {
             date: mainDate,
-            items: formattedItems
+            items: formattedItems,
+            depo: user.depo
         };
 
         console.log('Sending payload:', finalPayload); // Debug log

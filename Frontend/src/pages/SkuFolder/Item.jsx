@@ -22,14 +22,6 @@ const Item = () => {
     getAllFlavours,
   } = useSKU();
 
-  useEffect(() => {
-    getAllItems();
-    getAllContainers();
-    getAllFlavours();
-    getAllPackages();
-  }, [])
-
-
   const [showModal, setShowModal] = useState(false);
   const [editId, setEditId] = useState(null);
   const [editItem, setEditItem] = useState({});
@@ -372,7 +364,7 @@ const Item = () => {
                 value={editItem.name}
                 className='edit-input'
                 onChange={(e) =>
-                  setEditItem({ ...editItem, name: e.target.value.trim().toUpperCase()  })
+                  setEditItem({ ...editItem, name: e.target.value.toUpperCase()  })
                 }
                 onKeyDown={(e) => handleKeyNavigation(e, "container")}
               />
@@ -382,7 +374,7 @@ const Item = () => {
                 value={editItem.container}
                 className='edit-input'
                 onChange={(e) =>
-                  setEditItem({ ...editItem, container: e.target.value.trim().toUpperCase()  })
+                  setEditItem({ ...editItem, container: e.target.value.toUpperCase()})
                 }
                 onKeyDown={(e) => handleKeyNavigation(e, "package")}
               />
@@ -392,7 +384,7 @@ const Item = () => {
                 value={editItem.package}
                 className='edit-input'
                 onChange={(e) =>
-                  setEditItem({ ...editItem, package: e.target.value.trim().toUpperCase()  })
+                  setEditItem({ ...editItem, package: e.target.value.toUpperCase()})
                 }
                 onKeyDown={(e) => handleKeyNavigation(e, "flavour")}
               />
@@ -402,7 +394,7 @@ const Item = () => {
                 value={editItem.flavour}
                 className='edit-input'
                 onChange={(e) =>
-                  setEditItem({ ...editItem, flavour: e.target.value.trim().toUpperCase()  })
+                  setEditItem({ ...editItem, flavour: e.target.value.toUpperCase()  })
                 }
                 onKeyDown={(e) => handleKeyNavigation(e, "status")}
               />
@@ -488,7 +480,7 @@ const Item = () => {
                   type="text"
                   value={newItem.name}
                   onChange={(e) =>
-                    setNewItem({ ...newItem, name: e.target.value.trim().toUpperCase()  })
+                    setNewItem({ ...newItem, name: e.target.value.toUpperCase() })
                   }
                   onKeyDown={(e) => handleModalKeyNavigation(e, "name")}
                   placeholder="Enter item name"
@@ -501,7 +493,7 @@ const Item = () => {
                 <select
                   ref={modalContainerRef}
                   value={newItem.container}
-                  onChange={(e) => setNewItem({ ...newItem, container: e.target.value.trim().toUpperCase()  })}
+                  onChange={(e) => setNewItem({ ...newItem, container: e.target.value })}
                   onKeyDown={(e) => handleModalKeyNavigation(e, "container")}
                 >
                   <option value="">Select container</option>
@@ -510,7 +502,7 @@ const Item = () => {
                   ) : (
                     containers.map((c) => (
                       <option key={c._id || c} value={c.name || c}>
-                        {c.name || c}
+                        {c.name.toUpperCase() || c.toUpperCase()}
                       </option>
                     ))
                   )}
@@ -522,7 +514,7 @@ const Item = () => {
                 <select
                   ref={modalPackageRef}
                   value={newItem.package}
-                  onChange={(e) => setNewItem({ ...newItem, package: e.target.value.trim().toUpperCase()  })}
+                  onChange={(e) => setNewItem({ ...newItem, package: e.target.value })}
                   onKeyDown={(e) => handleModalKeyNavigation(e, "package")}
                 >
                   <option value="">Select package</option>
@@ -531,7 +523,7 @@ const Item = () => {
                   ) : (
                     packages.map((c) => (
                       <option key={c._id || c} value={c.name || c}>
-                        {c.name || c}
+                        {c.name.toUpperCase() || c.toUpperCase()}
                       </option>
                     ))
                   )}
@@ -543,7 +535,7 @@ const Item = () => {
                 <select
                   ref={modalFlavourRef}
                   value={newItem.flavour}
-                  onChange={(e) => setNewItem({ ...newItem, flavour: e.target.value.trim().toUpperCase()  })}
+                  onChange={(e) => setNewItem({ ...newItem, flavour: e.target.value })}
                   onKeyDown={(e) => handleModalKeyNavigation(e, "flavour")}
                 >
                   <option value="">Select flavour</option>
@@ -552,7 +544,7 @@ const Item = () => {
                   ) : (
                     flavours.map((c) => (
                       <option key={c._id || c} value={c.name || c}>
-                        {c.name || c}
+                        {c.name.toUpperCase() || c.toUpperCase()}
                       </option>
                     ))
                   )}

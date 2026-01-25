@@ -1,7 +1,8 @@
-const { Flavour } = require('../../models/SKU');
-const Depo = require("../../models/depoModal");
+import { Flavour } from '../../models/SKU.js';
+import Depo from "../../models/depoModal.js";
+import mongoose from 'mongoose';
 
-exports.addFlavour = async (req, res) => {
+export const addFlavour = async (req, res) => {
     try {
         const { serial, name, depo } = req.body;
 
@@ -29,9 +30,9 @@ exports.addFlavour = async (req, res) => {
 };
 
 
-exports.getAllFlavour = async (req, res) => {
+export const getAllFlavour = async (req, res) => {
     try {
-        const {depo} = req.body;
+        const {depo} = req.query;
         if(!depo) return res.status(400).json({message:"Depo is required"});
 
         if (!mongoose.Types.ObjectId.isValid(depo)) {
@@ -49,7 +50,7 @@ exports.getAllFlavour = async (req, res) => {
     }
 };
 
-exports.getFlavourbyID = async (req, res) => {
+export const getFlavourbyID = async (req, res) => {
     try {
         const flavour = await Flavour.findById(req.params.id);
         if (!flavour) return res.status(404).json({ message: 'flavour Not found' });
@@ -59,7 +60,7 @@ exports.getFlavourbyID = async (req, res) => {
     }
 };
 
-exports.updateFlavour = async (req, res) => {
+export const updateFlavour = async (req, res) => {
     try {
         const updated = await Flavour.findByIdAndUpdate(
             req.params.id,
@@ -73,7 +74,7 @@ exports.updateFlavour = async (req, res) => {
     }
 };
 
-exports.deleteFlavour = async (req, res) => {
+export const deleteFlavour = async (req, res) => {
     try {
         const deleted = await Flavour.findByIdAndDelete(req.params.id);
         if (!deleted) return res.status(404).json({ message: "flavour not found" });

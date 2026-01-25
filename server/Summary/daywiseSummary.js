@@ -1,13 +1,13 @@
-const LoadOut = require('../models/transaction/LoadOut.js');
-const LoadIn = require('../models/transaction/loadIn.js');
-const S_sheet = require('../models/transaction/s_sheet.js');
-const { Item } = require('../models/SKU.js');
-const Salesman = require('../models/salesman.js');
-const CashCredit = require('../models/transaction/CashCredit.js');
-const Rates = require('../models/rates.js');
+import LoadOut from '../models/transaction/LoadOut.js';
+import LoadIn from '../models/transaction/loadIn.js';
+import S_sheet from '../models/transaction/s_sheet.js';
+import { Item } from '../models/SKU.js';
+import Salesman from '../models/salesman.js';
+import CashCredit from '../models/transaction/CashCredit.js';
+import Rates from '../models/rates.js';
 
 
-exports.DaywiseSummary = async (req, res) => {
+export const DaywiseSummary = async (req, res) => {
     const normalize = v => v?.trim().toLowerCase();
     try {
         const { startDate, endDate } = req.body;
@@ -187,7 +187,4 @@ exports.DaywiseSummary = async (req, res) => {
             success: false
         });
     }
-
-
-
-}
+};

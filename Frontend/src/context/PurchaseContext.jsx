@@ -1,15 +1,21 @@
 import React, { createContext, useState, useContext } from 'react';
+import { useAuth } from './AuthContext';
 
 
 const PurchaseContext = createContext();
 
 // Provider Component
 export const PurchaseProvider = ({ children }) => {
+    const { user } = useAuth();
     const [purchases, setPurchases] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
-    const API_URL = 'http://localhost:3000/purchase';
+    let API_URL;
+    if (user && user.depo) {
+         API_URL = `http://localhost:3000/purchase?depo=${user.depo}`;
+    }
+
 
     // CREATE - Add new purchase
     const createPurchase = async (purchaseData) => {
@@ -30,10 +36,10 @@ export const PurchaseProvider = ({ children }) => {
             }
 
             const data = await response.json();
-            
+
             // Add new purchase to state
             setPurchases([data.data, ...purchases]);
-            
+
             setLoading(false);
             return { success: true, data: data.data };
 
@@ -58,7 +64,7 @@ export const PurchaseProvider = ({ children }) => {
 
             const data = await response.json();
             setPurchases(data.data);
-            
+
             setLoading(false);
             return { success: true, data: data.data };
 
@@ -82,7 +88,7 @@ export const PurchaseProvider = ({ children }) => {
             }
 
             const data = await response.json();
-            
+
             setLoading(false);
             return { success: true, data: data.data };
 
@@ -112,12 +118,12 @@ export const PurchaseProvider = ({ children }) => {
             }
 
             const data = await response.json();
-            
+
             // Update purchase in state
-            setPurchases(purchases.map(p => 
+            setPurchases(purchases.map(p =>
                 p._id === id ? data.data : p
             ));
-            
+
             setLoading(false);
             return { success: true, data: data.data };
 
@@ -144,7 +150,7 @@ export const PurchaseProvider = ({ children }) => {
 
             // Remove purchase from state
             setPurchases(purchases.filter(p => p._id !== id));
-            
+
             setLoading(false);
             return { success: true };
 

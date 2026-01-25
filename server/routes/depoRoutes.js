@@ -1,6 +1,6 @@
-const express = require ('express');
+import express from 'express';
 
-const {addDepo , getAllDepo , updateDepo , deleteDepo} = require('../controllers/depoController.js');
+import {addDepo , getAllDepo , updateDepo , deleteDepo} from '../controllers/depoController.js';
 
 const router = express.Router();
 
@@ -9,4 +9,4 @@ router.get('/',getAllDepo);
 router.patch('/:id', updateDepo);
 router.delete('/delete/:id',deleteDepo);
 
-module.exports = router;
+export default router;

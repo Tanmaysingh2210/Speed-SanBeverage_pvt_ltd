@@ -1,11 +1,12 @@
 import React, { useContext, createContext, useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import api from '../api/api';
-
+import { useAuth } from './AuthContext';
 
 const TransationContext = createContext();
 
 export function TransactionProvider({ children }) {
+    const{user, isAuthenticated} = useAuth();
     const [loadout, setLoadout] = useState([]);
     const [loadin, setLoadin] = useState([]);
     const [cashCredit, setCashCredit] = useState([]);
@@ -76,7 +77,7 @@ export function TransactionProvider({ children }) {
     const getAllLoadout = async () => {
         try {
             setLoading(true);
-            const res = await api.get(`/transaction/loadout`);
+            const res = await api.get(`/transaction/loadout?depo=${user.depo}`);
             setLoadout(res.data);
             return res.data;
         } catch (err) {
@@ -91,7 +92,6 @@ export function TransactionProvider({ children }) {
             setLoading(true);
             const res = await api.post('/transaction/loadin/add', payload);
             toast.success(res.data.message || "loadin added successfully");
-            // await getAllLoadin();
             return res.data;
         } catch (err) {
             toast.error(err.response?.data?.message || "Error adding loadin");
@@ -120,7 +120,6 @@ export function TransactionProvider({ children }) {
             setLoading(true);
             const res = await api.patch(`/transaction/loadin/update/${id}`, payload);
             toast.success(res.data.message || "loadin updated successfully");
-            // await getAllLoadin();
             return res.data;
 
         } catch (err) {
@@ -136,9 +135,7 @@ export function TransactionProvider({ children }) {
             setLoading(true);
             const res = await api.delete(`/transaction/loadin/delete/${id}`);
             toast.success(res.data.message || "loadin deleted successfully");
-            // await getAllLoadin();
             return res.data;
-
         } catch (err) {
             toast.error(err.response?.data?.message || "Error deleting loadin");
             throw err;
@@ -150,7 +147,7 @@ export function TransactionProvider({ children }) {
     const getAllLoadin = async () => {
         try {
             setLoading(true);
-            const res = await api.get(`/transaction/loadin`);
+            const res = await api.get(`/transaction/loadin?depo=${user.depo}`);
             setLoadin(res.data);
             return res.data;
         } catch (err) {
@@ -260,11 +257,10 @@ export function TransactionProvider({ children }) {
             getCash_credit,
             updateCash_credit,
             deleteCash_credit,
-
+            
             getSettlement,
 
             FormatDate
-
         }} >
             {children}
         </TransationContext.Provider>

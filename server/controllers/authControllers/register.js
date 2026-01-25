@@ -1,8 +1,9 @@
-const nodemailer = require('nodemailer');
-const crypto = require('crypto');
-const User = require('../../models/user');
-const bcrypt = require('bcrypt');
-const Depo = require("../../models/depoModal");
+import nodemailer from 'nodemailer';
+import crypto from 'crypto';
+import User from '../../models/user.js';
+import bcrypt from 'bcrypt';
+import Depo from "../../models/depoModal.js";
+import mongoose from 'mongoose';
 
 const transporter = nodemailer.createTransport({
     service: 'gmail',
@@ -12,12 +13,12 @@ const transporter = nodemailer.createTransport({
     }
 });
 
-exports.transporter = transporter;
+export { transporter };
 
 const generateOtp = () => crypto.randomInt(100000, 999999).toString();
 
 
-exports.register = async (req, res) => {
+export const register = async (req, res) => {
     try {
         const { name, email, password, depo } = req.body;
         if (!name || !email || !password || !depo) return res.status(400).json({ message: "All fields are required!" });

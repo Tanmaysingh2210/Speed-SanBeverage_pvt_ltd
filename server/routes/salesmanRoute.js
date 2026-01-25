@@ -1,5 +1,5 @@
-const express = require('express');
-const {addSalesman, getAllSalesmen, getSalesmanById, updateSalesman, deleteSalesman}=require('../controllers/salesmanController/salesmanController.js')
+import express from 'express';
+import {addSalesman, getAllSalesmen, getSalesmanById, updateSalesman, deleteSalesman} from '../controllers/salesmanController/salesmanController.js';
 
 const router=express.Router();
 
@@ -9,4 +9,4 @@ router.get('/:id', getSalesmanById);
 router.patch('/:id', updateSalesman);
 router.delete('/delete/:id', deleteSalesman);
 
-module.exports = router;        
+export default router;        

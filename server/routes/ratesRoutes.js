@@ -1,6 +1,5 @@
-const express = require('express');
-const { addRate, getAllRates, getLatestByDate, getRateById, deleteRate, updateRate } = require('../controllers/ratesController/ratesController');
-const Rate = require('../models/rates')
+import express from 'express';
+import { addRate, getAllRates, getLatestByDate, getRateById, deleteRate, updateRate } from '../controllers/ratesController/ratesController.js';
 
 
 const router = express.Router()
@@ -13,4 +12,4 @@ router.patch("/:id", updateRate)
 
 router.get("/price", getLatestByDate);
 
-module.exports = router;
+export default router;

@@ -1,5 +1,5 @@
-const express = require('express');
-const { addLoadout, getLoadOut, getAllLoadOuts, updateLoadOut, deleteLoadOut } = require('../../controllers/transactionController/loadOutController');
+import express from 'express';
+import { addLoadout, getLoadOut, getAllLoadOuts, updateLoadOut, deleteLoadOut } from '../../controllers/transactionController/loadOutController.js';
 
 
 const router = express.Router();
@@ -10,4 +10,4 @@ router.get('/', getAllLoadOuts);
 router.patch('/update/:id', updateLoadOut);
 router.delete('/delete/:id', deleteLoadOut);
 
-module.exports = router;
+export default router;

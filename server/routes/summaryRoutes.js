@@ -1,11 +1,11 @@
-const express = require("express");
+import express from "express";
 const router = express.Router();
-const { ItemWiseSummary } = require('../Summary/ItemWise.js');
-const { CashChequeSummary } = require('../Summary/cashCheque.js');
-const { salesmanwiseItemwiseSummary } = require('../Summary/SalesmanwiseItemwise.js');
-const { EmtAndMtSummary } = require('../Summary/emtAndMt.js');
-const { DaywiseSummary } = require('../Summary/daywiseSummary.js');
-const {shortExcessSummary} =require('../Summary/ShortExcessSummary.js')
+import { ItemWiseSummary } from '../Summary/ItemWise.js';
+import { CashChequeSummary } from '../Summary/cashCheque.js';
+import { salesmanwiseItemwiseSummary } from '../Summary/SalesmanwiseItemwise.js';
+import { EmtAndMtSummary } from '../Summary/emtAndMt.js';
+import { DaywiseSummary } from '../Summary/daywiseSummary.js';
+import {shortExcessSummary} from '../Summary/ShortExcessSummary.js';
 
 router.post('/itemwise', ItemWiseSummary);
 router.post('/cashcheque', CashChequeSummary);
@@ -14,4 +14,4 @@ router.get('/short-excess-summary', shortExcessSummary);
 router.post('/emtandmt', EmtAndMtSummary);
 router.post('/daywise', DaywiseSummary);
 
-module.exports = router;
+export default router;

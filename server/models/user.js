@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const userSchema = new mongoose.Schema({
     name: { type: String, required: true },
@@ -16,4 +16,4 @@ const userSchema = new mongoose.Schema({
     resetPasswordOtpExpire: { type: Date },
 })
 
-module.exports = mongoose.model('user', userSchema);
+export default mongoose.model('user', userSchema);

@@ -1,7 +1,8 @@
-const { Container } = require('../../models/SKU');
-const Depo = require("../../models/depoModal");
+import { Container } from '../../models/SKU.js';
+import Depo from "../../models/depoModal.js";
+import mongoose from 'mongoose';
 
-exports.addContainer = async (req, res) => {
+export const addContainer = async (req, res) => {
     try {
         const { serial, name, depo } = req.body;
 
@@ -28,9 +29,9 @@ exports.addContainer = async (req, res) => {
     }
 };
 
-exports.getAllContainer = async (req, res) => {
+export const getAllContainer = async (req, res) => {
     try {
-        const { depo } = req.body;
+        const { depo } = req.query;
         if(!depo) return res.status(400).json({message:"Depo is required"});
         if (!mongoose.Types.ObjectId.isValid(depo)) {
             return res.status(400).json({ message: "Invalid depo ID" });
@@ -47,7 +48,7 @@ exports.getAllContainer = async (req, res) => {
     }
 };
 
-exports.getContainerbyID = async (req, res) => {
+export const getContainerbyID = async (req, res) => {
     try {
         const container = await Container.findById(req.params.id);
         if (!container) return res.status(404).json({ message: 'Container Not found' });
@@ -57,7 +58,7 @@ exports.getContainerbyID = async (req, res) => {
     }
 };
 
-exports.updateContainer = async (req, res) => {
+export const updateContainer = async (req, res) => {
     try {
         const updated = await Container.findByIdAndUpdate(
             req.params.id,
@@ -71,7 +72,7 @@ exports.updateContainer = async (req, res) => {
     }
 };
 
-exports.deleteContainer = async (req, res) => {
+export const deleteContainer = async (req, res) => {
     try {
         const deleted = await Container.findByIdAndDelete(req.params.id);
         if (!deleted) return res.status(404).json({ message: "Container not found" });

@@ -1,19 +1,24 @@
 import React, { useState, useEffect, useContext, createContext } from 'react';
 import toast from 'react-hot-toast'
 import api from '../api/api';
+import { useAuth } from "./AuthContext";
+
 
 
 const SalesmanContext = createContext();
 
 export function SalesmanProvider({ children }) {
+    const { user, isAuthenticated } = useAuth();
     const [salesmans, setSalesmans] = useState([]);
     const [loading, setLoading] = useState(false);
 
     const getAllSalesmen = async () => {
+        if (!user || !user.depo) return;
         try {
             setLoading(true);
-            const res = await api.get("/salesman/");
+            const res = await api.get(`/salesman?depo=${user.depo}`);
             setSalesmans(res.data);
+            return res;
         } catch (err) {
             toast.error(err.response?.data?.message || "Error fetching salesman");
         } finally {
@@ -37,7 +42,6 @@ export function SalesmanProvider({ children }) {
             setLoading(true);
             const res = await api.post("/salesman/", payload);
             toast.success(res.data.message || "Salesman added successfully");
-
             await getAllSalesmen();
             return res;
         } catch (err) {
@@ -55,7 +59,7 @@ export function SalesmanProvider({ children }) {
             setLoading(true);
             const res = await api.patch(`/salesman/${id}`, payload);
             toast.success(res.data.message || "Salesman updated");
-            getAllSalesmen();
+            await getAllSalesmen();
         } catch (err) {
             toast.error(err.response?.data?.message || "Error updating salesman");
             throw err;
@@ -79,8 +83,9 @@ export function SalesmanProvider({ children }) {
     };
 
     useEffect(() => {
+        if (!isAuthenticated || !user.depo) return;
         getAllSalesmen();
-    }, []);
+    }, [isAuthenticated]);
 
     return (
         <SalesmanContext.Provider value={{ salesmans, loading, getAllSalesmen, updateSalesman, deleteSalesman, addSalesman, getSalesmanByID }} >{children}</SalesmanContext.Provider>
