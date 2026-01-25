@@ -33,9 +33,9 @@ const LatestPrice = () => {
     const modalRef = useRef(null);
 
     const calculateNetRate = (basePrice, perTax, perDisc) => {
-        if (!basePrice || !perTax) return '';
-        let taxablePrice = (parseFloat(basePrice) - (parseFloat(basePrice) * parseFloat(perDisc) / 100)).toFixed(2);
-        return (parseFloat(taxablePrice) + (parseFloat(taxablePrice) * parseFloat(perTax) / 100)).toFixed(2);
+        if (!basePrice ) return '';
+        let taxablePrice = (parseFloat(basePrice) - (parseFloat(basePrice) * parseFloat(perDisc || 0) / 100)).toFixed(2);
+        return (parseFloat(taxablePrice) + (parseFloat(taxablePrice) * parseFloat(perTax || 0) / 100)).toFixed(2);
     };
 
     useEffect(() => {
@@ -136,7 +136,7 @@ const LatestPrice = () => {
     const handleSave = async (e) => {
         e.preventDefault();
 
-        if (!newPrice.basePrice || !newPrice.perTax || !newPrice.date) {
+        if (!newPrice.basePrice || !newPrice.perTax || !newPrice.date || !user || !user.depo) {
             toast.error("⚠️ Please fill all fields!");
             return;
         }
@@ -144,11 +144,11 @@ const LatestPrice = () => {
         const payload = {
             code: newPrice.code.trim().toUpperCase(),
             basePrice: Number(newPrice.basePrice),
-            perTax: Number(newPrice.perTax),
-            perDisc: Number(newPrice.perDisc),
+            perTax: Number(newPrice.perTax) || 0,
+            perDisc: Number(newPrice.perDisc) || 0,
             date: newPrice.date, // backend expects `date` (lowercase)
             status: editId ? newPrice.status : "Active", //  Force Active for new prices
-            depo:user.depo
+            depo:user?.depo
         };
         console.log('add/update price payload', payload);
 
@@ -307,7 +307,7 @@ const LatestPrice = () => {
                                     type="text"
                                     value={newPrice.code}
                                     onChange={(e) =>
-                                        setNewPrice({ ...newPrice, code: e.target.value })
+                                        setNewPrice({ ...newPrice, code: e.target.value.trim().toUpperCase() })
                                     }
                                     onKeyDown={(e) => handleKeyNav(e, "code")}
                                     disabled={editId} // Disable code editing when updating

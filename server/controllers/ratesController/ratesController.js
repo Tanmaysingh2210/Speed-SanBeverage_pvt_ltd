@@ -6,7 +6,7 @@ export const addRate = async (req, res) => {
     try {
         const { code, basePrice, perTax, date, perDisc, depo, status } = req.body;
 
-        if (!code || !basePrice || !perTax || !date || !perDisc || !depo) {
+        if (!code || !basePrice || !date || !depo) {
             return res.status(400).json({ message: "All fields are required" });
         }
 
@@ -41,8 +41,8 @@ export const addRate = async (req, res) => {
         const created = await Rate.create({
             itemCode: code,
             basePrice,
-            perTax,
-            perDisc,
+            perTax: perTax || 0,
+            perDisc: perDisc || 0,
             date,
             depo,
             status: "Active", // Always Active for new prices

@@ -11,6 +11,7 @@ export function PricesProvider({ children }) {
     const [loading, setLoading] = useState(false);
 
     const getAllPrices = async () => {
+        if(!user || !user.depo) return;
         try {
             setLoading(true);
             const res = await api.get(`/rates?depo=${user.depo}`);
@@ -24,10 +25,11 @@ export function PricesProvider({ children }) {
     };
 
     const getPriceByDate = async (code, date) => {
+        if(!user || !user.depo) return;
         try {
             setLoading(true);
             const res = await api.get(`/rates/price`, {
-                params: { code, date, depo: user.depo }
+                params: { code, date, depo: user?.depo }
             });
             return res.data;
         } catch (err) {
@@ -93,9 +95,9 @@ export function PricesProvider({ children }) {
     };
 
     useEffect(() => {
-        if(!isAuthenticated) return;
+        if(!isAuthenticated || !user.depo) return;
         getAllPrices();
-    }, [isAuthenticated]);
+    }, [isAuthenticated, user]);
 
     return (
         <PriceContext.Provider value={{ prices, loading, getAllPrices, updatePrice, getPriceByDate, getPriceByID, deletePrice, addPrice }} >{children}</PriceContext.Provider>
