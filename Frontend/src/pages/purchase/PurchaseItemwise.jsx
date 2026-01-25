@@ -27,6 +27,9 @@ const PurchaseItemwise = () => {
     const modalAddRef = useRef(null)
     const modalSubmitRef = useRef(null)
 
+    useEffect(() => {
+    fetchSkuItems();
+}, []);
     const [formData, setFormData] = useState({
         date: '',
         itemCode: '',
@@ -34,18 +37,18 @@ const PurchaseItemwise = () => {
         expiryDate: ''
     });
 
-    // const fetchSkuItems = async () => {
-    //     try {
-    //         const response = await getAllItems();
-    //         const data = response.data;
-    //         console.log(data);
+    const fetchSkuItems = async () => {
+        try {
+            const response = await getAllItems();
+            const data = response.data;
+            console.log(data);
 
-    //         setSkuItems(data);
-    //     } catch (error) {
-    //         console.error('Error fetching SKU items:', error);
-    //         toast.error('Failed to fetch SKU items', 'error');
-    //     }
-    // };
+            setSkuItems(data);
+        } catch (error) {
+            console.error('Error fetching SKU items:', error);
+            toast.error('Failed to fetch SKU items', 'error');
+        }
+    };
 
     const getItemName = (code) => {
         const item = skuItems.find(sku => sku.code.toLowerCase() === code.toLowerCase());

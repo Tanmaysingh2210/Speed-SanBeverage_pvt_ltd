@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 import User from '../models/user.js';
 
-const MONGO_URI= `mongodb+srv://wallbookservice_db_user:kqNT5kXUnwHnqYHy@cluster0.jlglxtw.mongodb.net/Speed`;
+const MONGO_URI = `mongodb://127.0.0.1:27017/speed`;
 
 const connectDB = async () => {
     try {
