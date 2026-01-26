@@ -1,14 +1,15 @@
 import express from 'express';
 const router = express.Router();
-import LoadOut from '../models/transaction/LoadOut.js';
-import PurchaseItemwise from '../models/purchase/PurchaseItemwise.js';
 import StockService from '../services/StockCalculator.js';
+import requireAuth from '../middleware/requireAuth.js';
+import requireDepo from '../middleware/requireDepo.js';
+
+router.use(requireAuth);
+router.use(requireDepo);
 
 router.get('/', async (req, res) => {
     try {
-        await StockService.cleanupExpiredItems();
-
-        const stock = await StockService.getCurrentStock();
+        const stock = await StockService.getCurrentStock(req.user.depo);
 
         res.json({
             success: true,
@@ -30,8 +31,13 @@ router.get('/', async (req, res) => {
 
 router.get('/expiring', async (req, res) => {
     try {
-        const days = parseInt(req.query.days) || 30;
-        const expiringItems = await StockService.getExpiringItems(days);
+        let days = Number(req.query.days);
+
+        if (!Number.isInteger(days) || days <= 0) {
+            days = 30;
+        }
+
+        const expiringItems = await StockService.getExpiringItems(req.user.depo, days);
 
         res.json({
             success: true,
@@ -53,7 +59,7 @@ router.get('/expiring', async (req, res) => {
 // Manual cleanup endpoint
 router.post('/cleanup', async (req, res) => {
     try {
-        const result = await StockService.cleanupExpiredItems();
+        const result = await StockService.cleanupExpiredItems(req.user.depo);
 
         res.json({
             success: true,
@@ -74,10 +80,11 @@ router.post('/cleanup', async (req, res) => {
 // Get stock for specific item
 router.get('/:itemCode', async (req, res) => {
     try {
-        await StockService.cleanupExpiredItems();
-
-        const allStock = await StockService.getCurrentStock();
-        const itemStock = allStock.find(s => s.itemCode === req.params.itemCode);
+        const itemStock =
+            await StockService.getStockByItemCode(
+                req.user.depo,
+                req.params.itemCode
+            );
 
         if (!itemStock) {
             return res.status(404).json({
@@ -91,7 +98,6 @@ router.get('/:itemCode', async (req, res) => {
             data: itemStock
         });
     } catch (error) {
-        console.error('Error fetching item stock:', error);
         res.status(500).json({
             success: false,
             message: 'Failed to fetch item stock',
@@ -99,5 +105,6 @@ router.get('/:itemCode', async (req, res) => {
         });
     }
 });
+
 
 export default router;

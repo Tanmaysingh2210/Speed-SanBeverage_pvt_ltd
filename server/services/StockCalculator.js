@@ -3,10 +3,10 @@ import Loadout from '../models/transaction/LoadOut.js';
 import PurchaseItemwise from '../models/purchase/PurchaseItemwise.js';
 
 class StockService {
-    static async cleanupExpiredItems() {
+    static async cleanupExpiredItems(depoId) {
         const now = new Date();
 
-        const purchases = await PurchaseItemwise.find({ isFullyProcessed: false });
+        const purchases = await PurchaseItemwise.find({ depo: depoId, isFullyProcessed: false });
 
         let totalExpiredQty = 0;
         const expiredLog = [];
@@ -20,7 +20,8 @@ class StockService {
                         itemCode: item.itemCode,
                         qty: item.remainingQty,
                         expiryDate: item.expiryDate,
-                        purchaseDate: purchase.date
+                        purchaseDate: purchase.date,
+                        depo: depoId
                     });
                     totalExpiredQty += item.remainingQty;
                     hasChanges = true;
@@ -29,10 +30,9 @@ class StockService {
                 return true;
             });
 
+            const allExhausted = purchase.items.length === 0 || purchase.items.every(item => item.remainingQty <= 0);
 
-            const allExhausted = purchase.items.every(item => item.remainingQty <= 0);
-
-            if (allExhausted || purchase.items.length === 0) {
+            if (allExhausted) {
                 purchase.isFullyProcessed = true;
                 hasChanges = true;
             }
@@ -42,7 +42,7 @@ class StockService {
         return { totalExpiredQty, expiredLog };
     }
 
-    static async processLoadout(loadoutItems) {
+    static async processLoadout(loadoutItems, depoId) {
         const results = [];
         const now = new Date();
 
@@ -51,6 +51,7 @@ class StockService {
             const allocations = [];
 
             const purchases = await PurchaseItemwise.find({
+                depo: depoId,
                 isFullyProcessed: false,
                 'items.itemCode': loadoutItem.itemCode,
                 'items.remainingQty': { $gt: 0 },
@@ -76,8 +77,9 @@ class StockService {
                             qty: qtyToDeduct
                         });
 
-                        const allExhausted = purchase.items.every(i => i.remainingQty <= 0);
-                        if (allExhausted) purchase.isFullyProcessed = true;
+                        if (purchase.items.every(i => i.remainingQty <= 0)) { //allexhaousted
+                            purchase.isFullyProcessed = true;
+                        }
 
                         await purchase.save();
 
@@ -99,10 +101,11 @@ class StockService {
 
 
     //get current stock summary
-    static async getCurrentStock() {
+    static async getCurrentStock(depoId) {
         const now = new Date();
 
         const purchases = await PurchaseItemwise.find({
+            depo: depoId,
             isFullyProcessed: false
         });
 
@@ -144,11 +147,19 @@ class StockService {
         );
     }
 
-    static async getExpiringItems(daysThreshold = 30) {
+
+    static async getStockByItemCode(depoId, itemCode) {
+        const stock = await this.getCurrentStock(depoId);
+        return stock.find(s => s.itemCode === itemCode);
+    }
+
+
+    static async getExpiringItems(depoId, daysThreshold = 30) {
         const now = new Date();
         const thresholdDate = new Date(now.getTime() + (daysThreshold * 24 * 60 * 60 * 1000));
 
         const purchases = await PurchaseItemwise.find({
+            depo: depoId,
             isFullyProcessed: false,
             'items.expiryDate': { $gt: now, $lte: thresholdDate },
             'items.remainingQty': { $gt: 0 }
