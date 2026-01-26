@@ -327,7 +327,7 @@ export function SKUProvider({ children }) {
   };
 
   useEffect(() => {
-    if (!isAuthenticated || !user.depo) return;
+    if (!isAuthenticated || !user || !user.depo) return;
 
     const fetchAll = async () => {
       try {

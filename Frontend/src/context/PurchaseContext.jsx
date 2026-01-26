@@ -11,9 +11,9 @@ export const PurchaseProvider = ({ children }) => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
-    let API_URL;
+    let API_URL = "";
     if (user && user.depo) {
-         API_URL = `http://localhost:3000/purchase?depo=${user.depo}`;
+        API_URL = `http://localhost:3000/purchase?depo=${user.depo}`;
     }
 
 
@@ -52,6 +52,8 @@ export const PurchaseProvider = ({ children }) => {
 
     // READ - Get all purchases
     const getAllPurchases = async () => {
+        if (!user || !user.depo) return;
+        
         setLoading(true);
         setError(null);
 

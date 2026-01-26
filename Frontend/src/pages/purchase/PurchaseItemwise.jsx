@@ -151,6 +151,8 @@ const PurchaseItemwise = () => {
     };
 
     const handleSubmit = async () => {
+        if (!user || !user.depo) return;
+
         if (items.length === 0) {
             toast.error('Please add at least one item', 'error');
             return;
@@ -175,7 +177,7 @@ const PurchaseItemwise = () => {
         const finalPayload = {
             date: mainDate,
             items: formattedItems,
-            depo: user.depo
+            depo: user?.depo
         };
 
         console.log('Sending payload:', finalPayload); // Debug log
