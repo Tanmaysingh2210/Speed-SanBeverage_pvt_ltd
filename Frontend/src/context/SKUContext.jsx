@@ -13,12 +13,11 @@ export function SKUProvider({ children }) {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(false);
 
-
   const getAllContainers = async () => {
     if (!user || !user.depo) return;
     try {
       setLoading(true);
-      console.log(user.depo);
+      console.log(user.depo);  
       const res = await api.get(`/container?depo=${user.depo}`);
       setContainers(res.data);
       return res;

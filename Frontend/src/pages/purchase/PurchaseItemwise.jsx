@@ -8,8 +8,7 @@ import { useAuth } from '../../context/AuthContext';
 
 const PurchaseItemwise = () => {
     const { user } = useAuth();
-    const { getAllItems } = useSKU();
-    const [skuItems, setSkuItems] = useState([]);
+    const { items: skuItems } = useSKU();
     const [items, setItems] = useState([]);
     const [editingIndex, setEditingIndex] = useState(null);
     const [itemShow, setItemShow] = useState(false);
@@ -27,28 +26,12 @@ const PurchaseItemwise = () => {
     const modalAddRef = useRef(null)
     const modalSubmitRef = useRef(null)
 
-    useEffect(() => {
-        fetchSkuItems();
-    }, []);
     const [formData, setFormData] = useState({
         date: '',
         itemCode: '',
         qty: '',
         expiryDate: ''
     });
-
-    const fetchSkuItems = async () => {
-        try {
-            const response = await getAllItems();
-            const data = response.data;
-            console.log(data);
-
-            setSkuItems(data);
-        } catch (error) {
-            console.error('Error fetching SKU items:', error);
-            toast.error('Failed to fetch SKU items', 'error');
-        }
-    };
 
     const getItemName = (code) => {
         const item = skuItems.find(sku => sku.code.toLowerCase() === code.toLowerCase());
