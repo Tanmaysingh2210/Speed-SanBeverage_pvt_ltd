@@ -231,3 +231,48 @@
   background: #bbb;
   border-radius: 4px;
 }
+
+
+.input-dropdown {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  border: 1px solid #cfd4dc;
+  border-radius: 6px;
+  overflow: hidden;
+  background: #fff;
+}
+
+.input-dropdown input {
+  flex: 1;
+  border: none;
+  padding: 10px 12px;
+  font-size: 14px;
+  outline: none;
+}
+
+.input-dropdown input:disabled {
+  background: #f6f7f9;
+}
+
+.dropdown-btn {
+  width: 42px;
+  border: none;
+  border-left: 1px solid #cfd4dc;
+  background: #f2f4f7;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background 0.2s ease;
+}
+
+.dropdown-btn:hover {
+  background: #e6e9ee;
+}
+
+.dropdown-btn:active {
+  background: #dfe3ea;
+}
+.input-dropdown:focus-within {
+  border-color: #4f46e5;
+  box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.15);
+}

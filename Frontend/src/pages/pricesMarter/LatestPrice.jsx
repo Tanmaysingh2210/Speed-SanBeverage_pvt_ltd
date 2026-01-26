@@ -4,13 +4,13 @@ import { usePrice } from "../../context/PricesContext";
 import { useSKU } from "../../context/SKUContext";
 import toast from "react-hot-toast";
 import { useAuth } from "../../context/AuthContext";
-
-
+import { useItemModal } from '../../context/ItemModalContext';
+// import '../../pages/transaction/transaction.css'
 const LatestPrice = () => {
     const { user } = useAuth();
     const { prices, updatePrice, deletePrice, addPrice, loading } = usePrice();
     const { items } = useSKU();
-
+    const [itemShow, setItemShow] = useState(false);
     const [showModal, setShowModal] = useState(false);
     const [editId, setEditId] = useState(null);
     const [search, setSearch] = useState("");
@@ -22,7 +22,8 @@ const LatestPrice = () => {
         perDisc: "",
         status: "Active",
     });
-
+    const [modalQtyMap, setModalQtyMap] = useState({});
+    const { openItemModal } = useItemModal();
     const codeRef = useRef(null);
     const baseRef = useRef(null);
     const taxRef = useRef(null);
@@ -48,8 +49,8 @@ const LatestPrice = () => {
     const matchedItem =
         Array.isArray(items)
             ? items.find(
-                (sm) =>
-                    String(sm.code || sm.itemCode || '').toUpperCase() ===
+                (it) =>
+                    String(it.code || it.itemCode || '').toUpperCase() ===
                     String(newPrice.code || '').toUpperCase()
             )
             : null;
@@ -300,9 +301,10 @@ const LatestPrice = () => {
                     <div className="modal" ref={modalRef}>
                         <h2>{editId ? "Edit Price" : "Add New Price"}</h2>
                         <form onSubmit={handleSave}>
-                            <div className="form-group">
+                            <div className="form-group" >
                                 <label>Item Code</label>
-                                <input
+                                <div className="input-with-btn">
+                                   <input
                                     ref={codeRef}
                                     type="text"
                                     value={newPrice.code}
@@ -312,6 +314,20 @@ const LatestPrice = () => {
                                     onKeyDown={(e) => handleKeyNav(e, "code")}
                                     disabled={editId} // Disable code editing when updating
                                 />
+                                <button
+                                        type="button"
+                                        className="dropdown-btn"
+                                        onClick={() =>
+                                            openItemModal((code) =>
+                                                setNewPrice(prev => ({ ...prev, code: code.trim().toUpperCase() }))
+                                            )
+                                        }
+                                    >
+                                        ⌄
+                                    </button> 
+                                </div>
+                            
+                                
                             </div>
 
                             <div className="form-group">
@@ -427,6 +443,9 @@ const LatestPrice = () => {
                     </div>
                 </div>
             )}
+
+            
+
         </div>
     );
 };
