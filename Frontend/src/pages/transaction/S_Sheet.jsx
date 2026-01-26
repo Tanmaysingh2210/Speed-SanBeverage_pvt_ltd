@@ -58,7 +58,7 @@ const S_Sheet = () => {
         date: sheetData.date,
         trip: sheetData.trip,
         schm: Number(discount),
-        depo: user.depo
+        depo: user?.depo
       });
 
       toast.success("Discount saved successfully");
@@ -70,7 +70,7 @@ const S_Sheet = () => {
       }));
 
     } catch (err) {
-      console.error(err);
+      console.error(err?.data.message);
       toast.error("Failed to save discount");
     }
   };
@@ -89,7 +89,7 @@ const S_Sheet = () => {
         salesmanCode: sheet.salesmanCode.trim().toUpperCase(),
         date: sheet.date,
         trip: Number(sheet.trip) || 1,
-        depo: user.depo
+        depo: user?.depo
       });
 
       setSheetData(data); // store settlement details in UI

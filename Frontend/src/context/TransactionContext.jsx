@@ -217,6 +217,7 @@ export function TransactionProvider({ children }) {
         try {
             setLoading(true);
             const res = await api.post('/transaction/settlement', payload);
+            toast.success(res.data?.message || "Settlement calculated sucessfully" )
             return res.data;
         } catch (err) {
             toast.error(err.response?.data?.message || "Error fetching settlement");

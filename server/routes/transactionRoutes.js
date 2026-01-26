@@ -1,6 +1,6 @@
 import express from 'express';
 const router = express.Router();
-
+import mongoose from 'mongoose';
 import loadoutRoutes from './transactionRoutes/loadoutRoutes.js';
 import loadinRoutes from './transactionRoutes/loadinRoutes.js';
 import cashcreditRoutes from './transactionRoutes/cashcreditRoutes.js';
@@ -9,6 +9,7 @@ import Loadin from '../models/transaction/loadIn.js';
 import CashCredit from '../models/transaction/CashCredit.js';
 import Rate from '../models/rates.js';
 import S_sheet from '../models/transaction/s_sheet.js';
+import Depo from '../models/depoModal.js';
 
 router.use('/loadout', loadoutRoutes);
 router.use('/loadin', loadinRoutes);
@@ -20,6 +21,15 @@ router.post("/settlement", async (req, res) => {
 
         if (!salesmanCode || !date || !trip || !depo) return res.status(400).json({ message: "All field required" });
         const selectedDate = new Date(date);
+
+        if (!mongoose.Types.ObjectId.isValid(depo)) {
+            return res.status(400).json({ message: "Invalid depo ID" });
+        }
+
+        const depoExists = await Depo.findById(depo);
+        if (!depoExists) {
+            return res.status(400).json({ message: "Depo not found" });
+        }
 
         const [s_sheet, loadout, loadin, cashCredit] = await Promise.all([
             S_sheet.findOne({ salesmanCode, selectedDate, trip, depo }),
@@ -183,7 +193,7 @@ router.post("/settlement/save-schm", async (req, res) => {
         }
 
         const updated = await S_sheet.findOneAndUpdate(
-            { salesmanCode, date, trip , depo },
+            { salesmanCode, date, trip, depo },
             { $set: { schm } },
             { upsert: true, new: true }
         );
