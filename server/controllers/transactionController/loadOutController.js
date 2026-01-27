@@ -1,31 +1,24 @@
 import LoadOut from "../../models/transaction/LoadOut.js";
 import StockService from '../../services/StockCalculator.js';
-import Depo from '../../models/depoModal.js';
-import mongoose from 'mongoose';
+
 
 export const addLoadout = async (req, res) => {
     try {
-        const { salesmanCode, date, trip, items, depo } = req.body;
+        const { salesmanCode, date, trip, items } = req.body;
 
-        if (!salesmanCode || !date || !Array.isArray(items) || items.length === 0 || !depo) return res.status(400).json({ message: "All fields are required" });
+        if (!salesmanCode || !date || !Array.isArray(items) || items.length === 0) return res.status(400).json({ message: "All fields are required" });
 
-        if (!mongoose.Types.ObjectId.isValid(depo)) {
-            return res.status(400).json({ message: "Invalid depo ID" });
-        }
+        const depo = req.user?.depo;
 
-        const depoExists = await Depo.findById(depo);
-        if (!depoExists) {
-            return res.status(400).json({ message: "Depo not found" });
-        }
         const existing = await LoadOut.findOne({ salesmanCode: salesmanCode, date: date, trip, depo });
 
         if (existing) return res.status(400).json({ message: `Loadout record exists` });
 
 
         // Clean up expired items first
-        await StockService.cleanupExpiredItems();
+        await StockService.cleanupExpiredItems(depo);
         // Process loadout with FIFO logic
-        const allocations = await StockService.processLoadout(items);
+        const allocations = await StockService.processLoadout(items, depo );
         // Check for shortfalls
         const hasShortfall = allocations.some(a => a.shortfall > 0);
 
@@ -55,18 +48,10 @@ export const addLoadout = async (req, res) => {
 
 export const getLoadOut = async (req, res) => {
     try {
-        const { salesmanCode, date, trip, depo } = req.body;
-        if (!salesmanCode || !date || !trip || !depo) return res.status(400).json({ message: "All fields are required" });
+        const { salesmanCode, date, trip } = req.body;
+        if (!salesmanCode || !date || !trip) return res.status(400).json({ message: "All fields are required" });
 
-        if (!mongoose.Types.ObjectId.isValid(depo)) {
-            return res.status(400).json({ message: "Invalid depo ID" });
-        }
-
-        const depoExists = await Depo.findById(depo);
-        if (!depoExists) {
-            return res.status(400).json({ message: "Depo not found" });
-        }
-        const data = await LoadOut.findOne({ salesmanCode, date, trip, depo });
+        const data = await LoadOut.findOne({ salesmanCode, date, trip, depo: req.user?.depo });
         if (!data) return res.status(404).json({ message: "Loadout record not found" });
         res.status(200).json(data);
     } catch (err) {
@@ -76,7 +61,7 @@ export const getLoadOut = async (req, res) => {
 
 export const getAllLoadOuts = async (req, res) => {
     try {
-        const data = await LoadOut.find();
+        const data = await LoadOut.find({ depo: req.user?.depo });
         if (!data) return res.status(404).json({ message: "Record not found" });
         res.status(200).json(data);
     } catch (err) {
@@ -86,20 +71,26 @@ export const getAllLoadOuts = async (req, res) => {
 
 export const updateLoadOut = async (req, res) => {
     try {
-        const updated = await LoadOut.findByIdAndUpdate(req.params.id, req.body, {
-            new: true,
-            runValidators: true
-        });
-        if (!updated) return res.status(404).json({ message: "Loadout record not found" });
+        const updated = await LoadOut.findOneAndUpdate(
+            { _id: req.params.id, depo: req.user?.depo },
+            req.body,
+            { new: true, runValidators: true }
+        );
+
+        if (!updated) {
+            return res.status(404).json({ message: "Loadout not found" });
+        }
+
         res.status(200).json(updated);
     } catch (err) {
-        res.status(500).json({ message: "Error updating LoadOut", error: err.message });
+        res.status(500).json({ message: "Error updating loadout", error: err.message });
     }
 };
 
+
 export const deleteLoadOut = async (req, res) => {
     try {
-        const deleted = await LoadOut.findByIdAndDelete(req.params.id);
+        const deleted = await LoadOut.findOneAndDelete({ _id: req.params.id, depo: req.user?.depo });
         if (!deleted) return res.status(404).json({ message: "Loadout record not found" });
         res.status(200).json({ message: "LoadOut record deleted" });
     } catch (err) {

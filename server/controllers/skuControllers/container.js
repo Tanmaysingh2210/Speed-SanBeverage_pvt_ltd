@@ -1,22 +1,12 @@
 import { Container } from '../../models/SKU.js';
-import Depo from "../../models/depoModal.js";
-import mongoose from 'mongoose';
 
 export const addContainer = async (req, res) => {
     try {
-        const { serial, name, depo } = req.body;
+        const { serial, name } = req.body;
 
-        if (!serial || !name || !depo) return res.status(400).json({ message: "all fields are required" });
+        if (!serial || !name) return res.status(400).json({ message: "all fields are required" });
+        const depo = req.user?.depo;
 
-        if (!mongoose.Types.ObjectId.isValid(depo)) {
-            return res.status(400).json({ message: "Invalid depo ID" });
-        }
-
-        // 3️⃣ Check if depo exists
-        const depoExists = await Depo.findById(depo);
-        if (!depoExists) {
-            return res.status(400).json({ message: "Depo not found" });
-        }
 
         const existing = await Container.findOne({ name, depo });
         if (existing) return res.status(400).json({ message: "container already exists, please add different" });
@@ -31,17 +21,8 @@ export const addContainer = async (req, res) => {
 
 export const getAllContainer = async (req, res) => {
     try {
-        const { depo } = req.query;
-        if(!depo) return res.status(400).json({message:"Depo is required"});
-        if (!mongoose.Types.ObjectId.isValid(depo)) {
-            return res.status(400).json({ message: "Invalid depo ID" });
-        }
 
-        const depoExists = await Depo.findById(depo);
-        if (!depoExists) {
-            return res.status(400).json({ message: "Depo not found" });
-        }
-        const containers = await Container.find({depo});
+        const containers = await Container.find({ depo: req.user?.depo });
         res.status(200).json(containers);
     } catch (error) {
         res.status(500).json({ message: 'Error fetching containers', error: error.message });
@@ -50,7 +31,7 @@ export const getAllContainer = async (req, res) => {
 
 export const getContainerbyID = async (req, res) => {
     try {
-        const container = await Container.findById(req.params.id);
+        const container = await Container.findOne({ _id: req.params.id, depo: req.user?.depo });
         if (!container) return res.status(404).json({ message: 'Container Not found' });
         res.status(200).json(container);
     } catch (err) {
@@ -60,8 +41,8 @@ export const getContainerbyID = async (req, res) => {
 
 export const updateContainer = async (req, res) => {
     try {
-        const updated = await Container.findByIdAndUpdate(
-            req.params.id,
+        const updated = await Container.findOneAndUpdate(
+            { _id: req.params.id, depo: req.user?.depo },
             req.body,
             { new: true }
         );
@@ -74,7 +55,7 @@ export const updateContainer = async (req, res) => {
 
 export const deleteContainer = async (req, res) => {
     try {
-        const deleted = await Container.findByIdAndDelete(req.params.id);
+        const deleted = await Container.findOneAndDelete({ _id: req.params.id, depo: req.user?.depo });
         if (!deleted) return res.status(404).json({ message: "Container not found" });
         res.status(200).json({ message: "container deleted sucessfully" })
 

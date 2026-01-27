@@ -1,24 +1,13 @@
 import Rate from '../../models/rates.js';
-import Depo from '../../models/depoModal.js';
-import mongoose from 'mongoose';
 
 export const addRate = async (req, res) => {
     try {
-        const { code, basePrice, perTax, date, perDisc, depo, status } = req.body;
+        const { code, basePrice, perTax, date, perDisc, status } = req.body;
 
-        if (!code || !basePrice || !date || !depo) {
+        if (!code || !basePrice || !date) {
             return res.status(400).json({ message: "All fields are required" });
         }
-
-        if (!mongoose.Types.ObjectId.isValid(depo)) {
-            return res.status(400).json({ message: "Invalid depo ID" });
-        }
-
-        const depoExists = await Depo.findById(depo);
-        if (!depoExists) {
-            return res.status(400).json({ message: "Depo not found" });
-        }
-
+        const depo = req.user?.depo;
         const existing = await Rate.findOne({
             itemCode: code,
             depo,
@@ -65,19 +54,10 @@ export const addRate = async (req, res) => {
 
 export const getLatestByDate = async (req, res) => {
     try {
-        const { code, date, depo } = req.query;
-
-        if (!mongoose.Types.ObjectId.isValid(depo)) {
-            return res.status(400).json({ message: "Invalid depo ID" });
-        }
-
-        const depoExists = await Depo.findById(depo);
-        if (!depoExists) {
-            return res.status(400).json({ message: "Depo not found" });
-        }
+        const { code, date } = req.query;
 
         const price = await Rate.find({
-            depo,
+            depo:req.user?.depo,
             code,
             effectiveDate: { $lte: new Date(date) }
         })
@@ -94,19 +74,8 @@ export const getLatestByDate = async (req, res) => {
 // Get all rates
 export const getAllRates = async (req, res) => {
     try {
-        const { depo } = req.query;
-        if (!depo) return res.status(400).json({ message: "Depo is required" });
-
-        if (!mongoose.Types.ObjectId.isValid(depo)) {
-            return res.status(400).json({ message: "Invalid depo ID" });
-        }
-
-        const depoExists = await Depo.findById(depo);
-        if (!depoExists) {
-            return res.status(400).json({ message: "Depo not found" });
-        }
-
-        const rates = await Rate.find({ depo });
+    
+        const rates = await Rate.find({ depo: req.user?.depo });
         res.status(200).json(rates);
     } catch (err) {
         res.status(500).json({ message: "Error fetching rates", error: err.message });
@@ -116,7 +85,7 @@ export const getAllRates = async (req, res) => {
 // Get rate by ID
 export const getRateById = async (req, res) => {
     try {
-        const rate = await Rate.findById(req.params.id);
+        const rate = await Rate.findOne({ _id: req.params.id, depo: req.user?.depo });
         if (!rate) return res.status(404).json({ message: "Rate not found" });
         res.status(200).json(rate);
     } catch (err) {
@@ -127,8 +96,8 @@ export const getRateById = async (req, res) => {
 // Update rate
 export const updateRate = async (req, res) => {
     try {
-        const updatedRate = await Rate.findByIdAndUpdate(
-            req.params.id,
+        const updatedRate = await Rate.findOneAndUpdate(
+            { _id: req.params.id, depo: req.user?.depo },
             req.body,
             { new: true }
         );
@@ -142,7 +111,7 @@ export const updateRate = async (req, res) => {
 // Delete rate
 export const deleteRate = async (req, res) => {
     try {
-        const deletedRate = await Rate.findByIdAndDelete(req.params.id);
+        const deletedRate = await Rate.findOneAndDelete({ _id: req.params.id, depo: req.user?.depo });
         if (!deletedRate) return res.status(404).json({ message: "Rate not found" });
         res.status(200).json({ message: "Rate deleted successfully" });
     } catch (err) {

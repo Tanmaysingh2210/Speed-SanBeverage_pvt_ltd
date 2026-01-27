@@ -1,22 +1,12 @@
 import { Item } from '../../models/SKU.js';
-import Depo from "../../models/depoModal.js";
-import mongoose from 'mongoose';
 
 export const addItem = async (req, res) => {
     try {
-        const { code, name, container, package: pkg, flavour, depo, status } = req.body;
+        const { code, name, container, package: pkg, flavour, status } = req.body;
 
-        if (!code || !name || !container || !pkg || !flavour || !depo) return res.status(400).json({ message: "Every field is required" });
+        if (!code || !name || !container || !pkg || !flavour) return res.status(400).json({ message: "Every field is required" });
 
-        if (!mongoose.Types.ObjectId.isValid(depo)) {
-            return res.status(400).json({ message: "Invalid depo ID" });
-        }
-
-        // 3️⃣ Check if depo exists
-        const depoExists = await Depo.findById(depo);
-        if (!depoExists) {
-            return res.status(400).json({ message: "Depo not found" });
-        }
+        const depo = req.user?.depo;
 
         const existing = await Item.findOne({ code, depo });
 
@@ -40,18 +30,8 @@ export const addItem = async (req, res) => {
 
 export const getAllItems = async (req, res) => {
     try {
-        const { depo } = req.query;
-        if (!depo) return res.status(400).json({ message: "Depo is required" });
-
-        if (!mongoose.Types.ObjectId.isValid(depo)) {
-            return res.status(400).json({ message: "Invalid depo ID" });
-        }
-
-        const depoExists = await Depo.findById(depo);
-        if (!depoExists) {
-            return res.status(400).json({ message: "Depo not found" });
-        }
-        const items = await Item.find({depo});
+        
+        const items = await Item.find({ depo:req.user.depo });
         res.status(200).json(items);
 
     } catch (err) {
@@ -61,7 +41,7 @@ export const getAllItems = async (req, res) => {
 
 export const getItembyId = async (req, res) => {
     try {
-        const item = await Item.findById(req.params.id);
+        const item = await Item.findOne({ _id: req.params.id, depo: req.user?.depo });
         if (!item) return res.status(404).json({ message: "Not found!" });
         res.status(200).json(item);
     } catch (err) {
@@ -71,8 +51,8 @@ export const getItembyId = async (req, res) => {
 
 export const updateItem = async (req, res) => {
     try {
-        const updated = await Item.findByIdAndUpdate(
-            req.params.id,
+        const updated = await Item.findOneAndUpdate(
+            { _id: req.params.id, depo: req.user?.depo },
             req.body,
             { new: true }
         );
@@ -85,7 +65,7 @@ export const updateItem = async (req, res) => {
 
 export const deleteItem = async (req, res) => {
     try {
-        const deleted = await Item.findByIdAndDelete(req.params.id);
+        const deleted = await Item.findOneAndDelete({ _id: req.params.id, depo: req.user?.depo });
         if (!deleted) return res.status(404).json({ message: "Item not found" });
         res.status(200).json({ message: "Item deleted" });
     } catch (err) {

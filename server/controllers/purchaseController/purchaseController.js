@@ -1,7 +1,5 @@
 
 import Purchase from '../../models/purchase/purchaseEntry.js';
-import Depo from "../../models/depoModal.js";
-import mongoose from 'mongoose';
 
 // CREATE - New Purchase Entry
 export const createPurchase = async (req, res) => {
@@ -22,24 +20,16 @@ export const createPurchase = async (req, res) => {
             disc,
             percentVat,
             purchaseAgst,
-            formIssue,
-            depo
+            formIssue
         } = req.body;
 
         // Validation
-        if (!party || !slno || !date || !gra || !depo) {
+        if (!party || !slno || !date || !gra) {
             return res.status(400).json({
                 message: 'Please provide all required fields'
             });
         }
-        if (!mongoose.Types.ObjectId.isValid(depo)) {
-            return res.status(400).json({ message: "Invalid depo ID" });
-        }
 
-        const depoExists = await Depo.findById(depo);
-        if (!depoExists) {
-            return res.status(400).json({ message: "Depo not found" });
-        }
         // Create new purchase
         const newPurchase = new Purchase({
             party,
@@ -58,7 +48,7 @@ export const createPurchase = async (req, res) => {
             percentVat,
             purchaseAgst,
             formIssue,
-            depo
+            depo: req.user?.depo
         });
 
         // Save to database
@@ -81,17 +71,8 @@ export const createPurchase = async (req, res) => {
 // READ - Get All Purchases
 export const getAllPurchases = async (req, res) => {
     try {
-        const { depo } = req.query;
-        if (!mongoose.Types.ObjectId.isValid(depo)) {
-            return res.status(400).json({ message: "Invalid depo ID" });
-        }
 
-        const depoExists = await Depo.findById(depo);
-        if (!depoExists) {
-            return res.status(400).json({ message: "Depo not found" });
-        }
-
-        const purchases = await Purchase.find({depo}).sort({ date: -1 });
+        const purchases = await Purchase.find({ depo: req.user?.depo }).sort({ date: -1 });
 
         res.status(200).json({
             message: 'Purchases fetched successfully',
@@ -111,9 +92,7 @@ export const getAllPurchases = async (req, res) => {
 // READ - Get Single Purchase by ID
 export const getPurchaseById = async (req, res) => {
     try {
-        const { id } = req.params;
-
-        const purchase = await Purchase.findById(id);
+        const purchase = await Purchase.findOne({ _id: req.params.id, depo: req.user?.depo });
 
         if (!purchase) {
             return res.status(404).json({
@@ -138,11 +117,10 @@ export const getPurchaseById = async (req, res) => {
 // UPDATE - Update Purchase
 export const updatePurchase = async (req, res) => {
     try {
-        const { id } = req.params;
         const updateData = req.body;
 
-        const updatedPurchase = await Purchase.findByIdAndUpdate(
-            id,
+        const updatedPurchase = await Purchase.findOneAndUpdate(
+            { _id: req.params.id, depo: req.user?.depo },
             updateData,
             { new: true, runValidators: true }
         );
@@ -170,9 +148,7 @@ export const updatePurchase = async (req, res) => {
 // DELETE - Delete Purchase
 export const deletePurchase = async (req, res) => {
     try {
-        const { id } = req.params;
-
-        const deletedPurchase = await Purchase.findByIdAndDelete(id);
+        const deletedPurchase = await Purchase.findOneAndDelete({ _id: req.params.id, depo: req.user?.depo });
 
         if (!deletedPurchase) {
             return res.status(404).json({

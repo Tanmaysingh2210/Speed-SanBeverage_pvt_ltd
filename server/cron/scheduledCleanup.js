@@ -4,7 +4,7 @@ import StockService from '../services/StockCalculator.js';
 cron.schedule('0 0 * * *', async () => {
     console.log('Running scheduled stock cleanup...');
     try {
-        const result = await StockService.cleanupExpiredItems();
+        const result = await StockService.cleanupExpiredItems(req.user?.depo);
         console.log(result);
         console.log('Cleanup completed:', result);
     } catch (error) {

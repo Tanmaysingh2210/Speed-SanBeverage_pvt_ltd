@@ -5,7 +5,7 @@ import bcrypt from 'bcrypt';
 import Depo from "../../models/depoModal.js";
 import mongoose from 'mongoose';
 
-const transporter = nodemailer.createTransport({
+export const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
         user: 'kisansathiservice@gmail.com',
@@ -13,7 +13,6 @@ const transporter = nodemailer.createTransport({
     }
 });
 
-export { transporter };
 
 const generateOtp = () => crypto.randomInt(100000, 999999).toString();
 

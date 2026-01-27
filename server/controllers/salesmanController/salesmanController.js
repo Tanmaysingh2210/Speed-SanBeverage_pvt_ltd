@@ -1,23 +1,11 @@
 import Salesman from '../../models/salesman.js';
-import Depo from '../../models/depoModal.js';
-import mongoose from 'mongoose';
 
 
 export const addSalesman = async (req, res) => {
     try {
-        const { routeNo, name, codeNo, depo, status } = req.body;
+        const { routeNo, name, codeNo, status } = req.body;
 
-        if (!routeNo || !name || !codeNo || !depo)
-            return res.status(400).json({ message: "routeNo, name, and codeNo are required" });
-
-        if (!mongoose.Types.ObjectId.isValid(depo)) {
-            return res.status(400).json({ message: "Invalid depo ID" });
-        }
-
-        const depoExists = await Depo.findById(depo);
-        if (!depoExists) {
-            return res.status(400).json({ message: "Depo not found" });
-        }
+        const depo = req.user?.depo;
 
         const existing = await Salesman.findOne({ codeNo, depo });
 
@@ -38,19 +26,8 @@ export const addSalesman = async (req, res) => {
 
 export const getAllSalesmen = async (req, res) => {
     try {
-        const { depo } = req.query;
-        if (!depo) return res.status(400).json({ message: "Depo is required" });
 
-        if (!mongoose.Types.ObjectId.isValid(depo)) {
-            return res.status(400).json({ message: "Invalid depo ID" });
-        }
-
-        const depoExists = await Depo.findById(depo);
-        if (!depoExists) {
-            return res.status(400).json({ message: "Depo not found" });
-        }
-
-        const salesmen = await Salesman.find({ depo });
+        const salesmen = await Salesman.find({ depo: req.user?.depo });
         res.status(200).json(salesmen);
     } catch (error) {
         res.status(500).json({ message: 'Error fetching salesmen', error: error.message });
@@ -59,7 +36,7 @@ export const getAllSalesmen = async (req, res) => {
 
 export const getSalesmanById = async (req, res) => {
     try {
-        const salesman = await Salesman.findById(req.params.id);
+        const salesman = await Salesman.findOne({ _id: req.params.id, depo: req.user?.depo });
         if (!salesman) return res.status(404).json({ message: 'Salesman not found' });
         res.status(200).json(salesman);
     } catch (err) {
@@ -70,8 +47,8 @@ export const getSalesmanById = async (req, res) => {
 
 export const updateSalesman = async (req, res) => {
     try {
-        const updated = await Salesman.findByIdAndUpdate(
-            req.params.id,
+        const updated = await Salesman.findOneAndUpdate(
+            { _id: req.params.id, depo: req.user?.depo },
             req.body,
             { new: true }
         );
@@ -84,7 +61,7 @@ export const updateSalesman = async (req, res) => {
 
 export const deleteSalesman = async (req, res) => {
     try {
-        const deleted = await Salesman.findByIdAndDelete(req.params.id);
+        const deleted = await Salesman.findOneAndDelete({ _id: req.params.id, depo: req.user?.depo });
         if (!deleted) return res.status(404).json({ message: "Salesman not found" });
         res.status(200).json({ message: "Salesman deleted successfully" });
     } catch (err) {

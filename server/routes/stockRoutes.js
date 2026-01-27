@@ -9,7 +9,7 @@ router.use(requireDepo);
 
 router.get('/', async (req, res) => {
     try {
-        const stock = await StockService.getCurrentStock(req.user.depo);
+        const stock = await StockService.getCurrentStock(req.user?.depo);
 
         res.json({
             success: true,
@@ -37,7 +37,7 @@ router.get('/expiring', async (req, res) => {
             days = 30;
         }
 
-        const expiringItems = await StockService.getExpiringItems(req.user.depo, days);
+        const expiringItems = await StockService.getExpiringItems(req.user?.depo, days);
 
         res.json({
             success: true,
@@ -59,7 +59,7 @@ router.get('/expiring', async (req, res) => {
 // Manual cleanup endpoint
 router.post('/cleanup', async (req, res) => {
     try {
-        const result = await StockService.cleanupExpiredItems(req.user.depo);
+        const result = await StockService.cleanupExpiredItems(req.user?.depo);
 
         res.json({
             success: true,
@@ -82,7 +82,7 @@ router.get('/:itemCode', async (req, res) => {
     try {
         const itemStock =
             await StockService.getStockByItemCode(
-                req.user.depo,
+                req.user?.depo,
                 req.params.itemCode
             );
 

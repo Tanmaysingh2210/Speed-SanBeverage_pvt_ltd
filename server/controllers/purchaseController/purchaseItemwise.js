@@ -1,26 +1,17 @@
 import PurchaseItemwise from '../../models/purchase/PurchaseItemwise.js';
-import Depo from "../../models/depoModal.js";
-import mongoose from 'mongoose';
 
 // CREATE - New Purchase Itemwise Entry
 export const createPurchaseItemwise = async (req, res) => {
     try {
-        const { date, items, depo } = req.body;
+        const { date, items } = req.body;
 
         // Validation
-        if (!date || !items || items.length === 0 || !depo) {
+        if (!date || !items || items.length === 0) {
             return res.status(400).json({
                 message: 'Please provide date and items'
             });
         }
-
-        if (!mongoose.Types.ObjectId.isValid(depo)) {
-            return res.status(400).json({ message: "Invalid depo ID" });
-        }
-        const depoExists = await Depo.findById(depo);
-        if (!depoExists) {
-            return res.status(400).json({ message: "Depo not found" });
-        }
+        const depo = req.user?.depo;
         // Validate each item
         for (let item of items) {
             if (!item.itemCode || !item.qty || !item.expiryDate) {
@@ -57,8 +48,7 @@ export const createPurchaseItemwise = async (req, res) => {
 // READ - Get All Purchase Itemwise
 export const getAllPurchaseItemwise = async (req, res) => {
     try {
-        const { depo } = req.query;
-        const purchases = await PurchaseItemwise.find({depo}).sort({ date: -1 });
+        const purchases = await PurchaseItemwise.find({ depo: req.user?.depo }).sort({ date: -1 });
 
         res.status(200).json({
             message: 'Purchase itemwise fetched successfully',
@@ -78,9 +68,7 @@ export const getAllPurchaseItemwise = async (req, res) => {
 // READ - Get Single Purchase Itemwise by ID
 export const getPurchaseItemwiseById = async (req, res) => {
     try {
-        const { id } = req.params;
-
-        const purchase = await PurchaseItemwise.findById(id);
+        const purchase = await PurchaseItemwise.findOne({ _id: req.params.id, depo: req.user?.depo });
 
         if (!purchase) {
             return res.status(404).json({
@@ -105,11 +93,10 @@ export const getPurchaseItemwiseById = async (req, res) => {
 // UPDATE - Update Purchase Itemwise
 export const updatePurchaseItemwise = async (req, res) => {
     try {
-        const { id } = req.params;
         const updateData = req.body;
 
-        const updatedPurchase = await PurchaseItemwise.findByIdAndUpdate(
-            id,
+        const updatedPurchase = await PurchaseItemwise.findOneAndUpdate(
+            { _id: req.params.id, depo: req.user?.depo },
             updateData,
             { new: true, runValidators: true }
         );
@@ -137,9 +124,7 @@ export const updatePurchaseItemwise = async (req, res) => {
 // DELETE - Delete Purchase Itemwise
 export const deletePurchaseItemwise = async (req, res) => {
     try {
-        const { id } = req.params;
-
-        const deletedPurchase = await PurchaseItemwise.findByIdAndDelete(id);
+        const deletedPurchase = await PurchaseItemwise.findOneAndDelete({ _id: req.params.id, depo: req.user?.depo });
 
         if (!deletedPurchase) {
             return res.status(404).json({

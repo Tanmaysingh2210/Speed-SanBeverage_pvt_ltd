@@ -10,7 +10,6 @@ import { useAuth } from "../../context/AuthContext";
 
 
 const LoadOut = () => {
-    const { user } = useAuth();
     const navigate = useNavigate();
     const location = useLocation();
 
@@ -20,8 +19,8 @@ const LoadOut = () => {
     const [itemShow, setItemShow] = useState(false);
     const [search, setSearch] = useState("");
     const { loading, addLoadout, updateLoadout } = useTransaction();
-    const { items, getAllItems } = useSKU();
-    const { salesmans, getAllSalesmen } = useSalesman();
+    const { items } = useSKU();
+    const { salesmans } = useSalesman();
 
     const { openSalesmanModal } = useSalesmanModal();
 
@@ -110,7 +109,6 @@ const LoadOut = () => {
             date: newLoadOut.date,
             trip: newLoadOut.trip,
             items: newLoadOut.items,
-            depo: user.depo
         };
 
         try {
@@ -131,7 +129,8 @@ const LoadOut = () => {
             });
 
         } catch (err) {
-            console.error(err.response.data.message || "Error adding loadout");
+            console.log(err);
+            console.error(err.response?.data?.message || "Error adding loadout");
         }
     };
 

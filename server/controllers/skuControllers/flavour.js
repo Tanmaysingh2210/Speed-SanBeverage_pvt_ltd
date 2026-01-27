@@ -1,24 +1,14 @@
 import { Flavour } from '../../models/SKU.js';
-import Depo from "../../models/depoModal.js";
-import mongoose from 'mongoose';
 
 export const addFlavour = async (req, res) => {
     try {
-        const { serial, name, depo } = req.body;
+        const { serial, name } = req.body;
 
-        if (!serial || !name, !depo) return res.status(400).json({ message: "all fields are required" });
+        if (!serial || !name) return res.status(400).json({ message: "all fields are required" });
 
-        if (!mongoose.Types.ObjectId.isValid(depo)) {
-            return res.status(400).json({ message: "Invalid depo ID" });
-        }
+        const depo = req.user?.depo;
 
-        // 3️⃣ Check if depo exists
-        const depoExists = await Depo.findById(depo);
-        if (!depoExists) {
-            return res.status(400).json({ message: "Depo not found" });
-        }
-
-        const existing = await Flavour.findOne({ name , depo});
+        const existing = await Flavour.findOne({ name, depo });
         if (existing) return res.status(400).json({ message: "flavour already exists, please add different" });
 
         await Flavour.create({ serial, name, depo });
@@ -32,18 +22,7 @@ export const addFlavour = async (req, res) => {
 
 export const getAllFlavour = async (req, res) => {
     try {
-        const {depo} = req.query;
-        if(!depo) return res.status(400).json({message:"Depo is required"});
-
-        if (!mongoose.Types.ObjectId.isValid(depo)) {
-            return res.status(400).json({ message: "Invalid depo ID" });
-        }
-
-        const depoExists = await Depo.findById(depo);
-        if (!depoExists) {
-            return res.status(400).json({ message: "Depo not found" });
-        }
-        const flavours = await Flavour.find({depo});
+        const flavours = await Flavour.find({ depo: req.user?.depo });
         res.status(200).json(flavours);
     } catch (error) {
         res.status(500).json({ message: 'Error fetching flavours', error: error.message });
@@ -52,7 +31,7 @@ export const getAllFlavour = async (req, res) => {
 
 export const getFlavourbyID = async (req, res) => {
     try {
-        const flavour = await Flavour.findById(req.params.id);
+        const flavour = await Flavour.findOne({ _id: req.params.id, depo: req.user?.depo });
         if (!flavour) return res.status(404).json({ message: 'flavour Not found' });
         res.status(200).json(flavour);
     } catch (err) {
@@ -62,8 +41,8 @@ export const getFlavourbyID = async (req, res) => {
 
 export const updateFlavour = async (req, res) => {
     try {
-        const updated = await Flavour.findByIdAndUpdate(
-            req.params.id,
+        const updated = await Flavour.findOneAndUpdate(
+            { _id: req.params.id, depo: req.user?.depo },
             req.body,
             { new: true }
         );
@@ -76,7 +55,7 @@ export const updateFlavour = async (req, res) => {
 
 export const deleteFlavour = async (req, res) => {
     try {
-        const deleted = await Flavour.findByIdAndDelete(req.params.id);
+        const deleted = await Flavour.findOneAndDelete({ _id: req.params.id, depo: req.user?.depo });
         if (!deleted) return res.status(404).json({ message: "flavour not found" });
         res.status(200).json({ message: "flavour deleted sucessfully" });
 

@@ -128,7 +128,7 @@ const AllTransaction = () => {
 
   const handleFind = async (e) => {
     e.preventDefault();
-    if (!find.date || !find.type || !find.trip || !find.salesmanCode) {
+    if (!find.date || !find.type || !find.trip || !find.salesmanCode || !user || !user.depo) {
       toast.error("⚠️ Fill all fields");
       return;
     }
@@ -137,19 +137,17 @@ const AllTransaction = () => {
       salesmanCode: find.salesmanCode.trim().toUpperCase(),
       date: find.date,
       trip: find.trip,
-      depo: user.depo
+      depo: user?.depo
     };
 
     if (find.type === "all") {
       // Fetch all three but don't fail the whole flow if one of them errors.
       try {
-        const results = await Promise.allSettled([
+        const [loadoutRes, loadinRes, cashRes] = await Promise.allSettled([
           getLoadout(payload),
           getLoadIn(payload),
           getCash_credit(payload),
         ]);
-
-        const [loadoutRes, loadinRes, cashRes] = results;
 
         const newTransactions = [];
 
