@@ -26,31 +26,39 @@ export const register = async (req, res) => {
             return res.status(400).json({ message: "Invalid depo ID" });
         }
 
-        // 3️⃣ Check if depo exists
         const depoExists = await Depo.findById(depo);
         if (!depoExists) {
             return res.status(400).json({ message: "Depo not found" });
         }
-        
+
         let user = await User.findOne({ email });
         if (user) return req.status(400).json({ message: "user already exists" });
 
         const otp = generateOtp();
         const otpExpire = new Date(Date.now() + 5 * 60 * 1000);
 
+        const hashedPass = await bcrypt.hash(password, 10);
 
-        bcrypt.genSalt(10, (err, salt) => {
-            bcrypt.hash(password, salt, async (err, hash) => {
-                await User.create({
-                    name,
-                    email,
-                    password: hash,
-                    depo,
-                    otp,
-                    otpExpire
-                })
-            })
-        });
+        await User.create({
+            name,
+            email,
+            password: hashedPass,
+            depo,
+            otp,
+            otpExpire
+        })
+        // bcrypt.genSalt(10, (err, salt) => {
+        //     bcrypt.hash(password, salt, async (err, hash) => {
+        //         await User.create({
+        //             name,
+        //             email,
+        //             password: hash,
+        //             depo,
+        //             otp,
+        //             otpExpire
+        //         })
+        //     })
+        // });
 
         await transporter.sendMail({
             from: 'kisansathiservice@gmail.com',
@@ -62,6 +70,6 @@ export const register = async (req, res) => {
         res.status(201).json({ message: "User registered. otp sent to email Please verify!" })
 
     } catch (err) {
-        res.status(500).json({ message: "Error registering user", err });
+        res.status(500).json({ message: "Error registering user", error: err.message });
     }
 }

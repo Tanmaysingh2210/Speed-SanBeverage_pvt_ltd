@@ -81,10 +81,11 @@ export default function RegisterPage() {
                 toast.error('Enter 6-digit OTP');
                 return;
             }
-            await verifyOtp({ email, otp: code });
-            toast.success(res.data.message || 'OTP verified successfully!');
+            const msg = await verifyOtp({ email, otp: code });
+            toast.success(msg || 'OTP verified successfully!');
             navigate('/dashboard');
         } catch (err) {
+            console.log(err);
             const backendMessage = err?.response?.data?.message || err?.response?.data?.error || 'Invalid OTP';
             toast.error(backendMessage);
             throw err;
@@ -106,7 +107,7 @@ export default function RegisterPage() {
         if (user) navigate('/');
     }, [user, navigate]);
 
-    
+
     return (
         <div className='register'>
             <Toaster position="top-center" />
