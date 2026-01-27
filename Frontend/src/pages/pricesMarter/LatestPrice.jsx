@@ -5,6 +5,13 @@ import { useSKU } from "../../context/SKUContext";
 import toast from "react-hot-toast";
 import { useAuth } from "../../context/AuthContext";
 import { useItemModal } from '../../context/ItemModalContext';
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
+import * as XLSX from "xlsx";
+import { saveAs } from "file-saver";
+import pepsiLogo from "../../assets/pepsi_logo.png";
+import ExcelJS from "exceljs";
+
 // import '../../pages/transaction/transaction.css'
 const LatestPrice = () => {
     const { user } = useAuth();
@@ -33,8 +40,170 @@ const LatestPrice = () => {
     const discRef = useRef(null);
     const modalRef = useRef(null);
 
+    const loadImageBase64 = (url) =>
+        new Promise((resolve) => {
+            const img = new Image();
+            img.crossOrigin = "anonymous";
+            img.onload = function () {
+                const canvas = document.createElement("canvas");
+                canvas.width = img.width;
+                canvas.height = img.height;
+                const ctx = canvas.getContext("2d");
+                ctx.drawImage(img, 0, 0);
+                resolve(canvas.toDataURL("image/png"));
+            };
+            img.src = url;
+        });
+
+
+    const exportPDF = async () => {
+        const doc = new jsPDF();
+
+        const logoBase64 = await loadImageBase64(pepsiLogo);
+
+        // Pepsi Logo (top-left)
+        doc.addImage(logoBase64, "PNG", 12, 3, 45, 25);
+
+        // Company title
+        doc.setFontSize(14);
+        doc.text("SAN BEVERAGES PVT LTD", 105, 15, { align: "center" });
+
+        doc.setFontSize(8);
+        doc.text("VILLAGE SARFARABAD, SECTOR-73, NOIDA 201301", 105, 22, { align: "center" });
+
+        doc.setFontSize(10);
+        doc.text("LATEST PRICE REPORT", 105, 29, { align: "center" });
+
+        const tableData = filtered.map((p, i) => {
+            const rowItem = items.find(
+                it =>
+                    String(it.code || it.itemCode || "").toUpperCase() ===
+                    String(p.itemCode || "").toUpperCase()
+            );
+
+            return [
+                i + 1,
+                p.itemCode,
+                rowItem?.name || "",
+                p.basePrice,
+                `${p.perDisc}%`,
+                `${p.perTax}%`,
+                calculateNetRate(p.basePrice, p.perTax, p.perDisc),
+                formatDate(p.date)
+            ];
+        });
+
+        autoTable(doc, {
+            startY: 32,
+            head: [[
+                "SL",
+                "CODE",
+                "NAME",
+                "BASE",
+                "DISC %",
+                "TAX %",
+                "NET RATE",
+                "DATE"
+            ]],
+            body: tableData,
+            styles: { fontSize: 9 },
+            headStyles: { fillColor: [0, 0, 0] },
+            alternateRowStyles: { fillColor: [245, 245, 245] }
+        });
+
+        doc.save("latest-price-report.pdf");
+    };
+
+
+
+
+    const exportExcel = async () => {
+        const workbook = new ExcelJS.Workbook();
+        const sheet = workbook.addWorksheet("Latest Price");
+
+        // Load logo
+        const logoBase64 = await loadImageBase64(pepsiLogo);
+
+        const imageId = workbook.addImage({
+            base64: logoBase64,
+            extension: "png"
+        });
+
+        sheet.addImage(imageId, {
+            tl: { col: 0, row: 0 },
+            ext: { width: 120, height: 70 }
+        });
+
+        // Header text
+        sheet.mergeCells("C2:J2");
+        sheet.mergeCells("C3:J3");
+        sheet.mergeCells("C5:J5");
+
+        sheet.getCell("C2").value = "SAN BEVERAGES PVT LTD";
+        sheet.getCell("C3").value = "Village Sarfarabad, Sector-73, Noida 201301";
+        sheet.getCell("C5").value = "LATEST PRICE REPORT";
+
+        sheet.getCell("C2").alignment = { horizontal: "center" };
+        sheet.getCell("C3").alignment = { horizontal: "center" };
+        sheet.getCell("C5").alignment = { horizontal: "center" };
+
+
+        sheet.getCell("B2").font = { bold: true, size: 14 };
+        sheet.getCell("B3").font = { size: 11 };
+        sheet.getCell("B5").font = { bold: true };
+
+        sheet.getRow(7).values = [
+            "SL NO",
+            "CODE",
+            "NAME",
+            "BASE PRICE",
+            "DISC %",
+            "TAX %",
+            "NET RATE",
+            "DATE"
+        ];
+
+        sheet.getRow(7).font = { bold: true };
+
+        filtered.forEach((p, i) => {
+            const rowItem = items.find(
+                it =>
+                    String(it.code || it.itemCode || "").toUpperCase() ===
+                    String(p.itemCode || "").toUpperCase()
+            );
+
+            sheet.addRow([
+                i + 1,
+                p.itemCode,
+                rowItem?.name || "",
+                p.basePrice,
+                p.perDisc,
+                p.perTax,
+                calculateNetRate(p.basePrice, p.perTax, p.perDisc),
+                formatDate(p.date)
+            ]);
+        });
+
+        sheet.columns = [
+            { width: 8 },
+            { width: 12 },
+            { width: 30 },
+            { width: 14 },
+            { width: 10 },
+            { width: 10 },
+            { width: 14 },
+            { width: 14 }
+        ];
+
+        const buffer = await workbook.xlsx.writeBuffer();
+        saveAs(new Blob([buffer]), "latest-price-report.xlsx");
+    };
+
+
+
+
     const calculateNetRate = (basePrice, perTax, perDisc) => {
-        if (!basePrice ) return '';
+        if (!basePrice) return '';
         let taxablePrice = (parseFloat(basePrice) - (parseFloat(basePrice) * parseFloat(perDisc || 0) / 100)).toFixed(2);
         return (parseFloat(taxablePrice) + (parseFloat(taxablePrice) * parseFloat(perTax || 0) / 100)).toFixed(2);
     };
@@ -149,9 +318,9 @@ const LatestPrice = () => {
             perDisc: Number(newPrice.perDisc) || 0,
             date: newPrice.date, // backend expects `date` (lowercase)
             status: editId ? newPrice.status : "Active", //  Force Active for new prices
-            depo:user?.depo
+            depo: user?.depo
         };
-        
+
 
         try {
             if (editId) {
@@ -219,26 +388,36 @@ const LatestPrice = () => {
                     onChange={(e) => setSearch(e.target.value)}
                     className="price-search"
                 />
-                <button
-                    className="price-add-btn"
-                    disabled={loading}
-                    onClick={() => {
-                        setShowModal(true);
-                        setEditId(null);
-                        setNewPrice({
-                            code: "",
-                            name: "",
-                            basePrice: "",
-                            perTax: "",
-                            perDisc: "",
-                            date: "",
-                            netRate: "",
-                            status: "Active",
-                        });
-                    }}
-                >
-                    + New Price
-                </button>
+
+                <div style={{ display: "flex", gap: "10px" }}>
+                    <button className="export-btn pdf" onClick={exportPDF}>
+                        📄 Export PDF
+                    </button>
+
+                    <button className="export-btn excel" onClick={exportExcel}>
+                        📊 Export Excel
+                    </button>
+                    <button
+                        className="price-add-btn"
+                        disabled={loading}
+                        onClick={() => {
+                            setShowModal(true);
+                            setEditId(null);
+                            setNewPrice({
+                                code: "",
+                                name: "",
+                                basePrice: "",
+                                perTax: "",
+                                perDisc: "",
+                                date: "",
+                                netRate: "",
+                                status: "Active",
+                            });
+                        }}
+                    >
+                        + New Price
+                    </button>
+                </div>
             </div>
 
             {loading && <div className="loading">Loading...</div>}
@@ -275,7 +454,7 @@ const LatestPrice = () => {
                             <div>{i + 1}</div>
                             <div>{p?.itemCode?.toUpperCase() || ''}</div>
                             <div>{rowItem?.name || ''}</div>
-                            <div>{p?.basePrice ||0}</div>
+                            <div>{p?.basePrice || 0}</div>
                             <div>{p?.perDisc || 0}%</div>
                             <div>{p?.perTax || 0}%</div>
                             <div>{calculateNetRate(p?.basePrice, p?.perTax, p?.perDisc)}</div>
@@ -304,17 +483,17 @@ const LatestPrice = () => {
                             <div className="form-group" >
                                 <label>Item Code</label>
                                 <div className="input-with-btn">
-                                   <input
-                                    ref={codeRef}
-                                    type="text"
-                                    value={newPrice.code}
-                                    onChange={(e) =>
-                                        setNewPrice({ ...newPrice, code: e.target.value.trim().toUpperCase() })
-                                    }
-                                    onKeyDown={(e) => handleKeyNav(e, "code")}
-                                    disabled={editId} // Disable code editing when updating
-                                />
-                                <button
+                                    <input
+                                        ref={codeRef}
+                                        type="text"
+                                        value={newPrice.code}
+                                        onChange={(e) =>
+                                            setNewPrice({ ...newPrice, code: e.target.value.trim().toUpperCase() })
+                                        }
+                                        onKeyDown={(e) => handleKeyNav(e, "code")}
+                                        disabled={editId} // Disable code editing when updating
+                                    />
+                                    <button
                                         type="button"
                                         className="dropdown-btn"
                                         onClick={() =>
@@ -324,10 +503,10 @@ const LatestPrice = () => {
                                         }
                                     >
                                         ⌄
-                                    </button> 
+                                    </button>
                                 </div>
-                            
-                                
+
+
                             </div>
 
                             <div className="form-group">
@@ -444,7 +623,7 @@ const LatestPrice = () => {
                 </div>
             )}
 
-            
+
 
         </div>
     );
