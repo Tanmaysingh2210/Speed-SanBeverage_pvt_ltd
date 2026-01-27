@@ -18,12 +18,12 @@ export const DaywiseSummary = async (req, res) => {
         end.setHours(23, 59, 59, 999);
 
         const [loadouts, loadins, cashcredits, sheets, rates, items] = await Promise.all([
-            LoadOut.find({ date: { $gte: start, $lte: end } }),
-            LoadIn.find({ date: { $gte: start, $lte: end } }),
-            CashCredit.find({ date: { $gte: start, $lte: end } }),
-            S_sheet.find({ date: { $gte: start, $lte: end } }),
-            Rates.find({ date: { $lte: end } }).sort({ date: 1 }),
-            Item.find()
+            LoadOut.find({ depo: req.user?.depo, date: { $gte: start, $lte: end } }),
+            LoadIn.find({ depo: req.user?.depo, date: { $gte: start, $lte: end } }),
+            CashCredit.find({ depo: req.user?.depo, date: { $gte: start, $lte: end } }),
+            S_sheet.find({ depo: req.user?.depo, date: { $gte: start, $lte: end } }),
+            Rates.find({ depo: req.user?.depo, date: { $lte: end } }).sort({ date: 1 }),
+            Item.find({ depo: req.user?.depo })
         ]);
 
         // itemCode -> [rate1, rate2, ...] (sorted by date ASC)
@@ -80,7 +80,7 @@ export const DaywiseSummary = async (req, res) => {
                     refunds: 0,
                     disc: 0,
                     schm: 0,
-                    ref:0
+                    ref: 0
                 });
             }
             return dayMap.get(key);
@@ -129,7 +129,7 @@ export const DaywiseSummary = async (req, res) => {
 
                 if (!it) continue;
                 console.log(it);
-                if (normalize(it.container) ===normalize("EMT") ) {
+                if (normalize(it.container) === normalize("EMT")) {
                     day.refunds += (item.Emt * finalPrice);
                     console.log(`refunds : ${day.refunds}`);
                 } else {
@@ -151,7 +151,7 @@ export const DaywiseSummary = async (req, res) => {
             }
         }
 
-        for(const s of sheets){
+        for (const s of sheets) {
             const day = ensureDay(s.date);
             day.schm += (s.schm || 0);
         }

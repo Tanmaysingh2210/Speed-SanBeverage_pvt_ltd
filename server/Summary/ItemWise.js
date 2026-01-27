@@ -15,10 +15,10 @@ export const ItemWiseSummary = async (req, res) => {
         end.setHours(23, 59, 59, 999);
 
         const [loadouts, loadins, rates, items] = await Promise.all([
-            LoadOut.find({ date: { $gte: start, $lte: end } }),
-            LoadIn.find({ date: { $gte: start, $lte: end } }),
-            Rates.find({ date: { $lte: end } }).sort({ date: 1 }),
-            Item.find()
+            LoadOut.find({ depo: req.user?.depo, date: { $gte: start, $lte: end } }),
+            LoadIn.find({ depo: req.user?.depo, date: { $gte: start, $lte: end } }),
+            Rates.find({ depo: req.user?.depo, date: { $lte: end } }).sort({ date: 1 }),
+            Item.find({ depo: req.user?.depo })
         ]);
 
 
@@ -105,6 +105,7 @@ export const ItemWiseSummary = async (req, res) => {
 
         for (const [itemCode, data] of itemMap) {
             const itemDetails = await Item.findOne({
+                depo: req.user?.depo,
                 code: itemCode.trim().toUpperCase(),
             });
 

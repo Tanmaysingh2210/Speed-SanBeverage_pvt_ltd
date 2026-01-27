@@ -2,7 +2,7 @@ import CashCredit from '../models/transaction/CashCredit.js';
 import Salesman from '../models/salesman.js';
 
 export const CashChequeSummary = async (req, res) => {
-        const normalize = v => v?.trim().toLowerCase();
+    const normalize = v => v?.trim().toLowerCase();
 
     try {
         const { startDate, endDate } = req.body;
@@ -18,7 +18,7 @@ export const CashChequeSummary = async (req, res) => {
         // ]);
 
         const cashCredits = await CashCredit.find(
-            { date: { $gte: start, $lte: end } }
+            { depo: req.user?.depo, date: { $gte: start, $lte: end } }
         );
         // const dayMap = new Map();
         // const getDayKey = d => d.toISOString().spilt("T")[0];
@@ -35,16 +35,16 @@ export const CashChequeSummary = async (req, res) => {
             const cash = cashcredit.cashDeposited;
             const cheque = cashcredit.chequeDeposited;
             const date = cashcredit.date;
-            
+
             const total = cash + cheque;
             if (!salesmanMap.has(cashcredit.salesmanCode)) {
                 salesmanMap.set(cashcredit.salesmanCode,
                     {
-                        date:date,
+                        date: date,
                         salesmanCode: cashcredit.salesmanCode,
                         totalCash: 0,
                         totalCheque: 0,
-                        
+
                     }
                 );
             }
@@ -60,12 +60,13 @@ export const CashChequeSummary = async (req, res) => {
 
         for (const [salesmanCode, data] of salesmanMap) {
             const salesmanDetails = await Salesman.findOne({
+                depo: req.user?.depo,
                 codeNo: salesmanCode.trim().toUpperCase(),
             });
             if (!salesmanDetails) continue;
 
             summary.push({
-                date : data.date.toISOString().split("T")[0],
+                date: data.date.toISOString().split("T")[0],
                 salesmanCode,
                 name: salesmanDetails.name,
                 totalCash: data.totalCash,
