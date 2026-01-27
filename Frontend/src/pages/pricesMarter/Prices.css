@@ -276,3 +276,25 @@
   border-color: #4f46e5;
   box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.15);
 }
+
+.export-btn {
+  padding: 8px 14px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.export-btn.pdf {
+  background: #e74c3c;
+  color: white;
+}
+
+.export-btn.excel {
+  background: #27ae60;
+  color: white;
+}
+
+.export-btn:hover {
+  opacity: 0.85;
+}
