@@ -4,11 +4,9 @@ import toast from 'react-hot-toast';
 import './salesman.css'
 import { usePrint } from "../context/PrintContext";
 import { useExcel } from "../context/ExcelContext";
-import { useAuth } from "../context/AuthContext";
 
 
 const Salesman = () => {
-  const {user} = useAuth();
   const [showModal, setShowModal] = useState(false);
   const handleOpen = () => setShowModal(true);
   const handleClose = () => setShowModal(false);
@@ -80,8 +78,7 @@ const Salesman = () => {
         codeNo: newSalesman.codeNo.toUpperCase(),
         name: newSalesman.name.toUpperCase(),
         routeNo: newSalesman.routeNo,
-        depo:user?.depo,
-        status: newSalesman.status,
+        status: newSalesman.status
       };
       await addSalesman(newData);
       setNewSalesman({ codeNo: "", name: "", routeNo: 0, status: "Active" });

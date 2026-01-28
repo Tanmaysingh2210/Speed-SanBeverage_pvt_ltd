@@ -54,7 +54,7 @@ export const EmtAndMtSummary = async (req, res) => {
             let emt = 0;
             for (const item of loadin.items) {
                 const itemDoc = await Item.findOne({
-                    depo:req.user?.depo ,
+                    depo:req.user?.depo,
                     code: item.itemCode.trim().toUpperCase()
                 });
                 if (!itemDoc) continue;

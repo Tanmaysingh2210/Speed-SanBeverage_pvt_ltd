@@ -1,10 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import "../purchase/purchase.css"; // New separate CSS file
 import { usePurchase } from '../../context/PurchaseContext.jsx';
-import { useAuth } from '../../context/AuthContext.jsx';
 
 const PurchaseEntry = () => {
-    const {user}= useAuth();
     const { createPurchase, calculateNetAmount, loading } = usePurchase();
 
     const [formData, setFormData] = useState({
@@ -66,12 +64,8 @@ const PurchaseEntry = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const payload = {
-            ...formData, 
-            depo:user.depo
-        }
 
-        const result = await createPurchase(payload);
+        const result = await createPurchase(formData);
 
         if (result.success) {
             // alert('Purchase entry created successfully!');

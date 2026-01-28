@@ -2,11 +2,8 @@ import React, { useState, useRef, useEffect } from 'react'  // Fix: useState, us
 import { usePrice } from '../../context/PricesContext'
 import { useSKU } from '../../context/SKUContext'
 import './Prices.css';
-import { useAuth } from '../../context/AuthContext';
-
 
 const BrowsePrice = () => {
-  const {user} = useAuth();
   const { prices, updatePrice, deletePrice, loading } = usePrice();
   const { items } = useSKU();
   const [search, setSearch] = useState("")

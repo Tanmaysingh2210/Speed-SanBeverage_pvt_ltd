@@ -6,7 +6,6 @@ import { useSKU } from '../../context/SKUContext';
 import { useSalesman } from '../../context/SalesmanContext';
 import "./transaction.css";
 import { useSalesmanModal } from '../../context/SalesmanModalContext';
-import { useAuth } from "../../context/AuthContext";
 
 
 const LoadOut = () => {

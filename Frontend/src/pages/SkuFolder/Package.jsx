@@ -1,11 +1,9 @@
 import React, { useEffect, useState, useRef } from 'react'
 import './Container.css';
 import { useSKU } from '../../context/SKUContext';
-import {useAuth} from '../../context/AuthContext';
 
 const Package = () => {
   const { packages, addPackage, getPackageByID, deletePackage, updatePackage, getAllPackages, loading } = useSKU();
-  const {user} = useAuth();
 
   const [editId, setEditId] = useState(null);
   const [editValue, setEditValue] = useState("");
@@ -27,7 +25,7 @@ const Package = () => {
 
   const handleAddPackage = async () => {
     if (newpackage.trim() === "") return;
-    await addPackage({ serial: packages.length + 1, name: newpackage.toUpperCase() , depo: user.depo});
+    await addPackage({ serial: packages.length + 1, name: newpackage.toUpperCase() });
     setNewPackage("");
   };
 

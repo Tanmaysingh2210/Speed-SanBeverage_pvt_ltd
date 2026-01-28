@@ -4,10 +4,8 @@ import "../transaction/transaction.css";
 import api from '../../api/api';
 import { useSKU } from '../../context/SKUContext';
 import "../transaction/transaction.css";
-import { useAuth } from '../../context/AuthContext';
 
 const PurchaseItemwise = () => {
-    const { user } = useAuth();
     const { items: skuItems } = useSKU();
     const [items, setItems] = useState([]);
     const [editingIndex, setEditingIndex] = useState(null);
@@ -134,8 +132,6 @@ const PurchaseItemwise = () => {
     };
 
     const handleSubmit = async () => {
-        if (!user || !user.depo) return;
-
         if (items.length === 0) {
             toast.error('Please add at least one item', 'error');
             return;
@@ -159,8 +155,7 @@ const PurchaseItemwise = () => {
 
         const finalPayload = {
             date: mainDate,
-            items: formattedItems,
-            depo: user?.depo
+            items: formattedItems
         };
 
         console.log('Sending payload:', finalPayload); // Debug log

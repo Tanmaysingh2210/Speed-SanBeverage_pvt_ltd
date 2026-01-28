@@ -3,7 +3,6 @@ import "./Prices.css";
 import { usePrice } from "../../context/PricesContext";
 import { useSKU } from "../../context/SKUContext";
 import toast from "react-hot-toast";
-import { useAuth } from "../../context/AuthContext";
 import { useItemModal } from '../../context/ItemModalContext';
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
@@ -14,7 +13,6 @@ import ExcelJS from "exceljs";
 
 // import '../../pages/transaction/transaction.css'
 const LatestPrice = () => {
-    const { user } = useAuth();
     const { prices, updatePrice, deletePrice, addPrice, loading } = usePrice();
     const { items } = useSKU();
     const [itemShow, setItemShow] = useState(false);
@@ -306,7 +304,7 @@ const LatestPrice = () => {
     const handleSave = async (e) => {
         e.preventDefault();
 
-        if (!newPrice.basePrice || !newPrice.code || !newPrice.date || !user || !user.depo) {
+        if (!newPrice.basePrice || !newPrice.code || !newPrice.date) {
             toast.error("⚠️ Please fill all fields!");
             return;
         }
@@ -318,7 +316,6 @@ const LatestPrice = () => {
             perDisc: Number(newPrice.perDisc) || 0,
             date: newPrice.date, // backend expects `date` (lowercase)
             status: editId ? newPrice.status : "Active", //  Force Active for new prices
-            depo: user?.depo
         };
 
 

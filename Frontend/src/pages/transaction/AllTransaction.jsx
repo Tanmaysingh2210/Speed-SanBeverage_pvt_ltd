@@ -6,10 +6,8 @@ import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 import { useSKU } from '../../context/SKUContext';
 import { useSalesmanModal } from '../../context/SalesmanModalContext';
-import { useAuth } from '../../context/AuthContext';
 
 const AllTransaction = () => {
-  const { user } = useAuth();
   const navigate = useNavigate();
   const { FormatDate, getLoadout, deleteLoadout, getLoadIn, deleteLoadin, getCash_credit, deleteCash_credit, loading } = useTransaction();
   const { salesmans, getAllSalesmen } = useSalesman();
@@ -128,7 +126,7 @@ const AllTransaction = () => {
 
   const handleFind = async (e) => {
     e.preventDefault();
-    if (!find.date || !find.type || !find.trip || !find.salesmanCode || !user || !user.depo) {
+    if (!find.date || !find.type || !find.trip || !find.salesmanCode) {
       toast.error("⚠️ Fill all fields");
       return;
     }
@@ -137,7 +135,6 @@ const AllTransaction = () => {
       salesmanCode: find.salesmanCode.trim().toUpperCase(),
       date: find.date,
       trip: find.trip,
-      depo: user?.depo
     };
 
     if (find.type === "all") {

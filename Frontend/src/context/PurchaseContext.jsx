@@ -1,20 +1,16 @@
 import React, { createContext, useState, useContext } from 'react';
-import { useAuth } from './AuthContext';
 
 
 const PurchaseContext = createContext();
 
 // Provider Component
 export const PurchaseProvider = ({ children }) => {
-    const { user } = useAuth();
     const [purchases, setPurchases] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
-    let API_URL = "";
-    if (user && user.depo) {
-        API_URL = `http://localhost:3000/purchase?depo=${user.depo}`;
-    }
+
+    const API_URL = `http://localhost:3000/purchase`;
 
 
     // CREATE - Add new purchase
@@ -52,8 +48,6 @@ export const PurchaseProvider = ({ children }) => {
 
     // READ - Get all purchases
     const getAllPurchases = async () => {
-        if (!user || !user.depo) return;
-        
         setLoading(true);
         setError(null);
 

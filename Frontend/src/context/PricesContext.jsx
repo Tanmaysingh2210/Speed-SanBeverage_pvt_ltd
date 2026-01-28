@@ -6,15 +6,14 @@ import { useAuth } from "./AuthContext";
 const PriceContext = createContext();
 
 export function PricesProvider({ children }) {
-    const { user, isAuthenticated } = useAuth();
+    const { isAuthenticated } = useAuth();
     const [prices, setPrices] = useState([]);
     const [loading, setLoading] = useState(false);
 
     const getAllPrices = async () => {
-        if(!user || !user.depo) return;
         try {
             setLoading(true);
-            const res = await api.get(`/rates?depo=${user.depo}`);
+            const res = await api.get(`/rates`);
             setPrices(res.data);
             return res;
         } catch (err) {
@@ -25,11 +24,10 @@ export function PricesProvider({ children }) {
     };
 
     const getPriceByDate = async (code, date) => {
-        if(!user || !user.depo) return;
         try {
             setLoading(true);
             const res = await api.get(`/rates/price`, {
-                params: { code, date, depo: user?.depo }
+                params: { code, date }
             });
             return res.data;
         } catch (err) {
@@ -95,9 +93,9 @@ export function PricesProvider({ children }) {
     };
 
     useEffect(() => {
-        if(!isAuthenticated || !user.depo) return;
+        if (!isAuthenticated) return;
         getAllPrices();
-    }, [isAuthenticated, user]);
+    }, [isAuthenticated]);
 
     return (
         <PriceContext.Provider value={{ prices, loading, getAllPrices, updatePrice, getPriceByDate, getPriceByID, deletePrice, addPrice }} >{children}</PriceContext.Provider>

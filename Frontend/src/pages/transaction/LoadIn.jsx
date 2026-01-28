@@ -1,17 +1,15 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useRef } from 'react';
 import toast from 'react-hot-toast';
 import { useTransaction } from '../../context/TransactionContext';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useSKU } from '../../context/SKUContext';
 import { useSalesman } from '../../context/SalesmanContext';
 import "./transaction.css";
-import {useAuth} from "../../context/AuthContext"; 
 import { useSalesmanModal } from '../../context/SalesmanModalContext';
 
 const LoadIn = () => {
     const navigate = useNavigate();
     const location = useLocation();
-    const {user} = useAuth();
 
     const [modalQtyMapFill, setModalQtyMapFill] = useState({});
     const [modalQtyMapBurst, setModalQtyMapBurst] = useState({});
@@ -24,8 +22,8 @@ const LoadIn = () => {
     const [search, setSearch] = useState("");
 
     const { loading, addLoadIn, updateLoadIn } = useTransaction();
-    const { items, getAllItems } = useSKU();
-    const { salesmans, getAllSalesmen } = useSalesman();
+    const { items } = useSKU();
+    const { salesmans } = useSalesman();
 
 
     const editMode = location.state?.editMode || false;
@@ -117,7 +115,6 @@ const LoadIn = () => {
             date: newLoadIn.date,
             trip: Number(newLoadIn.trip),
             items: newLoadIn.items,
-            depo: user.depo
         };
 
         try {

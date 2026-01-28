@@ -26,7 +26,7 @@ export const login = async (req, res) => {
             req.session.user = { id: user._id, email: user.email, name: user.name, depo: user.depo };
             console.log("session: ", req.session);
             console.log("sessionID: ", req.sessionID);
-            res.json({ message: 'Logged in successfully', user });
+            res.json({ message: 'Logged in successfully', user: req.session.user });
         });
     } catch (err) {
         res.status(500).json({ message: "Error logging in", err });

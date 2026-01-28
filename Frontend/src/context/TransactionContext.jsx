@@ -6,7 +6,7 @@ import { useAuth } from './AuthContext';
 const TransationContext = createContext();
 
 export function TransactionProvider({ children }) {
-    const{user, isAuthenticated} = useAuth();
+    const{isAuthenticated} = useAuth();
     const [loadout, setLoadout] = useState([]);
     const [loadin, setLoadin] = useState([]);
     const [cashCredit, setCashCredit] = useState([]);
@@ -77,7 +77,7 @@ export function TransactionProvider({ children }) {
     const getAllLoadout = async () => {
         try {
             setLoading(true);
-            const res = await api.get(`/transaction/loadout?depo=${user.depo}`);
+            const res = await api.get(`/transaction/loadout`);
             setLoadout(res.data);
             return res.data;
         } catch (err) {
@@ -147,7 +147,7 @@ export function TransactionProvider({ children }) {
     const getAllLoadin = async () => {
         try {
             setLoading(true);
-            const res = await api.get(`/transaction/loadin?depo=${user.depo}`);
+            const res = await api.get(`/transaction/loadin`);
             setLoadin(res.data);
             return res.data;
         } catch (err) {
