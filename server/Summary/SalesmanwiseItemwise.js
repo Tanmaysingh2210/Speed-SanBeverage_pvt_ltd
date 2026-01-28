@@ -20,10 +20,11 @@ export const salesmanwiseItemwiseSummary = async (req, res) => {
     end.setHours(23, 59, 59, 999);
 
     const result = await LoadOut.aggregate([
-
+    
       {
         $match: {
           salesmanCode,
+          depo: req.user.depo,
           date: {
             $gte: start,
             $lte: end
@@ -140,6 +141,7 @@ export const salesmanwiseItemwiseSummary = async (req, res) => {
             {
               $match: {
                 salesmanCode,
+                depo: req.user.depo,
                 date: { $gte: start, $lte: end }
               }
             },
