@@ -15,16 +15,12 @@ const LoadIn = () => {
     const [modalQtyMapBurst, setModalQtyMapBurst] = useState({});
     const [modalQtyMapEmt, setModalQtyMapEmt] = useState({});
 
-
-
-
     const [itemShow, setItemShow] = useState(false);
     const [search, setSearch] = useState("");
 
     const { loading, addLoadIn, updateLoadIn } = useTransaction();
     const { items } = useSKU();
     const { salesmans } = useSalesman();
-
 
     const editMode = location.state?.editMode || false;
     const editData = location.state?.editData || null;

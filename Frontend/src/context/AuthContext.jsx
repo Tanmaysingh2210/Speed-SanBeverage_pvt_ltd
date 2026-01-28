@@ -35,11 +35,6 @@ export function AuthProvider({ children }) {
         fetchUser();
     }, []);
 
-    useEffect(() => {
-        console.log("Logged user", user)
-    }, [user]
-    );
-
     async function login(payload) {
         try {
             const res = await api.post('/auth/login', payload);
@@ -97,7 +92,6 @@ export function AuthProvider({ children }) {
             setUser(null);
             navigate('/signin', { replace: true });
         }
-
     }
 
     return (

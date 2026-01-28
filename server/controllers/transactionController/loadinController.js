@@ -4,7 +4,7 @@ export const addLoadIn = async (req, res) => {
     try {
         const { salesmanCode, date, trip, items } = req.body;
 
-        if (!salesmanCode || !date || !trip || !Array.isArray(items) || items.length === 0 || !depo) return res.status(400).json({ message: "All fields are required" });
+        if (!salesmanCode || !date || !trip || !Array.isArray(items) || items.length === 0) return res.status(400).json({ message: "All fields are required" });
 
         const depo = req.user?.depo;
 

@@ -5,6 +5,7 @@ import SignInPage from './pages/SignInPage';
 import ProtectedRoute from './Components/ProtectedRoute';
 import RegisterPage from './pages/RegisterPage';
 import { Toaster } from "react-hot-toast";
+import { PublicRoute } from './Components/PublicRoute';
 
 
 function App() {
@@ -32,7 +33,7 @@ function App() {
 
 
       <Routes>
-        <Route path='/signin' index element={<SignInPage />} />
+        <Route path='/signin' index element={<PublicRoute> <SignInPage /></PublicRoute>} />
         <Route path="/register" element={<RegisterPage />} />
 
         <Route element={<ProtectedRoute />}>

@@ -8,7 +8,7 @@ export default function SignInPage() {
     const [showPassword, setShowPassword] = useState(false);
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const { login, user, loading } = useAuth();
+    const { login, user } = useAuth();
     const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
@@ -16,23 +16,12 @@ export default function SignInPage() {
         try {
             await login({ email, password });
             toast.success(`Logged in sucsessfully!`);
+            navigate('/', { replace: true });
         } catch (err) {
             const msg = err?.response?.data?.message || 'Login failed';
             toast.error(msg);
-            console.log(err);
         }
     };
-
-    // If already authenticated, redirect away from sign-in
-    useEffect(() => {
-        if (!loading && user) navigate('/');
-    }, [user, loading, navigate]);
-
-
-    // Redirect if already logged in
-    useEffect(() => {
-        if (user) navigate('/');
-    }, [user, navigate]);
 
 
     return (

@@ -94,6 +94,7 @@ export function TransactionProvider({ children }) {
             toast.success(res.data.message || "loadin added successfully");
             return res.data;
         } catch (err) {
+            console.log(err);
             toast.error(err.response?.data?.message || "Error adding loadin");
             throw err;
         } finally {
