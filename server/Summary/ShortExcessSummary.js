@@ -22,6 +22,7 @@ export const shortExcessSummary = async (req, res) => {
 
             {
                 $match: {
+                    depo: req.user.depo,
                     date: {
                         $gte: start,
                         $lte: end,
@@ -136,6 +137,7 @@ export const shortExcessSummary = async (req, res) => {
                     pipeline: [
                         {
                             $match: {
+                                depo: req.user.depo,
                                 $expr: {
                                     $eq: [
                                         { $toUpper: "$salesmanCode" },
@@ -302,6 +304,7 @@ export const shortExcessSummary = async (req, res) => {
                     pipeline: [
                         {
                             $match: {
+                                depo: req.user.depo,
                                 $expr: {
                                     $eq: [
                                         { $toUpper: "$salesmanCode" },
