@@ -102,10 +102,7 @@ export default function RegisterPage() {
         }
     };
 
-    // Redirect if already logged in
-    useEffect(() => {
-        if (user) navigate('/');
-    }, [user, navigate]);
+    // Note: allow logged-in users to access this page to register other users
 
 
     return (

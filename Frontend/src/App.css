@@ -64,7 +64,7 @@ body {
   justify-content: flex-end;
   align-items: center;
   color: black;
-  gap: 6vh;
+  gap: 1.5vh;
   width: 100%;
   margin-right: 3vh;
   transition: transform 0.3s ease;
