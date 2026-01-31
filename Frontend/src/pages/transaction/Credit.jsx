@@ -44,7 +44,7 @@ const Credit = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if (!newCredit.salesmanCode || !newCredit.trip || !newCredit.date || !newCredit.tax || !newCredit.value) {
+        if (!newCredit.salesmanCode || !newCredit.trip || !newCredit.date || !newCredit.value) {
             toast.error("Fill all fields properly");
             return;
         }

@@ -8,12 +8,14 @@ import Rates from '../models/rates.js';
 
 
 export const DaywiseSummary = async (req, res) => {
-    const normalize = v => v?.trim().toLowerCase();
+    const normalize = v => typeof v === "string" ? v.trim().toLowerCase() : "";
+
     try {
         const { startDate, endDate } = req.body;
         if (!startDate || !endDate || startDate > endDate) return res.status(400).json({ message: "Fill all fields properly", success: false });
 
         const start = new Date(startDate);
+        start.setHours(0, 0, 0, 0);
         const end = new Date(endDate);
         end.setHours(23, 59, 59, 999);
 
@@ -47,7 +49,6 @@ export const DaywiseSummary = async (req, res) => {
                 itemCode: code,
                 container: normalize(i.container)
             });
-
         }
 
         console.log(itemMap);
@@ -73,14 +74,15 @@ export const DaywiseSummary = async (req, res) => {
             if (!dayMap.has(key)) {
                 dayMap.set(key, {
                     date: key,
-                    sale: 0,
-                    creditSale: 0,
-                    cashDeposited: 0,
-                    chequeDeposited: 0,
+                    grossSale: 0,
+                    credit: 0,
+                    cash: 0,
+                    cheque: 0,
                     refunds: 0,
                     disc: 0,
                     schm: 0,
-                    ref: 0
+                    ref: 0,
+                    missingItems: []
                 });
             }
             return dayMap.get(key);
@@ -98,7 +100,7 @@ export const DaywiseSummary = async (req, res) => {
                 const tax = ((base - disc) * (rate.perTax || 0)) / 100;
                 const finalPrice = base - disc + tax;
 
-                day.sale += item.qty * finalPrice;
+                day.grossSale += item.qty * finalPrice;
 
             }
         }
@@ -120,12 +122,10 @@ export const DaywiseSummary = async (req, res) => {
                 const it = itemMap.get(normalize(item.itemCode));
 
                 if (!it) {
-                    day.missingItems.add(normalize(item.itemCode));
+                    day.missingItems.push(normalize(item.itemCode));
                     console.log(day.missingItems);
                     continue;
                 }
-
-
 
                 if (!it) continue;
                 console.log(it);
@@ -133,20 +133,19 @@ export const DaywiseSummary = async (req, res) => {
                     day.refunds += (item.Emt * finalPrice);
                     console.log(`refunds : ${day.refunds}`);
                 } else {
-                    day.sale -= ((item.Filled + item.Burst) * finalPrice);
+                    day.grossSale -= ((item.Filled + item.Burst) * finalPrice);
                 }
-
             }
         }
 
         for (const cc of cashcredits) {
             const day = ensureDay(cc.date);
             if (cc.crNo === 1) {
-                day.cashDeposited += cc.cashDeposited || 0;
-                day.chequeDeposited += cc.chequeDeposited || 0;
+                day.cash += cc.cashDeposited || 0;
+                day.cheque += cc.chequeDeposited || 0;
                 day.ref += cc.ref || 0;
             } else {
-                day.creditSale += cc.value || 0;
+                day.credit += cc.value || 0;
                 day.ref += cc.ref || 0;
             }
         }
@@ -157,15 +156,15 @@ export const DaywiseSummary = async (req, res) => {
         }
 
         const summary = Array.from(dayMap.values()).map(d => {
-            const deposited = d.cashDeposited + d.chequeDeposited;
-            const shortExcess = deposited + d.schm + d.ref - d.sale;
+            const deposited = d.cash + d.cheque;
+            const shortExcess = deposited + d.schm + d.ref - d.grossSale;
 
             return {
                 date: d.date,
-                sale: Number(d.sale.toFixed(2)),
-                cashDeposited: Number(d.cashDeposited.toFixed(2)),
-                chequeDeposited: Number(d.chequeDeposited.toFixed(2)),
-                creditSale: Number(d.creditSale.toFixed(2)),
+                grossSale: Number(d.grossSale.toFixed(2)),
+                cashDeposited: Number(d.cash.toFixed(2)),
+                chequeDeposited: Number(d.cheque.toFixed(2)),
+                creditSale: Number(d.credit.toFixed(2)),
                 refund: Number(d.refunds.toFixed(2)),
                 schm: Number((d.schm).toFixed(2)),
                 shortExcess: Number(shortExcess.toFixed(2))

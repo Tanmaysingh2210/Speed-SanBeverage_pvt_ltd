@@ -10,53 +10,58 @@ export const EmtAndMtSummary = async (req, res) => {
         if (!startDate || !endDate) return res.status(400).json({ message: "All field are required", success: false });
 
         const start = new Date(startDate);
+        start.setHours(0, 0, 0, 0);
         const end = new Date(endDate);
         end.setHours(23, 59, 59, 999);
 
-        const loadouts = await LoadOut.find(
-            { depo: req.user?.depo, date: { $gte: start, $lte: end } }
-        );
+        const [loadouts, loadins, salesmans, items] = await Promise.all([
+            LoadOut.find({ depo: req.user?.depo, date: { $gte: start, $lte: end } }),
+            LoadIn.find({ depo: req.user?.depo, date: { $gte: start, $lte: end } }),
+            Salesman.find({ depo: req.user?.depo }),
+            Item.find({ depo: req.user?.depo }),
 
-        const salesmanMap = new Map();
+        ])
+
+        const itemMap = new Map();
+        for (const item of items) {
+            itemMap.set(item.code.trim().toUpperCase(), item);
+        }
+
+        const salesmanMapDetails = new Map();
+        for (const sm of salesmans) {
+            salesmanMapDetails.set(sm.codeNo.trim().toUpperCase(), sm);
+        }
+
+
+        const summaryMap = new Map();
 
 
         for (const loadout of loadouts) {
             let mt = 0;
             for (const item of loadout.items) {
-                const itemDoc = await Item.findOne({
-                    depo:req.user?.depo ,
-                    code: item.itemCode.trim().toUpperCase()
-                });
+                const itemDoc = itemMap.get(item.itemCode.trim().toUpperCase());
                 if (!itemDoc) continue;
                 if (itemDoc.container.toLowerCase() === "mt") {
                     mt += item.qty;
                 }
 
             }
-            if (!salesmanMap.has(loadout.salesmanCode)) {
-                salesmanMap.set(loadout.salesmanCode, {
+            if (!summaryMap.has(loadout.salesmanCode)) {
+                summaryMap.set(loadout.salesmanCode, {
                     salesmanCode: loadout.salesmanCode,
                     totalMt: 0,
                     totalEmt: 0
                 });
             }
 
-            const agg = salesmanMap.get(loadout.salesmanCode);
-            agg.totalMt += mt;
-            console.log(`agg: ${agg.totalMt}`);
+            summaryMap.get(loadout.salesmanCode).totalMt += mt;
 
         }
-        const loadins = await LoadIn.find({
-            depo:req.user?.depo ,
-            date: { $gte: start, $lte: end }
-        });
+
         for (const loadin of loadins) {
             let emt = 0;
             for (const item of loadin.items) {
-                const itemDoc = await Item.findOne({
-                    depo:req.user?.depo,
-                    code: item.itemCode.trim().toUpperCase()
-                });
+                const itemDoc = itemMap.get(item.itemCode.trim().toUpperCase());
                 if (!itemDoc) continue;
                 if (itemDoc.container.toLowerCase() === "emt") {
                     emt += item.Emt;
@@ -64,32 +69,24 @@ export const EmtAndMtSummary = async (req, res) => {
                 }
             }
 
-            if (!salesmanMap.has(loadin.salesmanCode)) {
-                salesmanMap.set(loadin.salesmanCode, {
+            if (!summaryMap.has(loadin.salesmanCode)) {
+                summaryMap.set(loadin.salesmanCode, {
                     salesmanCode: loadin.salesmanCode,
                     totalMt: 0,
                     totalEmt: 0
                 });
-
             }
-            const agg = salesmanMap.get(loadin.salesmanCode);
-            agg.totalEmt += emt;
-            console.log(`agg: ${agg.totalEmt}`);
-
-
+            summaryMap.get(loadin.salesmanCode).totalEmt += emt;
         }
         const summary = [];
         let grandTotalMt = 0;
         let grandTotalEmt = 0;
-        for (const [salesmanCode, data] of salesmanMap) {
-            const salesmanDetails = await Salesman.findOne({
-                depo:req.user?.depo ,
-                codeNo: salesmanCode.trim().toUpperCase()
-            });
-            if (!salesmanDetails) continue;
+        for (const [salesmanCode, data] of summaryMap) {
+            const sm = salesmanMapDetails.get(salesmanCode.trim().toUpperCase());
+            if (!sm) continue;
             summary.push({
                 salesmanCode,
-                name: salesmanDetails.name,
+                name: sm.name,
                 totalMt: data.totalMt,
                 totalEmt: data.totalEmt
             })

@@ -40,7 +40,6 @@ export function AuthProvider({ children }) {
             const res = await api.post('/auth/login', payload);
             if (res.data.user) {
                 setIsAuthenticated(true);
-                console.log("Res.data.user: ", res.data.user);
                 const loggedUser = res.data.user;
                 setUser(loggedUser);
             } else {

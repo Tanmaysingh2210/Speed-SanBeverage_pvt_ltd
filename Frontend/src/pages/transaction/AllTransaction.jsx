@@ -22,36 +22,23 @@ const AllTransaction = () => {
 
   const [transactions, setTransactions] = useState([]);
 
-  const { openSalesmanModal } = useSalesmanModal();
-
-
-
-
-
+  // const { openSalesmanModal } = useSalesmanModal();
   const handleEdit = (transaction) => {
     if (!transaction || !transaction.type) return;
 
-    // Navigate to appropriate page with transaction data
     if (transaction.type === 'Load Out') {
       navigate('/transaction/load-out', {
-        state: {
-          editMode: true,
-          editData: transaction
-        }
+        state: { editMode: true, editData: transaction }
       });
-    } else if (transaction.type === 'Load In') {
+    }
+    else if (transaction.type === 'Load In') {
       navigate('/transaction/load-in', {
-        state: {
-          editMode: true,
-          editData: transaction
-        }
+        state: { editMode: true, editData: transaction }
       });
-    } else if (transaction.type === 'Cash/Credit') {
+    }
+    else if (transaction.type === 'Cash' || transaction.type === 'Credit') {
       navigate('/transaction/cash-credit', {
-        state: {
-          editMode: true,
-          editData: transaction
-        }
+        state: { editMode: true, editData: transaction }
       });
     }
   };
@@ -65,7 +52,7 @@ const AllTransaction = () => {
         await deleteLoadout(id);
       } else if (type === 'Load In') {
         await deleteLoadin(id);
-      } else if (type === 'Cash/Credit') {
+      } else if (type === 'Cash' || type === 'Credit') {
         await deleteCash_credit(id);
       }
 
@@ -149,19 +136,26 @@ const AllTransaction = () => {
         const newTransactions = [];
 
         if (loadoutRes.status === 'fulfilled' && loadoutRes.value) {
-          newTransactions.push({ ...loadoutRes.value, type: 'Load Out', id: Date.now() + 1 });
+          newTransactions.push({ ...loadoutRes.value, type: 'Load Out', id: Date.now() });
         } else if (loadoutRes.status === 'rejected') {
           console.warn('Loadout fetch failed:', loadoutRes.reason);
         }
 
         if (loadinRes.status === 'fulfilled' && loadinRes.value) {
-          newTransactions.push({ ...loadinRes.value, type: 'Load In', id: Date.now() + 1 });
+          newTransactions.push({ ...loadinRes.value, type: 'Load In', id: Date.now() });
         } else if (loadinRes.status === 'rejected') {
           console.warn('Loadin fetch failed:', loadinRes.reason);
         }
 
-        if (cashRes.status === 'fulfilled' && cashRes.value) {
-          newTransactions.push({ ...cashRes.value, type: 'Cash/Credit', id: Date.now() + 1 });
+        if (cashRes.status === 'fulfilled' && Array.isArray(cashRes.value)) {
+          cashRes.value.forEach((record) => {
+            newTransactions.push({
+              ...record,
+              type: record.crNo === 1 ? 'Cash' : 'Credit',
+              id: `${record._id}-cashcredit`
+            });
+          });
+          console.log("newTransaction", newTransactions)
         } else if (cashRes.status === 'rejected') {
           console.warn('CashCredit fetch failed:', cashRes.reason);
         }
@@ -293,58 +287,29 @@ const AllTransaction = () => {
           })}
         </div>
       );
-    } else if (transaction.type === 'Cash/Credit') {
-      // const netValue = transaction.value - transaction.tax - transaction.ref;
-      // return (
-      //   <div style={{ fontSize: '14px', color: '#666' }}>
-      //     <div>CR No: {transaction.crNo}</div>
-      //     <div>Value: ₹{transaction.value}</div>
-      //     <div>Tax: ₹{transaction.tax} | Ref: ₹{transaction.ref}</div>
-      //     <div>Net: ₹{netValue}</div>
-      //     <div>Cash: ₹{transaction.cashDeposited} | Cheque: ₹{transaction.chequeDeposited}</div>
-      //     {transaction.remark && <div>Remark: {transaction.remark}</div>}
-      //   </div>
-      // );
+    } else if (transaction.type === 'Cash' || transaction.type === 'Credit') {
+      const netValue = transaction.value + (transaction.tax || 0) - (transaction.ref || 0);
 
-      if (transaction && transaction.length > 0) {
-        return (
-          <div style={{ fontSize: '14px' }}>
-            {transaction.map((record, idx) => {
-              const netValue = record.value - record.tax - record.ref;
-              return (
-                <div key={idx} style={{
-                  color: '#666',
-                  marginBottom: idx < transaction.length - 1 ? '12px' : '0',
-                  paddingBottom: idx < transaction.length - 1 ? '12px' : '0',
-                  borderBottom: idx < transaction.length - 1 ? '1px solid #e5e7eb' : 'none'
-                }}>
-                  <div style={{ fontWeight: '600', color: '#374151' }}>CR No: {record.crNo}</div>
-                  <div>Value: ₹{record.value}</div>
-                  <div>Tax: ₹{record.tax} | Ref: ₹{record.ref}</div>
-                  <div>Net: ₹{netValue}</div>
-                  <div>Cash: ₹{record.cashDeposited} | Cheque: ₹{record.chequeDeposited}</div>
-                  {record.remark && <div style={{ fontStyle: 'italic' }}>Remark: {record.remark}</div>}
-                </div>
-              );
-            })}
-          </div>
-        );
+      return (
+        <div style={{ fontSize: '14px', color: '#666' }}>
+          <div>Value: ₹{transaction.value}</div>
+          <div>Tax: ₹{transaction.tax} | Ref: ₹{transaction.ref || 0}</div>
 
 
-        // Single cash/credit record (backward compatibility)
-        const netValue = transaction.value - transaction.tax - (transaction.ref || 0);
-        return (
-          <div style={{ fontSize: '14px', color: '#666' }}>
-            <div style={{ fontWeight: '600', color: '#374151' }}>CR No: {transaction.crNo}</div>
-            <div>Value: ₹{transaction.value}</div>
-            <div>Tax: ₹{transaction.tax} | Ref: ₹{transaction.ref || 0}</div>
-            <div>Net: ₹{netValue}</div>
-            <div>Cash: ₹{transaction.cashDeposited} | Cheque: ₹{transaction.chequeDeposited}</div>
-            {transaction.remark && <div style={{ fontStyle: 'italic' }}>Remark: {transaction.remark}</div>}
-          </div>
-        );
-      }
+          {transaction.type === 'Cash' && (
+            <div>Cash: ₹{transaction.cashDeposited}</div>
+          )}
+
+          {transaction.type === 'Cash' && (
+            <div>Cheque: ₹{transaction.chequeDeposited}</div>
+          )}
+
+          <div>Net: ₹{netValue}</div>
+
+        </div>
+      );
     }
+
   };
 
   return (
@@ -422,7 +387,7 @@ const AllTransaction = () => {
       </div>
       <div className="trans-container set-margin">
         <div className="all-table">
-          <div className="all-row header">
+          <div className="headerr">
             <div>TYPE</div>
             <div>SALESMAN</div>
             <div>NAME</div>

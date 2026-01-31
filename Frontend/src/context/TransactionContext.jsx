@@ -6,7 +6,7 @@ import { useAuth } from './AuthContext';
 const TransationContext = createContext();
 
 export function TransactionProvider({ children }) {
-    const{isAuthenticated} = useAuth();
+    const { isAuthenticated } = useAuth();
     const [loadout, setLoadout] = useState([]);
     const [loadin, setLoadin] = useState([]);
     const [cashCredit, setCashCredit] = useState([]);
@@ -176,6 +176,7 @@ export function TransactionProvider({ children }) {
         try {
             setLoading(true);
             const res = await api.post(`/transaction/cashcredit/getone`, payload);
+            console.log("cash_credit: ", res.date);
             setCashCredit(res.data);
             return res.data;
         } catch (err) {
@@ -186,7 +187,7 @@ export function TransactionProvider({ children }) {
         }
     };
 
-    const updateCash_credit = async ( id, payload) => {
+    const updateCash_credit = async (id, payload) => {
         try {
             setLoading(true);
             const res = await api.patch(`/transaction/cashcredit/update/${id}`, payload);
@@ -218,7 +219,7 @@ export function TransactionProvider({ children }) {
         try {
             setLoading(true);
             const res = await api.post('/transaction/settlement', payload);
-            toast.success(res.data?.message || "Settlement calculated sucessfully" )
+            toast.success(res.data?.message || "Settlement calculated sucessfully")
             return res.data;
         } catch (err) {
             toast.error(err.response?.data?.message || "Error fetching settlement");
@@ -259,7 +260,7 @@ export function TransactionProvider({ children }) {
             getCash_credit,
             updateCash_credit,
             deleteCash_credit,
-            
+
             getSettlement,
 
             FormatDate

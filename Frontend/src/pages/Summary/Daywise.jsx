@@ -157,13 +157,13 @@ const DayWise = () => {
                     }
                     {/* Data Rows */}
                     {summary.map((p, i) => {
-                        const grossSale = Number(p.sale || 0) - Number(p.schm || 0);
+                        const netSale = Number(p.grossSale || 0) - Number(p.schm || 0);
                         return (
                             <div key={i} className="all-row5">
                                 <div>{FormatDate(p.date)}</div>
-                                <div>{p.sale}</div>
+                                <div>{netSale}</div>
                                 <div>₹ {p.schm}</div>
-                                <div>₹{grossSale} </div>
+                                <div>₹{p.grossSale} </div>
                                 <div>₹ {p.refund}</div>
                                 <div>₹ {p.creditSale}</div>
                                 <div>₹{p.cashDeposited} /₹ {p.chequeDeposited}</div>

@@ -2,54 +2,53 @@ import CashCredit from '../models/transaction/CashCredit.js';
 import Salesman from '../models/salesman.js';
 
 export const CashChequeSummary = async (req, res) => {
-    const normalize = v => v?.trim().toLowerCase();
+    const normalize = v => typeof v === "string" ? v.trim().toLowerCase() : "";
+
+
+    const getDateKey = (d) => d.toISOString().split("T")[0];
 
     try {
         const { startDate, endDate } = req.body;
         if (!startDate || !endDate) return res.status(400).json({ message: "All field are required", success: false });
 
         const start = new Date(startDate);
+        start.setHours(0, 0, 0, 0);
         const end = new Date(endDate);
         end.setHours(23, 59, 59, 999);
 
-        // const [cashCredits ,salesman] = await Promise.all([
-        //     CashCredit.find({ date :{ $gte : start , $lte :end}}),
-        //     Salesman.find({date: { $gte: start, $lte: end }})
-        // ]);
+        const [cashCredits, salesmans] = await Promise.all([
+            CashCredit.find({ depo: req.user?.depo, date: { $gte: start, $lte: end } }),
+            Salesman.find({ depo: req.user?.depo })
+        ]);
 
-        const cashCredits = await CashCredit.find(
-            { depo: req.user?.depo, date: { $gte: start, $lte: end } }
-        );
-        // const dayMap = new Map();
-        // const getDayKey = d => d.toISOString().spilt("T")[0];
-        // const ensureDay =(date)=>{
-        //     const key = getDayKey(date);
-        //     if(!dayMap.has(key)){
+        const salesmanMapDetails = new Map();
+        for (const sm of salesmans) {
+            salesmanMapDetails.set(sm.codeNo.trim().toUpperCase(), sm);
+        }
 
-        //     }
-        // }
-
-        const salesmanMap = new Map();
+        const summaryMap = new Map();
 
         for (const cashcredit of cashCredits) {
-            const cash = cashcredit.cashDeposited;
-            const cheque = cashcredit.chequeDeposited;
-            const date = cashcredit.date;
+            if (cashcredit.crNo != 1) continue;
+            const dateKey = getDateKey(cashcredit.date);
+            const salesmanCode = cashcredit.salesmanCode.trim().toUpperCase();
+            const mapKey = `${dateKey} | ${salesmanCode}`;
+
+            const cash = cashcredit.cashDeposited || 0;
+            const cheque = cashcredit.chequeDeposited || 0;
 
             const total = cash + cheque;
-            if (!salesmanMap.has(cashcredit.salesmanCode)) {
-                salesmanMap.set(cashcredit.salesmanCode,
+            if (!summaryMap.has(mapKey)) {
+                summaryMap.set(mapKey,
                     {
-                        date: date,
-                        salesmanCode: cashcredit.salesmanCode,
+                        date: dateKey,
+                        salesmanCode: salesmanCode,
                         totalCash: 0,
                         totalCheque: 0,
-
                     }
                 );
             }
-            const agg = salesmanMap.get(cashcredit.salesmanCode);
-            console.log(`agg: ${agg}`);
+            const agg = summaryMap.get(mapKey);
             agg.totalCash += cash;
             agg.totalCheque += cheque;
         }
@@ -58,24 +57,24 @@ export const CashChequeSummary = async (req, res) => {
         let grandTotalCash = 0;
         let grandTotalCheque = 0;
 
-        for (const [salesmanCode, data] of salesmanMap) {
-            const salesmanDetails = await Salesman.findOne({
-                depo: req.user?.depo,
-                codeNo: salesmanCode.trim().toUpperCase(),
-            });
-            if (!salesmanDetails) continue;
+        for (const data of summaryMap.values()) {
+            const sm = salesmanMapDetails.get(data.salesmanCode.trim().toUpperCase());
+            if (!sm) continue;
 
             summary.push({
-                date: data.date.toISOString().split("T")[0],
-                salesmanCode,
-                name: salesmanDetails.name,
+                date: data.date,
+                salesmanCode: data.salesmanCode,
+                name: sm.name,
                 totalCash: data.totalCash,
                 totalCheque: data.totalCheque
             });
             grandTotalCash += data.totalCash;
             grandTotalCheque += data.totalCheque;
         }
-        summary.sort((a, b) => a.salesmanCode.localeCompare(b.salesmanCode));
+        summary.sort((a, b) =>
+            a.date.localeCompare(b.date) ||
+            a.salesmanCode.localeCompare(b.salesmanCode)
+        );
         res.status(200).json({
             success: true,
             data: summary,
