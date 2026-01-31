@@ -38,6 +38,12 @@ export const salesmanwiseItemwiseSummary = async (req, res) => {
         }
       },
       { $unwind: "$items" },
+      // Filter out EMT (empty) items
+      {
+        $match: {
+          "items.itemCode": { $not: /EMT/ }
+        }
+      },
       {
         $project: {
           _id: 0,                       // exclude _id if you don't want it
@@ -62,6 +68,12 @@ export const salesmanwiseItemwiseSummary = async (req, res) => {
               }
             },
             { $unwind: "$items" },
+            // Filter out EMT (empty) items
+            {
+              $match: {
+                "items.itemCode": { $not: /EMT/ }
+              }
+            },
             {
               $project: {
                 _id: 0,
@@ -162,6 +174,7 @@ export const salesmanwiseItemwiseSummary = async (req, res) => {
       },
 
       // Step 6: Final group by itemCode → total qty + total amount
+  
       {
         $group: {
           _id: "$itemCode",
