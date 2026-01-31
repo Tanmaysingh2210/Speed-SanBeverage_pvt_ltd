@@ -76,6 +76,7 @@ const SalesmanWiseItemWise = () => {
 
       const res = await api.get(
         `/summary/salesman-wise-item-wise?salesmanCode=${salesmanCode}&startDate=${startDate}&endDate=${endDate}`
+       
       );
 
       console.log("SUMMARY DATA:", res.data); // 👈 must see this
