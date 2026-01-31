@@ -4,13 +4,15 @@ import Rates from '../models/rates.js';
 import { Item } from '../models/SKU.js';
 
 export const ItemWiseSummary = async (req, res) => {
-    const normalize = v => v?.trim().toLowerCase();
+    const normalize = v => typeof v === "string" ? v.trim().toLowerCase() : "";
+
     try {
         const { startDate, endDate } = req.body;
 
         if (!startDate || !endDate || startDate > endDate) return res.status(400).json({ message: "fill all fields properly", success: false });
 
         const start = new Date(startDate);
+        start.setHours(0, 0, 0, 0);
         const end = new Date(endDate);
         end.setHours(23, 59, 59, 999);
 

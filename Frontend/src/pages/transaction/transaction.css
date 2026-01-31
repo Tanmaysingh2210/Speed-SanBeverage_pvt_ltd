@@ -25,7 +25,7 @@
   margin-bottom: 12px;
 }
 
-.hidden{
+.hidden {
   overflow: hidden;
 }
 
@@ -111,6 +111,7 @@
   padding: 10px 14px;
   min-width: 700px;
 }
+
 .trans-table-grid-purchaseItemwise {
   display: grid;
   grid-template-columns: 0.6fr 2fr 0.5fr 0.8fr 0.8fr;
@@ -136,6 +137,7 @@
   font-weight: 600;
   border-bottom: 2px solid #e5e7eb;
 }
+
 .trans-table-header-purchaseItemwise {
   background-color: #f9fafb;
   font-weight: 600;
@@ -170,7 +172,7 @@
   animation: popup 0.3s ease;
 }
 
-.padd{
+.padd {
   margin-top: 3.5vh;
   height: 6vh;
   overflow: hidden;
@@ -194,7 +196,10 @@
   border-bottom: 1px solid #e0e0e0;
   font-size: 14px;
   text-wrap: nowrap;
+  text-align: center;
+
 }
+
 .all-row4 {
   display: grid;
   grid-template-columns: 2.7fr 2.7fr 2.1fr 1fr;
@@ -204,6 +209,7 @@
   font-size: 14px;
   text-wrap: nowrap;
 }
+
 .all-row6 {
   display: grid;
   grid-template-columns: 1.4fr 1fr 0.9fr 1.3fr 1.2fr 0.7fr;
@@ -214,122 +220,183 @@
   text-wrap: nowrap;
 }
 
-.all-row2{
+.all-row2 {
   display: grid;
-  grid-template-columns: 1.2fr 2fr 1fr 1.5fr; /* CODE | NAME | QTY | AMOUNT */
+  grid-template-columns: 1.2fr 2fr 1fr 1.5fr;
+  /* CODE | NAME | QTY | AMOUNT */
   padding: 10px 16px;
   white-space: nowrap;
   font-size: 14px;
-  align-items:center;
+  align-items: center;
 }
-.all-row2-smit{
+
+.all-row2-smit {
   display: grid;
-  grid-template-columns: 2.7fr 2.7fr 2.4fr 0.7fr; /* CODE | NAME | QTY | AMOUNT */
+  grid-template-columns: 2.7fr 2.7fr 2.4fr 0.7fr;
+  /* CODE | NAME | QTY | AMOUNT */
   padding: 10px 16px;
   white-space: nowrap;
   font-size: 14px;
-  align-items:center;
+  align-items: center;
 }
+
 .all-row2 div:nth-child(1) {
-  text-align: left;   /* CODE */
+  text-align: left;
+  /* CODE */
 }
 
 .all-row2 div:nth-child(2) {
-  text-align: left !important;   /* NAME */
+  text-align: left !important;
+  /* NAME */
 }
 
 .all-row2 div:nth-child(3) {
-  text-align: center; /* QUANTITY */
+  text-align: center;
+  /* QUANTITY */
 }
 
 .all-row2 div:nth-child(4) {
-  text-align: right;  /* AMOUNT */
+  text-align: right;
+  /* AMOUNT */
 }
+
 .total-row {
-  margin-top: 12px;          /* 👈 one-line space */
+  margin-top: 12px;
+  /* 👈 one-line space */
   font-weight: 700;
   background: #f9fafb;
   border-top: 2px solid #000;
 }
-.all-row3{
+
+.all-row3 {
   display: grid;
-  grid-template-columns: 1.2fr 2fr 1fr 1.5fr 1fr; /* CODE | NAME | QTY | AMOUNT */
+  grid-template-columns: 1.2fr 2fr 1fr 1.5fr 1fr;
+  /* CODE | NAME | QTY | AMOUNT */
   padding: 10px 16px;
   white-space: nowrap;
   font-size: 14px;
-  align-items:center;
+  align-items: center;
 }
-.all-row3 , .all-row5 div:nth-child(1)  {
-  text-align: left;   /* CODE */
+
+.all-row3,
+.all-row5 div:nth-child(1) {
+  text-align: left;
+  /* CODE */
 }
 
 .all-row3 div:nth-child(2) {
-  text-align: left !important;   /* NAME */
+  text-align: left !important;
+  /* NAME */
 }
 
 .all-row3 div:nth-child(3) {
-  text-align: center; /* QUANTITY */
+  text-align: center;
+  /* QUANTITY */
 }
 
 .all-row3 div:nth-child(4) {
-  text-align: center;  /* AMOUNT */
+  text-align: center;
+  /* AMOUNT */
 }
+
 .all-row3 div:nth-child(5) {
-  text-align: right;  /* AMOUNT */
+  text-align: right;
+  /* AMOUNT */
 }
 
-.all-row5:hover , .all-row4:hover , .all-row6:hover , .all-row3:hover{
-    background-color: #f1f5f9;
+.all-row5:hover,
+.all-row4:hover,
+.all-row6:hover,
+.all-row3:hover {
+  background-color: #f1f5f9;
 
 }
-.all-row5{
+
+.all-row5 {
   display: grid;
-  grid-template-columns: 0.9fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr; 
+  grid-template-columns: 0.9fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
   padding: 10px 16px;
   white-space: nowrap;
   font-size: 14px;
-  align-items:center;
+  align-items: center;
 }
+
 .all-row5 div:nth-child(7) {
-  text-align: center;  /* AMOUNT */
+  text-align: center;
+  /* AMOUNT */
 }
+
 .all-row5 div:nth-child(8) {
-  text-align: right;  /* AMOUNT */
+  text-align: right;
+  /* AMOUNT */
 }
+
 .all-row5 div:nth-child(2) {
-  text-align: left;  /* AMOUNT */
+  text-align: left;
+  /* AMOUNT */
 }
+
 .all-row5 div:nth-child(4) {
-  text-align: left;  /* AMOUNT */
+  text-align: left;
+  /* AMOUNT */
 }
 
 .all-row7 {
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr ; 
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
   padding: 10px 16px;
   white-space: nowrap;
   font-size: 14px;
-  align-items:center;
+  align-items: center;
 }
+
 .all-row7 div:nth-child(3) {
-  text-align: center;  /* AMOUNT */
+  text-align: center;
+  /* AMOUNT */
 }
+
 .all-row7 div:nth-child(6) {
-  text-align: right;  /* AMOUNT */
+  text-align: right;
+  /* AMOUNT */
 }
+
 .all-row7 div:nth-child(5) {
-  text-align: right;  /* AMOUNT */
+  text-align: right;
+  /* AMOUNT */
 }
+
 .all-row7 div:nth-child(4) {
-  text-align: right;  /* AMOUNT */
+  text-align: right;
+  /* AMOUNT */
 }
-.all-row.header ,.all-row2.header ,.all-row3.header , .all-row5.header ,.all-row7.header{
+
+.all-row.header,
+.all-row2.header,
+.all-row3.header,
+.all-row5.header,
+.all-row7.header {
   background-color: #f0f3f9;
   font-weight: bold;
   border-bottom: 2px solid #d0d0d0;
 }
 
-
+.headerr {
+  background-color: #f0f3f9;
+  font-weight: bold;
+  border-bottom: 2px solid #d0d0d0;
+  gap: 10px;
+  height: 10vh;
+  margin-bottom: 16px;
+  display: grid;
+  grid-template-columns: 1.1fr 0.8fr 2fr 1fr 0.5fr 2fr 1.1fr;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  /* padding: 10px 21px; */
+  /* border-bottom: 1px solid #e0e0e0; */
+  /* font-size: 14px; */
+  text-wrap: nowrap;
+}
 
 
 .actions span {
@@ -352,6 +419,7 @@
     transform: scale(0.9);
     opacity: 0;
   }
+
   to {
     transform: scale(1);
     opacity: 1;
@@ -395,7 +463,8 @@
   cursor: pointer;
 }
 
-.cancel-btn, .trans-cancel-btn {
+.cancel-btn,
+.trans-cancel-btn {
   background-color: #ef4444;
   color: white;
   border: none;
@@ -404,15 +473,16 @@
   cursor: pointer;
 }
 
-input.excess{
+input.excess {
   color: green;
 }
 
-input.short{
+input.short {
   color: red;
 }
-.set-margin{
-  margin: 0  auto;
+
+.set-margin {
+  margin: 0 auto;
   overflow-y: auto;
   overflow-x: hidden;
   scrollbar-width: none;
@@ -421,8 +491,8 @@ input.short{
 /* ===== NEW SAFE ADDITIONS (Only for Purchase Entry) ===== */
 
 /* Enhanced Input Styling - Only affects direct children of form-group */
-.form-group > input,
-.form-group > select {
+.form-group>input,
+.form-group>select {
   padding: 10px 12px;
   border-radius: 6px;
   border: 1px solid #d1d5db;
@@ -431,24 +501,24 @@ input.short{
   background-color: #fff;
 }
 
-.form-group > input:focus,
-.form-group > select:focus {
+.form-group>input:focus,
+.form-group>select:focus {
   outline: none;
   border-color: var(--primary-blue);
   box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
 }
 
-.form-group > input:read-only {
+.form-group>input:read-only {
   background-color: #f3f4f6;
   cursor: not-allowed;
   color: #6b7280;
 }
 
-.form-group > input::placeholder {
+.form-group>input::placeholder {
   color: #9ca3af;
 }
 
-.form-group > label {
+.form-group>label {
   margin-bottom: 6px;
   font-weight: 500;
   font-size: 14px;
@@ -570,7 +640,7 @@ input.short{
   flex: 1;
   border-top-right-radius: 0;
   border-bottom-right-radius: 0;
-  min-width:0;
+  min-width: 0;
 }
 
 .input-with-btn .dropdown-btn {
@@ -585,7 +655,8 @@ input.short{
   align-items: flex-end;
   justify-content: center;
   font-size: 17px;
-  color: #000000;overflow: hidden;
+  color: #000000;
+  overflow: hidden;
   font-weight: 900;
 }
 
@@ -629,6 +700,7 @@ input.short{
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.25);
   animation: fadeIn 0.2s ease-in-out;
 }
+
 .modal-box2 {
   background: #ffffff;
   width: 820px;
@@ -637,6 +709,7 @@ input.short{
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.25);
   animation: fadeIn 0.2s ease-in-out;
 }
+
 .modal-box-itemwise {
   background: #ffffff;
   width: 700px;
@@ -651,6 +724,7 @@ input.short{
     transform: scale(0.95);
     opacity: 0;
   }
+
   to {
     transform: scale(1);
     opacity: 1;
@@ -714,16 +788,18 @@ input.short{
   border-radius: 6px;
   transition: background 0.15s ease;
 }
+
 .modal-row4 {
   color: #000000;
   display: grid;
-  grid-template-columns: 1fr 2fr 1fr 1fr ;
+  grid-template-columns: 1fr 2fr 1fr 1fr;
   padding: 10px;
   cursor: pointer;
   align-items: center;
   border-radius: 6px;
   transition: background 0.15s ease;
 }
+
 .modal-row5 {
   color: #000000;
   display: grid;
@@ -734,16 +810,18 @@ input.short{
   border-radius: 6px;
   transition: background 0.15s ease;
 }
+
 .modal-row6 {
   color: #000000;
   display: grid;
-  grid-template-columns: 1fr 3fr 1fr 1fr 1fr ;
+  grid-template-columns: 1fr 3fr 1fr 1fr 1fr;
   padding: 10px;
   cursor: pointer;
   align-items: center;
   border-radius: 6px;
   transition: background 0.15s ease;
 }
+
 .modal-row5-itemwise {
   color: #000000;
   display: grid;
@@ -754,6 +832,7 @@ input.short{
   border-radius: 6px;
   transition: background 0.15s ease;
 }
+
 .modal-row5-itemwise-head {
   color: #000000;
   display: grid;
@@ -802,6 +881,7 @@ input.short{
   border: 1px solid #ccc;
   background: #ffffff;
 
-  color: #000000;          /* ✅ THIS FIXES IT */
+  color: #000000;
+  /* ✅ THIS FIXES IT */
   font-size: 14px;
 }

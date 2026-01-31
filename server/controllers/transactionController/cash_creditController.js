@@ -4,7 +4,7 @@ export const createCashCredit = async (req, res) => {
     try {
         const { crNo, date, salesmanCode, trip, value, ref, cashDeposited, chequeDeposited, tax, remark } = req.body;
 
-        if (!crNo || !date || !salesmanCode || !trip || !value || !tax) return res.status(400).json({ message: "All fields are required" });
+        if (!crNo || !date || !salesmanCode || !trip || !value) return res.status(400).json({ message: "All fields are required" });
 
         const depo = req.user?.depo;
 
@@ -20,7 +20,7 @@ export const createCashCredit = async (req, res) => {
             date,
             trip,
             value,
-            tax,
+            tax: tax || 0,
             ref,
             depo,
             cashDeposited,
@@ -82,7 +82,7 @@ export const updateCashCredit = async (req, res) => {
 
 export const deleteCashCredit = async (req, res) => {
     try {
-        const deleted = CashCredit.findOneAndDelete({ _id: req.params.id, depo: req.user?.depo });
+        const deleted = await CashCredit.findOneAndDelete({ _id: req.params.id, depo: req.user?.depo });
         if (!deleted) return res.status(404).json({ message: "Record not found" });
         res.status(200).json({ message: "Record deleted sucessfully" });
 

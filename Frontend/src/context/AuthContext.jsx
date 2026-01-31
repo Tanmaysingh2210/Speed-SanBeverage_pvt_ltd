@@ -35,17 +35,11 @@ export function AuthProvider({ children }) {
         fetchUser();
     }, []);
 
-    useEffect(() => {
-        console.log("Logged user", user)
-    }, [user]
-    );
-
     async function login(payload) {
         try {
             const res = await api.post('/auth/login', payload);
             if (res.data.user) {
                 setIsAuthenticated(true);
-                console.log("Res.data.user: ", res.data.user);
                 const loggedUser = res.data.user;
                 setUser(loggedUser);
             } else {
@@ -97,7 +91,6 @@ export function AuthProvider({ children }) {
             setUser(null);
             navigate('/signin', { replace: true });
         }
-
     }
 
     return (

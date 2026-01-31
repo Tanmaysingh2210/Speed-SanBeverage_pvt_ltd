@@ -9,7 +9,7 @@ const cash_creditSchema = new mongoose.Schema({
     trip: { type: Number, required: true },
     date: { type: Date, required: true },
     value: { type: Number, required: true },
-    tax: { type: Number, required: true },
+    tax: { type: Number },
     ref: { type: Number },
     cashDeposited: { type: Number },
     chequeDeposited: { type: Number },

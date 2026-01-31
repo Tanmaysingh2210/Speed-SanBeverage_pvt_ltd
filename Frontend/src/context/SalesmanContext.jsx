@@ -8,15 +8,14 @@ import { useAuth } from "./AuthContext";
 const SalesmanContext = createContext();
 
 export function SalesmanProvider({ children }) {
-    const { user, isAuthenticated } = useAuth();
+    const { isAuthenticated } = useAuth();
     const [salesmans, setSalesmans] = useState([]);
     const [loading, setLoading] = useState(false);
 
     const getAllSalesmen = async () => {
-        if (!user || !user.depo) return;
         try {
             setLoading(true);
-            const res = await api.get(`/salesman?depo=${user.depo}`);
+            const res = await api.get(`/salesman`);
             setSalesmans(res.data);
             return res;
         } catch (err) {
@@ -83,7 +82,7 @@ export function SalesmanProvider({ children }) {
     };
 
     useEffect(() => {
-        if (!isAuthenticated || !user.depo) return;
+        if (!isAuthenticated) return;
         getAllSalesmen();
     }, [isAuthenticated]);
 

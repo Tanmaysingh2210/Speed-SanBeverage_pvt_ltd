@@ -1,21 +1,17 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import { useSalesman } from "./SalesmanContext";
 import "../pages/transaction/transaction.css";
-import { useAuth } from "./AuthContext";
 
 const SalesmanModalContext = createContext();
 
 export const SalesmanModalProvider = ({ children }) => {
-  const {user, isAuthenticated} = useAuth();
-  const { salesmans, getAllSalesmen } = useSalesman();
+  const { salesmans } = useSalesman();
 
   const [show, setShow] = useState(false);
   const [search, setSearch] = useState("");
   const [onSelectCallback, setOnSelectCallback] = useState(null);
 
-  useEffect(() => {
-    if (show) getAllSalesmen();
-  }, [show]);
+
 
   const openSalesmanModal = (callback) => {
     setOnSelectCallback(() => callback);

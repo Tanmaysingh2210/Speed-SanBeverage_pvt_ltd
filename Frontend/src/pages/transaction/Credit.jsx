@@ -1,20 +1,17 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useRef } from 'react';
 import toast from 'react-hot-toast';
 import { useTransaction } from '../../context/TransactionContext';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { useSKU } from '../../context/SKUContext';
 import { useSalesman } from '../../context/SalesmanContext';
 import "./transaction.css";
-import { useAuth } from '../../context/AuthContext';
 import { useSalesmanModal } from '../../context/SalesmanModalContext';
 
 const Credit = () => {
     const navigate = useNavigate();
     const location = useLocation();
-    const { user } = useAuth();
 
     const { loading, addCash_credit, updateCash_credit } = useTransaction();
-    const { salesmans, getAllSalesmen } = useSalesman();
+    const { salesmans } = useSalesman();
 
     const { openSalesmanModal } = useSalesmanModal();
     const editMode = location.state?.editMode || false;
@@ -47,7 +44,7 @@ const Credit = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if (!newCredit.salesmanCode || !newCredit.trip || !newCredit.date || !newCredit.tax || !newCredit.value) {
+        if (!newCredit.salesmanCode || !newCredit.trip || !newCredit.date || !newCredit.value) {
             toast.error("Fill all fields properly");
             return;
         }
@@ -61,8 +58,7 @@ const Credit = () => {
             ref: Number(newCredit.ref) || 0,
             cashDeposited: Number(newCredit.cashDeposited) || 0,
             chequeDeposited: Number(newCredit.chequeDeposited) || 0,
-            remark: newCredit.remark || "",
-            depo: user.depo
+            remark: newCredit.remark || ""
         }
         try {
             if (editData && editMode) {

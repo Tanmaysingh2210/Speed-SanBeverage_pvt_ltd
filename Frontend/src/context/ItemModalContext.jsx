@@ -5,15 +5,11 @@ import "../pages/transaction/transaction.css";
 const ItemModalContext = createContext();
 
 export const ItemModalProvider = ({ children }) => {
-  const { items, getAllItems } = useSKU();
+  const { items } = useSKU();
 
   const [show, setShow] = useState(false);
   const [search, setSearch] = useState("");
   const [onSelectCallback, setOnSelectCallback] = useState(null);
-
-  useEffect(() => {
-    if (show) getAllItems();
-  }, [show]);
 
   const openItemModal = (callback) => {
     setOnSelectCallback(() => callback);

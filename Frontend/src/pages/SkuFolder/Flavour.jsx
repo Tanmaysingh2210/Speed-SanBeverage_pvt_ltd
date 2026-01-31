@@ -4,7 +4,7 @@ import './Container.css';
 import {useAuth} from '../../context/AuthContext';
 
 const Flavour = () => {
-  const { flavours, addFlavour, getFlavourByID, deleteFlavour, updateFlavour, getAllFlavours, loading } = useSKU();
+  const { flavours, addFlavour, deleteFlavour, updateFlavour, loading } = useSKU();
   const {user} =useAuth();
 
   const [editId, setEditId] = useState(null);

@@ -17,26 +17,20 @@ router.use('/cashcredit', cashcreditRoutes);
 
 router.post("/settlement", async (req, res) => {
     try {
-        const { salesmanCode, date, trip, depo } = req.body;
+        const { salesmanCode, date, trip } = req.body;
 
-        if (!salesmanCode || !date || !trip || !depo) return res.status(400).json({ message: "All field required" });
-        const selectedDate = new Date(date);
+        if (!salesmanCode || !date || !trip) return res.status(400).json({ message: "All field required" });
 
-        if (!mongoose.Types.ObjectId.isValid(depo)) {
-            return res.status(400).json({ message: "Invalid depo ID" });
-        }
-
-        const depoExists = await Depo.findById(depo);
-        if (!depoExists) {
-            return res.status(400).json({ message: "Depo not found" });
-        }
+        const depo = req.user?.depo;
 
         const [s_sheet, loadout, loadin, cashCredit] = await Promise.all([
-            S_sheet.findOne({ salesmanCode, selectedDate, trip, depo }),
-            LoadOut.findOne({ salesmanCode, selectedDate, trip, depo }),
-            Loadin.findOne({ salesmanCode, selectedDate, trip, depo }),
-            CashCredit.find({ salesmanCode, selectedDate, trip, depo })
+            S_sheet.findOne({ salesmanCode, date, trip, depo }),
+            LoadOut.findOne({ salesmanCode, date, trip, depo }),
+            Loadin.findOne({ salesmanCode, date, trip, depo }),
+            CashCredit.find({ salesmanCode, date, trip, depo })
         ]);
+
+        const selectedDate = new Date(date);
 
         if (!loadout)
             return res.status(404).json({ message: "No loadout found" });
@@ -186,11 +180,13 @@ router.post("/settlement", async (req, res) => {
 
 router.post("/settlement/save-schm", async (req, res) => {
     try {
-        const { salesmanCode, date, trip, schm, depo } = req.body;
+        const { salesmanCode, date, trip, schm } = req.body;
 
-        if (!salesmanCode || !date || !trip || !depo) {
+        if (!salesmanCode || !date || !trip) {
             return res.status(400).json({ message: "Missing fields" });
         }
+
+        const depo = req.user?.depo;
 
         const updated = await S_sheet.findOneAndUpdate(
             { salesmanCode, date, trip, depo },
