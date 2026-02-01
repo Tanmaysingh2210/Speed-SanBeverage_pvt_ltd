@@ -10,7 +10,8 @@ import * as XLSX from "xlsx";
 import { saveAs } from "file-saver";
 import pepsiLogo from "../../assets/pepsi_logo.png";
 import ExcelJS from "exceljs";
-
+import { useDepo } from '../../context/depoContext';
+import { useAuth } from '../../context/AuthContext'
 // import '../../pages/transaction/transaction.css'
 const LatestPrice = () => {
     const { prices, updatePrice, deletePrice, addPrice, loading } = usePrice();
@@ -37,6 +38,15 @@ const LatestPrice = () => {
     const saveRef = useRef(null);
     const discRef = useRef(null);
     const modalRef = useRef(null);
+    const { depos } = useDepo();
+    const { user } = useAuth();
+
+    const getDepo= (depo) => {
+        if (!depo || !Array.isArray(depos)) return "";
+        const id = String(depo).trim();
+        const matchDepo = depos.find((d) => String(d._id).trim() === id);
+        return matchDepo ;
+    }
 
     const loadImageBase64 = (url) =>
         new Promise((resolve) => {
@@ -55,62 +65,77 @@ const LatestPrice = () => {
 
 
     const exportPDF = async () => {
-        const doc = new jsPDF();
+    const doc = new jsPDF();
 
-        const logoBase64 = await loadImageBase64(pepsiLogo);
+    const logoBase64 = await loadImageBase64(pepsiLogo);
 
-        // Pepsi Logo (top-left)
-        doc.addImage(logoBase64, "PNG", 12, 3, 45, 25);
+    // Logo
+    doc.addImage(logoBase64, "PNG", 12, 3, 45, 25);
 
-        // Company title
-        doc.setFontSize(14);
-        doc.text("SAN BEVERAGES PVT LTD", 105, 15, { align: "center" });
+    // Header
+    doc.setFontSize(14);
+    doc.text("SAN BEVERAGES PVT LTD", 105, 15, { align: "center" });
 
-        doc.setFontSize(8);
-        doc.text("VILLAGE SARFARABAD, SECTOR-73, NOIDA 201301", 105, 22, { align: "center" });
+    doc.setFontSize(8);
+    doc.text(
+        
+            // getDepo(user.depo)?.depoName || "",
+            getDepo(user.depo)?.depoAddress || "",
+        
+        105,
+        22,
+        { align: "center" }
+    );
 
-        doc.setFontSize(10);
-        doc.text("LATEST PRICE REPORT", 105, 29, { align: "center" });
+    doc.setFontSize(10);
+    doc.text("LATEST PRICE REPORT", 105, 29, { align: "center" });
 
-        const tableData = filtered.map((p, i) => {
-            const rowItem = items.find(
-                it =>
-                    String(it.code || it.itemCode || "").toUpperCase() ===
-                    String(p.itemCode || "").toUpperCase()
-            );
+    const tableData = filtered.map((p, i) => {
+        const rowItem = items.find(
+            it =>
+                String(it.code || it.itemCode || "").toUpperCase() ===
+                String(p.itemCode || "").toUpperCase()
+        );
 
-            return [
-                i + 1,
-                p.itemCode,
-                rowItem?.name || "",
-                p.basePrice,
-                `${p.perDisc}%`,
-                `${p.perTax}%`,
-                calculateNetRate(p.basePrice, p.perTax, p.perDisc),
-                formatDate(p.date)
-            ];
-        });
+        return [
+            i + 1,
+            p.itemCode,
+            rowItem?.name || "",
+            p.basePrice,
+            `${p.perDisc}%`,
+            `${p.perTax}%`,
+            calculateNetRate(p.basePrice, p.perTax, p.perDisc),
+            formatDate(p.date)
+        ];
+    });
 
-        autoTable(doc, {
-            startY: 32,
-            head: [[
-                "SL",
-                "CODE",
-                "NAME",
-                "BASE",
-                "DISC %",
-                "TAX %",
-                "NET RATE",
-                "DATE"
-            ]],
-            body: tableData,
-            styles: { fontSize: 9 },
-            headStyles: { fillColor: [0, 0, 0] },
-            alternateRowStyles: { fillColor: [245, 245, 245] }
-        });
+    autoTable(doc, {
+        startY: 32,
+        head: [[
+            "SL",
+            "CODE",
+            "NAME",
+            "BASE",
+            "DISC %",
+            "TAX %",
+            "NET RATE",
+            "DATE"
+        ]],
+        body: tableData,
+        styles: { fontSize: 9 },
+        headStyles: { fillColor: [0, 0, 0] },
+        alternateRowStyles: { fillColor: [245, 245, 245] }
+    });
 
-        doc.save("latest-price-report.pdf");
+    // 🔥 THIS PART ENABLES PRINT + PDF PREVIEW
+    const pdfBlob = doc.output("bloburl");
+
+    const printWindow = window.open(pdfBlob);
+    printWindow.onload = () => {
+        printWindow.print();
     };
+};
+
 
 
 
@@ -138,7 +163,7 @@ const LatestPrice = () => {
         sheet.mergeCells("C5:J5");
 
         sheet.getCell("C2").value = "SAN BEVERAGES PVT LTD";
-        sheet.getCell("C3").value = "Village Sarfarabad, Sector-73, Noida 201301";
+        sheet.getCell("C3").value = getDepo(user.depo)?.depoAddress || "";
         sheet.getCell("C5").value = "LATEST PRICE REPORT";
 
         sheet.getCell("C2").alignment = { horizontal: "center" };
