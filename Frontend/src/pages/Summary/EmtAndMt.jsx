@@ -79,6 +79,8 @@ const EmtAndMtSummary = () => {
             }
         }
     }
+    let sumMt=0;
+    let sumEmt=0;
 
     return (
         <div className='trans'>
@@ -151,6 +153,9 @@ const EmtAndMtSummary = () => {
                     {summary.map((p, i) => {
                         const rowTotal = Number(p.totalEmt || 0) - Number(p.totalMt || 0);
                       grandTotalShortExcess+=rowTotal;
+
+                      sumEmt= sumEmt + Number(p.totalEmt|| 0 );
+                      sumMt = sumMt + Number(p.totalMt);
                         return (
                             <div key={i} className="all-row3">
                                 <div>{p.salesmanCode}</div>
@@ -177,10 +182,12 @@ const EmtAndMtSummary = () => {
                         )
                     })}
                     {summary.length > 0 && (
-                        <div className="all-row3 total-row">
-                            <div></div>
+                        <div className="all-row8 total-row">
+                            
                             <div><strong>TOTAL</strong></div>
 
+                            <div>{sumMt}</div>
+                            <div>{sumEmt}</div>
                             {
                                 grandTotalShortExcess>0 &&
                                 <div style={{
@@ -190,8 +197,8 @@ const EmtAndMtSummary = () => {
                             { 
                             grandTotalShortExcess<0 &&
                             <div style={{
-                                color:"red"
-                            }}><strong>{grandTotalShortExcess.toFixed(2)}</strong></div>
+                                    color:"red"
+                                }}><strong>{grandTotalShortExcess.toFixed(2)}</strong></div>
                         }
                         </div>
                     )}

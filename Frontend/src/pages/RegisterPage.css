@@ -26,27 +26,31 @@
 }
 
 .register .left {
-    background-color: var(--gray-color);
+    /* background-color: var(--gray-color); */
     color: var(--blue-color);
-    width: 50%;
+    width: 30%;
     height: 100vh;
     position: absolute;
     z-index: 2;
     top: 0;
-    left: 0;
+    left: 16vw;
     clip-path: polygon(0 0, 100% 0, 80% 100%, 0% 100%);
 }
 
 
 
 .register .left .heading {
+    position: absolute;
+    top: 120px;
+    left: 80px;
     display: flex;
     justify-content: space-around;
     align-items: center;
     width: 80%;
-    height: 85vh;
-    font-size: 8vh;
+    height: 50vh;
+    font-size: clamp(1rem, 4vw, 3rem);
     font-weight: 600;
+    transition: font-size 0.4s ease, transform 0.4s ease;
 }
 
 .register .right {
@@ -61,7 +65,7 @@
     align-items: center;
 
 
-    /* clip-path: polygon(30% 0, 100% 0, 100% 100%, 0% 100%); */
+    clip-path: polygon(30% 0, 100% 0, 100% 100%, 0% 100%);
 
 }
 
@@ -191,28 +195,29 @@ input:invalid {
 
 
 .password-group {
-  position: relative;
+    position: relative;
 }
 
 .password-group input {
-  width: 100%;
-  padding-right: 35px; /* space for eye icon */
+    width: 100%;
+    padding-right: 35px;
+    /* space for eye icon */
 }
 
 .toggle-eye {
-  position: absolute;
-  right: 10px;
-  top: 50%;
-  transform: translateY(-50%);
-  cursor: pointer;
-  font-size: 18px;
-  opacity: 0.7;
-  user-select: none;
-  transition: opacity 0.2s;
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    font-size: 18px;
+    opacity: 0.7;
+    user-select: none;
+    transition: opacity 0.2s;
 }
 
 .toggle-eye:hover {
-  opacity: 1;
+    opacity: 1;
 }
 
 
@@ -238,53 +243,55 @@ p a:hover {
 
 /* OTP Section */
 .otp-info {
-  text-align: center;
-  margin-bottom: 15px;
-  color: rgb(160, 157, 157);
+    text-align: center;
+    margin-bottom: 15px;
+    color: rgb(160, 157, 157);
 }
 
 .otp-box {
-  display: flex;
-  justify-content: center;
-  gap: 10px;
-  margin: 20px 0;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin: 20px 0;
 }
 
 .otp-input {
-  width: 45px;
-  height: 50px;
-  font-size: 20px;
-  text-align: center;
-  border-radius: 8px;
-  border: 1px solid #ccc;
-  outline: none;
-  transition: all 0.2s;
+    width: 45px;
+    height: 50px;
+    font-size: 20px;
+    text-align: center;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    outline: none;
+    transition: all 0.2s;
 }
 
 .otp-input:focus {
-  border-color: #007bff;
-  box-shadow: 0 0 3px #007bff;
+    border-color: #007bff;
+    box-shadow: 0 0 3px #007bff;
 }
 
 .otp-actions {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
 }
 
 .otp-actions .resend {
-  background: #6c757d;
+    background: #6c757d;
 }
+
 .input-group select {
-  width: 100%;
-  padding: 10px 5px;
-  background: transparent;
-  border: none;
-  border-bottom: 2px solid white;
-  font-size: 16px;
-  outline: none;
+    width: 100%;
+    padding: 10px 5px;
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid white;
+    font-size: 16px;
+    outline: none;
 }
-.input-group option{
-    color :black;
+
+.input-group option {
+    color: black;
 }
