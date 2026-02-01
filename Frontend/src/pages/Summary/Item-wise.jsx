@@ -86,6 +86,7 @@ const ItemWiseSummary = () => {
             }
         }
     }
+let sumQty=0;
 
     return (
         <div className='trans'>
@@ -154,6 +155,8 @@ const ItemWiseSummary = () => {
                     }
                     {/* Data Rows */}
                     {summary.map((p, i) => {
+
+                         sumQty=sumQty+p.qty;
                         return (
                             <div key={i} className="all-row2">
                                 <div>{p.itemCode}</div>
@@ -167,7 +170,7 @@ const ItemWiseSummary = () => {
                         <div className="all-row4 total-row">
                             <div></div>
                             <div><strong>TOTAL</strong></div>
-                            <div></div>
+                            <div> {sumQty} </div>
                             <div><strong>₹ {grandTotal.toFixed(2)}</strong></div>
                         </div>
                     )}

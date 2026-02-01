@@ -81,15 +81,15 @@ const Burger = ({ onMenuToggle }) => {
                 {user &&
                     (
                         <div className="user-section">
-                            <div className="user-info">
-                                <div className="user-avatar">
+                            {/* <div className="user-info"> */}
+                                {/* <div className="user-avatar">
                                     <i className="fas fa-user-circle"></i>
-                                </div>
+                                </div> */}
                                 <div className="user-details">
                                     <span className="user-name">{user.name}</span>
-                                    <span className="user-email">{getDepoName(user.depo)}</span>
+                                    <span className="user-depo">{getDepoName(user.depo)}</span>
                                 </div>
-                            </div>
+                            {/* </div> */}
                             <button className="logout-btn" onClick={handleLogout}>
                                 <i className="fas fa-sign-out-alt"></i> Logout
                             </button>

@@ -13,7 +13,7 @@ const Navbar = () => {
             <li><Link to={`/`}>Dashboard</Link></li>
             <li><Link to={`/statistics`}>Statistics</Link></li>
             <li><Link to={`/summary`}>Summary</Link></li>
-            <li><Link to={`/register`}>Register</Link></li>
+            <li className="register-red"><Link to={`/register`}>Register</Link></li>
         </ul>
         </div>
       </nav>

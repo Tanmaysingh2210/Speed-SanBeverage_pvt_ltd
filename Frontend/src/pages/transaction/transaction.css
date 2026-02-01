@@ -199,6 +199,14 @@
   text-align: center;
 
 }
+.all-row8{
+  display: grid;
+  grid-template-columns: 3.5fr 1.2fr 1.5fr 0.2fr;
+  padding: 10px 16px;
+  white-space: nowrap;
+  font-size: 14px;
+  align-items: center;
+}
 
 .all-row4 {
   display: grid;

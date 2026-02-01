@@ -49,7 +49,10 @@ body {
         0 0 2px #14b886,
         0 0 3px #14b886;
     font-weight: 600;
-    font-size: 20px;
+    font-size: 18px;
+    position:absolute;
+    left:60px;
+    top:15px;
 }
 
 .space-between{
@@ -207,9 +210,9 @@ body {
 .user-info {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding-top: 15px;
-  /* border-top: 1px solid #374151; */
+  gap: 20px;
+  padding-top: 20px;
+  border-top: 1px solid #374151;
   overflow: hidden;
   flex-direction:column;
   width:100%;
@@ -242,10 +245,15 @@ body {
     overflow:hidden;
 
 }
+.user-depo{
+  color:#87888b;
+}
 
 .user-section {
-  border-top: 1px solid #374151;
+  border-top: 2px solid #374151;
   padding-top: 10px;
+  height:25vh;
+  font-weight:1000;
   padding-bottom:10px;
   display: flex;
   flex-direction:column;
@@ -280,8 +288,12 @@ body {
 
 /* burger design ends */
 
-
-
+.register-red{
+  background-color:#ff3838 !important;
+}
+.register-red:hover{
+  background-color:#da0404 !important;
+}
 
 
 
