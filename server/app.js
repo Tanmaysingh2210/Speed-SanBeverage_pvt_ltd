@@ -17,7 +17,6 @@ import stockRoutes from './routes/stockRoutes.js';
 import summaryRoutes from './routes/summaryRoutes.js';
 import requireAuth from './middleware/requireAuth.js';
 import requireDepo from './middleware/requireDepo.js';
-const router = express.Router();
 
 connectDB();
 const app = express();

@@ -6,6 +6,8 @@ import { useSalesman } from '../../context/SalesmanContext';
 import { useSalesmanModal } from '../../context/SalesmanModalContext';
 import toast from 'react-hot-toast';
 import api from '../../api/api';
+import { useSKU } from '../../context/SKUContext';
+import {ItemBreakdownModal} from "./ItemBreakdownModal";
 
 const S_Sheet = () => {
   const { getSettlement, loading } = useTransaction();
@@ -13,6 +15,11 @@ const S_Sheet = () => {
 
   const [sheetData, setSheetData] = useState(null);
   const [discount, setDiscount] = useState("");    // editable schm
+  const { items } = useSKU();
+
+  const [showItemModal, setShowItemModal] = useState(false);
+  const [selectedItems, setSelectedItems] = useState([]);
+
 
   const codeRef = useRef(null);
   const dateRef = useRef(null);
@@ -27,22 +34,6 @@ const S_Sheet = () => {
     trip: 1,
     schm: ""
   });
-
-  // const handleSubmit = async (e) => {
-  //   e.preventDefault();
-
-  //   if (!sheet.salesmanCode || !sheet.trip || !sheet.date) {
-  //     toast.error("Fill all fields properly");
-  //     return;
-  //   }
-
-  //   try {
-  //     await getPriceByDate(sheet.code, sheet.date);
-
-  //   } catch (err) {
-
-  //   }
-  // };
 
   const handleSaveDiscount = async () => {
     if (!discount) {
@@ -76,7 +67,7 @@ const S_Sheet = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!sheet.salesmanCode || !sheet.trip || !sheet.date) {
+    if (!sheet.salesmanCode || !sheet.date) {
       toast.error("Fill all fields properly");
       return;
     }
@@ -105,23 +96,10 @@ const S_Sheet = () => {
   let totalA = 0;
   let totalB = 0;
 
-  const calculateTotalA = (sale, tax) => {
-    if (!sale || !tax) return;
-    totalA = sale + tax;
-    return sale + tax;
-  }
-
-  const calculateTotalB = (credit, ref, priceDisc, schm) => {
-    if (!credit || !ref || !priceDisc || !schm) return;
-    totalB = credit + ref + priceDisc + schm;
-    return credit + ref + priceDisc + schm;
-  }
-
-  let shortOrExcess = 0;
-  const calculateShortOrExcess = (totalA, cashDeposited, chequeDeposited) => {
-    if (!totalA || !cashDeposited || !chequeDeposited) return;
-    shortOrExcess = cashDeposited + chequeDeposited - totalA;
-    return cashDeposited + chequeDeposited - totalA;
+  const calculateTotalA = (sale, ref) => {
+    if (!sale || !ref) return;
+    totalA = sale - ref;
+    return totalA;
   }
 
   const handleKeyNav = (e, currentField) => {
@@ -248,19 +226,19 @@ const S_Sheet = () => {
             <div className="gap1">
               <div className="flex">
                 <div className="form-group">
-                  <label>Sale</label>
+                  <label>NET SALE</label>
                   <input
                     readOnly
-                    value={sheetData?.totals?.totalSale || 0}
+                    value={sheetData?.totals?.NetSale || 0}
                     type="number"
                     placeholder="Enter Sale Price"
                   />
                 </div>
                 <div className="form-group">
-                  <label>TAX</label>
+                  <label>DEP/REF</label>
                   <input
                     readOnly
-                    value={sheetData?.totals?.totalTax || 0}
+                    value={sheetData?.cashCreditDetails?.ref || 0}
                     type="number"
                     placeholder="Enter"
                   />
@@ -269,35 +247,8 @@ const S_Sheet = () => {
                   <label>TOTAL A</label>
                   <input
                     readOnly
-                    value={calculateTotalA(sheetData?.totals?.totalSale, sheetData?.totals?.totalTax) || 0}
+                    value={calculateTotalA(sheetData?.totals?.NetSale, sheetData?.cashCreditDetails?.ref) || 0}
                     type="number"
-                  />
-                </div>
-              </div>
-              <div className="flex">
-                <div className="form-group">
-                  <label>CREDIT SALE</label>
-                  <input
-                    readOnly
-                    type="number"
-                    value={sheetData?.cashCreditDetails?.creditSale || 0}
-                  />
-                </div>
-                <div className="form-group">
-                  <label>PRICE DISCOUNT</label>
-                  <input
-                    readOnly
-                    type="number"
-                    value={sheetData?.totals?.totalDiscount || 0}
-                  />
-                </div>
-                <div className="form-group">
-                  <label>DEP/REF</label>
-                  <input
-                    readOnly
-                    value={sheetData?.cashCreditDetails?.ref || ""}
-                    type="number"
-                    placeholder="Enter"
                   />
                 </div>
               </div>
@@ -312,13 +263,37 @@ const S_Sheet = () => {
                   />
                 </div>
                 <div className="form-group">
+                  <label>REFUNDS</label>
+                  <input
+                    readOnly
+                    type="number"
+                    value={sheetData?.totals?.totalRefund || 0}
+                  />
+                </div>
+                <div className="form-group">
+                  <label>CREDIT SALE</label>
+                  <input
+                    readOnly
+                    type="number"
+                    value={sheetData?.cashCreditDetails?.creditSale || 0}
+                  />
+                </div>
+                {/* <div className="form-group">
+                  <label>PRICE DISCOUNT</label>
+                  <input
+                    readOnly
+                    type="number"
+                    value={sheetData?.totals?.totalDiscount || 0}
+                  />
+                </div> */}
+                {/* <div className="form-group">
                   <label>TOTAL B</label>
                   <input
                     readOnly
                     type="number"
                     value={calculateTotalB(sheetData?.cashCreditDetails?.creditSale || 0, sheetData?.cashCreditDetails?.ref || 0, sheetData?.totals?.totalDiscount || 0, sheetData?.schm || 0) || 0}
                   />
-                </div>
+                </div> */}
               </div>
             </div>
 
@@ -329,19 +304,18 @@ const S_Sheet = () => {
                   <input
                     readOnly
                     type="number"
-                    value={totalA - totalB}
+                    value={sheetData?.totals?.NetSale - discount}
                   />
                 </div>
-
                 <div className="form-group">
-                  <label>Net Collection</label>
+                  <label>Cash Deposited</label>
                   <input
                     readOnly
                     type="number"
-                    // value={sheetData?.totals?.grandTotal || 0}
-                    value={totalA + sheetData?.cashCreditDetails?.creditSale || 0}
+                    value={(sheetData?.cashCreditDetails?.cashDeposited) || 0}
                   />
                 </div>
+
                 <div className="form-group">
                   <label>Cheq.Desposited</label>
                   <input
@@ -352,6 +326,14 @@ const S_Sheet = () => {
                 </div>
               </div>
               <div className="flex">
+                <div className="form-group">
+                  <label>Net Collection</label>
+                  <input
+                    readOnly
+                    type="number"
+                    value={sheetData?.totals?.totalDeposited || 0}
+                  />
+                </div>
                 <div className="form-group">
                   <label>Cash Short</label>
                   <input
@@ -367,25 +349,24 @@ const S_Sheet = () => {
                   <input
                     readOnly
                     type="number"
-                    className={calculateShortOrExcess(totalA || 0, sheetData?.cashCreditDetails?.cashDeposited || 0, sheetData?.cashCreditDetails?.chequeDeposited || 0) > 0 ? "excess" : "short"}
+                    className={sheetData?.totals?.shortOrExcess > 0 ? "excess" : "short"}
                     style={{
-                      color: calculateShortOrExcess(totalA || 0, sheetData?.cashCreditDetails?.cashDeposited || 0, sheetData?.cashCreditDetails?.chequeDeposited || 0) > 0 ? 'green' :
-                        calculateShortOrExcess(totalA || 0, sheetData?.cashCreditDetails?.cashDeposited || 0, sheetData?.cashCreditDetails?.chequeDeposited || 0) < 0 ? 'red' : 'black'
+                      color: sheetData?.totals?.shortOrExcess > 0 ? 'green' :
+                        sheetData?.totals?.shortOrExcess < 0 ? 'red' : 'black'
                     }}
-                    // value={(sheetData?.totals?.shortOrExcess) || 0}
-                    value={calculateShortOrExcess(totalA || 0, sheetData?.cashCreditDetails?.cashDeposited || 0, sheetData?.cashCreditDetails?.chequeDeposited || 0)}
+                    value={sheetData?.totals?.shortOrExcess || 0}
                   />
                 </div>
-                <div className="form-group">
-                  <label>Cash Deposited</label>
-                  <input
-                    readOnly
-                    type="number"
-                    value={(sheetData?.cashCreditDetails?.cashDeposited) || 0}
-                  />
-                </div>
-
               </div>
+              <button
+                className="btn btn-sm"
+                onClick={() => {
+                  setSelectedItems(sheetData.items);
+                  setShowItemModal(true);
+                }}
+              >
+                View Item Breakdown
+              </button>
             </div>
 
           </div>
@@ -410,8 +391,14 @@ const S_Sheet = () => {
           </button>
         )}
       </div>
+      <ItemBreakdownModal
+        open={showItemModal}
+        onClose={() => setShowItemModal(false)}
+        items={selectedItems}
+        skuItems={items}   // from SKU context
+      />
     </div >
   )
 }
 
-export default S_Sheet
+export default S_Sheet;

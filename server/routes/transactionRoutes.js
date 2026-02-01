@@ -16,84 +16,112 @@ router.use('/loadin', loadinRoutes);
 router.use('/cashcredit', cashcreditRoutes);
 
 router.post("/settlement", async (req, res) => {
+    const normalize = v => typeof v === "string" ? v.trim().toLowerCase() : "";
+
     try {
         const { salesmanCode, date, trip } = req.body;
 
         if (!salesmanCode || !date || !trip) return res.status(400).json({ message: "All field required" });
 
         const depo = req.user?.depo;
+        const saleDate = new Date(date);
 
-        const [s_sheet, loadout, loadin, cashCredit] = await Promise.all([
+        const [s_sheet, loadout, loadin, cashCredit, rates] = await Promise.all([
             S_sheet.findOne({ salesmanCode, date, trip, depo }),
             LoadOut.findOne({ salesmanCode, date, trip, depo }),
             Loadin.findOne({ salesmanCode, date, trip, depo }),
-            CashCredit.find({ salesmanCode, date, trip, depo })
+            CashCredit.find({ salesmanCode, date, trip, depo }),
+            Rate.find({ depo, date: { $lte: saleDate } }).sort({ date: 1 })
         ]);
-
-        const selectedDate = new Date(date);
 
         if (!loadout)
             return res.status(404).json({ message: "No loadout found" });
 
+        const rateMap = new Map();
+        for (const r of rates) {
+            if (!rateMap.has(normalize(r.itemCode))) {
+                rateMap.set(normalize(r.itemCode), []);
+            }
+            rateMap.get(normalize(r.itemCode)).push(r);
+        }
+
+        const getRate = (code) => {
+            code = normalize(code);
+            const list = rateMap.get(code) || [];
+            let chosen = null;
+            for (const r of list) {
+                if (r.date <= saleDate) chosen = r;
+                else break;
+            }
+            return chosen;
+        };
+
+        const loadinMap = new Map();
+        loadin?.items.forEach(i => loadinMap.set(i.itemCode, i));
+
         let settlementItems = [];
-        let grandTotal = 0;
-        let totalSale = 0;
+        let NetSale = 0;
         let totalTax = 0;
         let totalDiscount = 0;
+        let totalRefund = 0;
 
         // 3) LOOP THROUGH ALL LOADOUT ITEMS
-        for (let item of loadout.items) {
+        for (let lo of loadout.items) {
 
-            const loadinItem = loadin
-                ? loadin.items.find(li => li.itemCode === item.itemCode)
-                : null;
+            const latestRate = getRate(lo.itemCode);
+            if (!latestRate) continue;
 
-            const finalQty = item.qty - ((loadinItem?.Filled + loadinItem?.Burst) || 0);
+            const returned = loadinMap.get(lo.itemCode);
+            const returnedQty = (returned?.Filled || 0) + (returned?.Burst || 0);
 
-            // 4) FETCH LATEST PRICE
-            const latestRate = await Rate.findOne({
-                itemCode: item.itemCode,
-                depo: depo,
-                date: { $lte: selectedDate }
-            })
-                .sort({ date: -1 })
-                .limit(1);
+            const finalQty = lo.qty - returnedQty;
 
             const basePrice = parseFloat((latestRate?.basePrice || 0).toFixed(2));
-            const perDisc = parseFloat((latestRate?.perDisc || 0).toFixed(2));
-            const perTax = parseFloat((latestRate?.perTax || 0).toFixed(2));
+            const disc = basePrice * (latestRate?.perDisc || 0) / 100;
+            const tax = (basePrice - disc) * (latestRate?.perTax || 0) / 100;
+            const finalPrice = parseFloat((basePrice + tax - disc).toFixed(2));
 
-            const sale = parseFloat((finalQty * basePrice).toFixed(2));
+            const sale = parseFloat((finalQty * finalPrice).toFixed(2));
+            const discAmt = parseFloat((finalQty * disc).toFixed(2));
+            const taxAmount = parseFloat((finalQty * tax).toFixed(2));
 
-            const discAmount = parseFloat(((basePrice * perDisc) / 100).toFixed(2));
-            const taxAmount = parseFloat((((basePrice - discAmount) * perTax) / 100).toFixed(2));
+            // const amount = parseFloat((finalQty * finalPrice).toFixed(2));
 
-            const finalPrice = parseFloat((basePrice + taxAmount - discAmount).toFixed(2));
-
-            const amount = parseFloat((finalQty * finalPrice).toFixed(2));
-
-            totalSale += sale;
-            grandTotal += amount;
+            NetSale += sale;
             totalTax += taxAmount;
-            totalDiscount += finalQty * discAmount;
+            totalDiscount += discAmt;
 
             settlementItems.push({
-                itemCode: item.itemCode,
-                loadedQty: item.qty,
-                returnedQty: loadinItem?.qty || 0,
+                itemCode: lo.itemCode,
+                loadedQty: lo.qty,
+                returnedQty,
                 finalQty,
                 basePrice,
-                perTax,
-                perDisc,
+                tax,
+                disc,
                 taxAmount,
-                discAmount,
+                discAmt,
                 finalPrice,
-                amount
+                amount: sale
             });
         }
 
-        totalSale = parseFloat(totalSale.toFixed(2));
-        grandTotal = parseFloat(grandTotal.toFixed(2));
+        if (loadin) {
+            for (const li of loadin.items) {
+                if (!li.Emt) continue;
+                const rate = getRate(li.itemCode);
+                if (!rate) continue;
+
+                const base = rate.basePrice;
+                const disc = base * (rate.perDisc || 0) / 100;
+                const tax = (base - disc) * (rate.perTax || 0) / 100;
+                const price = base - disc + tax;
+
+                totalRefund += li.Emt * price;
+            }
+        }
+
+        NetSale = parseFloat(NetSale.toFixed(2));
         totalTax = parseFloat(totalTax.toFixed(2));
         totalDiscount = parseFloat(totalDiscount.toFixed(2));
 
@@ -103,73 +131,45 @@ router.post("/settlement", async (req, res) => {
         let creditSale = 0;
 
         for (const cc of cashCredit) {
+            ref += cc.ref || 0;
             if (cc.crNo === 1) {
                 cashDeposited += parseFloat((cc?.cashDeposited || 0).toFixed(2));
                 chequeDeposited += parseFloat((cc?.chequeDeposited || 0).toFixed(2));
-                ref += parseFloat((cc?.ref || 0).toFixed(2));
-                console.log(ref);
             } else {
-                creditSale += parseFloat((cc.value + (cc.value * (cc.tax) || 0) / 100).toFixed(2));
-                ref += parseFloat((cc?.ref || 0).toFixed(2));
-                console.log(ref);
+                creditSale += parseFloat((cc.value + (cc.value * (cc.tax || 0)) / 100).toFixed(2));
             }
         }
 
+        const totalPayable = NetSale - totalRefund - (s_sheet?.schm || 0) - ref;
 
-        const totalDeposited = parseFloat((cashDeposited + chequeDeposited + creditSale + ref).toFixed(2));
+        const totalDeposited = parseFloat((cashDeposited + chequeDeposited + creditSale).toFixed(2));
 
-        // 7) CALCULATE SHORT / EXCESS
-        const shortOrExcess = parseFloat((totalDeposited - grandTotal).toFixed(2));
+        const shortOrExcess = parseFloat((totalDeposited - totalPayable).toFixed(2));
 
-        // 8) SEND FINAL RESPONSE
-        if (s_sheet) {
-            return res.json({
-                salesmanCode,
-                date,
-                trip,
-                schm: s_sheet.schm,
-                items: settlementItems,
 
-                totals: {
-                    totalSale,
-                    grandTotal,
-                    totalDiscount,
-                    totalTax,
-                    totalDeposited,
-                    shortOrExcess,   // + means excess, - means short
-                },
+        return res.json({
+            salesmanCode,
+            date,
+            trip,
+            schm: s_sheet.schm || 0,
+            items: settlementItems,
 
-                cashCreditDetails: {
-                    cashDeposited,
-                    chequeDeposited,
-                    creditSale,
-                    ref
-                }
-            });
-        }
-        else {
-            return res.json({
-                salesmanCode,
-                date,
-                trip,
-                items: settlementItems,
+            totals: {
+                NetSale,
+                totalDiscount,
+                totalTax,
+                totalRefund,
+                totalDeposited,
+                shortOrExcess,
+            },
 
-                totals: {
-                    totalSale,
-                    grandTotal,
-                    totalDiscount,
-                    totalDeposited,
-                    shortOrExcess,   // + means excess, - means short
-                },
-
-                cashCreditDetails: {
-                    cashDeposited,
-                    chequeDeposited,
-                    creditSale,
-                    ref
-                }
-            });
-        }
+            cashCreditDetails: {
+                cashDeposited,
+                chequeDeposited,
+                creditSale,
+                ref
+            }
+        });
     } catch (err) {
         console.error(err);
         return res.status(500).json({ message: "Settlement error", error: err.message });
