@@ -7,7 +7,15 @@ import { useSalesmanModal } from '../../context/SalesmanModalContext';
 import toast from 'react-hot-toast';
 import api from '../../api/api';
 import { useSKU } from '../../context/SKUContext';
-import {ItemBreakdownModal} from "./ItemBreakdownModal";
+import { ItemBreakdownModal } from "./ItemBreakdownModal";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
+import ExcelJS from "exceljs";
+import { saveAs } from "file-saver";
+import pepsiLogo from "../../assets/pepsi_logo.png";
+import { useDepo } from '../../context/depoContext';
+import { useAuth } from '../../context/AuthContext'
+
 
 const S_Sheet = () => {
   const { getSettlement, loading } = useTransaction();
@@ -20,11 +28,33 @@ const S_Sheet = () => {
   const [showItemModal, setShowItemModal] = useState(false);
   const [selectedItems, setSelectedItems] = useState([]);
 
-
   const codeRef = useRef(null);
   const dateRef = useRef(null);
   const tripRef = useRef(null);
   const findRef = useRef(null);
+  const loadImageBase64 = (url) =>
+
+    new Promise((resolve) => {
+      const img = new Image();
+      img.crossOrigin = "anonymous";
+      img.onload = function () {
+        const canvas = document.createElement("canvas");
+        canvas.width = img.width;
+        canvas.height = img.height;
+        canvas.getContext("2d").drawImage(img, 0, 0);
+        resolve(canvas.toDataURL("image/png"));
+      };
+      img.src = url;
+    });
+
+  const getDepo = (depo) => {
+    if (!depo || !Array.isArray(depos)) return "";
+    const id = String(depo).trim();
+    const matchDepo = depos.find((d) => String(d._id).trim() === id);
+    return matchDepo;
+  }
+  const { depos } = useDepo();
+  const { user } = useAuth();
 
   const { openSalesmanModal } = useSalesmanModal();
 
@@ -34,6 +64,144 @@ const S_Sheet = () => {
     trip: 1,
     schm: ""
   });
+
+  const exportSettlementPDF = async () => {
+    if (!sheetData?.items?.length) {
+      toast.error("No settlement data to export");
+      return;
+    }
+    console.log(sheetData.items[0]);
+
+
+    const doc = new jsPDF();
+
+    const logoBase64 = await loadImageBase64(pepsiLogo);
+    doc.addImage(logoBase64, "PNG", 12, 5, 35, 18);
+
+    doc.setFontSize(14);
+    doc.text("SAN BEVERAGES PVT LTD", 105, 15, { align: "center" });
+
+    doc.setFontSize(8);
+    doc.text( getDepo(user.depo)?.depoAddress || "", 105, 22, { align: "center" });
+
+    doc.setFontSize(10);
+    doc.text("SETTLEMENT SHEET REPORT", 105, 30, { align: "center" });
+
+    const tableData = sheetData.items.map((it, i) => {
+      const sku = items.find(s => s.code === it.itemCode);
+
+      return [
+        i + 1,
+        it.itemCode,
+        sku?.name || "",
+        it.loadedQty || 0,
+        it.returnedQty || 0,
+        it.finalQty||0,
+        it.finalPrice || 0,
+        it.amount || 0
+      ];
+    });
+
+    autoTable(doc, {
+      startY: 32,
+      head: [[
+        "SL",
+        "CODE",
+        "NAME",
+        "LOAD OUT",
+        "LOAD IN",
+        "FINAL QTY",
+        "RATE",
+        "AMOUNT"
+      ]],
+      body: tableData,
+      styles: { fontSize: 9 },
+      headStyles: { fillColor: [0, 0, 0] },
+      alternateRowStyles: { fillColor: [245, 245, 245] }
+    });
+
+    const blob = doc.output("bloburl");
+    const w = window.open(blob);
+    w.onload = () => w.print();
+  };
+
+  const exportSettlementExcel = async () => {
+    if (!sheetData?.items?.length) {
+      toast.error("No settlement data to export");
+      return;
+    }
+
+    const workbook = new ExcelJS.Workbook();
+    const sheet = workbook.addWorksheet("Settlement");
+
+    const logoBase64 = await loadImageBase64(pepsiLogo);
+
+    const imageId = workbook.addImage({
+      base64: logoBase64,
+      extension: "png"
+    });
+
+    sheet.addImage(imageId, {
+      tl: { col: 0, row: 0 },
+      ext: { width: 120, height: 70 }
+    });
+
+    sheet.mergeCells("C2:I2");
+    sheet.mergeCells("C3:I3");
+    sheet.mergeCells("C5:I5");
+
+    sheet.getCell("C2").value = "SAN BEVERAGES PVT LTD";
+    sheet.getCell("C3").value = getDepo(user.depo)?.depoAddress || "";
+    sheet.getCell("C5").value = "ITEM-WISE SETTLEMENT SHEET";
+
+    sheet.getCell("C2").alignment = { horizontal: "center" };
+    sheet.getCell("C3").alignment = { horizontal: "center" };
+    sheet.getCell("C5").alignment = { horizontal: "center" };
+
+    sheet.getCell("C2").font = { bold: true, size: 14 };
+    sheet.getCell("C5").font = { bold: true };
+
+    sheet.getRow(7).values = [
+      "SL",
+      "CODE",
+      "NAME",
+      "LOAD OUT",
+      "LOAD IN",
+      "FINAL QTY",
+      "RATE",
+      "AMOUNT"
+    ];
+
+    sheet.getRow(7).font = { bold: true };
+
+    sheetData.items.forEach((it, i) => {
+      const sku = items.find(s => s.code === it.itemCode);
+
+      sheet.addRow([
+        i + 1,
+        it.itemCode,
+        sku?.name || "",
+        it.loadedQty || 0,
+        it.returnedQty || 0,
+        it.finalQty || 0,
+        it.finalPrice || 0,
+        it.amount || 0
+      ]);
+    });
+
+    sheet.columns = [
+      { width: 6 },
+      { width: 12 },
+      { width: 30 },
+      { width: 12 },
+      { width: 12 },
+      { width: 12 },
+      { width: 14 }
+    ];
+
+    const buffer = await workbook.xlsx.writeBuffer();
+    saveAs(new Blob([buffer]), "settlement-sheet.xlsx");
+  };
 
   const handleSaveDiscount = async () => {
     if (!discount) {
@@ -390,6 +558,18 @@ const S_Sheet = () => {
             Save Discount
           </button>
         )}
+        {sheetData && (
+          <div style={{ display: "flex", gap: "10px", marginTop: "10px" }}>
+            <button className="export-btn pdf" onClick={exportSettlementPDF}>
+              📄 Export PDF
+            </button>
+
+            <button className="export-btn excel" onClick={exportSettlementExcel}>
+              📊 Export Excel
+            </button>
+          </div>
+        )}
+
       </div>
       <ItemBreakdownModal
         open={showItemModal}

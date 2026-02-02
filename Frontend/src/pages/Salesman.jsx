@@ -2,17 +2,19 @@ import React, { useState, useRef, useEffect } from "react";
 import { useSalesman } from "../context/SalesmanContext";
 import toast from 'react-hot-toast';
 import './salesman.css'
-import { usePrint } from "../context/PrintContext";
-import { useExcel } from "../context/ExcelContext";
-
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
+import ExcelJS from "exceljs";
+import { saveAs } from "file-saver";
+import pepsiLogo from "../assets/pepsi_logo.png";
+import { useDepo } from '../context/depoContext';
+import { useAuth } from '../context/AuthContext'
 
 const Salesman = () => {
   const [showModal, setShowModal] = useState(false);
   const handleOpen = () => setShowModal(true);
   const handleClose = () => setShowModal(false);
 
-  const { print, isPrinting } = usePrint();
-  const { exportToExcel, isExporting } = useExcel();
 
   const { salesmans, loading, getAllSalesmen, updateSalesman, addSalesman, getSalesmanByID, deleteSalesman } = useSalesman();
 
@@ -20,7 +22,14 @@ const Salesman = () => {
     getAllSalesmen();
   }, []);
 
-
+  const { depos } = useDepo();
+  const { user } = useAuth();
+  const getDepo = (depo) => {
+    if (!depo || !Array.isArray(depos)) return "";
+    const id = String(depo).trim();
+    const matchDepo = depos.find((d) => String(d._id).trim() === id);
+    return matchDepo;
+  }
   const [editId, setEditId] = useState(null);
   const [editSalesman, setEditSalesman] = useState({});
   const [searchTerm, setSearchTerm] = useState("");
@@ -118,51 +127,128 @@ const Salesman = () => {
   );
 
 
-  const handlePrint = () => {
-    // Prepare data for printing
-    const printData = {
-      salesmans: filteredSalesmans, // Use filtered data
-      summary: {
-        total: filteredSalesmans.length,
-        active: filteredSalesmans.filter(s => s.status === 'Active').length,
-        inactive: filteredSalesmans.filter(s => s.status === 'Inactive').length,
-      }
-    };
+   const loadImageBase64 = (url) =>
 
-    // Call print function with data and config
-    print(printData, {
-      title: 'Salesman Masters Report',
-      pageType: 'salesman', // We'll add this new type
-      orientation: 'portrait',
-      showHeader: true,
-      showFooter: true
+    new Promise((resolve) => {
+      const img = new Image();
+      img.crossOrigin = "anonymous";
+      img.onload = function () {
+        const canvas = document.createElement("canvas");
+        canvas.width = img.width;
+        canvas.height = img.height;
+        canvas.getContext("2d").drawImage(img, 0, 0);
+        resolve(canvas.toDataURL("image/png"));
+      };
+      img.src = url;
     });
+  const exportSalesmanPDF = async () => {
+    if (!filteredSalesmans.length) {
+      toast.error("No salesman data");
+      return;
+    }
+
+    const doc = new jsPDF();
+
+    const logoBase64 = await loadImageBase64(pepsiLogo);
+    doc.addImage(logoBase64, "PNG", 12, 5, 35, 18);
+
+    doc.setFontSize(14);
+    doc.text("SAN BEVERAGES PVT LTD", 105, 15, { align: "center" });
+
+    doc.setFontSize(8);
+    doc.text(getDepo(user.depo)?.depoAddress || "", 105, 22, { align: "center" });
+
+    doc.setFontSize(10);
+    doc.text("SALESMAN MASTER REPORT", 105, 30, { align: "center" });
+
+    const tableData = filteredSalesmans.map((s, i) => [
+      i + 1,
+      s.codeNo,
+      s.name,
+      s.routeNo,
+      s.status
+    ]);
+
+    autoTable(doc, {
+      startY: 35,
+      head: [["SL", "CODE", "NAME", "ROUTE NO", "STATUS"]],
+      body: tableData,
+      styles: { fontSize: 9 },
+      headStyles: { fillColor: [0, 0, 0] },
+      alternateRowStyles: { fillColor: [245, 245, 245] }
+    });
+
+    const blob = doc.output("bloburl");
+    const w = window.open(blob);
+    w.onload = () => w.print();
   };
 
-  const handleExcelExport = async () => {
-    const excelData = {
-      salesmans: filteredSalesmans,
-      summary: {
-        total: filteredSalesmans.length,
-        active: filteredSalesmans.filter(s => s.status === 'Active').length,
-        inactive: filteredSalesmans.filter(s => s.status === 'Inactive').length,
-      }
-    };
+  const exportSalesmanExcel = async () => {
+    if (!filteredSalesmans.length) {
+      toast.error("No salesman data");
+      return;
+    }
 
-    const result = await exportToExcel(excelData, {
-      fileName: 'Salesman_Masters',
-      sheetName: 'Salesman Data',
-      dataType: 'salesman',
-      includeHeader: true,
-      includeSummary: true,
-      autoWidth: true
+    const workbook = new ExcelJS.Workbook();
+    const sheet = workbook.addWorksheet("Salesman Master");
+
+    const logoBase64 = await loadImageBase64(pepsiLogo);
+
+    const imageId = workbook.addImage({
+      base64: logoBase64,
+      extension: "png"
     });
 
-    if (result.success) {
-      toast.success(`Excel file downloaded: ${result.fileName}`);
-    } else {
-      toast.error('Failed to export Excel file');
-    }
+    sheet.addImage(imageId, {
+      tl: { col: 0, row: 0 },
+      ext: { width: 120, height: 70 }
+    });
+
+    sheet.mergeCells("C2:I2");
+    sheet.mergeCells("C3:I3");
+    sheet.mergeCells("C5:I5");
+
+    sheet.getCell("C2").value = "SAN BEVERAGES PVT LTD";
+    sheet.getCell("C3").value = getDepo(user.depo)?.depoAddress || "";
+    sheet.getCell("C5").value = "SALESMAN MASTER REPORT";
+
+    sheet.getCell("C2").alignment = { horizontal: "center" };
+    sheet.getCell("C3").alignment = { horizontal: "center" };
+    sheet.getCell("C5").alignment = { horizontal: "center" };
+
+    sheet.getCell("C2").font = { bold: true, size: 14 };
+    sheet.getCell("C5").font = { bold: true };
+
+    sheet.getRow(7).values = [
+      "SL",
+      "CODE",
+      "NAME",
+      "ROUTE NO",
+      "STATUS"
+    ];
+
+    sheet.getRow(7).font = { bold: true };
+
+    filteredSalesmans.forEach((s, i) => {
+      sheet.addRow([
+        i + 1,
+        s.codeNo,
+        s.name,
+        s.routeNo,
+        s.status
+      ]);
+    });
+
+    sheet.columns = [
+      { width: 6 },
+      { width: 12 },
+      { width: 28 },
+      { width: 12 },
+      { width: 12 }
+    ];
+
+    const buffer = await workbook.xlsx.writeBuffer();
+    saveAs(new Blob([buffer]), "salesman-master.xlsx");
   };
 
   const handleKeyNavigation = (e, nextField) => {
@@ -254,22 +340,14 @@ const Salesman = () => {
             onChange={(e) => setSearchTerm(e.target.value)}
             value={searchTerm}
           />
-          <button
-            className="salesman-excel-btn"
-            onClick={handleExcelExport}
-            disabled={isExporting || filteredSalesmans.length === 0}
-            title="Export to Excel"
-          >
-            📊 {isExporting ? 'Exporting...' : 'Excel'}
+          <button className="salesman-excel-btn" onClick={exportSalesmanExcel}>
+            📊 Excel
           </button>
-          <button
-            className="salesman-print-btn"
-            onClick={handlePrint}
-            disabled={isPrinting || filteredSalesmans.length === 0}
-            title="Print Salesman List"
-          >
-            🖨️ Print
+
+          <button className="salesman-print-btn" onClick={exportSalesmanPDF}>
+            🖨️ Print / PDF
           </button>
+
           <button className="salesman-new-item-btn" onClick={() => setShowModal(true)}>
             + New
           </button>
