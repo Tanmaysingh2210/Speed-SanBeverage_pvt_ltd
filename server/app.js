@@ -17,6 +17,7 @@ import stockRoutes from './routes/stockRoutes.js';
 import summaryRoutes from './routes/summaryRoutes.js';
 import requireAuth from './middleware/requireAuth.js';
 import requireDepo from './middleware/requireDepo.js';
+import graphRoutes from './routes/graphRoutes.js';
 
 connectDB();
 const app = express();
@@ -52,7 +53,7 @@ app.use('/salesman', salesmanRoutes);
 app.use('/rates', ratesRoutes);
 app.use('/transaction', transactionRoutes);
 app.use('/purchase', purchaseRoutes);
-
+app.use('/graph', graphRoutes);
 app.use('/stock', stockRoutes);
 app.use('/summary', summaryRoutes);
 

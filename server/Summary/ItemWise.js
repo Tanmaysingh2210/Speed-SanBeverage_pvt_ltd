@@ -9,12 +9,14 @@ export const ItemWiseSummary = async (req, res) => {
     try {
         const { startDate, endDate } = req.body;
 
-        if (!startDate || !endDate || startDate > endDate) return res.status(400).json({ message: "fill all fields properly", success: false });
+        if (!startDate || !endDate) return res.status(400).json({ success: false, message: "Dates required" });
 
         const start = new Date(startDate);
         start.setHours(0, 0, 0, 0);
         const end = new Date(endDate);
         end.setHours(23, 59, 59, 999);
+
+        if (start > end) return res.status(400).json({ success: false, message: "Invalid date range" });
 
         const [loadouts, loadins, rates, items] = await Promise.all([
             LoadOut.find({ depo: req.user?.depo, date: { $gte: start, $lte: end } }),
@@ -23,6 +25,19 @@ export const ItemWiseSummary = async (req, res) => {
             Item.find({ depo: req.user?.depo })
         ]);
 
+        const itemMap = new Map();
+        for (const i of items) {
+            const code = normalize(i.code);
+            if (normalize(i.container) === normalize("emt")) continue;
+            else {
+                itemMap.set(code, {
+                    itemCode: code,
+                    name: i.name,
+                    qty: 0,
+                    amount: 0
+                });
+            }
+        }
 
         const rateMap = new Map();
         for (const r of rates) {
@@ -33,21 +48,6 @@ export const ItemWiseSummary = async (req, res) => {
             rateMap.get(code).push(r);
         };
 
-        const itemMap = new Map();
-
-        for (const i of items) {
-            const code = normalize(i.code);
-            if (normalize(i.container) === normalize("emt")) continue;
-            else {
-                itemMap.set(code, {
-                    itemCode: code,
-                    container: normalize(i.container),
-                    qty: 0,
-                    amount: 0
-                });
-            }
-        }
-
         const getRateforDate = (itemCode, saleDate) => {
             const list = rateMap.get(normalize(itemCode));
             if (!list) return null;
@@ -57,7 +57,6 @@ export const ItemWiseSummary = async (req, res) => {
                 if (r.date <= saleDate) choosen = r;
                 else break;
             }
-
             return choosen;
         };
 
@@ -92,12 +91,8 @@ export const ItemWiseSummary = async (req, res) => {
 
                 const agg = itemMap.get(normalize(item.itemCode));
                 if (!agg) continue;
-                if (agg.container === normalize("emt")) {
-                    continue;
-                } else {
-                    agg.qty -= ((item.Filled || 0) + (item.Burst || 0));
-                    agg.amount -= finalAmount;
-                }
+                agg.qty -= ((item.Filled || 0) + (item.Burst || 0));
+                agg.amount -= finalAmount;
             }
         }
 
@@ -106,16 +101,9 @@ export const ItemWiseSummary = async (req, res) => {
         let grandTotalAmount = 0;
 
         for (const [itemCode, data] of itemMap) {
-            const itemDetails = await Item.findOne({
-                depo: req.user?.depo,
-                code: itemCode.trim().toUpperCase(),
-            });
-
-            if (!itemDetails) continue;
-
             summary.push({
                 itemCode,
-                name: itemDetails.name,
+                name: data.name,
                 qty: data.qty,
                 amount: parseFloat(data.amount.toFixed(2))
             });
@@ -140,7 +128,8 @@ export const ItemWiseSummary = async (req, res) => {
         console.error('Error in itemwise summary:', err);
         return res.status(500).json({
             success: false,
-            message: "Internal server error"
+            message: "Internal server error",
+            error: err.message
         });
     }
 }

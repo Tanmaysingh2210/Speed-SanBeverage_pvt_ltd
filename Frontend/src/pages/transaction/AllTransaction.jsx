@@ -288,12 +288,12 @@ const AllTransaction = () => {
         </div>
       );
     } else if (transaction.type === 'Cash' || transaction.type === 'Credit') {
-      const netValue = transaction.value + (transaction.tax || 0) - (transaction.ref || 0);
+      const netValue = transaction.value + ((transaction.tax || 0) * (transaction.value) / 100) - (transaction.ref || 0);
 
       return (
         <div style={{ fontSize: '14px', color: '#666' }}>
           <div>Value: ₹{transaction.value}</div>
-          <div>Tax: ₹{transaction.tax} | Ref: ₹{transaction.ref || 0}</div>
+          <div>Tax: {transaction.tax}% | Ref: ₹{transaction.ref || 0}</div>
 
 
           {transaction.type === 'Cash' && (

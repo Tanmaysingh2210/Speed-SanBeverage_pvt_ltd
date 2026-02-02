@@ -56,59 +56,72 @@ router.post("/settlement", async (req, res) => {
             return chosen;
         };
 
-        const loadinMap = new Map();
-        loadin?.items.forEach(i => loadinMap.set(i.itemCode, i));
 
-        let settlementItems = [];
         let NetSale = 0;
         let totalTax = 0;
         let totalDiscount = 0;
         let totalRefund = 0;
 
-        // 3) LOOP THROUGH ALL LOADOUT ITEMS
+        const settlementMap = new Map();
+
         for (let lo of loadout.items) {
 
             const latestRate = getRate(lo.itemCode);
             if (!latestRate) continue;
 
-            const returned = loadinMap.get(lo.itemCode);
-            const returnedQty = (returned?.Filled || 0) + (returned?.Burst || 0);
+            // const returned = loadinMap.get(lo.itemCode);
+            // const returnedQty = (returned?.Filled || 0) + (returned?.Burst || 0);
 
-            const finalQty = lo.qty - returnedQty;
+            // const finalQty = lo.qty - returnedQty;
 
             const basePrice = parseFloat((latestRate?.basePrice || 0).toFixed(2));
             const disc = basePrice * (latestRate?.perDisc || 0) / 100;
             const tax = (basePrice - disc) * (latestRate?.perTax || 0) / 100;
             const finalPrice = parseFloat((basePrice + tax - disc).toFixed(2));
 
-            const sale = parseFloat((finalQty * finalPrice).toFixed(2));
-            const discAmt = parseFloat((finalQty * disc).toFixed(2));
-            const taxAmount = parseFloat((finalQty * tax).toFixed(2));
+            // const sale = parseFloat((finalQty * finalPrice).toFixed(2));
+            // const discAmt = parseFloat((finalQty * disc).toFixed(2));
+            // const taxAmount = parseFloat((finalQty * tax).toFixed(2));
 
-            // const amount = parseFloat((finalQty * finalPrice).toFixed(2));
+            if (!settlementMap.get(lo.itemCode)) {
+                settlementMap.set(lo.itemCode, {
+                    itemCode: lo.itemCode,
+                    loadedQty: lo.qty,
+                    returnedQty: 0,
+                    finalQty: lo.qty,
 
-            NetSale += sale;
-            totalTax += taxAmount;
-            totalDiscount += discAmt;
+                    basePrice,
+                    tax,
+                    disc,
+                    finalPrice,
 
-            settlementItems.push({
-                itemCode: lo.itemCode,
-                loadedQty: lo.qty,
-                returnedQty,
-                finalQty,
-                basePrice,
-                tax,
-                disc,
-                taxAmount,
-                discAmt,
-                finalPrice,
-                amount: sale
-            });
+                    taxAmount: 0,
+                    discAmt: 0,
+                    amount: 0
+                })
+            }
+
+            // NetSale += sale;
+            // totalTax += taxAmount;
+            // totalDiscount += discAmt;
+
+            // settlementItems.push({
+            //     itemCode: lo.itemCode,
+            //     loadedQty: lo.qty,
+            //     returnedQty,
+            //     finalQty,
+            //     basePrice,
+            //     tax,
+            //     disc,
+            //     taxAmount,
+            //     discAmt,
+            //     finalPrice,
+            //     amount: sale
+            // });
         }
 
         if (loadin) {
             for (const li of loadin.items) {
-                if (!li.Emt) continue;
                 const rate = getRate(li.itemCode);
                 if (!rate) continue;
 
@@ -117,13 +130,51 @@ router.post("/settlement", async (req, res) => {
                 const tax = (base - disc) * (rate.perTax || 0) / 100;
                 const price = base - disc + tax;
 
-                totalRefund += li.Emt * price;
+                if (!li.Emt) {
+                    const returned = (li.Filled || 0) + (li.Burst || 0);
+                    const agg = settlementMap.get(li.itemCode);
+                    if (!agg) {
+                        settlementMap.set(li.itemCode, {
+                            itemCode: li.itemCode,
+                            loadedQty: 0,
+                            returnedQty: returned,
+                            finalQty: 0 - returned,
+
+                            basePrice: base,
+                            tax,
+                            disc,
+                            finalPrice: price,
+
+                            taxAmount: 0,
+                            discAmt: 0,
+                            amount: 0
+                        })
+                    } else {
+                        agg.returnedQty += returned;
+                        agg.finalQty -= returned;
+                    }
+                } else {
+                    totalRefund += li.Emt * price;
+                }
             }
+        }
+
+        for (const entry of settlementMap.values()) {
+            const finalQty = entry.finalQty;
+
+            entry.amount = parseFloat((finalQty * entry.finalPrice).toFixed(2));
+            entry.discAmt = parseFloat((finalQty * entry.disc).toFixed(2));
+            entry.taxAmount = parseFloat((finalQty * entry.tax).toFixed(2));
+
+            NetSale+=entry.amount;
+            totalDiscount+=entry.discAmt;
+            totalTax+=entry.taxAmount;
         }
 
         NetSale = parseFloat(NetSale.toFixed(2));
         totalTax = parseFloat(totalTax.toFixed(2));
         totalDiscount = parseFloat(totalDiscount.toFixed(2));
+        totalRefund = parseFloat(totalRefund.toFixed(2));
 
         let cashDeposited = 0;
         let chequeDeposited = 0;
@@ -145,6 +196,8 @@ router.post("/settlement", async (req, res) => {
         const totalDeposited = parseFloat((cashDeposited + chequeDeposited + creditSale).toFixed(2));
 
         const shortOrExcess = parseFloat((totalDeposited - totalPayable).toFixed(2));
+
+        const settlementItems = Array.from(settlementMap.values());
 
 
         return res.json({

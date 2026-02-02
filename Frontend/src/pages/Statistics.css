@@ -1,0 +1,151 @@
+/* PAGE */
+.summary-page {
+    padding: 20px 24px;
+    background: #eef4ff;
+    width: 80vw;
+    /* min-height: calc(100vh - 70px); */
+}
+
+/* HEADER */
+.summary-header {
+    margin-bottom: 20px;
+}
+
+.summary-header h2 {
+    font-size: 1.6rem;
+    font-weight: 600;
+    color: #1f2937;
+}
+
+.summary-header p {
+    color: #6b7280;
+    font-size: 0.95rem;
+}
+
+/* GRID */
+.summary-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(480px, 1fr));
+    gap: 20px;
+}
+
+/* CARD */
+.chart-card {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 16px 18px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+
+    display: flex;
+    flex-direction: column;
+
+    min-height: 420px;
+    /* IMPORTANT */
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.chart-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+}
+
+.chart-card h3 {
+    font-size: 1.05rem;
+    font-weight: 600;
+    margin-bottom: 10px;
+    color: #111827;
+}
+
+.chart-wrapper {
+    flex: 1;
+    /* chart fills card */
+    width: 100%;
+}
+
+/* FULL WIDTH CARD */
+.chart-card.full-width {
+    grid-column: 1 / -1;
+}
+
+/* CHART CONTAINER FIX */
+.chart-card>div {
+    flex: 1;
+}
+
+/* RESPONSIVE TWEAKS */
+@media (max-width: 1024px) {
+    .summary-page {
+        padding: 16px;
+    }
+}
+
+@media (max-width: 768px) {
+    .summary-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .chart-card {
+        padding: 14px;
+    }
+}
+
+@media (max-width: 900px) {
+    .summary-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.chart-card:hover {
+    transform: translateY(-2px);
+    transition: 0.2s ease;
+}
+
+.chart-card {
+    border-left: 4px solid #10b981;
+}
+
+.chart-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+/* Title */
+.chart-header h3 {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: #111827;
+}
+
+/* Filters */
+.chart-filters {
+  display: flex;
+  color: #10b981;
+  gap: 8px;
+}
+
+.chart-filters select {
+  appearance: none;
+  background: #ffffff;
+  border: 2px solid #111827;
+  border-radius: 8px;
+  padding: 6px 10px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  color: #10b981;
+}
+
+/* Dropdown arrow */
+.chart-filters select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='none' stroke='black' stroke-width='2' viewBox='0 0 24 24'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+  background-size: 12px;
+  padding-right: 28px;
+}
+
+.chart-filters select:focus {
+  outline: none;
+  border-color: #10b981;
+}
