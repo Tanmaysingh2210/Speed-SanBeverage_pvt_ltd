@@ -6,6 +6,14 @@ import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 import { useSKU } from '../../context/SKUContext';
 import { useSalesmanModal } from '../../context/SalesmanModalContext';
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
+import * as XLSX from "xlsx";
+import { saveAs } from "file-saver";
+import { useDepo } from '../../context/depoContext';
+import { useAuth } from '../../context/AuthContext'
+import pepsiLogo from "../../assets/pepsi_logo.png";
+import ExcelJS from "exceljs";
 
 const AllTransaction = () => {
   const navigate = useNavigate();
@@ -20,9 +28,191 @@ const AllTransaction = () => {
     trip: 1
   });
 
+   const loadImageBase64 = (url) =>
+        new Promise((resolve) => {
+            const img = new Image();
+            img.crossOrigin = "anonymous";
+            img.onload = function () {
+                const canvas = document.createElement("canvas");
+                canvas.width = img.width;
+                canvas.height = img.height;
+                const ctx = canvas.getContext("2d");
+                ctx.drawImage(img, 0, 0);
+                resolve(canvas.toDataURL("image/png"));
+            };
+            img.src = url;
+        });
+
   const [transactions, setTransactions] = useState([]);
 
+  const getDepo = (depo) => {
+    if (!depo || !Array.isArray(depos)) return "";
+    const id = String(depo).trim();
+    const matchDepo = depos.find((d) => String(d._id).trim() === id);
+    return matchDepo;
+  }
+  const { depos } = useDepo();
+  const { user } = useAuth();
   // const { openSalesmanModal } = useSalesmanModal();
+  const getDetailsText = (t) => {
+    if (t.type === "Load Out") {
+      return t.items?.map(i => `${i.itemCode}: ${i.qty}`).join(", ");
+    }
+
+    if (t.type === "Load In") {
+      return t.items?.map(i =>
+        i.Emt ? `${i.itemCode}: EMT ${i.Emt}` : `${i.itemCode}: Filled ${i.Filled}`
+      ).join(", ");
+    }
+
+    if (t.type === "Cash" || t.type === "Credit") {
+      return `₹${t.value} | Tax ₹${t.tax} | Ref ₹${t.ref || 0}`;
+    }
+
+    return "";
+  };
+
+  const exportPDF = async () => {
+    if (!transactions.length) {
+      toast.error("No transactions to export");
+      return;
+    }
+
+    const doc = new jsPDF();
+
+    const logoBase64 = await loadImageBase64(pepsiLogo);
+    
+    // Logo
+    doc.addImage(logoBase64, "PNG", 12, 3, 45, 25);
+
+    // HEADER
+    doc.setFontSize(14);
+    doc.text("SAN BEVERAGES PVT LTD", 105, 15, { align: "center" });
+    doc.setFontSize(8);
+    doc.text(
+
+      // getDepo(user.depo)?.depoName || "",
+      getDepo(user.depo)?.depoAddress || "",
+
+      105,
+      22,
+      { align: "center" }
+    );
+    doc.setFontSize(10);
+    doc.text("TRANSACTION REPORT", 105, 30, { align: "center" });
+
+    const tableData = transactions.map((t, i) => [
+      i + 1,
+      t.type,
+      t.salesmanCode?.toUpperCase(),
+      FormatDate(t.date),
+      t.trip,
+      getDetailsText(t)
+    ]);
+
+    autoTable(doc, {
+      startY: 32,
+      head: [[
+        "SL",
+        "TYPE",
+        "SALESMAN",
+        "DATE",
+        "TRIP",
+        "DETAILS"
+      ]],
+      body: tableData,
+      styles: { fontSize: 9 },
+      headStyles: { fillColor: [0, 0, 0] },
+      alternateRowStyles: { fillColor: [245, 245, 245] }
+    });
+
+    // 👉 This opens print dialog (print OR save PDF)
+    const pdfBlob = doc.output("bloburl");
+
+    const printWindow = window.open(pdfBlob);
+    printWindow.onload = () => {
+      printWindow.print();
+    };
+  };
+
+
+  const exportExcel = async () => {
+  if (!transactions.length) {
+    toast.error("No transactions to export");
+    return;
+  }
+
+  const workbook = new ExcelJS.Workbook();
+  const sheet = workbook.addWorksheet("Transactions");
+
+  // Load logo
+  const logoBase64 = await loadImageBase64(pepsiLogo);
+
+  const imageId = workbook.addImage({
+    base64: logoBase64,
+    extension: "png"
+  });
+
+  sheet.addImage(imageId, {
+    tl: { col: 0, row: 0 },
+    ext: { width: 120, height: 70 }
+  });
+
+  // Header layout (same as price page)
+  sheet.mergeCells("C2:H2");
+  sheet.mergeCells("C3:H3");
+  sheet.mergeCells("C5:H5");
+
+  sheet.getCell("C2").value = "SAN BEVERAGES PVT LTD";
+  sheet.getCell("C3").value = getDepo(user.depo)?.depoAddress || "";
+  sheet.getCell("C5").value = "TRANSACTION REPORT";
+
+  sheet.getCell("C2").alignment = { horizontal: "center" };
+  sheet.getCell("C3").alignment = { horizontal: "center" };
+  sheet.getCell("C5").alignment = { horizontal: "center" };
+
+  sheet.getCell("C2").font = { bold: true, size: 14 };
+  sheet.getCell("C3").font = { size: 11 };
+  sheet.getCell("C5").font = { bold: true };
+
+  // Table headers
+  sheet.getRow(7).values = [
+    "SL",
+    "TYPE",
+    "SALESMAN",
+    "DATE",
+    "TRIP",
+    "DETAILS"
+  ];
+
+  sheet.getRow(7).font = { bold: true };
+
+  // Data rows
+  transactions.forEach((t, i) => {
+    sheet.addRow([
+      i + 1,
+      t.type,
+      t.salesmanCode?.toUpperCase(),
+      FormatDate(t.date),
+      t.trip,
+      getDetailsText(t)
+    ]);
+  });
+
+  // Column widths
+  sheet.columns = [
+    { width: 6 },
+    { width: 14 },
+    { width: 14 },
+    { width: 14 },
+    { width: 8 },
+    { width: 40 }
+  ];
+
+  const buffer = await workbook.xlsx.writeBuffer();
+  saveAs(new Blob([buffer]), "transactions-report.xlsx");
+};
+
   const handleEdit = (transaction) => {
     if (!transaction || !transaction.type) return;
 
@@ -382,6 +572,16 @@ const AllTransaction = () => {
                 {loading ? "Wait..." : "Find"}
               </button>
             </div>
+            {/* <div style={{ display: "flex", gap: "10px" }}>
+
+              <button className="export-btn pdf" onClick={exportPDF}>
+                📄 Export PDF
+              </button>
+
+              <button className="export-btn excel" onClick={exportExcel}>
+                📊 Export Excel
+              </button>
+            </div> */}
           </div>
         </div>
       </div>

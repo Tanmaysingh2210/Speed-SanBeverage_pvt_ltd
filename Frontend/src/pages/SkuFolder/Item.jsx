@@ -2,6 +2,14 @@ import React, { useState, useEffect, useRef } from 'react';
 import './Item.css';
 import { useSKU } from '../../context/SKUContext';
 import toast from 'react-hot-toast';
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
+import ExcelJS from "exceljs";
+import { saveAs } from "file-saver";
+import pepsiLogo from "../../assets/pepsi_logo.png";
+import { useDepo } from '../../context/depoContext';
+import { useAuth } from '../../context/AuthContext'
+
 
 const Item = () => {
   const {
@@ -58,6 +66,14 @@ const Item = () => {
   const modalFlavourRef = useRef(null);
   const modalStatusRef = useRef(null);
   const modalSaveBtnRef = useRef(null);
+  const getDepo = (depo) => {
+    if (!depo || !Array.isArray(depos)) return "";
+    const id = String(depo).trim();
+    const matchDepo = depos.find((d) => String(d._id).trim() === id);
+    return matchDepo;
+  }
+  const { depos } = useDepo();
+  const { user } = useAuth();
 
   useEffect(() => {
     if (showModal) {
@@ -312,6 +328,143 @@ const Item = () => {
     }
   }, [showModal]);
 
+  const loadImageBase64 = (url) =>
+
+    new Promise((resolve) => {
+      const img = new Image();
+      img.crossOrigin = "anonymous";
+      img.onload = function () {
+        const canvas = document.createElement("canvas");
+        canvas.width = img.width;
+        canvas.height = img.height;
+        canvas.getContext("2d").drawImage(img, 0, 0);
+        resolve(canvas.toDataURL("image/png"));
+      };
+      img.src = url;
+    });
+
+  const exportItemPDF = async () => {
+    if (!items.length) {
+      toast.error("No item data");
+      return;
+    }
+
+    const doc = new jsPDF();
+    const logoBase64 = await loadImageBase64(pepsiLogo);
+    doc.addImage(logoBase64, "PNG", 12, 5, 35, 18);
+
+    doc.setFontSize(14);
+    doc.text("SAN BEVERAGES PVT LTD", 105, 15, { align: "center" });
+    doc.setFontSize(8);
+    doc.text(getDepo(user.depo)?.depoAddress || "", 105, 22, { align: "center" });
+    doc.setFontSize(10);
+    doc.text("ITEM MASTER REPORT", 105, 30, { align: "center" });
+
+    const tableData = items.map((it, i) => [
+      i + 1,
+      it.code,
+      it.name,
+      it.container,
+      it.package,
+      it.flavour,
+      it.status
+    ]);
+
+    autoTable(doc, {
+      startY: 32,
+      head: [[
+        "SL",
+        "CODE",
+        "NAME",
+        "CONTAINER",
+        "PACKAGE",
+        "FLAVOUR",
+        "STATUS"
+      ]],
+      body: tableData,
+      styles: { fontSize: 9 },
+      headStyles: { fillColor: [0, 0, 0] },
+      alternateRowStyles: { fillColor: [245, 245, 245] }
+    });
+
+    const blob = doc.output("bloburl");
+    const w = window.open(blob);
+    w.onload = () => w.print();
+
+  };
+  const exportItemExcel = async () => {
+    if (!items.length) {
+      toast.error("No item data");
+      return;
+    }
+
+    const workbook = new ExcelJS.Workbook();
+    const sheet = workbook.addWorksheet("Item Master");
+
+    const logoBase64 = await loadImageBase64(pepsiLogo);
+
+    const imageId = workbook.addImage({
+      base64: logoBase64,
+      extension: "png"
+    });
+
+    sheet.addImage(imageId, {
+      tl: { col: 0, row: 0 },
+      ext: { width: 120, height: 70 }
+    });
+    sheet.mergeCells("C2:I2");
+    sheet.mergeCells("C3:I3");
+    sheet.mergeCells("C5:I5");
+
+    sheet.getCell("C2").value = "SAN BEVERAGES PVT LTD";
+    sheet.getCell("C3").value = getDepo(user.depo)?.depoAddress || "";
+    sheet.getCell("C5").value = "ITEM MASTER REPORT";
+
+    sheet.getCell("C2").alignment = { horizontal: "center" };
+    sheet.getCell("C3").alignment = { horizontal: "center" };
+    sheet.getCell("C5").alignment = { horizontal: "center" };
+
+    sheet.getCell("C2").font = { bold: true, size: 14 };
+    sheet.getCell("C5").font = { bold: true };
+
+    sheet.getRow(7).values = [
+      "SL",
+      "CODE",
+      "NAME",
+      "CONTAINER",
+      "PACKAGE",
+      "FLAVOUR",
+      "STATUS"
+    ];
+
+    sheet.getRow(1).font = { bold: true };
+
+    items.forEach((it, i) => {
+      sheet.addRow([
+        i + 1,
+        it.code,
+        it.name,
+        it.container,
+        it.package,
+        it.flavour,
+        it.status
+      ]);
+    });
+
+    sheet.columns = [
+      { width: 6 },
+      { width: 12 },
+      { width: 35 },
+      { width: 14 },
+      { width: 14 },
+      { width: 18 },
+      { width: 12 }
+    ];
+
+    const buffer = await workbook.xlsx.writeBuffer();
+    saveAs(new Blob([buffer]), "item-master.xlsx");
+  };
+
 
   return (
     <div className="table-container">
@@ -323,6 +476,16 @@ const Item = () => {
           onChange={(e) => setSearchTerm(e.target.value)}
           className="search-box"
         />
+        <div style={{ display: "flex", gap: "10px" }}>
+          <button className="export-btn pdf" onClick={exportItemPDF}>
+            📄 Export PDF
+          </button>
+
+          <button className="export-btn excel" onClick={exportItemExcel}>
+            📊 Export Excel
+          </button>
+        </div>
+
         <button className="new-item-btn" onClick={() => setShowModal(true)}>+ New Item</button>
       </div>
 
@@ -361,7 +524,7 @@ const Item = () => {
                 value={editItem.name}
                 className='edit-input'
                 onChange={(e) =>
-                  setEditItem({ ...editItem, name: e.target.value.toUpperCase()  })
+                  setEditItem({ ...editItem, name: e.target.value.toUpperCase() })
                 }
                 onKeyDown={(e) => handleKeyNavigation(e, "container")}
               />
@@ -371,7 +534,7 @@ const Item = () => {
                 value={editItem.container}
                 className='edit-input'
                 onChange={(e) =>
-                  setEditItem({ ...editItem, container: e.target.value.toUpperCase()})
+                  setEditItem({ ...editItem, container: e.target.value.toUpperCase() })
                 }
                 onKeyDown={(e) => handleKeyNavigation(e, "package")}
               />
@@ -381,7 +544,7 @@ const Item = () => {
                 value={editItem.package}
                 className='edit-input'
                 onChange={(e) =>
-                  setEditItem({ ...editItem, package: e.target.value.toUpperCase()})
+                  setEditItem({ ...editItem, package: e.target.value.toUpperCase() })
                 }
                 onKeyDown={(e) => handleKeyNavigation(e, "flavour")}
               />
@@ -391,7 +554,7 @@ const Item = () => {
                 value={editItem.flavour}
                 className='edit-input'
                 onChange={(e) =>
-                  setEditItem({ ...editItem, flavour: e.target.value.toUpperCase()  })
+                  setEditItem({ ...editItem, flavour: e.target.value.toUpperCase() })
                 }
                 onKeyDown={(e) => handleKeyNavigation(e, "status")}
               />
@@ -463,7 +626,7 @@ const Item = () => {
                   type="text"
                   value={newItem.code}
                   onChange={(e) =>
-                    setNewItem({ ...newItem, code: e.target.value.trim().toUpperCase()  })
+                    setNewItem({ ...newItem, code: e.target.value.trim().toUpperCase() })
                   }
                   onKeyDown={(e) => handleModalKeyNavigation(e, "code")}
                   placeholder="Enter item code"
@@ -548,8 +711,8 @@ const Item = () => {
                 </select>
               </div>
 
-         
-             
+
+
 
               <div className="form-group">
                 <label>Status</label>
