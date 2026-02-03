@@ -339,6 +339,7 @@ body {
   justify-content: start;
   margin: 0 2vw;
   overflow: hidden;
+  height:10vh;
 }
 
 .big-box .options ul {
