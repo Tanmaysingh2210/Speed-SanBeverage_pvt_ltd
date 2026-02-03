@@ -275,9 +275,7 @@ export const ExcelProvider = ({ children }) => {
     return rows;
   };
 
-  /**
-   * Default/generic data generator
-   */
+  
   const generateDefaultData = (data, includeHeader) => {
     const rows = [];
 

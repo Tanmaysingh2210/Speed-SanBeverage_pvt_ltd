@@ -48,8 +48,6 @@ const ItemQtyBarChart = ({ year, month }) => {
                 setLoading(true);
                 const payload = { year, month };
                 const res = await api.post("/graph/bar/", payload);
-
-                // IMPORTANT: match backend response
                 setData(res.data.summary || []);
             } catch (err) {
                 console.error("bar chart error", err);
