@@ -1,5 +1,3 @@
-import React, { useState, useRef, useEffect } from "react";
-
 export const ItemBreakdownModal = ({ open, onClose, items, skuItems }) => {
     if (!open) return null;
     const getItemName = (code) =>
@@ -22,6 +20,7 @@ export const ItemBreakdownModal = ({ open, onClose, items, skuItems }) => {
                             <th>Item Name</th>
                             <th>Load Out Qty</th>
                             <th>Load In Qty</th>
+                            <th>Final Qty</th>
                             <th>Rate</th>
                             <th>Amount</th>
                         </tr>
@@ -33,6 +32,7 @@ export const ItemBreakdownModal = ({ open, onClose, items, skuItems }) => {
                                 <td>{getItemName(it.itemCode)}</td>
                                 <td>{it.loadedQty}</td>
                                 <td>{it.returnedQty}</td>
+                                <td>{it.finalQty}</td>
                                 <td>₹{it.finalPrice}</td>
                                 <td>₹{it.amount}</td>
                             </tr>

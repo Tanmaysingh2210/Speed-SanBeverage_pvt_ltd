@@ -3,12 +3,14 @@
 .price-container {
   background: #f9fbff;
   padding: 20px;
+  /* padding: 15px; */
   border-radius: 10px;
   font-family: "Segoe UI", sans-serif;
   width: 90%;
+  height: 65vh;
   scrollbar-width: none;
   max-width: 1200px;
-  margin: 10vh auto;
+  margin: 6vh auto;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
 }
 
@@ -214,7 +216,7 @@
   }
 
   .price-container {
-    padding: 15px;
+    
   }
 
   .modal {
