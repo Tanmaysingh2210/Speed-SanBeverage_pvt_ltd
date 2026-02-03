@@ -9,7 +9,7 @@ const monthMap = {
 const getDateRange = (yearType, month) => {
     const now = new Date();
     const year =
-        yearType === "last"
+        yearType === ("last" || "lastyear")
             ? now.getFullYear() - 1
             : now.getFullYear();
 

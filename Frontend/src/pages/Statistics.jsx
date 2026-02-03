@@ -55,6 +55,15 @@ const Statistics = () => {
           {/* another chart */}
         </div>
 
+
+        <div className="chart-card">
+          <h3>Item Wise Sales Value</h3>
+          <div className="chart-wrapper">
+            <ItemQtyBarChart month="jan" year="current" />
+          </div>
+          {/* another chart */}
+        </div>
+
         {/* <div className="chart-card full-width">
           <h3>Monthly Trend</h3>
           <div className="chart-wrapper">

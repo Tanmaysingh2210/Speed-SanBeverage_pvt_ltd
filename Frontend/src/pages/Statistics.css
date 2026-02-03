@@ -3,7 +3,10 @@
     padding: 20px 24px;
     background: #eef4ff;
     width: 80vw;
-    /* min-height: calc(100vh - 70px); */
+    height:80%;
+    min-height: calc(100vh - 70px);
+    overflow:scroll !important;
+    scrollbar-width:none;
 }
 
 /* HEADER */
