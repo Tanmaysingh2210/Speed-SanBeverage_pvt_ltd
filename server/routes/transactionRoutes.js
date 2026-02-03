@@ -69,19 +69,10 @@ router.post("/settlement", async (req, res) => {
             const latestRate = getRate(lo.itemCode);
             if (!latestRate) continue;
 
-            // const returned = loadinMap.get(lo.itemCode);
-            // const returnedQty = (returned?.Filled || 0) + (returned?.Burst || 0);
-
-            // const finalQty = lo.qty - returnedQty;
-
             const basePrice = parseFloat((latestRate?.basePrice || 0).toFixed(2));
             const disc = basePrice * (latestRate?.perDisc || 0) / 100;
             const tax = (basePrice - disc) * (latestRate?.perTax || 0) / 100;
             const finalPrice = parseFloat((basePrice + tax - disc).toFixed(2));
-
-            // const sale = parseFloat((finalQty * finalPrice).toFixed(2));
-            // const discAmt = parseFloat((finalQty * disc).toFixed(2));
-            // const taxAmount = parseFloat((finalQty * tax).toFixed(2));
 
             if (!settlementMap.get(lo.itemCode)) {
                 settlementMap.set(lo.itemCode, {
@@ -100,24 +91,6 @@ router.post("/settlement", async (req, res) => {
                     amount: 0
                 })
             }
-
-            // NetSale += sale;
-            // totalTax += taxAmount;
-            // totalDiscount += discAmt;
-
-            // settlementItems.push({
-            //     itemCode: lo.itemCode,
-            //     loadedQty: lo.qty,
-            //     returnedQty,
-            //     finalQty,
-            //     basePrice,
-            //     tax,
-            //     disc,
-            //     taxAmount,
-            //     discAmt,
-            //     finalPrice,
-            //     amount: sale
-            // });
         }
 
         if (loadin) {
