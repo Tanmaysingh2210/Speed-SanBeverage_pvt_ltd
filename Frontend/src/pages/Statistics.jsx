@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import ItemQtyBarChart from '../Components/ItemQtyBarChart';
 import "./Statistics.css";
 import MonthWiseLineChart from "../Components/monthWiseLineChart";
-
+import SalesmanQtyBarChart from '../Components/SalesmanwiseBarGraph';
 
 const Statistics = () => {
   const [year, setYear] = useState("current");
@@ -51,10 +51,7 @@ const Statistics = () => {
 
         </div>
 
-
-         {/* ================= Monthly Trend Line Chart ================= */}
-
-          <div className="chart-card full-width">
+        <div className="chart-card full-width">
           <div className="chart-header">
             <h3>Monthly Sale</h3>
             <div className="chart-filters">
@@ -74,12 +71,12 @@ const Statistics = () => {
           <div className="chart-header">
             <h3>Salesman Wise Sale</h3>
             <div className="chart-filters">
-              <select value={yearForSalesman} onChange={(e) => yearForSalesman(e.target.value)}>
+              <select value={yearForSalesman} onChange={(e) => setYearForSalesman(e.target.value)}>
                 <option value="current">Current Year</option>
                 <option value="last">Last Year</option>
               </select>
 
-              <select value={monthForSalesman} onChange={(e) => monthForSalesman(e.target.value)}>
+              <select value={monthForSalesman} onChange={(e) => setMonthForSalesman(e.target.value)}>
                 <option value="jan">Jan</option>
                 <option value="feb">Feb</option>
                 <option value="mar">Mar</option>
@@ -96,7 +93,7 @@ const Statistics = () => {
             </div>
           </div>
           <div className="chart-wrapper">
-            {/* <ItemQtyBarChart month="jan" year="current" /> */}
+            <SalesmanQtyBarChart month={monthForSalesman} year={yearForSalesman} />
           </div>
         </div>
       </div>

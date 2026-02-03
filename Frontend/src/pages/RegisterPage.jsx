@@ -180,7 +180,6 @@ export default function RegisterPage() {
                                     {/* {error && <div style={{ color: 'red', marginBottom: 8 }}>{error}</div>} */}
                                 </form>
                             </div>
-                            <p>Already User? <Link to="/signin">Sign in</Link></p>
                         </>
                     ) : (
                         <>
