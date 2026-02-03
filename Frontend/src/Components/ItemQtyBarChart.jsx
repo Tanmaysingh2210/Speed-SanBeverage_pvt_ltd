@@ -10,6 +10,34 @@ import {
 } from "recharts";
 import api from "../api/api";
 
+const CustomTooltip = ({ active, payload }) => {
+    if (!active || !payload || !payload.length) return null;
+
+    const { itemCode, name, qty } = payload[0].payload;
+
+    return (
+        <div
+            style={{
+                background: "#55586d",
+                padding: "10px 12px",
+                borderRadius: "8px",
+                boxShadow: "0 4px 12px rgba(0,0,0,0.12)",
+                fontSize: "0.85rem"
+            }}
+        >
+            <div style={{ fontWeight: 600, marginBottom: 4 }}>
+                {itemCode.toUpperCase()}
+            </div>
+            <div style={{ color: "#a1adc6", marginBottom: 6 }}>
+                {name}
+            </div>
+            <div style={{ color: "#10b981", fontWeight: 600 }}>
+                Qty Sold: {qty}
+            </div>
+        </div>
+    );
+};
+
 const ItemQtyBarChart = ({ year, month }) => {
     const [data, setData] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -45,7 +73,6 @@ const ItemQtyBarChart = ({ year, month }) => {
                 barCategoryGap={20}
             >
                 <CartesianGrid strokeDasharray="3 3" />
-
                 <XAxis
                     dataKey="itemCode"
                     angle={-35}
@@ -53,17 +80,11 @@ const ItemQtyBarChart = ({ year, month }) => {
                     interval={0}
                     tick={{ fontSize: 12 }}
                 />
-
                 <YAxis />
-
                 <Tooltip
                     cursor={{ fill: "rgba(16, 185, 129, 0.15)" }}
-                    formatter={(value) => [`Qty: ${value}`, "Sold"]}
-                    labelFormatter={(label) =>
-                        data.find(d => d.itemCode === label)?.name || label
-                    }
+                    content={<CustomTooltip />}
                 />
-
                 <Bar
                     dataKey="qty"
                     fill="#10b981"

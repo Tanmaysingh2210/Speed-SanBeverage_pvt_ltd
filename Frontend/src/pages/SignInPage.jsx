@@ -63,7 +63,6 @@ export default function SignInPage() {
 
                             <button type="submit" onClick={handleSubmit} className="submit">Sign In</button>
                         </form>
-                        <p className="register-link">Did'nt have account? <Link to={`/register`}>Register</Link></p>
                     </div>
                 </div>
             </div>

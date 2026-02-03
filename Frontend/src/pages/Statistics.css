@@ -33,15 +33,13 @@
 .chart-card {
     background: #ffffff;
     border-radius: 12px;
-    padding: 16px 18px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-
     display: flex;
     flex-direction: column;
-
     min-height: 420px;
-    /* IMPORTANT */
     transition: transform 0.2s ease, box-shadow 0.2s ease;
+    min-height: 420px;
+    padding: 14px 16px;
 }
 
 .chart-card:hover {
@@ -49,10 +47,24 @@
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
 }
 
-.chart-card h3 {
-    font-size: 1.05rem;
+.chart-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    margin: 0;
+    padding: 0 0 6px 0;
+    border-bottom: 1px solid #e5e7eb;
+
+    flex: 0 0 auto;
+}
+
+.chart-header h3 {
+    font-size: 1rem;
     font-weight: 600;
-    margin-bottom: 10px;
+    margin: 0 !important;
+    padding: 0 !important;
+    height: auto;
     color: #111827;
 }
 
@@ -60,16 +72,12 @@
     flex: 1;
     /* chart fills card */
     width: 100%;
+    min-height: 0;
 }
 
 /* FULL WIDTH CARD */
 .chart-card.full-width {
     grid-column: 1 / -1;
-}
-
-/* CHART CONTAINER FIX */
-.chart-card>div {
-    flex: 1;
 }
 
 /* RESPONSIVE TWEAKS */
@@ -104,48 +112,47 @@
     border-left: 4px solid #10b981;
 }
 
-.chart-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 10px;
-}
-
 /* Title */
-.chart-header h3 {
+/* .chart-header h3 {
   font-size: 1.05rem;
   font-weight: 600;
   color: #111827;
-}
+} */
 
 /* Filters */
 .chart-filters {
-  display: flex;
-  color: #10b981;
-  gap: 8px;
+    display: flex;
+    color: #10b981;
+    gap: 8px;
+
 }
 
 .chart-filters select {
-  appearance: none;
-  background: #ffffff;
-  border: 2px solid #111827;
-  border-radius: 8px;
-  padding: 6px 10px;
-  font-size: 0.85rem;
-  cursor: pointer;
-  color: #10b981;
+    cursor: pointer;
+    color: #10b981;
+    appearance: none;
+    background: #ffffff;
+    border: 2px solid #111827;
+    font-size: 0.8rem;
+    border-radius: 8px;
+    margin: 0 !important;
+    padding: 4px 8px !important;
+    height: 28px !important;
+    line-height: 20px !important;
 }
 
 /* Dropdown arrow */
 .chart-filters select {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='none' stroke='black' stroke-width='2' viewBox='0 0 24 24'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 8px center;
-  background-size: 12px;
-  padding-right: 28px;
+    appearance: none;
+    background: #ffffff;
+    border: 2px solid #111827;
+    border-radius: 8px;
+    padding: 6px 10px;
+    font-size: 0.85rem;
+    cursor: pointer;
 }
 
 .chart-filters select:focus {
-  outline: none;
-  border-color: #10b981;
+    outline: none;
+    border-color: #10b981;
 }
