@@ -12,7 +12,6 @@
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
 }
 
-/* ---------- HEADER ---------- */
 .price-header {
   display: flex;
   justify-content: space-between;
@@ -64,13 +63,19 @@
   display: grid;
   grid-template-columns: 0.8fr 0.8fr 3fr 1.3fr 1.3fr 1fr 1.2fr 1.5fr 1.2fr 1.5fr;
   align-items: center;
+  justify-content: flex-start;
   padding: 10px 5px;
+  /* text-align: center; */
   border-bottom: 1px solid #e0e0e0;
   font-size: 14px;
   text-wrap: nowrap;
 }
 
-.price-row.header {
+.price-row:hover{
+  background-color: #f1f5f9;
+}
+
+.price-row.header32 {
   background-color: #f0f3f9;
   font-weight: bold;
   border-bottom: 2px solid #d0d0d0;
@@ -185,8 +190,6 @@
     width: 100%;
   }
 
-  .price-header {}
-
   .price-add-btn {
     width: 100%;
     text-align: center;
@@ -203,10 +206,7 @@
     font-size: 13px;
   }
 
-  .price-row.header {
-    display: none;
-    /* Hide header for compact mobile style */
-  }
+
 
   .price-row div {
     width: 100%;

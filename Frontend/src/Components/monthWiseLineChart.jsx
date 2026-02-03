@@ -84,7 +84,7 @@ return (
 
         <XAxis
           dataKey="month"
-          angle={-20}
+          angle={-0}
           textAnchor="end"
           interval={0}
           tick={{ fontSize: 12 }}

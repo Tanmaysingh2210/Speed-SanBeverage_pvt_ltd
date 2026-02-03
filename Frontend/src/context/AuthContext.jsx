@@ -12,13 +12,14 @@ const AuthContext = createContext({
 
 export function AuthProvider({ children }) {
     const [user, setUser] = useState(null);
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true);
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const navigate = useNavigate();
 
     useEffect(() => {
         async function fetchUser() {
             try {
+                setLoading(true);
                 const res = await api.get('/auth/me');
                 if (res.data.user) {
                     setUser(res.data.user);
@@ -30,6 +31,8 @@ export function AuthProvider({ children }) {
             } catch {
                 setUser(null);
                 setIsAuthenticated(false);
+            }finally{
+                setLoading(false);
             }
         }
         fetchUser();
