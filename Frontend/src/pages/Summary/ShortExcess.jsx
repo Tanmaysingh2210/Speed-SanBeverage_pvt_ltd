@@ -1,8 +1,6 @@
-import React from 'react'
 import api from "../../api/api.js";
 import { useState, useEffect, useRef } from 'react';
 import "../transaction/transaction.css";
-import { useSalesman } from '../../context/SalesmanContext.jsx';
 import { useDepo } from '../../context/depoContext';
 import { useAuth } from '../../context/AuthContext'
 import jsPDF from "jspdf";
@@ -16,7 +14,6 @@ const ShortExcess = () => {
     const [endDate, setEndDate] = useState("");
     const [rows, setRows] = useState([]);
     const [loading, setLoading] = useState(false);
-    const { getAllSalesmen } = useSalesman();
     const { depos } = useDepo();
     const { user } = useAuth();
     const startRef = useRef(null);
@@ -94,9 +91,6 @@ const ShortExcess = () => {
         }
     };
 
-    useEffect(() => {
-        getAllSalesmen();
-    }, []);
 
     const loadImageBase64 = (url) =>
         new Promise((resolve) => {
@@ -254,16 +248,16 @@ const ShortExcess = () => {
                                 onKeyDown={(e) => handleKeyNav(e, "endDate")}
                             />
                         </div>
-                        <div className="form-group">
-                            <button className="export-btn pdf" onClick={exportSummaryPDF}>
+                         <div className="form-group">
+                             <button className="export-btn pdf" onClick={exportSummaryPDF}>
                                 🖨️ Print
                             </button>
-                        </div>
-
-                        <div> <button className="export-btn excel" onClick={exportSummaryExcel}>
-                            📊 Excel
-                        </button></div>
-
+                         </div>
+                       
+                            <div> <button className="export-btn excel" onClick={exportSummaryExcel}>
+                                📊 Excel
+                            </button></div>
+                           
                         <div className="form-group">
                             <button onClick={handleFind}
                                 ref={findRef}
@@ -272,7 +266,7 @@ const ShortExcess = () => {
                             >
                                 {loading ? "Loading..." : "Find"}
                             </button>
-
+                            
                         </div>
                     </div>
                 </div>
