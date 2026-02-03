@@ -3,7 +3,7 @@ import LoadIn from "../models/transaction/loadIn.js";
 import { Item } from "../models/SKU.js";
 
 const getItemwiseGraph = async ({ start, end, depo }) => {
-    const normalize = v => typeof v === "string" ? v.trim().toLowerCase() : "";
+    const normalize = v => typeof v === "string" ? v.trim().toUpperCase() : "";
 
     const [loadouts, loadins, items] = await Promise.all([
         LoadOut.find({ depo, date: { $gte: start, $lte: end } }),

@@ -75,7 +75,7 @@ const ItemQtyBarChart = ({ year, month }) => {
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis
                     dataKey="itemCode"
-                    angle={-35}
+                    angle={-25}
                     textAnchor="end"
                     interval={0}
                     tick={{ fontSize: 12 }}
