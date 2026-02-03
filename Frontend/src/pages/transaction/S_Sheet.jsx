@@ -82,7 +82,7 @@ const S_Sheet = () => {
     doc.text("SAN BEVERAGES PVT LTD", 105, 15, { align: "center" });
 
     doc.setFontSize(8);
-    doc.text( getDepo(user.depo)?.depoAddress || "", 105, 22, { align: "center" });
+    doc.text(getDepo(user.depo)?.depoAddress || "", 105, 22, { align: "center" });
 
     doc.setFontSize(10);
     doc.text("SETTLEMENT SHEET REPORT", 105, 30, { align: "center" });
@@ -96,7 +96,7 @@ const S_Sheet = () => {
         sku?.name || "",
         it.loadedQty || 0,
         it.returnedQty || 0,
-        it.finalQty||0,
+        it.finalQty || 0,
         it.finalPrice || 0,
         it.amount || 0
       ];
@@ -543,12 +543,12 @@ const S_Sheet = () => {
           </button>
         )}
         {sheetData && (
-          <div style={{ display: "flex", gap: "10px", marginTop: "10px" }}>
-            <button className="export-btn pdf" onClick={exportSettlementPDF}>
+          <div style={{ display: "flex", gap: "10px"}}>
+            <button className="export-btn pdf trans-submit-btn" onClick={exportSettlementPDF}>
               📄 Export PDF
             </button>
 
-            <button className="export-btn excel" onClick={exportSettlementExcel}>
+            <button className="export-btn excel trans-submit-btn" onClick={exportSettlementExcel}>
               📊 Export Excel
             </button>
           </div>
