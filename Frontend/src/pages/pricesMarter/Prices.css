@@ -1,5 +1,3 @@
-
-
 .price-container {
   background: #f9fbff;
   padding: 20px;
@@ -22,6 +20,8 @@
   margin-bottom: 15px;
   flex-wrap: wrap;
   gap: 10px;
+  max-height: 10vh;
+  align-items: stretch;
 }
 
 .price-search {
@@ -74,6 +74,7 @@
   background-color: #f0f3f9;
   font-weight: bold;
   border-bottom: 2px solid #d0d0d0;
+  max-height: 10vh;
 }
 
 .actions span {
@@ -184,10 +185,7 @@
     width: 100%;
   }
 
-  .price-header {
-    flex-direction: column;
-    align-items: stretch;
-  }
+  .price-header {}
 
   .price-add-btn {
     width: 100%;
@@ -206,7 +204,8 @@
   }
 
   .price-row.header {
-    display: none; /* Hide header for compact mobile style */
+    display: none;
+    /* Hide header for compact mobile style */
   }
 
   .price-row div {
@@ -215,9 +214,7 @@
     justify-content: space-between;
   }
 
-  .price-container {
-    
-  }
+  .price-container {}
 
   .modal {
     width: 90%;
@@ -229,6 +226,7 @@
 .price-table::-webkit-scrollbar {
   height: 8px;
 }
+
 .price-table::-webkit-scrollbar-thumb {
   background: #bbb;
   border-radius: 4px;
@@ -274,6 +272,7 @@
 .dropdown-btn:active {
   background: #dfe3ea;
 }
+
 .input-dropdown:focus-within {
   border-color: #4f46e5;
   box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.15);

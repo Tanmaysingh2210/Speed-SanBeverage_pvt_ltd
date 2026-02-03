@@ -64,8 +64,8 @@
   max-width: 1200px;
   margin: 1vh auto;
   font-family: "Poppins", sans-serif;
+  overflow: auto;
   scrollbar-width: none;
-  overflow: hidden;
 }
 
 .trans-left {
@@ -386,6 +386,7 @@
   background-color: #f0f3f9;
   font-weight: bold;
   border-bottom: 2px solid #d0d0d0;
+  height: 10vh;
 }
 
 .headerr {
