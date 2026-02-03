@@ -754,4 +754,7 @@ body {
   border-radius: 6px;
   cursor: pointer;
 }
-
+input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(1); /* makes icon dark */
+  cursor: pointer;
+}
