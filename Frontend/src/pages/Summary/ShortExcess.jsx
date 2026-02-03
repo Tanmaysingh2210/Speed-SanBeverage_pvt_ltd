@@ -184,7 +184,7 @@ const ShortExcess = () => {
 
         sheet.getCell("C2").value = "SAN BEVERAGES PVT LTD";
         sheet.getCell("C3").value = getDepo(user.depo)?.depoAddress || "";
-        sheet.getCell("C5").value = "SHOORT/EXCESS SUMMARY REPORT";
+        sheet.getCell("C5").value = "SHORT/EXCESS SUMMARY REPORT";
 
         sheet.getCell("C2").alignment = { horizontal: "center" };
         sheet.getCell("C3").alignment = { horizontal: "center" };
