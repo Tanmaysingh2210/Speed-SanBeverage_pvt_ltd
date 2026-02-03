@@ -446,22 +446,6 @@ const S_Sheet = () => {
                     value={sheetData?.cashCreditDetails?.creditSale || 0}
                   />
                 </div>
-                {/* <div className="form-group">
-                  <label>PRICE DISCOUNT</label>
-                  <input
-                    readOnly
-                    type="number"
-                    value={sheetData?.totals?.totalDiscount || 0}
-                  />
-                </div> */}
-                {/* <div className="form-group">
-                  <label>TOTAL B</label>
-                  <input
-                    readOnly
-                    type="number"
-                    value={calculateTotalB(sheetData?.cashCreditDetails?.creditSale || 0, sheetData?.cashCreditDetails?.ref || 0, sheetData?.totals?.totalDiscount || 0, sheetData?.schm || 0) || 0}
-                  />
-                </div> */}
               </div>
             </div>
 

@@ -143,7 +143,7 @@ router.post("/settlement", async (req, res) => {
                             basePrice: base,
                             tax,
                             disc,
-                            finalPrice: price,
+                            finalPrice: ((parseFloat(price)).toFixed(2)),
 
                             taxAmount: 0,
                             discAmt: 0,
@@ -166,9 +166,9 @@ router.post("/settlement", async (req, res) => {
             entry.discAmt = parseFloat((finalQty * entry.disc).toFixed(2));
             entry.taxAmount = parseFloat((finalQty * entry.tax).toFixed(2));
 
-            NetSale+=entry.amount;
-            totalDiscount+=entry.discAmt;
-            totalTax+=entry.taxAmount;
+            NetSale += entry.amount;
+            totalDiscount += entry.discAmt;
+            totalTax += entry.taxAmount;
         }
 
         NetSale = parseFloat(NetSale.toFixed(2));
@@ -204,7 +204,7 @@ router.post("/settlement", async (req, res) => {
             salesmanCode,
             date,
             trip,
-            schm: s_sheet.schm || 0,
+            schm: s_sheet ? s_sheet?.schm : 0,
             items: settlementItems,
 
             totals: {

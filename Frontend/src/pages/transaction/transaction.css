@@ -62,7 +62,7 @@
   box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
   width: 90%;
   max-width: 1200px;
-  margin: 32px auto;
+  margin: 1vh auto;
   font-family: "Poppins", sans-serif;
   scrollbar-width: none;
   overflow: hidden;
