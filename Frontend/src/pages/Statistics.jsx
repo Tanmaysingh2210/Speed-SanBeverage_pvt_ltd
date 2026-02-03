@@ -7,8 +7,7 @@ import MonthWiseLineChart from "../Components/monthWiseLineChart";
 const Statistics = () => {
   const [year, setYear] = useState("current");
   const [month, setMonth] = useState("jan");
-  
-
+  const [yearForLineChart, setYearForLineChart] = useState("current");
 
   return (
     <div className="summary-page">
@@ -16,8 +15,6 @@ const Statistics = () => {
         <h2>Sales Summary</h2>
         <p>Item-wise & trend analytics</p>
       </div>
-
-
 
       <div className="summary-grid">
         <div className="chart-card">
@@ -56,9 +53,9 @@ const Statistics = () => {
 
           <div className="chart-card full-width">
           <div className="chart-header">
-            <h3>Monthly Trend</h3>
+            <h3>Monthly Sale</h3>
             <div className="chart-filters">
-              <select value={year} onChange={(e) => setYear(e.target.value)}>
+              <select value={yearForLineChart} onChange={(e) => setYearForLineChart(e.target.value)}>
                 <option value="current">Current Year</option>
                 <option value="last">Last Year</option>
               </select>
@@ -66,25 +63,16 @@ const Statistics = () => {
           </div>
 
           <div className="chart-wrapper">
-            <MonthWiseLineChart year={year} />
+            <MonthWiseLineChart year={yearForLineChart} />
           </div>
         </div>
 
-  {/* other chart */}
         <div className="chart-card">
           <h3>Item Wise Sales Value</h3>
           <div className="chart-wrapper">
-            <ItemQtyBarChart month="jan" year="current" />
+            {/* <ItemQtyBarChart month="jan" year="current" /> */}
           </div>
-          {/* another chart */}
         </div>
-
-        {/* <div className="chart-card full-width">
-          <h3>Monthly Trend</h3>
-          <div className="chart-wrapper">
-            <ItemQtyBarChart month="jan" year="current" />
-          </div>
-        </div> */}
       </div>
     </div>
 
