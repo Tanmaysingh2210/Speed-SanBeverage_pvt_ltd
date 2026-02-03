@@ -48,8 +48,6 @@ const MonthWiseLineChart = ({year})=>{
         const payload = { year };
         const res = await api.post("/graph/line/", payload);
 
-        // backend returns:
-        // { success: true, JAN: 358, FEB: 98, ... }
         const { success, ...months } = res.data;
 
         const formatted = Object.entries(months).map(([month, qty]) => ({
