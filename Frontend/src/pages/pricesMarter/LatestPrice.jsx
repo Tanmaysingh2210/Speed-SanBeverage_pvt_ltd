@@ -11,8 +11,8 @@ import { saveAs } from "file-saver";
 import pepsiLogo from "../../assets/pepsi_logo.png";
 import ExcelJS from "exceljs";
 import { useDepo } from '../../context/depoContext';
-import { useAuth } from '../../context/AuthContext'
-// import '../../pages/transaction/transaction.css'
+import { useAuth } from '../../context/AuthContext';
+
 const LatestPrice = () => {
     const { prices, updatePrice, deletePrice, addPrice, loading } = usePrice();
     const { items } = useSKU();
@@ -446,7 +446,7 @@ const LatestPrice = () => {
 
             {/* Table */}
             <div className="price-table">
-                <div className="price-row header">
+                <div className="price-row header32">
                     <div>SL.NO.</div>
                     <div>CODE</div>
                     <div>NAME</div>
