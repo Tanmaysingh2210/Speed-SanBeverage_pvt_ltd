@@ -167,7 +167,7 @@ const BrowsePrice = () => {
 
   const filtered = Array.isArray(prices) ?
     getActivePrice(selectedDate).filter((p) => {
-      const matchesSearch = safeString(p?.name).toLowerCase().includes(safeString(search).toLowerCase())
+      const matchesSearch = safeString(p?.itemCode).toLowerCase().includes(safeString(search).toLowerCase())
       return matchesSearch;
     })
 
@@ -235,7 +235,7 @@ const BrowsePrice = () => {
       <div className="price-header">
         <input
           type="text"
-          placeholder='🔍 Search items'
+          placeholder='🔍 Search item Code...'
           value={search}
           onChange={(e) => { setSearch(e.target.value) }}
           className="price-search"

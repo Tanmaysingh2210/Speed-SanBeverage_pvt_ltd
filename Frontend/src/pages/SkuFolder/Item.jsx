@@ -37,7 +37,7 @@ const Item = () => {
   const [filteredContainers, setFilteredContainers] = useState([]);
   const [filteredFlavours, setFilteredFlavours] = useState([]);
   const [filteredPackages, setFilteredPackages] = useState([]);
-  
+
 
   const [newItem, setNewItem] = useState({
     code: "",
@@ -344,8 +344,8 @@ const Item = () => {
     });
 
   const exportItemPDF = async () => {
-    if (!items.length) {
-      toast.error("No item data");
+    if (!filteredItems.length) {
+      toast.error("No filtered data to export");
       return;
     }
 
@@ -360,7 +360,7 @@ const Item = () => {
     doc.setFontSize(10);
     doc.text("ITEM MASTER REPORT", 105, 30, { align: "center" });
 
-    const tableData = items.map((it, i) => [
+    const tableData = filteredItems.map((it, i) => [
       i + 1,
       it.code,
       it.name,
@@ -393,10 +393,11 @@ const Item = () => {
 
   };
   const exportItemExcel = async () => {
-    if (!items.length) {
-      toast.error("No item data");
-      return;
-    }
+   if (!filteredItems.length) {
+  toast.error("No filtered data to export");
+  return;
+}
+
 
     const workbook = new ExcelJS.Workbook();
     const sheet = workbook.addWorksheet("Item Master");
@@ -439,7 +440,7 @@ const Item = () => {
 
     sheet.getRow(1).font = { bold: true };
 
-    items.forEach((it, i) => {
+    filteredItems.forEach((it, i) => {
       sheet.addRow([
         i + 1,
         it.code,

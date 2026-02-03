@@ -48,6 +48,7 @@ const LatestPrice = () => {
         return matchDepo ;
     }
 
+
     const loadImageBase64 = (url) =>
         new Promise((resolve) => {
             const img = new Image();
@@ -396,7 +397,7 @@ const LatestPrice = () => {
     const filtered = Array.isArray(prices)
         ? prices
             .filter(p => p?.status === "Active") //  Only show active prices
-            .filter(p => safeString(p?.name).toLowerCase().includes(safeString(search).toLowerCase()))
+            .filter(p => safeString(p?.itemCode).toLowerCase().includes(safeString(search).toLowerCase()))
         : [];
 
     return (
@@ -405,7 +406,7 @@ const LatestPrice = () => {
             <div className="price-header">
                 <input
                     type="text"
-                    placeholder="🔍 Search Items..."
+                    placeholder="🔍 Search Item Code..."
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
                     className="price-search"
