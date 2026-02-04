@@ -295,16 +295,10 @@ const CashChequeSummary = () => {
                                 onKeyDown={(e) => handleKeyNav(e, "endDate")}
                             />
                         </div>
-                        <div className="form-group">
-                            <button className="export-btn pdf" onClick={exportCashChequePDF}>
-                                🖨️ Print
-                            </button>
-                        </div>
-                        <div className="form-group"> <button className="export-btn excel" onClick={exportSummaryExcel}>
-                            📊 Excel
-                        </button></div>
+                        
 
-                        <div className="form-group">
+                        <div className="form-group pdf">
+                            
                             <button
                                 className="padd trans-submit-btn"
                                 disabled={loading}
@@ -314,6 +308,13 @@ const CashChequeSummary = () => {
                             >
                                 {loading ? "Wait..." : "Find"}
 
+                            </button>
+
+                             <button className="export-btn pdf padd trans-submit-btn" onClick={exportCashChequePDF}>
+                                🖨️ Print
+                            </button>
+                            <button className="export-btn excel padd  pdf trans-submit-btn" onClick={exportSummaryExcel}>
+                                📊 Excel
                             </button>
                         </div>
                     </div>

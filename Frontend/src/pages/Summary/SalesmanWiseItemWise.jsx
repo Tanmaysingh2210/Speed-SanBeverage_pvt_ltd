@@ -282,7 +282,7 @@ const SalesmanWiseItemWise = () => {
                 onChange={(e) => setEndDate(e.target.value)}
               />
             </div>
-            <div className="form-group">
+            <div className="form-group pdf">
               <button onClick={handleFind}
                 ref={findRef}
                 onKeyDown={(e) => handleKeyNav(e, "find")}
@@ -290,11 +290,11 @@ const SalesmanWiseItemWise = () => {
               >
                 {loading ? "Loading..." : "Find"}
               </button>
-              <button className="export-btn pdf" onClick={exportSummaryPDF}>
+              <button className="export-btn pdf padd trans-submit-btn" onClick={exportSummaryPDF}>
                 🖨️ Print
               </button>
 
-              <button className="export-btn excel" onClick={exportSummaryExcel}>
+              <button className="export-btn excel pdf padd trans-submit-btn" onClick={exportSummaryExcel}>
                 📊 Excel
               </button>
 
