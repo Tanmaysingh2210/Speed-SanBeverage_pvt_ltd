@@ -375,13 +375,13 @@ const DayWise = () => {
                         <div className="all-row5 total-row">
 
                             <div><strong>Total</strong></div>
-                            <div>₹{totalNetSale}</div>
-                            <div >₹ {totalSchm}</div>
-                            <div >₹{totalGrossSale} </div>
-                            <div >₹ {totalRefund}</div>
-                            <div >₹ {totalCreditSale}</div>
+                            <div>₹{totalNetSale.toFixed(2)}</div>
+                            <div >₹ {totalSchm.toFixed(2)}</div>
+                            <div >₹{totalGrossSale.toFixed(2)} </div>
+                            <div >₹ {totalRefund.toFixed(2)}</div>
+                            <div >₹ {totalCreditSale.toFixed(2)}</div>
                             <div >₹{totalCashDeposited} /₹ {totalChequeDeposited}</div>
-                            <div style={{ color: totalShortExcess >= 0 ? "green" : "red" }}>₹ {totalShortExcess}</div>
+                            <div style={{ color: totalShortExcess >= 0 ? "green" : "red" }}>₹ {totalShortExcess.toFixed(2)}</div>
                         </div>
                     }
 
