@@ -4,7 +4,6 @@ import "../transaction/transaction.css";
 import api from "../../api/api";
 import { useToast } from "../../context/ToastContext";
 import { useTransaction } from "../../context/TransactionContext";
-import { useSalesman } from "../../context/SalesmanContext";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import ExcelJS from "exceljs";
@@ -118,7 +117,7 @@ const CashChequeSummary = () => {
 
         autoTable(doc, {
             startY: 35,
-            head: [["SL", "DATE", "SALESMAN CODE", "SALESMAN NAME", "CASH", "CHEQUE", "TOTAL",]],
+            head: [["SL", "DATE", "SALESMAN CODE", "SALESMAN NAME", "CASH", "CHEQUE", "TOTAL"]],
             body: tableData,
             styles: { fontSize: 9 },
             headStyles: { fillColor: [0, 0, 0] },

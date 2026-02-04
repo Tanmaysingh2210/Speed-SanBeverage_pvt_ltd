@@ -29,7 +29,7 @@ const Burger = ({ onMenuToggle }) => {
     const handleMenuToggle = (isOpen) => {
         setOpen(isOpen);
         if (onMenuToggle) {
-            onMenuToggle(isOpen);  // Pass state to parent
+            onMenuToggle(isOpen); 
         }
     };
 
@@ -53,10 +53,9 @@ const Burger = ({ onMenuToggle }) => {
 
             <div className={`burger-box ${open ? "show" : "hide"}`}>
                 <div className="heading">
-                    <FaWineBottle className="text-blue-600 text-2xl" />
                     <h3 >SAN Beverages</h3>
 
-                    <IoClose className="text-3xl cursor-pointer hover:text-red-500"
+                    <IoClose className="close-icon"
                         onClick={() => handleMenuToggle(false)}
                     />
 
