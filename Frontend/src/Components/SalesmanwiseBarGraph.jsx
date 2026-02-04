@@ -13,7 +13,7 @@ import api from "../api/api";
 const CustomTooltip = ({ active, payload }) => {
     if (!active || !payload || !payload.length) return null;
 
-    const { itemCode, name, qty } = payload[0].payload;
+    const { salesmanCode, salesmanName, qty } = payload[0].payload;
 
     return (
         <div
@@ -26,10 +26,10 @@ const CustomTooltip = ({ active, payload }) => {
             }}
         >
             <div style={{ fontWeight: 600, marginBottom: 4 }}>
-                {itemCode.toUpperCase()}
+                {salesmanCode.toUpperCase()}
             </div>
             <div style={{ color: "#a1adc6", marginBottom: 6 }}>
-                {name}
+                {salesmanName}
             </div>
             <div style={{ color: "#10b981", fontWeight: 600 }}>
                 Qty Sold: {qty}
@@ -38,7 +38,7 @@ const CustomTooltip = ({ active, payload }) => {
     );
 };
 
-const ItemQtyBarChart = ({ year, month }) => {
+const SalesmanQtyBarChart = ({ year, month }) => {
     const [data, setData] = useState([]);
     const [loading, setLoading] = useState(true);
 
@@ -47,7 +47,7 @@ const ItemQtyBarChart = ({ year, month }) => {
             try {
                 setLoading(true);
                 const payload = { year, month };
-                const res = await api.post("/graph/bar-item/", payload);
+                const res = await api.post("/graph/bar-salesman/", payload);
                 setData(res.data.summary || []);
             } catch (err) {
                 console.error("bar chart error", err);
@@ -72,7 +72,7 @@ const ItemQtyBarChart = ({ year, month }) => {
             >
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis
-                    dataKey="itemCode"
+                    dataKey="salesmanCode"
                     angle={-25}
                     textAnchor="end"
                     interval={0}
@@ -95,4 +95,4 @@ const ItemQtyBarChart = ({ year, month }) => {
     );
 };
 
-export default ItemQtyBarChart;
+export default SalesmanQtyBarChart;

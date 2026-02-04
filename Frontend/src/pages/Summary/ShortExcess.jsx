@@ -1,8 +1,6 @@
-import React from 'react'
 import api from "../../api/api.js";
 import { useState, useEffect, useRef } from 'react';
 import "../transaction/transaction.css";
-import { useSalesman } from '../../context/SalesmanContext.jsx';
 import { useDepo } from '../../context/depoContext';
 import { useAuth } from '../../context/AuthContext'
 import jsPDF from "jspdf";
@@ -16,7 +14,6 @@ const ShortExcess = () => {
     const [endDate, setEndDate] = useState("");
     const [rows, setRows] = useState([]);
     const [loading, setLoading] = useState(false);
-    const { getAllSalesmen } = useSalesman();
     const { depos } = useDepo();
     const { user } = useAuth();
     const startRef = useRef(null);
@@ -94,9 +91,6 @@ const ShortExcess = () => {
         }
     };
 
-    useEffect(() => {
-        getAllSalesmen();
-    }, []);
 
     const loadImageBase64 = (url) =>
         new Promise((resolve) => {
@@ -254,10 +248,24 @@ const ShortExcess = () => {
                                 onKeyDown={(e) => handleKeyNav(e, "endDate")}
                             />
                         </div>
+<<<<<<< HEAD
 
 
 
                         <div className="form-group pdf">
+=======
+                         <div className="form-group">
+                             <button className="export-btn pdf" onClick={exportSummaryPDF}>
+                                🖨️ Print
+                            </button>
+                         </div>
+                       
+                            <div> <button className="export-btn excel" onClick={exportSummaryExcel}>
+                                📊 Excel
+                            </button></div>
+                           
+                        <div className="form-group">
+>>>>>>> 57fb21d6d06c5986e8b678f30c3a8e586e33b118
                             <button onClick={handleFind}
                                 ref={findRef}
                                 onKeyDown={(e) => handleKeyNav(e, "find")}
@@ -265,6 +273,7 @@ const ShortExcess = () => {
                             >
                                 {loading ? "Loading..." : "Find"}
                             </button>
+<<<<<<< HEAD
 
                             <button className="export-btn pdf padd trans-submit-btn" onClick={exportSummaryPDF}>
                                 🖨️ Print
@@ -274,6 +283,9 @@ const ShortExcess = () => {
                             <button className="export-btn excel padd trans-submit-btn" onClick={exportSummaryExcel}>
                                 📊 Excel
                             </button>
+=======
+                            
+>>>>>>> 57fb21d6d06c5986e8b678f30c3a8e586e33b118
                         </div>
                     </div>
                 </div>

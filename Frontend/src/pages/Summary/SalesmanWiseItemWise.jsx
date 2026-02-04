@@ -1,9 +1,7 @@
-import React from 'react'
 import api from "../../api/api.js";
 import { useState, useEffect, useRef } from 'react';
 import { useSalesmanModal } from '../../context/SalesmanModalContext.jsx';
 import "../transaction/transaction.css";
-import { useSalesman } from '../../context/SalesmanContext.jsx';
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import ExcelJS from "exceljs";
@@ -19,7 +17,7 @@ const SalesmanWiseItemWise = () => {
   const [rows, setRows] = useState([]);
   const [loading, setLoading] = useState(false);
   const { openSalesmanModal } = useSalesmanModal();
-  const { getAllSalesmen } = useSalesman();
+
   const startRef = useRef(null);
   const endRef = useRef(null);
   const findRef = useRef(null);
@@ -103,9 +101,7 @@ const SalesmanWiseItemWise = () => {
     }
   };
 
-  useEffect(() => {
-    getAllSalesmen();
-  }, []);
+
 
   const loadImageBase64 = (url) =>
     new Promise((resolve) => {
