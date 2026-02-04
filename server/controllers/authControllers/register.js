@@ -32,7 +32,7 @@ export const register = async (req, res) => {
         }
 
         let user = await User.findOne({ email });
-        if (user) return req.status(400).json({ message: "user already exists" });
+        if (user) return res.status(400).json({ message: "user already exists" });
 
         const otp = generateOtp();
         const otpExpire = new Date(Date.now() + 5 * 60 * 1000);

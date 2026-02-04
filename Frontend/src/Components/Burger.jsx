@@ -91,7 +91,7 @@ const Burger = ({ onMenuToggle }) => {
                                 </div>
                             {/* </div> */}
                             <button className="logout-btn" onClick={handleLogout}>
-                                <i className="fas fa-sign-out-alt"></i> Logout
+                                <i className="fas fa-sign-out-alt"></i> Logout      
                             </button>
                         </div>
                     )

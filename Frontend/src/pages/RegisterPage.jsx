@@ -64,7 +64,7 @@ export default function RegisterPage() {
             setOtpStep(true);
             setCountdown(10);
         } catch (err) {
-            const msg = err?.response?.data?.message || 'Registration failed';
+            const msg = err.message || 'Registration failed';
             showToast(msg, "error");
             setError(msg);
         } finally {
@@ -81,10 +81,9 @@ export default function RegisterPage() {
             }
             const msg = await verifyOtp({ email, otp: code });
             showToast(msg || 'OTP verified successfully!', 'success');
-            navigate('/dashboard');
         } catch (err) {
             console.log(err);
-            const backendMessage = err?.response?.data?.message || err?.response?.data?.error || 'Invalid OTP';
+            const backendMessage = err.message || 'Invalid OTP';
             showToast(backendMessage, 'error');
             throw err;
         }

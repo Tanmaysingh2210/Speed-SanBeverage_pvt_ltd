@@ -59,10 +59,9 @@ export function AuthProvider({ children }) {
     async function register(payload) {
         try {
             const res = await api.post('/auth/register', payload);
-            const newUser = res.data.user;
-            return newUser;
+            return res.data.message;
         } catch (err) {
-            throw err;
+            throw err.response?.data;
         }
     }
 
@@ -78,8 +77,7 @@ export function AuthProvider({ children }) {
     async function verifyOtp(payload) {
         try {
             const res = await api.post('/auth/verify_otp', payload);
-            const verifiedUser = res.data.user;
-            return res.data.message; // "OTP verified successfully"
+            return res.data.message;
         } catch (err) {
             console.error("OTP verification failed:", err.response?.data || err.message);
             throw err.response?.data || { message: "OTP verification failed" };
@@ -96,8 +94,35 @@ export function AuthProvider({ children }) {
         }
     }
 
+    async function forgotPass(payload) {
+        try {
+            const res = await api.post('/auth/forgot_password', payload);
+            return res.data.message;
+        } catch (err) {
+            throw err.response?.data || { message: "OTP sent failed" };
+        }
+    }
+
+    async function verifyResetPassOtp(payload) {
+        try {
+            const res = await api.post('/auth/verify_reset_otp', payload);
+            return res.data.message;
+        } catch (err) {
+            throw err.response?.data || { message: "Error verifying otp" };
+        }
+    }
+
+    async function resetPassword(payload) {
+        try {
+            const res = await api.post('/auth/reset_password', payload);
+            return res.data.message;
+        } catch (err) {
+            throw err.response?.data || { message: "Error reseting password" };
+        }
+    }
+
     return (
-        <AuthContext.Provider value={{ user, loading, login, logout, register, verifyOtp, resendOtp, isAuthenticated }}>
+        <AuthContext.Provider value={{ user, loading, login, logout, register, verifyOtp, resendOtp, isAuthenticated , forgotPass, resetPassword, verifyResetPassOtp}}>
             {children}
         </AuthContext.Provider>
     );
