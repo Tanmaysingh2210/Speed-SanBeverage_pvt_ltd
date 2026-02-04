@@ -31,7 +31,7 @@ export function AuthProvider({ children }) {
             } catch {
                 setUser(null);
                 setIsAuthenticated(false);
-            }finally{
+            } finally {
                 setLoading(false);
             }
         }

@@ -1,12 +1,13 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
-import toast from 'react-hot-toast'
 import api from '../api/api';
+import { useToast } from "./ToastContext";
 
 const DepoContext = createContext();
 
 export function DepoProvider({ children }) {
     const [depos, setDepos] = useState([]);
     const [loading, setLoading] = useState(false);
+    const { showToast } = useToast();
 
     const getAllDepo = async () => {
         try {
@@ -16,7 +17,7 @@ export function DepoProvider({ children }) {
             return res;
         }
         catch (err) {
-            toast.error(err.response?.data?.message || "Error fetching depos");
+            showToast(err.response?.data?.message || "Error fetching depos", "error");
 
         }
         finally {
@@ -32,7 +33,7 @@ export function DepoProvider({ children }) {
             return res;
         }
         catch (err) {
-            toast.error(err.response?.data?.message || "Error adding depos");
+            showToast(err.response?.data?.message || "Error adding depos", "error");
         }
         finally {
             setLoading(false);
@@ -43,29 +44,29 @@ export function DepoProvider({ children }) {
         try {
             setLoading(true);
             const res = await api.patch(`/depo/${id}`, payload);
-            toast.success(res.data.message || "depo update successfully");
+            showToast(res.data.message || "depo update successfully", "success");
             setDepos((prev) =>
                 prev.map((d) => (d._id === id ? res.data : d))
             );
             return res;
         } catch (err) {
-            toast.error(err.response?.data?.message || "Error updating depo");
+            showToast(err.response?.data?.message || "Error updating depo", "error");
         }
         finally {
             setLoading(false);
         }
     };
-    
+
     const deleteDepo = async (id) => {
         try {
             setLoading(true);
             const res = await api.delete(`/depo/delete/${id}`);
-            toast.success(res.data.message || "depo deleted successfully");
+            showToast(res.data.message || "depo deleted successfully", "success");
             setDepos(prev => prev.filter(c => c._id !== id));
             return res;
         }
         catch (err) {
-            toast.error(err.response.data.message || "Error deleting depo");
+            showToast(err.response.data.message || "Error deleting depo", "error");
         }
         finally {
             setLoading(false);

@@ -1,22 +1,23 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useDepo } from "../context/depoContext";
-import toast from 'react-hot-toast';
 import './salesman.css'
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import ExcelJS from "exceljs";
 import { saveAs } from "file-saver";
 import pepsiLogo from "../assets/pepsi_logo.png";
-import { useAuth } from '../context/AuthContext'
+import { useAuth } from '../context/AuthContext';
+import { useToast } from "../context/ToastContext";
 
 const Depo = () => {
     const [showModal, setShowModal] = useState(false);
     const handleOpen = () => setShowModal(true);
     const handleClose = () => setShowModal(false);
+    const {showToast} = useToast();
 
 
 
-    const { depos, loading, getAllDepo, updateDepo, addDepo, deleteDepo } = useDepo();
+    const { depos, loading, updateDepo, addDepo, deleteDepo } = useDepo();
 
 
 
@@ -35,20 +36,17 @@ const Depo = () => {
         const matchDepo = depos.find((d) => String(d._id).trim() === id);
         return matchDepo;
     }
-    // Refs for editing
     const codeInputRef = useRef(null);
     const nameInputRef = useRef(null);
     const addressRef = useRef(null);
     const saveBtnRef = useRef(null);
 
-    // Refs for modal
     const modalRef = useRef(null);
     const modalCodeRef = useRef(null);
     const modalNameRef = useRef(null);
     const modalAddressRef = useRef(null);
     const modalSaveBtnRef = useRef(null);
 
-    // Focus code input when modal opens
     useEffect(() => {
         if (showModal) {
             setTimeout(() => {
@@ -71,7 +69,7 @@ const Depo = () => {
     const handleAddDepo = async (e) => {
         e.preventDefault();
         if (!newDepo.depoCode || !newDepo.depoName) {
-            toast.error("Please fill code and name");
+            showToast("Please fill code and name", "error");
             return;
         }
         try {
@@ -105,7 +103,6 @@ const Depo = () => {
         try {
             await updateDepo(id, editDepo);
             setEditId(null);
-            // toast.success("Salesman updated successfully");
         } catch (err) {
             console.error(err?.response?.data?.message || "Update failed");
         }
@@ -207,7 +204,7 @@ const Depo = () => {
 
     const exportDepoPDF = async () => {
         if (!filteredDepos.length) {
-            toast.error("No depo data");
+            showToast("No depo data", "error");
             return;
         }
 
@@ -248,7 +245,7 @@ const Depo = () => {
 
     const exportDepoExcel = async () => {
         if (!filteredDepos.length) {
-            toast.error("No depo data");
+            showToast("No depo data", "error");
             return;
         }
 
