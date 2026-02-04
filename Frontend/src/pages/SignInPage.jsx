@@ -2,9 +2,10 @@ import './SignInPage.css';
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import toast, { Toaster } from 'react-hot-toast';
+import { useToast } from '../context/ToastContext';
 
 export default function SignInPage() {
+    const { showToast } = useToast();
     const [showPassword, setShowPassword] = useState(false);
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -15,11 +16,11 @@ export default function SignInPage() {
         e?.preventDefault();
         try {
             await login({ email, password });
-            toast.success(`Logged in sucsessfully!`);
+            showToast(`Logged in sucsessfully!`, 'success');
             navigate('/', { replace: true });
         } catch (err) {
             const msg = err?.response?.data?.message || 'Login failed';
-            toast.error(msg);
+            showToast(msg, 'error');
         }
     };
 
@@ -27,17 +28,11 @@ export default function SignInPage() {
     return (
 
         <div className="signin">
-            <Toaster position="top-center" />
             <div className="signin-section">
                 <div className="content">
                     <div className="heading">Sign In</div>
                     <div className="form-entry">
                         <form method="post" className='form' >
-                            {/* <label>Email</label>
-                            <input type="email" name="email" required />
-                            <label>Password</label>
-                            <input type="password" name="Password" required /> */
-                            }
                             <div className="input-group">
                                 <input value={email} onChange={e => setEmail(e.target.value)} type="email" id="email" required />
                                 <label htmlFor="email">Email</label>

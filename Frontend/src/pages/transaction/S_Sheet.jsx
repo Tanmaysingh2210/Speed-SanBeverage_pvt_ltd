@@ -4,7 +4,7 @@ import "./transaction.css";
 import { useTransaction } from '../../context/TransactionContext';
 import { useSalesman } from '../../context/SalesmanContext';
 import { useSalesmanModal } from '../../context/SalesmanModalContext';
-import toast from 'react-hot-toast';
+import { useToast } from '../../context/ToastContext';
 import api from '../../api/api';
 import { useSKU } from '../../context/SKUContext';
 import { ItemBreakdownModal } from "./ItemBreakdownModal";
@@ -18,11 +18,12 @@ import { useAuth } from '../../context/AuthContext'
 
 
 const S_Sheet = () => {
+  const { showToast } = useToast();
   const { getSettlement, loading } = useTransaction();
   const { salesmans } = useSalesman();
 
   const [sheetData, setSheetData] = useState(null);
-  const [discount, setDiscount] = useState("");    // editable schm
+  const [discount, setDiscount] = useState("");    
   const { items } = useSKU();
 
   const [showItemModal, setShowItemModal] = useState(false);
@@ -67,7 +68,7 @@ const S_Sheet = () => {
 
   const exportSettlementPDF = async () => {
     if (!sheetData?.items?.length) {
-      toast.error("No settlement data to export");
+      showToast("No settlement data to export", "error");
       return;
     }
     console.log(sheetData.items[0]);
@@ -127,7 +128,7 @@ const S_Sheet = () => {
 
   const exportSettlementExcel = async () => {
     if (!sheetData?.items?.length) {
-      toast.error("No settlement data to export");
+      showToast("No settlement data to export", "error");
       return;
     }
 
@@ -217,9 +218,8 @@ const S_Sheet = () => {
         schm: Number(discount)
       });
 
-      toast.success("Discount saved successfully");
+      showToast("Discount saved successfully", "success");
 
-      // update UI without reload
       setSheetData(prev => ({
         ...prev,
         schm: Number(discount)
@@ -227,7 +227,7 @@ const S_Sheet = () => {
 
     } catch (err) {
       console.error(err?.data.message);
-      toast.error("Failed to save discount");
+      showToast("Failed to save discount", "error");
     }
   };
 
@@ -236,7 +236,7 @@ const S_Sheet = () => {
     e.preventDefault();
 
     if (!sheet.salesmanCode || !sheet.date) {
-      toast.error("Fill all fields properly");
+      showToast("Fill all fields properly", "error");
       return;
     }
 
@@ -247,7 +247,7 @@ const S_Sheet = () => {
         trip: Number(sheet.trip) || 1
       });
 
-      setSheetData(data); // store settlement details in UI
+      setSheetData(data); 
       setDiscount(data.schm || "");
 
       setSheet({
@@ -559,7 +559,7 @@ const S_Sheet = () => {
         open={showItemModal}
         onClose={() => setShowItemModal(false)}
         items={selectedItems}
-        skuItems={items}   // from SKU context
+        skuItems={items}   
       />
     </div >
   )

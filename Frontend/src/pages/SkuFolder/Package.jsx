@@ -3,7 +3,7 @@ import './Container.css';
 import { useSKU } from '../../context/SKUContext';
 
 const Package = () => {
-  const { packages, addPackage, getPackageByID, deletePackage, updatePackage, getAllPackages, loading } = useSKU();
+  const { packages, addPackage, deletePackage, updatePackage, loading } = useSKU();
 
   const [editId, setEditId] = useState(null);
   const [editValue, setEditValue] = useState("");
@@ -44,7 +44,6 @@ const Package = () => {
 
   return (
     <div className="container-wrapper">
-      {/* Header section */}
       <div className="top-bar">
         <input type="text"
           ref={searchRef}
@@ -55,7 +54,6 @@ const Package = () => {
         />
         <button className="add-btn-con" onClick={() => setShowForm(true)}>+ New </button>
       </div>
-      {/* Add New Container Form */}
       {showForm && (
         <div className="form-wrapper">
           <input
@@ -76,7 +74,6 @@ const Package = () => {
         </div>
       )}
 
-      {/* Table Header */}
       <div className="grid-layout header-section">
         <div>SL.NO.</div>
         <div>NAME</div>
@@ -85,7 +82,6 @@ const Package = () => {
 
       {loading && <div className="loading">Loading...</div>}
 
-      {/* Table Body */}
       {filteredPackages.map((item, index) => (
         <div key={item._id || index} className="grid-layout data-row">
           <div>{index + 1}</div>
@@ -107,7 +103,6 @@ const Package = () => {
             )}
           </div>
 
-          {/* Actions */}
           <div className="action-buttons">
             {editId === item._id ? (
               <>

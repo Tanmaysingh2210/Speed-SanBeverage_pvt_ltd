@@ -66,7 +66,7 @@ export function DepoProvider({ children }) {
             return res;
         }
         catch (err) {
-            showToast(err.response.data.message || "Error deleting depo", "error");
+            showToast(err.response?.data?.message || "Error deleting depo", "error");
         }
         finally {
             setLoading(false);

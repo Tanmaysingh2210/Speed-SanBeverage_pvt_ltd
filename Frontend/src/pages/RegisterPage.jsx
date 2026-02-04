@@ -2,11 +2,12 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import toast, { Toaster } from 'react-hot-toast';
+import { useToast } from '../context/ToastContext';
 import './RegisterPage.css';
 import { useDepo } from "../context/depoContext";
 
 export default function RegisterPage() {
+    const { showToast } = useToast();
     const [showPassword, setShowPassword] = useState(false);
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
@@ -16,7 +17,6 @@ export default function RegisterPage() {
     const [submitting, setSubmitting] = useState(false);
     const [otpStep, setOtpStep] = useState(false);
     const { depos, loading } = useDepo();
-    // OTP state
     const [otp, setOtp] = useState(['', '', '', '', '', '']);
     const [countdown, setCountdown] = useState(10);
 
@@ -28,7 +28,6 @@ export default function RegisterPage() {
         ? depos.find((sm) => String(sm.depoName || '').toUpperCase() === String(depo || '').toUpperCase())
         : null;
 
-    // Handle OTP input change
     const handleOtpChange = (index, value) => {
         if (/^\d?$/.test(value)) {
             const newOtp = [...otp];
@@ -42,7 +41,6 @@ export default function RegisterPage() {
         }
     };
 
-    // Countdown for resend
     useEffect(() => {
         let timer;
         if (otpStep && countdown > 0) {
@@ -56,18 +54,18 @@ export default function RegisterPage() {
         setError(null);
         setSubmitting(true);
         if (!matchedDepo) {
-            toast.error("Please select a valid depo");
+            showToast("Please select a valid depo", "error");
             setSubmitting(false);
             return;
         }
         try {
             await register({ name, email, password, depo: matchedDepo._id });
-            toast.success(`OTP sent to ${email}`);
+            showToast(`OTP sent to ${email}`, "success");
             setOtpStep(true);
             setCountdown(10);
         } catch (err) {
             const msg = err?.response?.data?.message || 'Registration failed';
-            toast.error(msg);
+            showToast(msg, "error");
             setError(msg);
         } finally {
             setSubmitting(false);
@@ -78,16 +76,16 @@ export default function RegisterPage() {
         try {
             const code = otp.join('');
             if (code.length !== 6) {
-                toast.error('Enter 6-digit OTP');
+                showToast('Enter 6-digit OTP', 'error');
                 return;
             }
             const msg = await verifyOtp({ email, otp: code });
-            toast.success(msg || 'OTP verified successfully!');
+            showToast(msg || 'OTP verified successfully!', 'success');
             navigate('/dashboard');
         } catch (err) {
             console.log(err);
             const backendMessage = err?.response?.data?.message || err?.response?.data?.error || 'Invalid OTP';
-            toast.error(backendMessage);
+            showToast(backendMessage, 'error');
             throw err;
         }
     };
@@ -95,19 +93,17 @@ export default function RegisterPage() {
     const handleResendOtp = async () => {
         try {
             await resendOtp(email);
-            toast.success(`OTP resent to ${email}`);
+            showToast(`OTP resent to ${email}`, 'success');
             setCountdown(10);
         } catch (err) {
-            toast.error(err?.response?.data?.message || 'Failed to resend OTP');
+            showToast(err?.response?.data?.message || 'Failed to resend OTP', 'error');
         }
     };
 
-    // Note: allow logged-in users to access this page to register other users
 
 
     return (
         <div className='register'>
-            <Toaster position="top-center" />
 
             <div className="left">
                 <div className='heading'>WELCOME!</div>
@@ -149,13 +145,9 @@ export default function RegisterPage() {
                                     </div>
 
                                     <div className="input-group depo-group">
-                                        {/* <input value={depo} onChange={e => setDepo(e.target.value)} type="text" id="depo" required />
-                                            <label htmlFor="depo">Depo. Name</label> */}
-                                        {/* <label htmlFor = "depo">Depo. Name</label> */}
                                         <select
                                             value={depo}
                                             onChange={(e) => setDepo(e.target.value)}
-
                                         >
                                             <option value="">
                                                 Depo. Name
@@ -177,7 +169,6 @@ export default function RegisterPage() {
                                         </button>
                                     </div>
 
-                                    {/* {error && <div style={{ color: 'red', marginBottom: 8 }}>{error}</div>} */}
                                 </form>
                             </div>
                         </>

@@ -1,12 +1,13 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
-import toast from 'react-hot-toast'
 import api from '../api/api';
 import { useAuth } from "./AuthContext";
+import { useToast } from "./ToastContext";
 
 const PriceContext = createContext();
 
 export function PricesProvider({ children }) {
     const { isAuthenticated } = useAuth();
+    const { showToast } = useToast();
     const [prices, setPrices] = useState([]);
     const [loading, setLoading] = useState(false);
 
@@ -17,7 +18,7 @@ export function PricesProvider({ children }) {
             setPrices(res.data);
             return res;
         } catch (err) {
-            toast.error(err.response?.data?.message || "Error fetching prices");
+            showToast(err.response?.data?.message || "Error fetching prices", "error");
         } finally {
             setLoading(false);
         }
@@ -44,7 +45,7 @@ export function PricesProvider({ children }) {
             setPrices(res.data);
             return res;
         } catch (err) {
-            toast.error(err.response?.data?.message || "Error fetching price");
+            showToast(err.response?.data?.message || "Error fetching price", "error");
         } finally {
             setLoading(false);
         }
@@ -54,11 +55,11 @@ export function PricesProvider({ children }) {
         try {
             setLoading(true);
             const res = await api.post('/rates', payload);
-            toast.success(res.data.message || "Price added sucessfully");
+            showToast(res.data.message || "Price added sucessfully", "success");
             await getAllPrices();
             return res;
         } catch (err) {
-            toast.error(err.response?.data?.message || "Error adding price");
+            showToast(err.response?.data?.message || "Error adding price", "error");
         } finally {
             setLoading(false);
         }
@@ -68,11 +69,11 @@ export function PricesProvider({ children }) {
         try {
             setLoading(true);
             const res = await api.patch(`/rates/${id}`, payload, { withCredentials: true });
-            toast.success(res.data.message || "Price updated sucessfully");
+            showToast(res.data.message || "Price updated sucessfully", "success");
             await getAllPrices();
             return res;
         } catch (err) {
-            toast.error(err.response.data.messsage || "Error updating price");
+            showToast(err.response?.data?.message || "Error updating price", "error");
         } finally {
             setLoading(false);
         }
@@ -82,11 +83,11 @@ export function PricesProvider({ children }) {
         try {
             setLoading(true);
             const res = await api.delete(`/rates/${id}`);
-            toast.success(res.data.message || "Price deleted sucessfully");
+            showToast(res.data.message || "Price deleted sucessfully", "success");
             setPrices(prices.filter((c) => c._id !== id));
             return res;
         } catch (err) {
-            toast.error(err.response.data.message || "Error deleting price");
+            showToast(err.response?.data?.message || "Error deleting price", "error");
         } finally {
             setLoading(false);
         }

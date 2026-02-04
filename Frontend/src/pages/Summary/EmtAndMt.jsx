@@ -10,13 +10,15 @@ import { saveAs } from "file-saver";
 import pepsiLogo from "../../assets/pepsi_logo.png";
 import { useDepo } from '../../context/depoContext';
 import { useAuth } from '../../context/AuthContext'
-const EmtAndMtSummary = () => {
+import { useToast } from '../../context/ToastContext';
 
+const EmtAndMtSummary = () => {
     const [period, setPeriod] = useState({ startDate: "", endDate: "" });
     const [summary, setSummary] = useState([]);
     const [loading, setLoading] = useState(false);
     const { depos } = useDepo();
     const { user } = useAuth();
+    const {showToast}=useToast();
     const getDepo = (depo) => {
         if (!depo || !Array.isArray(depos)) return "";
         const id = String(depo).trim();
@@ -26,7 +28,7 @@ const EmtAndMtSummary = () => {
     const getSummary = async (e) => {
         e.preventDefault();
         if (!period.startDate || !period.endDate || period.startDate > period.endDate) {
-            toast.error("Fill both date properly");
+            showToast("Fill both date properly", 'error');
             return;
         }
         try {
@@ -37,10 +39,10 @@ const EmtAndMtSummary = () => {
             }
             console.log("summary", res.data.data);
 
-            toast.success("Emt and mt fetch successfully");
+            showToast("Emt and mt fetch successfully" , "success");
         }
         catch (err) {
-            toast.error(err.response?.data?.message || "Error fetching summary");
+            showToast(err.response?.data?.message || "Error fetching summary", 'error');
         }
         finally {
             setLoading(false);
@@ -123,7 +125,7 @@ const EmtAndMtSummary = () => {
 
     const exportSummaryPDF = async () => {
         if (!summary.length) {
-            alert("No data to export");
+            showToast("No data to export" , "error");
             return;
         }
 
@@ -180,7 +182,7 @@ const EmtAndMtSummary = () => {
 
     const exportSummaryExcel = async () => {
         if (!summary.length) {
-            alert("No data to export");
+             showToast("No data to export" , "error");
             return;
         }
 
@@ -333,7 +335,6 @@ const EmtAndMtSummary = () => {
                             </div>
                         )
                     }
-                    {/* Data Rows */}
                     {summary.map((p, i) => {
                         const rowTotal = Number(p.totalEmt || 0) - Number(p.totalMt || 0);
                         grandTotalShortExcess += rowTotal;

@@ -2,7 +2,7 @@ import React, { useRef, useState } from 'react'
 import "./transaction.css";
 import { useTransaction } from '../../context/TransactionContext';
 import { useSalesman } from '../../context/SalesmanContext';
-import toast from 'react-hot-toast';
+import { useToast } from '../../context/ToastContext';
 import { useNavigate } from 'react-router-dom';
 import { useSKU } from '../../context/SKUContext';
 import { useSalesmanModal } from '../../context/SalesmanModalContext';
@@ -17,6 +17,7 @@ import ExcelJS from "exceljs";
 
 const AllTransaction = () => {
   const navigate = useNavigate();
+  const { showToast } = useToast();
   const { FormatDate, getLoadout, deleteLoadout, getLoadIn, deleteLoadin, getCash_credit, deleteCash_credit, loading } = useTransaction();
   const { salesmans } = useSalesman();
   const { items } = useSKU();
@@ -74,7 +75,7 @@ const AllTransaction = () => {
 
   const exportPDF = async () => {
     if (!transactions.length) {
-      toast.error("No transactions to export");
+      showToast("No transactions to export", "error");
       return;
     }
 
@@ -126,7 +127,6 @@ const AllTransaction = () => {
       alternateRowStyles: { fillColor: [245, 245, 245] }
     });
 
-    // 👉 This opens print dialog (print OR save PDF)
     const pdfBlob = doc.output("bloburl");
 
     const printWindow = window.open(pdfBlob);
@@ -138,14 +138,13 @@ const AllTransaction = () => {
 
   const exportExcel = async () => {
     if (!transactions.length) {
-      toast.error("No transactions to export");
+      showToast("No transactions to export", "error");
       return;
     }
 
     const workbook = new ExcelJS.Workbook();
     const sheet = workbook.addWorksheet("Transactions");
 
-    // Load logo
     const logoBase64 = await loadImageBase64(pepsiLogo);
 
     const imageId = workbook.addImage({
@@ -158,7 +157,6 @@ const AllTransaction = () => {
       ext: { width: 120, height: 70 }
     });
 
-    // Header layout (same as price page)
     sheet.mergeCells("C2:H2");
     sheet.mergeCells("C3:H3");
     sheet.mergeCells("C5:H5");
@@ -175,7 +173,6 @@ const AllTransaction = () => {
     sheet.getCell("C3").font = { size: 11 };
     sheet.getCell("C5").font = { bold: true };
 
-    // Table headers
     sheet.getRow(7).values = [
       "SL",
       "TYPE",
@@ -187,7 +184,6 @@ const AllTransaction = () => {
 
     sheet.getRow(7).font = { bold: true };
 
-    // Data rows
     transactions.forEach((t, i) => {
       sheet.addRow([
         i + 1,
@@ -199,7 +195,6 @@ const AllTransaction = () => {
       ]);
     });
 
-    // Column widths
     sheet.columns = [
       { width: 6 },
       { width: 14 },
@@ -246,7 +241,6 @@ const AllTransaction = () => {
         await deleteCash_credit(id);
       }
 
-      // Remove from local state
       setTransactions(transactions.filter(t => t._id !== id));
     } catch (error) {
       console.error('Error deleting transaction:', error);
@@ -304,7 +298,7 @@ const AllTransaction = () => {
   const handleFind = async (e) => {
     e.preventDefault();
     if (!find.date || !find.type || !find.trip || !find.salesmanCode) {
-      toast.error("⚠️ Fill all fields");
+      showToast("⚠️ Fill all fields", "error");
       return;
     }
 
@@ -315,7 +309,6 @@ const AllTransaction = () => {
     };
 
     if (find.type === "all") {
-      // Fetch all three but don't fail the whole flow if one of them errors.
       try {
         const [loadoutRes, loadinRes, cashRes] = await Promise.allSettled([
           getLoadout(payload),
@@ -351,7 +344,7 @@ const AllTransaction = () => {
         }
 
         if (newTransactions.length === 0) {
-          toast.error('No records found for the selected criteria');
+          showToast('No records found for the selected criteria', 'error');
         } else {
           setTransactions((prev) => [...prev, ...newTransactions]);
         }
@@ -359,7 +352,7 @@ const AllTransaction = () => {
         setFind({ salesmanCode: '', trip: 1, type: 'all', date: '' });
       } catch (error) {
         console.error('Unexpected error in all-fetch:', error);
-        toast.error('Error fetching records');
+        showToast('Error fetching records', 'error');
       }
     }
     else if (find.type === "loadout") {
@@ -610,12 +603,7 @@ const AllTransaction = () => {
             </div>
           )}
 
-          {/* Data Rows */}
           {transactions.map((p, i) => {
-            // const rowItem = Array.isArray(items) ?
-            //   items.find((it) =>
-            //     String(it.code || "").toUpperCase() === String(p.itemCode || "").toUpperCase()
-            //   ) : null;
             const matchedSalesman = Array.isArray(salesmans)
               ? salesmans.find((sm) => String(sm.codeNo || sm.code || '').toUpperCase() === String(p?.salesmanCode || '').toUpperCase())
               : null;

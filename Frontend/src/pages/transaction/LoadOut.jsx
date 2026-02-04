@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import toast from 'react-hot-toast';
+import { useToast } from '../../context/ToastContext';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useTransaction } from '../../context/TransactionContext';
 import { useSKU } from '../../context/SKUContext';
@@ -11,6 +11,7 @@ import { useSalesmanModal } from '../../context/SalesmanModalContext';
 const LoadOut = () => {
     const navigate = useNavigate();
     const location = useLocation();
+    const { showToast } = useToast();
 
     const [modalQtyMap, setModalQtyMap] = useState({});
 
@@ -47,7 +48,6 @@ const LoadOut = () => {
         items: editData?.items || []
     });
 
-    // derive matched salesman from current code so UI updates as user types
     const matchedSalesman = Array.isArray(salesmans)
         ? salesmans.find((sm) => String(sm.codeNo || sm.code || '').toUpperCase() === String(newLoadOut.salesmanCode || '').toUpperCase())
         : null;
@@ -56,7 +56,7 @@ const LoadOut = () => {
         const qtyNum = Number(newLoadItem.qty);
 
         if (!newLoadItem.itemCode || !newLoadItem.qty || qtyNum <= 0) {
-            toast.error("Enter valid item code and quantity");
+            showToast("Enter valid item code and quantity", "error");
             return;
         }
 
@@ -69,12 +69,12 @@ const LoadOut = () => {
         );
 
         if (!matchedSKU) {
-            toast.error("Invalid item code");
+            showToast("Invalid item code", "error");
             return;
         }
 
         if (exists) {
-            toast.error("Item already exist");
+            showToast("Item already exist", "error");
             return;
         }
 
@@ -93,14 +93,14 @@ const LoadOut = () => {
             items: prev.items.filter((it) => it.itemCode !== code)
         }));
 
-        toast.success("Item removed");
+        showToast("Item removed", "success");
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
 
         if (!newLoadOut.salesmanCode || !newLoadOut.date || newLoadOut.trip <= 0 || newLoadOut.items.length == 0) {
-            toast.error("Fill all fields properly");
+            showToast("Fill all fields properly", "error");
             return;
         }
         const paylaod = {
@@ -316,17 +316,8 @@ const LoadOut = () => {
                                 ➕ Add Item
                             </button>
                         </div>
-                        {/* <div className="form-group">
-                        <label>Item Name</label>
-                        <input
-                            readOnly
-                            type="text"
-                            style={{ backgroundColor: "#f5f5f5" }}
-                        />
-                    </div> */}
                         <div className="table">
                             <div className="trans-table-grid trans-table-header">
-                                {/* <div>SL.NO.</div> */}
                                 <div>CODE</div>
                                 <div>NAME</div>
                                 <div>Qty</div>
@@ -381,8 +372,6 @@ const LoadOut = () => {
                     Cancel
                 </button>
             </div>
-
-            {/* item modal */}
 
             {itemShow && (
                 <div className="modal-overlay">
@@ -470,7 +459,7 @@ const LoadOut = () => {
 
 
                                     if (itemsToAdd.length === 0) {
-                                        toast.error("Enter qty for at least one item");
+                                        showToast("Enter qty for at least one item", "error");
                                         return;
                                     }
 

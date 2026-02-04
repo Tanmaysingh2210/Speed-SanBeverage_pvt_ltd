@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import toast from 'react-hot-toast';
+import { useToast } from '../../context/ToastContext';
 import { useTransaction } from '../../context/TransactionContext';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useSalesman } from '../../context/SalesmanContext';
@@ -9,6 +9,7 @@ import { useSalesmanModal } from '../../context/SalesmanModalContext';
 const Credit = () => {
     const navigate = useNavigate();
     const location = useLocation();
+    const { showToast } = useToast();
 
     const { loading, addCash_credit, updateCash_credit } = useTransaction();
     const { salesmans } = useSalesman();
@@ -45,7 +46,7 @@ const Credit = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (!newCredit.salesmanCode || !newCredit.trip || !newCredit.date || !newCredit.value) {
-            toast.error("Fill all fields properly");
+            showToast("Fill all fields properly", "error");
             return;
         }
         const payload = {

@@ -11,7 +11,7 @@ import { saveAs } from "file-saver";
 import pepsiLogo from "../../assets/pepsi_logo.png";
 import { useDepo } from '../../context/depoContext';
 import { useAuth } from '../../context/AuthContext'
-
+import { useToast } from '../../context/ToastContext';
 const DayWise = () => {
 
     const [period, setPeriod] = useState({ startDate: "", endDate: "" });
@@ -19,13 +19,14 @@ const DayWise = () => {
     const { FormatDate } = useTransaction();
     const [summary, setSummary] = useState([]);
     const [loading, setLoading] = useState(false);
-
+    const { showToast } = useToast();
 
 
     const getSummary = async (e) => {
+
         e.preventDefault();
         if (!period.startDate || !period.endDate || period.startDate > period.endDate) {
-            toast.error("Fill both date properly");
+            showToast("Fill both date properly", "error");
             return;
         }
         try {
@@ -37,10 +38,10 @@ const DayWise = () => {
             }
             console.log(res.data.data);
 
-            toast.success("day-wise summary fetch successfull");
+            showToast("day-wise summary fetch successfull", "success");
         }
         catch (err) {
-            toast.error(err.response?.data?.message || "Error fetching summary");
+            showToast(err.response?.data?.message || "Error fetching summary", "error");
 
         } finally {
             setLoading(false);
@@ -115,7 +116,7 @@ const DayWise = () => {
 
     const exportSummaryPDF = async () => {
         if (!summary.length) {
-            alert("No data to export");
+            showToast("No data to export", "error");
             return;
         }
 
@@ -164,7 +165,7 @@ const DayWise = () => {
 
     const exportSummaryExcel = async () => {
         if (!summary.length) {
-            alert("No data to export");
+            showToast("No data to export", "error");
             return;
         }
 
@@ -275,7 +276,7 @@ const DayWise = () => {
                                 {loading ? "Wait..." : "Find"}
 
                             </button>
-                             <button className="export-btn pdf padd trans-submit-btn" onClick={exportSummaryPDF}>
+                            <button className="export-btn pdf padd trans-submit-btn" onClick={exportSummaryPDF}>
                                 🖨️ Print
                             </button>
 
@@ -317,7 +318,6 @@ const DayWise = () => {
                             </div>
                         )
                     }
-                    {/* Data Rows */}
                     {summary.map((p, i) => {
                         const netSale = Number(p.grossSale || 0) - Number(p.schm || 0);
                         return (
@@ -329,6 +329,7 @@ const DayWise = () => {
                                 <div>₹ {p.refund}</div>
                                 <div>₹ {p.creditSale}</div>
                                 <div>₹{p.cashDeposited} /₹ {p.chequeDeposited}</div>
+
 
                                 <div>₹ {p.shortExcess}</div>
                             </div>

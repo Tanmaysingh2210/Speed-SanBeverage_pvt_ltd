@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
-import "../purchase/purchase.css"; // New separate CSS file
+import "../purchase/purchase.css"; 
 import { usePurchase } from '../../context/PurchaseContext.jsx';
+import { useToast } from '../../context/ToastContext.jsx';
 
 const PurchaseEntry = () => {
     const { createPurchase, calculateNetAmount, loading } = usePurchase();
-
+    const {showToast} = useToast();
     const [formData, setFormData] = useState({
         party: '',
         slno: '',
@@ -68,8 +69,6 @@ const PurchaseEntry = () => {
         const result = await createPurchase(formData);
 
         if (result.success) {
-            // alert('Purchase entry created successfully!');
-            // Reset form
             setFormData({
                 party: '',
                 slno: '',
@@ -90,7 +89,7 @@ const PurchaseEntry = () => {
             });
             setNetAmt(0);
         } else {
-            alert(`Error: ${result.error}`);
+            showToast(`Error: ${result.error}`);
         }
     };
 
