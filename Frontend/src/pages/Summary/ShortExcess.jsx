@@ -248,24 +248,10 @@ const ShortExcess = () => {
                                 onKeyDown={(e) => handleKeyNav(e, "endDate")}
                             />
                         </div>
-<<<<<<< HEAD
 
 
 
                         <div className="form-group pdf">
-=======
-                         <div className="form-group">
-                             <button className="export-btn pdf" onClick={exportSummaryPDF}>
-                                🖨️ Print
-                            </button>
-                         </div>
-                       
-                            <div> <button className="export-btn excel" onClick={exportSummaryExcel}>
-                                📊 Excel
-                            </button></div>
-                           
-                        <div className="form-group">
->>>>>>> 57fb21d6d06c5986e8b678f30c3a8e586e33b118
                             <button onClick={handleFind}
                                 ref={findRef}
                                 onKeyDown={(e) => handleKeyNav(e, "find")}
@@ -273,7 +259,6 @@ const ShortExcess = () => {
                             >
                                 {loading ? "Loading..." : "Find"}
                             </button>
-<<<<<<< HEAD
 
                             <button className="export-btn pdf padd trans-submit-btn" onClick={exportSummaryPDF}>
                                 🖨️ Print
@@ -283,9 +268,6 @@ const ShortExcess = () => {
                             <button className="export-btn excel padd trans-submit-btn" onClick={exportSummaryExcel}>
                                 📊 Excel
                             </button>
-=======
-                            
->>>>>>> 57fb21d6d06c5986e8b678f30c3a8e586e33b118
                         </div>
                     </div>
                 </div>
