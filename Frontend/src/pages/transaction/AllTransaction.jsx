@@ -18,8 +18,9 @@ import ExcelJS from "exceljs";
 const AllTransaction = () => {
   const navigate = useNavigate();
   const { FormatDate, getLoadout, deleteLoadout, getLoadIn, deleteLoadin, getCash_credit, deleteCash_credit, loading } = useTransaction();
-  const { salesmans, getAllSalesmen } = useSalesman();
+  const { salesmans } = useSalesman();
   const { items } = useSKU();
+  const { openSalesmanModal } = useSalesmanModal();
 
   const [find, setFind] = useState({
     type: "all",
@@ -28,20 +29,20 @@ const AllTransaction = () => {
     trip: 1
   });
 
-   const loadImageBase64 = (url) =>
-        new Promise((resolve) => {
-            const img = new Image();
-            img.crossOrigin = "anonymous";
-            img.onload = function () {
-                const canvas = document.createElement("canvas");
-                canvas.width = img.width;
-                canvas.height = img.height;
-                const ctx = canvas.getContext("2d");
-                ctx.drawImage(img, 0, 0);
-                resolve(canvas.toDataURL("image/png"));
-            };
-            img.src = url;
-        });
+  const loadImageBase64 = (url) =>
+    new Promise((resolve) => {
+      const img = new Image();
+      img.crossOrigin = "anonymous";
+      img.onload = function () {
+        const canvas = document.createElement("canvas");
+        canvas.width = img.width;
+        canvas.height = img.height;
+        const ctx = canvas.getContext("2d");
+        ctx.drawImage(img, 0, 0);
+        resolve(canvas.toDataURL("image/png"));
+      };
+      img.src = url;
+    });
 
   const [transactions, setTransactions] = useState([]);
 
@@ -53,7 +54,6 @@ const AllTransaction = () => {
   }
   const { depos } = useDepo();
   const { user } = useAuth();
-  // const { openSalesmanModal } = useSalesmanModal();
   const getDetailsText = (t) => {
     if (t.type === "Load Out") {
       return t.items?.map(i => `${i.itemCode}: ${i.qty}`).join(", ");
@@ -81,7 +81,7 @@ const AllTransaction = () => {
     const doc = new jsPDF();
 
     const logoBase64 = await loadImageBase64(pepsiLogo);
-    
+
     // Logo
     doc.addImage(logoBase64, "PNG", 12, 3, 45, 25);
 
@@ -137,81 +137,81 @@ const AllTransaction = () => {
 
 
   const exportExcel = async () => {
-  if (!transactions.length) {
-    toast.error("No transactions to export");
-    return;
-  }
+    if (!transactions.length) {
+      toast.error("No transactions to export");
+      return;
+    }
 
-  const workbook = new ExcelJS.Workbook();
-  const sheet = workbook.addWorksheet("Transactions");
+    const workbook = new ExcelJS.Workbook();
+    const sheet = workbook.addWorksheet("Transactions");
 
-  // Load logo
-  const logoBase64 = await loadImageBase64(pepsiLogo);
+    // Load logo
+    const logoBase64 = await loadImageBase64(pepsiLogo);
 
-  const imageId = workbook.addImage({
-    base64: logoBase64,
-    extension: "png"
-  });
+    const imageId = workbook.addImage({
+      base64: logoBase64,
+      extension: "png"
+    });
 
-  sheet.addImage(imageId, {
-    tl: { col: 0, row: 0 },
-    ext: { width: 120, height: 70 }
-  });
+    sheet.addImage(imageId, {
+      tl: { col: 0, row: 0 },
+      ext: { width: 120, height: 70 }
+    });
 
-  // Header layout (same as price page)
-  sheet.mergeCells("C2:H2");
-  sheet.mergeCells("C3:H3");
-  sheet.mergeCells("C5:H5");
+    // Header layout (same as price page)
+    sheet.mergeCells("C2:H2");
+    sheet.mergeCells("C3:H3");
+    sheet.mergeCells("C5:H5");
 
-  sheet.getCell("C2").value = "SAN BEVERAGES PVT LTD";
-  sheet.getCell("C3").value = getDepo(user.depo)?.depoAddress || "";
-  sheet.getCell("C5").value = "TRANSACTION REPORT";
+    sheet.getCell("C2").value = "SAN BEVERAGES PVT LTD";
+    sheet.getCell("C3").value = getDepo(user.depo)?.depoAddress || "";
+    sheet.getCell("C5").value = "TRANSACTION REPORT";
 
-  sheet.getCell("C2").alignment = { horizontal: "center" };
-  sheet.getCell("C3").alignment = { horizontal: "center" };
-  sheet.getCell("C5").alignment = { horizontal: "center" };
+    sheet.getCell("C2").alignment = { horizontal: "center" };
+    sheet.getCell("C3").alignment = { horizontal: "center" };
+    sheet.getCell("C5").alignment = { horizontal: "center" };
 
-  sheet.getCell("C2").font = { bold: true, size: 14 };
-  sheet.getCell("C3").font = { size: 11 };
-  sheet.getCell("C5").font = { bold: true };
+    sheet.getCell("C2").font = { bold: true, size: 14 };
+    sheet.getCell("C3").font = { size: 11 };
+    sheet.getCell("C5").font = { bold: true };
 
-  // Table headers
-  sheet.getRow(7).values = [
-    "SL",
-    "TYPE",
-    "SALESMAN",
-    "DATE",
-    "TRIP",
-    "DETAILS"
-  ];
+    // Table headers
+    sheet.getRow(7).values = [
+      "SL",
+      "TYPE",
+      "SALESMAN",
+      "DATE",
+      "TRIP",
+      "DETAILS"
+    ];
 
-  sheet.getRow(7).font = { bold: true };
+    sheet.getRow(7).font = { bold: true };
 
-  // Data rows
-  transactions.forEach((t, i) => {
-    sheet.addRow([
-      i + 1,
-      t.type,
-      t.salesmanCode?.toUpperCase(),
-      FormatDate(t.date),
-      t.trip,
-      getDetailsText(t)
-    ]);
-  });
+    // Data rows
+    transactions.forEach((t, i) => {
+      sheet.addRow([
+        i + 1,
+        t.type,
+        t.salesmanCode?.toUpperCase(),
+        FormatDate(t.date),
+        t.trip,
+        getDetailsText(t)
+      ]);
+    });
 
-  // Column widths
-  sheet.columns = [
-    { width: 6 },
-    { width: 14 },
-    { width: 14 },
-    { width: 14 },
-    { width: 8 },
-    { width: 40 }
-  ];
+    // Column widths
+    sheet.columns = [
+      { width: 6 },
+      { width: 14 },
+      { width: 14 },
+      { width: 14 },
+      { width: 8 },
+      { width: 40 }
+    ];
 
-  const buffer = await workbook.xlsx.writeBuffer();
-  saveAs(new Blob([buffer]), "transactions-report.xlsx");
-};
+    const buffer = await workbook.xlsx.writeBuffer();
+    saveAs(new Blob([buffer]), "transactions-report.xlsx");
+  };
 
   const handleEdit = (transaction) => {
     if (!transaction || !transaction.type) return;
@@ -504,7 +504,7 @@ const AllTransaction = () => {
 
   return (
     <div className='trans'>
-      <div className="trans-container">
+      <div className="trans-container" >
         <div className="trans-up">
           <div className="flex">
             <div className="form-group">
@@ -520,25 +520,27 @@ const AllTransaction = () => {
             </div>
             <div className="form-group">
               <label>Salesman Code</label>
-              <input
-                type="text"
-                value={find.salesmanCode.trim().toUpperCase()}
-                onChange={(e) => setFind({ ...find, salesmanCode: e.target.value.trim().toUpperCase() })}
-                ref={codeRef}
-                onKeyDown={(e) => handleKeyNav(e, "code")}
-                placeholder='Enter Salesman code'
-              />
-              {/* <button
-                type="button"
-                className="dropdown-btn"
-                onClick={() =>
-                  openSalesmanModal((code) =>
-                    setNewLoadOut(prev => ({ ...prev, salesmanCode: code }))
-                  )
-                }
-              >
-                ⌄
-              </button> */}
+              <div className="input-with-btn">
+                <input
+                  type="text"
+                  value={find.salesmanCode.trim().toUpperCase()}
+                  onChange={(e) => setFind({ ...find, salesmanCode: e.target.value.trim().toUpperCase() })}
+                  ref={codeRef}
+                  onKeyDown={(e) => handleKeyNav(e, "code")}
+                  placeholder='Enter Salesman code'
+                />
+                <button
+                  type="button"
+                  className="dropdown-btn"
+                  onClick={() =>
+                    openSalesmanModal((code) =>
+                      setFind(prev => ({ ...prev, salesmanCode: code }))
+                    )
+                  }
+                >
+                  ⌄
+                </button>
+              </div>
             </div>
             <div className="form-group">
               <label>Date</label>
@@ -585,7 +587,7 @@ const AllTransaction = () => {
           </div>
         </div>
       </div>
-      <div className="trans-container set-margin">
+      <div className="trans-container  set-margin" style={{ maxHeight: "50vh" }}>
         <div className="all-table">
           <div className="headerr">
             <div>TYPE</div>

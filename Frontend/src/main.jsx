@@ -14,38 +14,40 @@ import { ExcelProvider } from './context/ExcelContext.jsx';
 import { SalesmanModalProvider } from './context/SalesmanModalContext.jsx';
 import { DepoProvider } from './context/depoContext.jsx';
 import { ItemModalProvider } from './context/ItemModalContext.jsx';
+import { ToastProvider } from './context/ToastContext.jsx';
 
 createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <BrowserRouter>
-      <DepoProvider>
-        <AuthProvider>
-          <SalesmanProvider>
-            <SalesmanModalProvider>
+      <ToastProvider>
+        <DepoProvider>
+          <AuthProvider>
+            <SalesmanProvider>
+              <SalesmanModalProvider>
                 <PrintProvider>
                   <ExcelProvider>
                     <SKUProvider>
-              <ItemModalProvider>
-                      <PricesProvider>
+                      <ItemModalProvider>
+                        <PricesProvider>
 
-                        <PurchaseProvider>
-                          <TransactionProvider>
+                          <PurchaseProvider>
+                            <TransactionProvider>
 
-                            <App />
+                              <App />
 
-                          </TransactionProvider>
-                        </PurchaseProvider>
+                            </TransactionProvider>
+                          </PurchaseProvider>
 
-                      </PricesProvider>
-              </ItemModalProvider>
+                        </PricesProvider>
+                      </ItemModalProvider>
                     </SKUProvider>
                   </ExcelProvider>
                 </PrintProvider>
-            </SalesmanModalProvider>
-          </SalesmanProvider>
-        </AuthProvider>
-      </DepoProvider>
-
+              </SalesmanModalProvider>
+            </SalesmanProvider>
+          </AuthProvider>
+        </DepoProvider>
+      </ToastProvider>  
     </BrowserRouter>
   </React.StrictMode>
 )
