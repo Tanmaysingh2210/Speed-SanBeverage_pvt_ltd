@@ -366,9 +366,9 @@ const CashChequeSummary = () => {
                             <div></div>
                             <div></div>
                             <div><strong>TOTAL</strong></div>
-                            <div><strong>₹ {grandTotalCash.toFixed(2)}</strong></div>
-                            <div><strong>₹ {grandTotalCheque.toFixed(2)}</strong></div>
-                            <div><strong>₹ {grandTotal.toFixed(2)}</strong></div>
+                            <div style={{ color: grandTotalCash >= 0 ? "green" : "red" }}>₹ {grandTotalCash.toFixed(2)}</div>
+                            <div style={{ color: grandTotalCheque >= 0 ? "green" : "red" }}>₹ {grandTotalCheque.toFixed(2)}</div>
+                            <div style={{ color: grandTotal >= 0 ? "green" : "red" }}>₹ {grandTotal.toFixed(2)}</div>
                         </div>
                     )}
 

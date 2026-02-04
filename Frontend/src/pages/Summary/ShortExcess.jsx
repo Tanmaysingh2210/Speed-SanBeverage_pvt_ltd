@@ -11,7 +11,7 @@ import pepsiLogo from "../../assets/pepsi_logo.png";
 import { useToast } from "../../context/ToastContext.jsx";
 
 const ShortExcess = () => {
-    const {showToast} = useToast();
+    const { showToast } = useToast();
     const [startDate, setStartDate] = useState("");
     const [endDate, setEndDate] = useState("");
     const [rows, setRows] = useState([]);
@@ -91,7 +91,21 @@ const ShortExcess = () => {
             setLoading(false);
         }
     };
+    const totalQtySale = rows.reduce((sum, r) => {
+        return sum + (+r.qtySale || 0);
+    }, 0);
 
+    const totalDeposit = rows.reduce((sum, r) => {
+        return sum + (+r.totalDeposit || 0);
+    }, 0)
+
+    const totalNetSale = rows.reduce((sum, r) => {
+        return sum + (+r.netSaleAmount || 0);
+    }, 0);
+
+    const totalShortExcess = rows.reduce((sum, r) => {
+        return sum + (r.shortExcess || 0);
+    }, 0)
 
     const loadImageBase64 = (url) =>
         new Promise((resolve) => {
@@ -137,14 +151,28 @@ const ShortExcess = () => {
             r.totalDeposit,
             r.shortExcess
         ]);
-
+        tableData.push([
+            "",
+            "",
+            "TOTAL",
+            totalQtySale,
+            totalNetSale.toFixed(2),
+            totalDeposit.toFixed(2),
+            totalShortExcess.toFixed(2)
+        ]);
         autoTable(doc, {
             startY: 35,
             head: [["SL", "SALESMAN CODE", "NAME", "QTY SALE", "NET SALE AMT", "TOTAL DEPOSIT", "SHORT/EXCESS"]],
             body: tableData,
             styles: { fontSize: 9 },
             headStyles: { fillColor: [0, 0, 0] },
-            alternateRowStyles: { fillColor: [245, 245, 245] }
+            alternateRowStyles: { fillColor: [245, 245, 245] },
+
+            didParseCell(data) {
+                if (data.row.index === tableData.length - 1) {
+                    data.cell.styles.fontStyle = "bold";
+                }
+            }
         });
 
         const blob = doc.output("bloburl");
@@ -208,6 +236,18 @@ const ShortExcess = () => {
             ]);
         });
 
+        const totalRow = sheet.addRow([
+            "",
+            "",
+            "TOTAL",
+            totalQtySale,
+            totalNetSale.toFixed(2),
+            totalDeposit.toFixed(2),
+            totalShortExcess.toFixed(2)
+        ]);
+
+        totalRow.font = { bold: true };
+
         sheet.columns = [
             { width: 6 },
             { width: 14 },
@@ -219,7 +259,7 @@ const ShortExcess = () => {
         ];
 
         const buffer = await workbook.xlsx.writeBuffer();
-        saveAs(new Blob([buffer]), "salesman-wise-summary.xlsx");
+        saveAs(new Blob([buffer]), "short/excess-summary.xlsx");
     };
 
     return (
@@ -310,7 +350,18 @@ const ShortExcess = () => {
                             </div>
                         </div>
                     ))}
+                    {(rows.length > 0) &&
+                        <div className="all-row6 total-row">
+                            <div ></div>
+                            <div><strong>Total</strong></div>
+                            <div style={{ color: totalQtySale >= 0 ? "green" : "red" }}>{totalQtySale}</div>
+                            <div >₹{totalNetSale.toFixed(2)}</div>
+                            <div >₹{totalDeposit.toFixed(2)}</div>
+                            <div style={{ color: totalShortExcess >= 0 ? "green" : "red" }}>₹{totalShortExcess.toFixed(2)}</div>
+                        </div>
+                    }
                 </div>
+
             </div>
 
         </div>

@@ -49,7 +49,6 @@ const DayWise = () => {
     }
 
 
-
     const startRef = useRef(null);
     const endRef = useRef(null);
     const findRef = useRef(null);
@@ -145,7 +144,17 @@ const DayWise = () => {
             `${r.shortExcess}`
         ]);
 
-
+        tableData.push([
+            "",
+            "TOTAL",
+            totalNetSale.toFixed(2),
+            totalSchm.toFixed(2),
+            totalGrossSale.toFixed(2),
+            totalRefund.toFixed(2),
+            totalCreditSale.toFixed(2),
+            `${totalCashDeposited}/${totalChequeDeposited}`,
+            totalShortExcess.toFixed(2)
+        ]);
 
 
         autoTable(doc, {
@@ -156,6 +165,11 @@ const DayWise = () => {
             headStyles: { fillColor: [0, 0, 0] },
             alternateRowStyles: { fillColor: [245, 245, 245] },
 
+            didParseCell(data) {
+                if (data.row.index === tableData.length - 1) {
+                    data.cell.styles.fontStyle = "bold";
+                }
+            }
         });
 
         const blob = doc.output("bloburl");
@@ -222,6 +236,19 @@ const DayWise = () => {
 
 
         });
+        const totalRow = sheet.addRow([
+            "",
+            "TOTAL",
+            totalNetSale.toFixed(2),
+            totalSchm.toFixed(2),
+            totalGrossSale.toFixed(2),
+            totalRefund.toFixed(2),
+            totalCreditSale.toFixed(2),
+            `${totalCashDeposited}/${totalChequeDeposited}`,
+            totalShortExcess.toFixed(2)
+        ]);
+
+        totalRow.font = { bold: true };
 
 
         sheet.columns = [
@@ -237,8 +264,17 @@ const DayWise = () => {
         ];
 
         const buffer = await workbook.xlsx.writeBuffer();
-        saveAs(new Blob([buffer]), "EmtAndMtSummary.xlsx");
+        saveAs(new Blob([buffer]), "day-wise-summary.xlsx");
     };
+
+    const totalNetSale = summary.reduce((sum, p) => sum + (Number(p.grossSale || 0) - Number(p.schm || 0)), 0);
+    const totalSchm = summary.reduce((sum, p) => sum + (Number(p.schm || 0)), 0);
+    const totalGrossSale = summary.reduce((sum, p) => sum + (Number(p.grossSale || 0)), 0);
+    const totalRefund = summary.reduce((sum, p) => sum + (Number(p.refund || 0)), 0);
+    const totalCreditSale = summary.reduce((sum, p) => sum + (Number(p.creditSale || 0)), 0);
+    const totalCashDeposited = summary.reduce((sum, p) => sum + (Number(p.cashDeposited || 0)), 0);
+    const totalChequeDeposited = summary.reduce((sum, p) => sum + (Number(p.chequeDeposited || 0)), 0);
+    const totalShortExcess = summary.reduce((sum, p) => sum + (Number(p.shortExcess || 0)), 0);
 
     return (
         <div className='trans'>
@@ -335,15 +371,21 @@ const DayWise = () => {
                             </div>
                         )
                     })}
-                    {/* {summary.length > 0 && (
-                        <div className="all-row3 total-row">
-                            <div></div>
-                            <div><strong>TOTAL</strong></div>
-                            <div><strong>₹ {grandTotalCash.toFixed(2)}</strong></div>
-                            <div><strong>₹ {grandTotalCheque.toFixed(2)}</strong></div>
-                            <div><strong>₹ {grandTotal.toFixed(2)}</strong></div>
+                    {summary.length > 0 &&
+                        <div className="all-row5 total-row">
+
+                            <div><strong>Total</strong></div>
+                            <div>₹{totalNetSale}</div>
+                            <div >₹ {totalSchm}</div>
+                            <div >₹{totalGrossSale} </div>
+                            <div >₹ {totalRefund}</div>
+                            <div >₹ {totalCreditSale}</div>
+                            <div >₹{totalCashDeposited} /₹ {totalChequeDeposited}</div>
+                            <div style={{ color: totalShortExcess >= 0 ? "green" : "red" }}>₹ {totalShortExcess}</div>
                         </div>
-                    )} */}
+                    }
+
+
 
                 </div>
             </div>

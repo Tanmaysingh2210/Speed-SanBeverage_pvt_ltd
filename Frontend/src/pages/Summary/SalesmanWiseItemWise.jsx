@@ -94,7 +94,7 @@ const SalesmanWiseItemWise = () => {
 
     } catch (err) {
       console.error(err);
-      showToast("Error fetching summary" , "error");
+      showToast("Error fetching summary", "error");
     } finally {
       setLoading(false);
     }
@@ -143,13 +143,27 @@ const SalesmanWiseItemWise = () => {
       r.netPrice.toFixed(2)
     ]);
 
+    tableData.push([
+      "",
+      "",
+      "TOTAL",
+      totalQty,
+      totalNet.toFixed(2)
+    ]);
+
+
     autoTable(doc, {
       startY: 35,
       head: [["SL", "ITEM CODE", "ITEM NAME", "QTY SALE", "NET PRICE"]],
       body: tableData,
       styles: { fontSize: 9 },
       headStyles: { fillColor: [0, 0, 0] },
-      alternateRowStyles: { fillColor: [245, 245, 245] }
+      alternateRowStyles: { fillColor: [245, 245, 245] },
+      didParseCell: function (data) {
+        if (data.row.index === tableData.length - 1) {
+          data.cell.styles.fontStyle = "bold";
+        }
+      }
     });
 
     const blob = doc.output("bloburl");
@@ -215,6 +229,16 @@ const SalesmanWiseItemWise = () => {
       ]);
     });
 
+    const totalRow = sheet.addRow([
+      "",
+      "",
+      "TOTAL",
+      totalQty,
+      totalNet.toFixed(2)
+    ]);
+
+    totalRow.font = { bold: true };
+
     sheet.columns = [
       { width: 6 },
       { width: 14 },
@@ -226,6 +250,15 @@ const SalesmanWiseItemWise = () => {
     const buffer = await workbook.xlsx.writeBuffer();
     saveAs(new Blob([buffer]), "salesman-wise-summary.xlsx");
   };
+
+
+  const totalQty = rows.reduce((sum, r) => {
+    return sum + (+r.qtySale || 0);
+  }, 0);
+
+  const totalNet = rows.reduce((sum, r) => {
+    return sum + (+r.netPrice || 0);
+  }, 0);
 
 
   return (
@@ -337,7 +370,18 @@ const SalesmanWiseItemWise = () => {
                       color: "red"
                     }}> ₹{r.netPrice.toFixed(2)}</div>)}</div>
             </div>
+
           ))}
+
+          {rows.length > 0 &&
+            <div className="all-row4 total-row">
+              <div></div>
+              <div><strong>Total</strong></div>
+              <div style={{ color: totalQty >= 0 ? "green" : "red" }}>{totalQty}</div>
+              <div style={{ color: totalNet >= 0 ? "green" : "red" }}>₹{totalNet.toFixed(2)}</div>
+            </div>
+          }
+
         </div>
       </div>
 
