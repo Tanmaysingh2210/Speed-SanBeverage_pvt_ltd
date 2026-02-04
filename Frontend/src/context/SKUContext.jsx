@@ -1,11 +1,12 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 import api from "../api/api";
-import toast from "react-hot-toast";
 import { useAuth } from "./AuthContext";
+import { useToast } from "./ToastContext";
 
 const SKUContext = createContext();
 
 export function SKUProvider({ children }) {
+  const {showToast} = useToast();
   const { isAuthenticated } = useAuth();
   const [containers, setContainers] = useState([]);
   const [packages, setPackages] = useState([]);
@@ -20,7 +21,7 @@ export function SKUProvider({ children }) {
       setContainers(res.data);
       return res;
     } catch (err) {
-      toast.error(err.response?.data?.message || "Error fetching containers");
+      showToast(err.response?.data?.message || "Error fetching containers", "error");
       throw err;
     } finally {
       setLoading(false);
@@ -33,7 +34,7 @@ export function SKUProvider({ children }) {
       const res = await api.get(`/container/${id}`);
       setContainers(res.data);
     } catch (err) {
-      toast.error(err.response?.data?.message || "Error fetching container");
+      showToast(err.response?.data?.message || "Error fetching container", "error");
       throw err;
     } finally {
       setLoading(false);
@@ -45,11 +46,11 @@ export function SKUProvider({ children }) {
       setLoading(true);
 
       const res = await api.post("/container/", payload);
-      toast.success(res.data.message || "Container added successfully");
+      showToast(res.data.message || "Container added successfully", "success");
       await getAllContainers();
       return res;
     } catch (err) {
-      toast.error(err.response?.data?.message || "Error adding container");
+      showToast(err.response?.data?.message || "Error adding container", "error");
       throw err;
     } finally {
       setLoading(false);
@@ -60,10 +61,10 @@ export function SKUProvider({ children }) {
     try {
       setLoading(true);
       const res = await api.patch(`/container/${id}`, payload);
-      toast.success(res.data.message || "Container updated");
+      showToast(res.data.message || "Container updated", "success");
       await getAllContainers();
     } catch (err) {
-      toast.error(err.response?.data?.message || "Error updating container");
+      showToast(err.response?.data?.message || "Error updating container", "error");
       throw err;
     } finally {
       setLoading(false);
@@ -75,11 +76,11 @@ export function SKUProvider({ children }) {
       setLoading(true);
 
       const res = await api.delete(`/container/delete/${id}`);
-      toast.success(res.data.message || "container deleted");
+      showToast(res.data.message || "container deleted", "success");
       setContainers(containers.filter((c) => c._id !== id));
       return res;
     } catch (err) {
-      toast.error(err.response?.data?.message || "Error deleting container");
+      showToast(err.response?.data?.message || "Error deleting container" , "error");
       throw err;
     } finally {
       setLoading(false);
@@ -97,7 +98,7 @@ export function SKUProvider({ children }) {
       setPackages(res.data);
       return res;
     } catch (err) {
-      toast.error(err.response?.data?.message || "Error fetching packages");
+      showToast(err.response?.data?.message || "Error fetching packages", "error");
       throw err;
     } finally {
       setLoading(false);
@@ -111,7 +112,7 @@ export function SKUProvider({ children }) {
       setPackages(res.data);
       return res;
     } catch (err) {
-      toast.error(err.response?.data?.message || "Error fetching package");
+      showToast(err.response?.data?.message || "Error fetching package", "error");
       throw err;
     } finally {
       setLoading(false);
@@ -122,11 +123,11 @@ export function SKUProvider({ children }) {
     try {
       setLoading(true);
       const res = await api.post("/package/", payload);
-      toast.success(res.data.message || "package added successfully");
+      showToast(res.data.message || "package added successfully", "success");
       await getAllPackages();
       return res;
     } catch (err) {
-      toast.error(err.response?.data?.message || "Error adding package");
+      showToast(err.response?.data?.message || "Error adding package", "error");
       throw err;
     } finally {
       setLoading(false);
@@ -138,11 +139,11 @@ export function SKUProvider({ children }) {
       setLoading(true);
 
       const res = await api.patch(`/package/${id}`, payload);
-      toast.success(res.data.message || "package updated");
+      showToast(res.data.message || "package updated", "success");
       await getAllPackages();
       return res;
     } catch (err) {
-      toast.error(err.response?.data?.message || "Error updating package");
+      showToast(err.response?.data?.message || "Error updating package", "error");
       throw err;
     } finally {
       setLoading(false);
@@ -154,11 +155,11 @@ export function SKUProvider({ children }) {
       setLoading(true);
 
       const res = await api.delete(`/package/delete/${id}`);
-      toast.success(res.data.message || "package deleted");
+      showToast(res.data.message || "package deleted", "success");
       setPackages(packages.filter((c) => c._id !== id));
       return res;
     } catch (err) {
-      toast.error(err.response?.data?.message || "Error deleting package");
+      showToast(err.response?.data?.message || "Error deleting package", "error");
       throw err;
     } finally {
       setLoading(false);
@@ -176,7 +177,7 @@ export function SKUProvider({ children }) {
       setFlavours(res.data);
       return res;
     } catch (err) {
-      toast.error(err.response?.data?.message || "Error fetching flavour");
+      showToast(err.response?.data?.message || "Error fetching flavour", "error");
       throw err;
     } finally {
       setLoading(false);
@@ -190,7 +191,7 @@ export function SKUProvider({ children }) {
       setFlavours(res.data);
       return res;
     } catch (err) {
-      toast.error(err.response?.data?.message || "Error fetching flavour");
+      showToast(err.response?.data?.message || "Error fetching flavour", "error");
       throw err;
     } finally {
       setLoading(false);
@@ -202,10 +203,10 @@ export function SKUProvider({ children }) {
       setLoading(true);
 
       const res = await api.post("/flavour/", payload);
-      toast.success(res.data.message || "flavour added successfully");
+      showToast(res.data.message || "flavour added successfully", "success");
       await getAllFlavours();
     } catch (err) {
-      toast.error(err.response?.data?.message || "Error adding flavour");
+      showToast(err.response?.data?.message || "Error adding flavour", "error");
       throw err;
     } finally {
       setLoading(false);
@@ -216,11 +217,11 @@ export function SKUProvider({ children }) {
     try {
       setLoading(true);
       const res = await api.patch(`/flavour/${id}`, payload);
-      toast.success(res.data.message || "flavour updated");
+      showToast(res.data.message || "flavour updated", "success");
       await getAllFlavours();
       return res;
     } catch (err) {
-      toast.error(err.response?.data?.message || "Error updating flavour");
+      showToast(err.response?.data?.message || "Error updating flavour", "error");
       throw err;
     } finally {
       setLoading(false);
@@ -231,11 +232,11 @@ export function SKUProvider({ children }) {
     try {
       setLoading(true);
       const res = await api.delete(`/flavour/delete/${id}`);
-      toast.success(res.data.message || "flavour deleted");
+      showToast(res.data.message || "flavour deleted", "success");
       setFlavours(flavours.filter((c) => c._id !== id));
       return res;
     } catch (err) {
-      toast.error(err.response?.data?.message || "Error deleting flavour");
+      showToast(err.response?.data?.message || "Error deleting flavour", "error");
       throw err;
     } finally {
       setLoading(false);
@@ -254,7 +255,7 @@ export function SKUProvider({ children }) {
       setItems(res.data);
       return res;
     } catch (err) {
-      toast.error(err.response?.data?.message || "Error fetching items");
+      showToast(err.response?.data?.message || "Error fetching items", "error");
       throw err;
     } finally {
       setLoading(false);
@@ -268,7 +269,7 @@ export function SKUProvider({ children }) {
       setFlavours(res.data);
       return res;
     } catch (err) {
-      toast.error(err.response?.data?.message || "Error fetching flavour");
+      showToast(err.response?.data?.message || "Error fetching flavour", "error");
       throw err;
     } finally {
       setLoading(false);
@@ -279,11 +280,11 @@ export function SKUProvider({ children }) {
     try {
       setLoading(true);
       const res = await api.post("/item/", payload);
-      toast.success(res.data.message || "Item added");
+      showToast(res.data.message || "Item added", "success");
       await getAllItems();
       return res;
     } catch (err) {
-      toast.error(err.response?.data?.message || "Error adding item");
+      showToast(err.response?.data?.message || "Error adding item", "error");
       throw err;
     } finally {
       setLoading(false);
@@ -294,11 +295,11 @@ export function SKUProvider({ children }) {
     try {
       setLoading(true);
       const res = await api.patch(`/item/${id}`, payload);
-      toast.success(res.data.message || "Item updated");
+      showToast(res.data.message || "Item updated", "success");
       await getAllItems();
       return res;
     } catch (err) {
-      toast.error(err.response?.data?.message || "Error updating item");
+      showToast(err.response?.data?.message || "Error updating item", "error");
       throw err;
     } finally {
       setLoading(false);
@@ -309,11 +310,11 @@ export function SKUProvider({ children }) {
     try {
       setLoading(true);
       const res = await api.delete(`/item/delete/${id}`);
-      toast.success(res.data.message || "Item deleted");
+      showToast(res.data.message || "Item deleted", "success");
       setItems(items.filter((i) => i._id !== id));
       return res;
     } catch (err) {
-      toast.error(err.response?.data?.message || "Error deleting item");
+      showToast(err.response?.data?.message || "Error deleting item", "error");
       throw err;
     } finally {
       setLoading(false);

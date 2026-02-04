@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import toast from 'react-hot-toast';
+import { useToast } from '../../context/ToastContext';
 import { useTransaction } from '../../context/TransactionContext';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useSKU } from '../../context/SKUContext';
@@ -10,6 +10,7 @@ import { useSalesmanModal } from '../../context/SalesmanModalContext';
 const LoadIn = () => {
     const navigate = useNavigate();
     const location = useLocation();
+    const { showToast } = useToast();
 
     const [modalQtyMapFill, setModalQtyMapFill] = useState({});
     const [modalQtyMapBurst, setModalQtyMapBurst] = useState({});
@@ -50,7 +51,6 @@ const LoadIn = () => {
         items: editData?.items || []
     });
 
-    // derive matched salesman from current code so UI updates as user types
     const matchedSalesman = Array.isArray(salesmans)
         ? salesmans.find((sm) => String(sm.codeNo || sm.code || '').toUpperCase() === String(newLoadIn.salesmanCode || '').toUpperCase())
         : null;
@@ -59,7 +59,7 @@ const LoadIn = () => {
     const handleAddItem = (e) => {
         e.preventDefault();
         if (!newLoadItem.itemcode || (newLoadItem.Filled <= 0 && newLoadItem.Burst <= 0)) {
-            toast.error("Enter valid item code and filled quantity");
+            showToast("Enter valid item code and filled quantity", "error");
             return;
         }
 
@@ -68,11 +68,10 @@ const LoadIn = () => {
         );
 
         if (exists) {
-            toast.error("Item already exist");
+            showToast("Item already exist", "error");
             return;
         }
 
-        // normalize to server schema: itemCode, Filled, Burst
         const normalized = {
             itemCode: newLoadItem.itemcode.trim().toUpperCase(),
             Filled: Number(newLoadItem.Filled) || 0,
@@ -95,14 +94,14 @@ const LoadIn = () => {
             items: prev.items.filter((it) => it.itemCode !== code)
         }));
 
-        toast.success("Item removed");
+        showToast("Item removed", "success");
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
 
         if (!newLoadIn.salesmanCode || !newLoadIn.trip || !newLoadIn.date || newLoadIn.items.length === 0) {
-            toast.error("Fill all fields properly");
+            showToast("Fill all fields properly", "error");
             return;
         }
 
@@ -342,17 +341,8 @@ const LoadIn = () => {
                                 ➕ Add
                             </button>
                         </div>
-                        {/* <div className="form-group">
-                        <label>Item Name</label>
-                        <input
-                            readOnly
-                            type="text"
-                            style={{ backgroundColor: "#f5f5f5" }}
-                        />
-                    </div> */}
                         <div className="table">
                             <div className="trans-loadin-table-grid trans-table-header">
-                                {/* <div>SL.NO.</div> */}
                                 <div>CODE</div>
                                 <div>NAME</div>
                                 <div>Filled/Emt</div>
@@ -412,7 +402,6 @@ const LoadIn = () => {
                     Cancel
                 </button>
             </div>
-            {/* item modal */}
 
             {itemShow && (
                 <div className="modal-overlay">
@@ -566,10 +555,9 @@ const LoadIn = () => {
                                             };
                                         })
                                         .filter(Boolean);
-                                    // null hata deta hai
 
                                     if (itemsToAdd.length === 0) {
-                                        toast.error("Enter Filled or Burst qty for at least one item");
+                                        showToast("Enter Filled or Burst qty for at least one item", "error");
                                         return;
                                     }
                                     setNewLoadIn(prev => ({
@@ -577,7 +565,6 @@ const LoadIn = () => {
                                         items: [...prev.items, ...itemsToAdd]
                                     }));
 
-                                    // reset modal state
                                     setModalQtyMapFill({});
                                     setModalQtyMapBurst({});
                                     setModalQtyMapEmt({});

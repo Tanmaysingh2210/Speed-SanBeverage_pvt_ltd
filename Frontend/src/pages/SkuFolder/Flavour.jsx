@@ -18,7 +18,7 @@ const Flavour = () => {
 
   useEffect(() => {
     if (showForm && addInputRef.current) {
-      addInputRef.current.focus(); // auto focus when form appears
+      addInputRef.current.focus(); 
     }
   }, [showForm]);
 
@@ -48,7 +48,6 @@ const Flavour = () => {
 
   return (
     <div className="container-wrapper">
-      {/* Header section */}
       <div className="top-bar">
         <input type="text"
           ref={searchRef}
@@ -60,7 +59,6 @@ const Flavour = () => {
         <button className="add-btn-con" onClick={() => setShowForm(true)}>+ New</button>
       </div>
 
-      {/* Add New Container Form */}
       {showForm && (
         <div className="form-wrapper">
           <input
@@ -83,7 +81,6 @@ const Flavour = () => {
 
 
 
-      {/* Table Header */}
       <div className="grid-layout header-section">
         <div>SL.NO.</div>
         <div>NAME</div>
@@ -92,7 +89,6 @@ const Flavour = () => {
 
       {loading && <div className="loading">Loading...</div>}
 
-      {/* Table Body */}
       {filteredFlavours.map((item, index) => (
         <div key={item._id || index} className="grid-layout data-row">
           <div>{index + 1}</div>

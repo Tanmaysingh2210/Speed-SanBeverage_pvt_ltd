@@ -2,8 +2,10 @@ import React, { useState, useRef, useEffect } from 'react'  // Fix: useState, us
 import { usePrice } from '../../context/PricesContext'
 import { useSKU } from '../../context/SKUContext'
 import './Prices.css';
+import { useToast } from '../../context/ToastContext';
 
 const BrowsePrice = () => {
+  const {showToast} = useToast();
   const { prices, updatePrice, deletePrice, loading } = usePrice();
   const { items } = useSKU();
   const [search, setSearch] = useState("")
@@ -64,22 +66,20 @@ const BrowsePrice = () => {
     setShowModal(true);
   }
 
-  // Save handler (for modal)
   const handleSave = async (e) => {
     e.preventDefault();
 
-    // Validate item exists
     const found = items.find(
       (item) => item.code.toUpperCase() === editPrice.code.toUpperCase()
     );
 
     if (!found) {
-      alert("❌ Invalid item code — item not found!");
+      showToast("❌ Invalid item code — item not found!" , "error");
       return;
     }
 
     if (!editPrice.basePrice || !editPrice.perTax || !editPrice.date) {
-      alert("⚠️ Please fill all fields!");
+      showToast("⚠️ Please fill all fields!", "error");
       return;
     }
 

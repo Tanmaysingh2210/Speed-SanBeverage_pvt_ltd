@@ -1,12 +1,13 @@
 import React, { useContext, createContext, useEffect, useState } from 'react';
-import toast from 'react-hot-toast';
 import api from '../api/api';
 import { useAuth } from './AuthContext';
+import { useToast } from './ToastContext';
 
 const TransationContext = createContext();
 
 export function TransactionProvider({ children }) {
     const { isAuthenticated } = useAuth();
+    const { showToast } = useToast();
     const [loadout, setLoadout] = useState([]);
     const [loadin, setLoadin] = useState([]);
     const [cashCredit, setCashCredit] = useState([]);
@@ -16,10 +17,10 @@ export function TransactionProvider({ children }) {
         try {
             setLoading(true);
             const res = await api.post('/transaction/loadout/add', payload);
-            toast.success(res.data.message || "loadout added successfully");
+            showToast(res.data.message || "loadout added successfully", "success");
             return res.data;
         } catch (err) {
-            toast.error(err.response?.data?.message || "Error adding loadout");
+            showToast(err.response?.data?.message || "Error adding loadout", "error");
             throw err;
         } finally {
             setLoading(false);
@@ -34,7 +35,7 @@ export function TransactionProvider({ children }) {
             setLoadout(res.data);
             return res.data;
         } catch (err) {
-            // toast.error(err.response?.data?.message || "Error getting loadout");
+            showToast(err.response?.data?.message || "Error getting loadout", "error");
             throw err;
         } finally {
             setLoading(false);
@@ -45,12 +46,11 @@ export function TransactionProvider({ children }) {
         try {
             setLoading(true);
             const res = await api.patch(`/transaction/loadout/update/${id}`, payload);
-            toast.success(res.data.message || "loadout updated successfully");
-            // await getAllLoadout();
+            showToast(res.data.message || "loadout updated successfully", "success");
             return res.data;
 
         } catch (err) {
-            toast.error(err.response?.data?.message || "Error updating loadout");
+            showToast(err.response?.data?.message || "Error updating loadout", "error");
             throw err;
         } finally {
             setLoading(false);
@@ -62,12 +62,11 @@ export function TransactionProvider({ children }) {
         try {
             setLoading(true);
             const res = await api.delete(`/transaction/loadout/delete/${id}`);
-            toast.success(res.data.message || "loadout deleted successfully");
-            // await getAllLoadout();
+            showToast(res.data.message || "loadout deleted successfully", "success");
             return res.data;
 
         } catch (err) {
-            toast.error(err.response?.data?.message || "Error deleting loadout");
+            showToast(err.response?.data?.message || "Error deleting loadout", "error");
             throw err;
         } finally {
             setLoading(false);
@@ -91,11 +90,11 @@ export function TransactionProvider({ children }) {
         try {
             setLoading(true);
             const res = await api.post('/transaction/loadin/add', payload);
-            toast.success(res.data.message || "loadin added successfully");
+            showToast(res.data.message || "loadin added successfully", "success");
             return res.data;
         } catch (err) {
             console.log(err);
-            toast.error(err.response?.data?.message || "Error adding loadin");
+            showToast(err.response?.data?.message || "Error adding loadin", "error");
             throw err;
         } finally {
             setLoading(false);
@@ -109,7 +108,7 @@ export function TransactionProvider({ children }) {
             setLoadin(res.data);
             return res.data;
         } catch (err) {
-            // toast.error(err.response?.data?.message || "Error adding loadin");
+            showToast(err.response?.data?.message || "Error getting loadin", "error");
             throw err;
         } finally {
             setLoading(false);
@@ -120,11 +119,11 @@ export function TransactionProvider({ children }) {
         try {
             setLoading(true);
             const res = await api.patch(`/transaction/loadin/update/${id}`, payload);
-            toast.success(res.data.message || "loadin updated successfully");
+            showToast(res.data.message || "loadin updated successfully", "success");
             return res.data;
 
         } catch (err) {
-            toast.error(err.response?.data?.message || "Error updating loadin");
+            showToast(err.response?.data?.message || "Error updating loadin", "error");
             throw err;
         } finally {
             setLoading(false);
@@ -135,10 +134,10 @@ export function TransactionProvider({ children }) {
         try {
             setLoading(true);
             const res = await api.delete(`/transaction/loadin/delete/${id}`);
-            toast.success(res.data.message || "loadin deleted successfully");
+            showToast(res.data.message || "loadin deleted successfully", "success");
             return res.data;
         } catch (err) {
-            toast.error(err.response?.data?.message || "Error deleting loadin");
+            showToast(err.response?.data?.message || "Error deleting loadin", "error");
             throw err;
         } finally {
             setLoading(false);
@@ -162,10 +161,10 @@ export function TransactionProvider({ children }) {
         try {
             setLoading(true);
             const res = await api.post(`/transaction/cashcredit/add`, payload);
-            toast.success(res.data.message || "cash/credit added sucessfully");
+            showToast(res.data.message || "cash/credit added sucessfully", "success");
             return res.data;
         } catch (err) {
-            toast.error(err.response?.data?.message || "Error adding cash/credit");
+            showToast(err.response?.data?.message || "Error adding cash/credit", "error");
             throw err;
         } finally {
             setLoading(false);
@@ -180,7 +179,7 @@ export function TransactionProvider({ children }) {
             setCashCredit(res.data);
             return res.data;
         } catch (err) {
-            // toast.error(err.response?.data?.message || "Error fetching cash/credit");
+            showToast(err.response?.data?.message || "Error getting cash-credit", "error");
             throw err;
         } finally {
             setLoading(false);
@@ -191,10 +190,10 @@ export function TransactionProvider({ children }) {
         try {
             setLoading(true);
             const res = await api.patch(`/transaction/cashcredit/update/${id}`, payload);
-            toast.success(res.data.message || "cash/credit updated sucessfully");
+            showToast(res.data.message || "cash/credit updated sucessfully", "success");
             return res.data;
         } catch (err) {
-            toast.error(err.response?.data?.message || "Error updating cash/credit");
+            showToast(err.response?.data?.message || "Error updating cash/credit", "error");
             throw err;
         } finally {
             setLoading(false);
@@ -205,10 +204,10 @@ export function TransactionProvider({ children }) {
         try {
             setLoading(true);
             const res = await api.delete(`/transaction/cashcredit/delete/${id}`);
-            toast.success(res.data.message || "cash/credit deleted sucessfully");
+            showToast(res.data.message || "cash/credit deleted sucessfully", "success");
             return res.data;
         } catch (err) {
-            toast.error(err.response?.data?.message || "Error deleting cash/credit");
+            showToast(err.response?.data?.message || "Error deleting cash/credit", "error");
             throw err;
         } finally {
             setLoading(false);
@@ -219,10 +218,10 @@ export function TransactionProvider({ children }) {
         try {
             setLoading(true);
             const res = await api.post('/transaction/settlement', payload);
-            toast.success(res.data?.message || "Settlement calculated sucessfully")
+            showToast(res.data?.message || "Settlement calculated sucessfully", "success");
             return res.data;
         } catch (err) {
-            toast.error(err.response?.data?.message || "Error fetching settlement");
+            showToast(err.response?.data?.message || "Error fetching settlement", "error");
             throw err;
         } finally {
             setLoading(false);

@@ -3,7 +3,7 @@ import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { NavLink } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext'
-import toast from "react-hot-toast";
+import { useToast } from '../context/ToastContext';
 import { FaWineBottle } from "react-icons/fa";
 import { IoMenu, IoClose } from "react-icons/io5";
 import { useDepo } from '../context/depoContext';
@@ -11,15 +11,16 @@ import { useDepo } from '../context/depoContext';
 const Burger = ({ onMenuToggle }) => {
     const { user, logout } = useAuth();
     const navigate = useNavigate();
+    const { showToast } = useToast();
     const { depos } = useDepo();
 
     const handleLogout = async () => {
         try {
             await logout();
-            toast.success("Logged out successfully");
+            showToast("Logged out successfully", "success");
             navigate("/signin");
         } catch (err) {
-            toast.error("Logout failed");
+            showToast("Logout failed", "error");
             console.error(err);
         }
     };

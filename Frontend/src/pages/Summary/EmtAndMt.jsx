@@ -2,18 +2,19 @@ import React from 'react';
 import { useState, useEffect, useRef } from "react";
 import "../transaction/transaction.css";
 import api from "../../api/api";
-import toast from "react-hot-toast";
+import { useToast } from "../../context/ToastContext";
 
 const EmtAndMtSummary = () => {
 
     const [period, setPeriod] = useState({ startDate: "", endDate: "" });
     const [summary, setSummary] = useState([]);
     const [loading, setLoading] = useState(false);
+    const {showToast} = useToast();
 
     const getSummary = async (e) => {
         e.preventDefault();
         if (!period.startDate || !period.endDate || period.startDate > period.endDate) {
-            toast.error("Fill both date properly");
+            showToast("Fill both date properly", 'error');
             return;
         }
         try {
@@ -22,10 +23,10 @@ const EmtAndMtSummary = () => {
             if (res?.data?.success) {
                 setSummary(res?.data?.data);
             }
-            toast.success("Emt and mt fetch successfully");
+            showToast("Emt and mt fetch successfully", 'success');
         }
         catch (err) {
-            toast.error(err.response?.data?.message || "Error fetching summary");
+            showToast(err.response?.data?.message || "Error fetching summary", 'error');
         }
         finally {
             setLoading(false);
@@ -149,7 +150,6 @@ const EmtAndMtSummary = () => {
                             </div>
                         )
                     }
-                    {/* Data Rows */}
                     {summary.map((p, i) => {
                         const rowTotal = Number(p.totalEmt || 0) - Number(p.totalMt || 0);
                       grandTotalShortExcess+=rowTotal;

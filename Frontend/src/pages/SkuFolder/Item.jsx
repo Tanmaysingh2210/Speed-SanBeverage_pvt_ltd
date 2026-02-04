@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './Item.css';
 import { useSKU } from '../../context/SKUContext';
-import toast from 'react-hot-toast';
+import { useToast } from '../../context/ToastContext';
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import ExcelJS from "exceljs";
@@ -12,20 +12,16 @@ import { useAuth } from '../../context/AuthContext'
 
 
 const Item = () => {
+  const { showToast } = useToast();
   const {
     items,
-    getAllItems,
-    getItemByID,
     updateItem,
     deleteItem,
     addItem,
     loading,
     containers,
-    getAllContainers,
     packages,
-    getAllPackages,
     flavours,
-    getAllFlavours,
   } = useSKU();
 
   const [showModal, setShowModal] = useState(false);
@@ -58,7 +54,6 @@ const Item = () => {
 
   const modalRef = useRef(null);
 
-  // Refs for modal inputs
   const modalCodeRef = useRef(null);
   const modalNameRef = useRef(null);
   const modalContainerRef = useRef(null);
@@ -84,7 +79,6 @@ const Item = () => {
   }, [showModal]);
 
 
-  // Close modal when clicked outside
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (modalRef.current && !modalRef.current.contains(e.target)) {
@@ -96,18 +90,16 @@ const Item = () => {
   }, [showModal]);
 
 
-  // Add new item
   const handleAddItem = async (e) => {
     e?.preventDefault();
     console.log('handleAddItem called');
-    if (isSubmittingRef.current) return; // synchronous guard
+    if (isSubmittingRef.current) return; 
     if (!newItem.code || !newItem.name || !newItem.container || !newItem.package || !newItem.flavour) {
-      toast.error('Fill all fields');
+      showToast('Fill all fields', 'error');
       return;
     }
 
     try {
-      // set synchronous guard first to avoid duplicate calls before state updates
       isSubmittingRef.current = true;
       setIsSubmitting(true);
       await addItem({
@@ -128,7 +120,6 @@ const Item = () => {
         status: 'Active',
       });
 
-      // close modal after successful add
       setShowModal(false);
     } catch (err) {
       console.error(err?.response?.data?.message || 'Failed to add item');
@@ -138,13 +129,10 @@ const Item = () => {
     }
   };
 
-  // Edit item
   const handleEdit = (item) => {
     setEditId(item._id);
-    // create a shallow copy to avoid mutating the original object
     setEditItem({ ...item });
 
-    // wait until input renders
     setTimeout(() => {
       if (codeInputRef.current) {
         codeInputRef.current.focus();
@@ -231,11 +219,6 @@ const Item = () => {
   const handleModalKeyNavigation = (e, currentField) => {
     if (["ArrowRight", "ArrowDown"].includes(e.key)) {
       e.preventDefault();
-
-      // if (e.key === "Enter" && currentField === "save") {
-      //   e.preventDefault();
-      //   modalSaveBtnRef.current?.click();
-      // }
 
       if (currentField === "save" && e.key === "Enter") {
         modalSaveBtnRef.current?.click();
@@ -345,7 +328,7 @@ const Item = () => {
 
   const exportItemPDF = async () => {
     if (!filteredItems.length) {
-      toast.error("No filtered data to export");
+      showToast("No filtered data to export", "error");
       return;
     }
 
@@ -394,11 +377,9 @@ const Item = () => {
   };
   const exportItemExcel = async () => {
    if (!filteredItems.length) {
-  toast.error("No filtered data to export");
+  showToast("No filtered data to export", "error");
   return;
 }
-
-
     const workbook = new ExcelJS.Workbook();
     const sheet = workbook.addWorksheet("Item Master");
 
@@ -469,7 +450,6 @@ const Item = () => {
 
   return (
     <div className="table-container">
-      {/* Header section */}
       <div className="header-row">
         <input type="text"
           placeholder="🔍 Search Items..."
@@ -490,7 +470,6 @@ const Item = () => {
         <button className="new-item-btn" onClick={() => setShowModal(true)}>+ New Item</button>
       </div>
 
-      {/* Table Header */}
       <div className="table-grid table-header">
         <div>SL.NO.</div>
         <div>Code</div>
@@ -504,7 +483,6 @@ const Item = () => {
 
       {loading && <div className="loading">Loading...</div>}
 
-      {/* Table Body */}
       {filteredItems.map((item, index) => (
         <div key={item._id || index} className="table-grid table-row">
           <div>{index + 1}</div>
@@ -711,9 +689,6 @@ const Item = () => {
                   )}
                 </select>
               </div>
-
-
-
 
               <div className="form-group">
                 <label>Status</label>

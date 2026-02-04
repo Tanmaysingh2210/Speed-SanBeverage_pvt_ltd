@@ -8,8 +8,10 @@ import autoTable from "jspdf-autotable";
 import ExcelJS from "exceljs";
 import { saveAs } from "file-saver";
 import pepsiLogo from "../../assets/pepsi_logo.png";
+import { useToast } from "../../context/ToastContext.jsx";
 
 const ShortExcess = () => {
+    const {showToast} = useToast();
     const [startDate, setStartDate] = useState("");
     const [endDate, setEndDate] = useState("");
     const [rows, setRows] = useState([]);
@@ -69,7 +71,7 @@ const ShortExcess = () => {
 
     const handleFind = async () => {
         if (!startDate || !endDate) {
-            alert("Please fill all fields");
+            showToast("Please fill all fields", "error");
             return;
         }
 
@@ -80,12 +82,11 @@ const ShortExcess = () => {
                 `/summary/short-excess-summary?startDate=${startDate}&endDate=${endDate}`
             );
 
-            console.log("SUMMARY DATA:", res.data); // 👈 must see this
             setRows(res.data);
 
         } catch (err) {
             console.error(err);
-            alert("Error fetching summary");
+            showToast("Error fetching summary", "error");
         } finally {
             setLoading(false);
         }
@@ -110,7 +111,7 @@ const ShortExcess = () => {
 
     const exportSummaryPDF = async () => {
         if (!rows.length) {
-            alert("No data to export");
+            showToast("No data to export", "error");
             return;
         }
 
@@ -153,7 +154,7 @@ const ShortExcess = () => {
 
     const exportSummaryExcel = async () => {
         if (!rows.length) {
-            alert("No data to export");
+            showToast("No data to export", "error");
             return;
         }
 

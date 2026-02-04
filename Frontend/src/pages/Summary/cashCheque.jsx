@@ -2,7 +2,7 @@ import React from 'react';
 import { useState, useEffect, useRef } from "react";
 import "../transaction/transaction.css";
 import api from "../../api/api";
-import toast from "react-hot-toast";
+import { useToast } from "../../context/ToastContext";
 import { useTransaction } from "../../context/TransactionContext";
 import { useSalesman } from "../../context/SalesmanContext";
 import jsPDF from "jspdf";
@@ -24,7 +24,7 @@ const CashChequeSummary = () => {
     const getSummary = async (e) => {
         e.preventDefault();
         if (!period.startDate || !period.endDate || period.startDate > period.endDate) {
-            toast.error("Fill both date properly");
+            showToast("Fill both date properly", "error");
             return;
         }
         try {
@@ -34,10 +34,10 @@ const CashChequeSummary = () => {
                 setSummary(res?.data?.data);
 
             }
-            toast.success("cash-cheque summary fetch successfull");
+            showToast("cash-cheque summary fetch successfull", "success");
         }
         catch (err) {
-            toast.error(err.response?.data?.message || "Error fetching summary");
+            showToast(err.response?.data?.message || "Error fetching summary", "error");
 
         } finally {
             setLoading(false);

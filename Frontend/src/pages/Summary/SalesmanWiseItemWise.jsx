@@ -8,9 +8,11 @@ import ExcelJS from "exceljs";
 import { saveAs } from "file-saver";
 import pepsiLogo from "../../assets/pepsi_logo.png";
 import { useDepo } from '../../context/depoContext';
-import { useAuth } from '../../context/AuthContext'
+import { useAuth } from '../../context/AuthContext';
+import { useToast } from "../../context/ToastContext.jsx";
 
 const SalesmanWiseItemWise = () => {
+  const { showToast } = useToast();
   const [salesmanCode, setSalesmanCode] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
@@ -24,12 +26,12 @@ const SalesmanWiseItemWise = () => {
   const saleCodeRef = useRef(null);
   const { depos } = useDepo();
   const { user } = useAuth();
-   const getDepo= (depo) => {
-        if (!depo || !Array.isArray(depos)) return "";
-        const id = String(depo).trim();
-        const matchDepo = depos.find((d) => String(d._id).trim() === id);
-        return matchDepo ;
-    }
+  const getDepo = (depo) => {
+    if (!depo || !Array.isArray(depos)) return "";
+    const id = String(depo).trim();
+    const matchDepo = depos.find((d) => String(d._id).trim() === id);
+    return matchDepo;
+  }
   useEffect(() => {
     startRef.current?.focus();
   }, []);
@@ -78,7 +80,7 @@ const SalesmanWiseItemWise = () => {
 
   const handleFind = async () => {
     if (!salesmanCode || !startDate || !endDate) {
-      alert("Please fill all fields");
+      showToast("Please fill all fields", "error");
       return;
     }
 
@@ -87,15 +89,12 @@ const SalesmanWiseItemWise = () => {
 
       const res = await api.get(
         `/summary/salesman-wise-item-wise?salesmanCode=${salesmanCode}&startDate=${startDate}&endDate=${endDate}`
-
       );
-
-      console.log("SUMMARY DATA:", res.data); // 👈 must see this
       setRows(res.data);
 
     } catch (err) {
       console.error(err);
-      alert("Error fetching summary");
+      showToast("Error fetching summary" , "error");
     } finally {
       setLoading(false);
     }
@@ -119,7 +118,7 @@ const SalesmanWiseItemWise = () => {
 
   const exportSummaryPDF = async () => {
     if (!rows.length) {
-      alert("No data to export");
+      showToast("No data to export", "error");
       return;
     }
 
@@ -160,7 +159,7 @@ const SalesmanWiseItemWise = () => {
 
   const exportSummaryExcel = async () => {
     if (!rows.length) {
-      alert("No data to export");
+      showToast("No data to export", "error");
       return;
     }
 
@@ -179,22 +178,22 @@ const SalesmanWiseItemWise = () => {
       ext: { width: 120, height: 70 }
     });
 
-     sheet.mergeCells("C2:J2");
-        sheet.mergeCells("C3:J3");
-        sheet.mergeCells("C5:J5");
+    sheet.mergeCells("C2:J2");
+    sheet.mergeCells("C3:J3");
+    sheet.mergeCells("C5:J5");
 
-        sheet.getCell("C2").value = "SAN BEVERAGES PVT LTD";
-        sheet.getCell("C3").value = getDepo(user.depo)?.depoAddress || "";
-        sheet.getCell("C5").value = "SALESMAN WISE ITEM WISE SUMMARY";
+    sheet.getCell("C2").value = "SAN BEVERAGES PVT LTD";
+    sheet.getCell("C3").value = getDepo(user.depo)?.depoAddress || "";
+    sheet.getCell("C5").value = "SALESMAN WISE ITEM WISE SUMMARY";
 
-        sheet.getCell("C2").alignment = { horizontal: "center" };
-        sheet.getCell("C3").alignment = { horizontal: "center" };
-        sheet.getCell("C5").alignment = { horizontal: "center" };
+    sheet.getCell("C2").alignment = { horizontal: "center" };
+    sheet.getCell("C3").alignment = { horizontal: "center" };
+    sheet.getCell("C5").alignment = { horizontal: "center" };
 
 
-        sheet.getCell("B2").font = { bold: true, size: 14 };
-        sheet.getCell("B3").font = { size: 11 };
-        sheet.getCell("B5").font = { bold: true };
+    sheet.getCell("B2").font = { bold: true, size: 14 };
+    sheet.getCell("B3").font = { size: 11 };
+    sheet.getCell("B5").font = { bold: true };
 
     sheet.getRow(7).values = [
       "SL",

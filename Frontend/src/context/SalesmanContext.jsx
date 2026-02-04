@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext, createContext } from 'react';
-import toast from 'react-hot-toast'
 import api from '../api/api';
 import { useAuth } from "./AuthContext";
+import { useToast } from "./ToastContext";
 
 
 
@@ -9,6 +9,7 @@ const SalesmanContext = createContext();
 
 export function SalesmanProvider({ children }) {
     const { isAuthenticated } = useAuth();
+    const { showToast } = useToast();
     const [salesmans, setSalesmans] = useState([]);
     const [loading, setLoading] = useState(false);
 
@@ -19,7 +20,7 @@ export function SalesmanProvider({ children }) {
             setSalesmans(res.data);
             return res;
         } catch (err) {
-            toast.error(err.response?.data?.message || "Error fetching salesman");
+            showToast(err.response?.data?.message || "Error fetching salesman", "error");
         } finally {
             setLoading(false);
         }
@@ -30,7 +31,7 @@ export function SalesmanProvider({ children }) {
             const res = await api.get(`/salesman/${id}`);
             setSalesmans(res.data);
         } catch (err) {
-            toast.error(err.response?.data?.message || "Error fetching salesman");
+            showToast(err.response?.data?.message || "Error fetching salesman", "error");
         } finally {
             setLoading(false);
         }
@@ -40,11 +41,11 @@ export function SalesmanProvider({ children }) {
         try {
             setLoading(true);
             const res = await api.post("/salesman/", payload);
-            toast.success(res.data.message || "Salesman added successfully");
+            showToast(res.data.message || "Salesman added successfully", "success");
             await getAllSalesmen();
             return res;
         } catch (err) {
-            toast.error(err.response.data.message || "Error adding salesman");
+            showToast(err.response?.data?.message || "Error adding salesman", "error");
 
             throw err;
             // console.log(err.response.data.message);
@@ -57,10 +58,10 @@ export function SalesmanProvider({ children }) {
         try {
             setLoading(true);
             const res = await api.patch(`/salesman/${id}`, payload);
-            toast.success(res.data.message || "Salesman updated");
+            showToast(res.data.message || "Salesman updated", "success");
             await getAllSalesmen();
         } catch (err) {
-            toast.error(err.response?.data?.message || "Error updating salesman");
+            showToast(err.response?.data?.message || "Error updating salesman", "error");
             throw err;
         } finally {
             setLoading(false);
@@ -71,10 +72,10 @@ export function SalesmanProvider({ children }) {
         try {
             setLoading(true);
             const res = await api.delete(`/salesman/delete/${id}`);
-            toast.success(res.data.message || "salesman deleted");
+            showToast(res.data.message || "salesman deleted", "success");
             setSalesmans(salesmans.filter((c) => c._id !== id));
         } catch (err) {
-            toast.error(err.response?.data?.message || "Error deleting salesman");
+            showToast(err.response?.data?.message || "Error deleting salesman", "error");
             throw err;
         } finally {
             setLoading(false);

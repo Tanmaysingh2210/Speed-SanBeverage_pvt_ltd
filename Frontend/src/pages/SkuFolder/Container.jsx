@@ -28,17 +28,6 @@ const Container = () => {
   };
 
 
-
-  // async function handleSaveEdit(id) {
-  //   // setContainers(containers.map((item) =>
-  //   //   item.id === id ? { ...item, name: editValue.toUpperCase() } : item
-  //   // )
-  //   // );
-  //   // setEditId(null);
-  //   // setEditValue("");
-
-  // }
-
   const handleSaveEdit = async (id) => {
     if (editValue.trim() === "") return;
     await updateContainer(id, { name: editValue.toUpperCase() });
@@ -52,7 +41,6 @@ const Container = () => {
 
   return (
     <div className="container-wrapper">
-      {/* Header section */}
       <div className="top-bar">
         <input
           type="text"
@@ -67,7 +55,6 @@ const Container = () => {
         </button>
       </div>
 
-      {/* Add New Container Form */}
       {showForm && (
         <div className="form-wrapper">
           <input
@@ -88,7 +75,6 @@ const Container = () => {
         </div>
       )}
 
-      {/* Table Header */}
       <div className="grid-layout header-section">
         <div>S NO.</div>
         <div>NAME</div>
@@ -97,12 +83,10 @@ const Container = () => {
 
       {loading && <div className="loading">Loading...</div>}
 
-      {/* Table Body */}
       {filteredContainers.map((item, index) => (
         <div key={item._id || index} className="grid-layout data-row">
           <div>{index + 1}</div>
 
-          {/* If this item is being edited, show input instead of text */}
           <div>
             {editId === item._id ? (
               <input
@@ -120,7 +104,6 @@ const Container = () => {
             )}
           </div>
 
-          {/* Actions */}
           <div className="action-buttons">
             {editId === item._id ? (
               <>

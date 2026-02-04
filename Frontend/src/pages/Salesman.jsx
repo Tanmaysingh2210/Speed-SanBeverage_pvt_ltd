@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useSalesman } from "../context/SalesmanContext";
-import toast from 'react-hot-toast';
+import { useToast } from "../context/ToastContext";
 import './salesman.css'
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
@@ -14,6 +14,7 @@ const Salesman = () => {
   const [showModal, setShowModal] = useState(false);
   const handleOpen = () => setShowModal(true);
   const handleClose = () => setShowModal(false);
+  const { showToast } = useToast();
 
 
   const { salesmans, loading, getAllSalesmen, updateSalesman, addSalesman, getSalesmanByID, deleteSalesman } = useSalesman();
@@ -79,7 +80,7 @@ const Salesman = () => {
   const handleAddSalesman = async (e) => {
     e.preventDefault();
     if (!newSalesman.codeNo || !newSalesman.name || !newSalesman.routeNo) {
-      toast.error("Please fill all fields");
+      showToast("Please fill all fields", "error");
       return;
     }
     try {
@@ -112,7 +113,6 @@ const Salesman = () => {
     try {
       await updateSalesman(id, editSalesman);
       setEditId(null);
-      // toast.success("Salesman updated successfully");
     } catch (err) {
       console.error(err?.response?.data?.message || "Update failed");
     }
@@ -143,7 +143,7 @@ const Salesman = () => {
     });
   const exportSalesmanPDF = async () => {
     if (!filteredSalesmans.length) {
-      toast.error("No salesman data");
+      showToast("No salesman data", "error");
       return;
     }
 
@@ -185,7 +185,7 @@ const Salesman = () => {
 
   const exportSalesmanExcel = async () => {
     if (!filteredSalesmans.length) {
-      toast.error("No salesman data");
+      showToast("No salesman data", "error");
       return;
     }
 

@@ -1,18 +1,18 @@
 import React, { useState, useEffect, useRef } from 'react';
-import toast from 'react-hot-toast';
 import "../transaction/transaction.css";
 import api from '../../api/api';
 import { useSKU } from '../../context/SKUContext';
+import { useToast } from '../../context/ToastContext';
 import "../transaction/transaction.css";
 
 const PurchaseItemwise = () => {
+    const { showToast } = useToast();
     const { items: skuItems } = useSKU();
     const [items, setItems] = useState([]);
     const [editingIndex, setEditingIndex] = useState(null);
     const [itemShow, setItemShow] = useState(false);
     const [search, setSearch] = useState("");
 
-    // modal ke inputs ke liye
     const [modalQtyMap, setModalQtyMap] = useState({});
     const [modalExpiryMap, setModalExpiryMap] = useState({});
 
@@ -43,26 +43,25 @@ const PurchaseItemwise = () => {
 
     const validateForm = () => {
         if (!formData.date) {
-            toast.error('Please select a date', 'error');
+            showToast('Please select a date', 'error');
             return false;
         }
         if (!formData.itemCode) {
-            toast.error('Please enter item code', 'error');
+            showToast('Please enter item code', 'error');
             return false;
         }
-        if (!formData.qty || formData.qty <= 0) {
-            toast.error('Please enter valid quantity', 'error');
+        if (!formData.qty || isNaN(formData.qty) || parseInt(formData.qty) <= 0) {
+            showToast('Please enter valid quantity', 'error');
             return false;
         }
         if (!formData.expiryDate) {
-            toast.error('Please select expiry date', 'error');
+            showToast('Please select expiry date', 'error');
             return false;
         }
 
-        // Check if item code exists in SKU items
         const itemExists = skuItems.some(sku => sku.code.toLowerCase() === formData.itemCode.toLowerCase());
         if (!itemExists) {
-            toast.error('Item code not found in SKU items', 'error');
+            showToast('Item code not found in SKU items', 'error');
             return false;
         }
 
@@ -75,23 +74,20 @@ const PurchaseItemwise = () => {
         const newItem = {
             ...formData,
             name: getItemName(formData.itemCode),
-            id: Date.now() // Temporary ID for frontend
+            id: Date.now() 
         };
 
         if (editingIndex !== null) {
-            // Update existing item
             const updatedItems = [...items];
             updatedItems[editingIndex] = newItem;
             setItems(updatedItems);
             setEditingIndex(null);
-            toast.success('Item updated successfully');
+            showToast('Item updated successfully', 'success');
         } else {
-            // Add new item
             setItems([...items, newItem]);
-            toast.success('Item added successfully');
+            showToast('Item added successfully', 'success');
         }
 
-        // Reset form
         setFormData({
             date: formData.date,
             itemCode: '',
@@ -109,16 +105,15 @@ const PurchaseItemwise = () => {
             expiryDate: item.expiryDate
         });
         setEditingIndex(index);
-        toast.success('Edit mode activated', 'info');
+        showToast('Edit mode activated', 'success');
     };
 
     const handleDelete = (index) => {
         if (true) {
             const updatedItems = items.filter((_, i) => i !== index);
             setItems(updatedItems);
-            toast.success('Item deleted successfully');
+            showToast('Item deleted successfully', 'success');
 
-            // Reset edit mode if deleting the item being edited
             if (editingIndex === index) {
                 setEditingIndex(null);
                 setFormData({
@@ -133,20 +128,18 @@ const PurchaseItemwise = () => {
 
     const handleSubmit = async () => {
         if (items.length === 0) {
-            toast.error('Please add at least one item', 'error');
+            showToast('Please add at least one item', 'error');
             return;
         }
 
-        // Check if all items have the same date
         const mainDate = items[0].date;
         const allSameDate = items.every(item => item.date === mainDate);
 
         if (!allSameDate) {
-            toast.error('All items must have the same purchase date', 'error');
+            showToast('All items must have the same purchase date', 'error');
             return;
         }
 
-        // Format items according to backend model (array of objects with itemCode, qty, expiryDate)
         const formattedItems = items.map(item => ({
             itemCode: item.itemCode,
             qty: parseInt(item.qty),
@@ -158,14 +151,14 @@ const PurchaseItemwise = () => {
             items: formattedItems
         };
 
-        console.log('Sending payload:', finalPayload); // Debug log
+        console.log('Sending payload:', finalPayload); 
 
         setLoading(true);
         try {
             const response = await api.post('/purchase/itemwise', finalPayload);
 
             if (response.data) {
-                toast.success('Purchase saved successfully');
+                showToast('Purchase saved successfully', 'success');
                 setItems([]);
                 setFormData({
                     date: '',
@@ -177,7 +170,7 @@ const PurchaseItemwise = () => {
         } catch (error) {
             console.error('Error saving purchase:', error);
             const errorMessage = error.response?.data?.message || 'Failed to save purchase';
-            toast.error(errorMessage, 'error');
+            showToast(errorMessage, 'error');
         } finally {
             setLoading(false);
         }
@@ -330,7 +323,6 @@ const PurchaseItemwise = () => {
 
                         <div className="table">
                             <div className="trans-table-grid-purchaseItemwise trans-table-header-purchaseItemwise">
-                                {/* <div>SL.NO.</div> */}
                                 <div>CODE</div>
                                 <div>NAME</div>
                                 <div>Qty</div>
@@ -408,7 +400,7 @@ const PurchaseItemwise = () => {
 
                             {skuItems
                                 .filter(itm =>
-                                    !itm.code.toLowerCase().includes("emt") &&   // ❌ hide EMT items
+                                    !itm.code.toLowerCase().includes("emt") &&   
                                     (
                                         itm.code.toLowerCase().includes(search.toLowerCase()) ||
                                         itm.name.toLowerCase().includes(search.toLowerCase())
@@ -423,7 +415,6 @@ const PurchaseItemwise = () => {
                                             {itm.status}
                                         </div>
 
-                                        {/* Qty */}
                                         <input
                                             type="number"
                                             min="0"
@@ -448,7 +439,6 @@ const PurchaseItemwise = () => {
                                             }}
                                         />
 
-                                        {/* Expiry */}
                                         <input
                                             type="date"
                                             value={modalExpiryMap[itm.code] || ""}
@@ -495,7 +485,7 @@ const PurchaseItemwise = () => {
                                     .filter(Boolean);
 
                                 if (itemsToAdd.length === 0) {
-                                    toast.error("Enter qty and expiry for at least one item");
+                                    showToast("Enter qty and expiry for at least one item", 'error');
                                     return;
                                 }
 

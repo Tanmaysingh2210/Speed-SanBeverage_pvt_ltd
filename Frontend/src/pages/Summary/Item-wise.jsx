@@ -2,7 +2,7 @@ import React from 'react';
 import { useState, useEffect, useRef } from "react";
 import "../transaction/transaction.css";
 import api from "../../api/api";
-import toast from "react-hot-toast";
+import { useToast } from "../../context/ToastContext";
 
 
 const ItemWiseSummary = () => {
@@ -11,12 +11,12 @@ const ItemWiseSummary = () => {
     const [summary, setSummary] = useState([]);
     const [loading, setLoading] = useState(false);
     const [grandTotal, setGrandTotal] = useState(null);
-
+    const {showToast} = useToast();
 
     const getSummary = async (e) => {
         e.preventDefault();
         if (!period.startDate || !period.endDate || period.startDate > period.endDate) {
-            toast.error("Fill both date properly");
+            showToast("Fill both date properly", 'error');
             return;
         }
         try {
@@ -26,11 +26,11 @@ const ItemWiseSummary = () => {
                 setSummary(res?.data?.data);
                 setGrandTotal(res?.data?.grandTotal.amount)
             }
-            toast.success("item-wise summary fetch successfull");
+            showToast("item-wise summary fetch successfull", 'success');
 
         }
         catch (err) {
-            toast.error(err.response?.data?.message || "Error fetching summary");
+            showToast(err.response?.data?.message || "Error fetching summary", 'error');
         }
         finally {
             setLoading(false);
@@ -38,8 +38,6 @@ const ItemWiseSummary = () => {
     }
 
     console.log("summary is:", summary);
-
-
 
     const startRef = useRef(null);
     const endRef = useRef(null);
@@ -153,7 +151,6 @@ let sumQty=0;
                             </div>
                         )
                     }
-                    {/* Data Rows */}
                     {summary.map((p, i) => {
 
                          sumQty=sumQty+p.qty;

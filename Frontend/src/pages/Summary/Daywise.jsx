@@ -2,14 +2,14 @@ import React from 'react';
 import { useState, useEffect, useRef } from "react";
 import "../transaction/transaction.css";
 import api from "../../api/api";
-import toast from "react-hot-toast";
-import {useTransaction} from "../../context/TransactionContext";
+import { useToast } from "../../context/ToastContext";
+import { useTransaction } from "../../context/TransactionContext";
 
 const DayWise = () => {
 
     const [period, setPeriod] = useState({ startDate: "", endDate: "" });
-
-    const {FormatDate} = useTransaction();
+    const { showToast } = useToast();
+    const { FormatDate } = useTransaction();
     const [summary, setSummary] = useState([]);
     const [loading, setLoading] = useState(false);
 
@@ -18,7 +18,7 @@ const DayWise = () => {
     const getSummary = async (e) => {
         e.preventDefault();
         if (!period.startDate || !period.endDate || period.startDate > period.endDate) {
-            toast.error("Fill both date properly");
+            showToast("Fill both date properly", "error");
             return;
         }
         try {
@@ -28,10 +28,10 @@ const DayWise = () => {
                 setSummary(res?.data?.data);
 
             }
-            toast.success("cash-cheque summary fetch successfull");
+            showToast("cash-cheque summary fetch successfull", "success");
         }
         catch (err) {
-            toast.error(err.response?.data?.message || "Error fetching summary");
+            showToast(err.response?.data?.message || "Error fetching summary", "error");
 
         } finally {
             setLoading(false);
@@ -155,7 +155,6 @@ const DayWise = () => {
                             </div>
                         )
                     }
-                    {/* Data Rows */}
                     {summary.map((p, i) => {
                         const netSale = Number(p.grossSale || 0) - Number(p.schm || 0);
                         return (
@@ -167,7 +166,7 @@ const DayWise = () => {
                                 <div>₹ {p.refund}</div>
                                 <div>₹ {p.creditSale}</div>
                                 <div>₹{p.cashDeposited} /₹ {p.chequeDeposited}</div>
-                                                        
+
                                 <div>₹ {p.shortExcess}</div>
                             </div>
                         )

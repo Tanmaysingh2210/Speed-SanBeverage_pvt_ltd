@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import "./Prices.css";
 import { usePrice } from "../../context/PricesContext";
 import { useSKU } from "../../context/SKUContext";
-import toast from "react-hot-toast";
+import { useToast } from "../../context/ToastContext";
 import { useItemModal } from '../../context/ItemModalContext';
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
@@ -14,6 +14,7 @@ import { useDepo } from '../../context/depoContext';
 import { useAuth } from '../../context/AuthContext';
 
 const LatestPrice = () => {
+    const { showToast } = useToast();
     const { prices, updatePrice, deletePrice, addPrice, loading } = usePrice();
     const { items } = useSKU();
     const [itemShow, setItemShow] = useState(false);
@@ -69,11 +70,8 @@ const LatestPrice = () => {
     const doc = new jsPDF();
 
     const logoBase64 = await loadImageBase64(pepsiLogo);
-
-    // Logo
     doc.addImage(logoBase64, "PNG", 12, 3, 45, 25);
 
-    // Header
     doc.setFontSize(14);
     doc.text("SAN BEVERAGES PVT LTD", 105, 15, { align: "center" });
 
@@ -128,7 +126,6 @@ const LatestPrice = () => {
         alternateRowStyles: { fillColor: [245, 245, 245] }
     });
 
-    // 🔥 THIS PART ENABLES PRINT + PDF PREVIEW
     const pdfBlob = doc.output("bloburl");
 
     const printWindow = window.open(pdfBlob);
@@ -145,7 +142,6 @@ const LatestPrice = () => {
         const workbook = new ExcelJS.Workbook();
         const sheet = workbook.addWorksheet("Latest Price");
 
-        // Load logo
         const logoBase64 = await loadImageBase64(pepsiLogo);
 
         const imageId = workbook.addImage({
@@ -158,7 +154,6 @@ const LatestPrice = () => {
             ext: { width: 120, height: 70 }
         });
 
-        // Header text
         sheet.mergeCells("C2:J2");
         sheet.mergeCells("C3:J3");
         sheet.mergeCells("C5:J5");
@@ -238,7 +233,6 @@ const LatestPrice = () => {
         }
     }, [showModal]);
 
-    // Auto update name when code changes
     const matchedItem =
         Array.isArray(items)
             ? items.find(
@@ -331,7 +325,7 @@ const LatestPrice = () => {
         e.preventDefault();
 
         if (!newPrice.basePrice || !newPrice.code || !newPrice.date) {
-            toast.error("⚠️ Please fill all fields!");
+            showToast("⚠️ Please fill all fields!", 'error');
             return;
         }
 
@@ -340,8 +334,8 @@ const LatestPrice = () => {
             basePrice: Number(newPrice.basePrice),
             perTax: Number(newPrice.perTax) || 0,
             perDisc: Number(newPrice.perDisc) || 0,
-            date: newPrice.date, // backend expects `date` (lowercase)
-            status: editId ? newPrice.status : "Active", //  Force Active for new prices
+            date: newPrice.date, 
+            status: editId ? newPrice.status : "Active", 
         };
 
 
@@ -390,10 +384,8 @@ const LatestPrice = () => {
         setShowModal(true);
     };
 
-    // Filter prices by search term
     const safeString = v => (v === null || v === undefined) ? '' : String(v);
 
-    // Safe filtered list
     const filtered = Array.isArray(prices)
         ? prices
             .filter(p => p?.status === "Active") //  Only show active prices
@@ -402,7 +394,6 @@ const LatestPrice = () => {
 
     return (
         <div className="price-container">
-            {/* Header */}
             <div className="price-header">
                 <input
                     type="text"
@@ -445,7 +436,6 @@ const LatestPrice = () => {
 
             {loading && <div className="loading">Loading...</div>}
 
-            {/* Table */}
             <div className="price-table">
                 <div className="price-row header32">
                     <div>SL.NO.</div>
@@ -497,7 +487,6 @@ const LatestPrice = () => {
                 })}
             </div>
 
-            {/* Modal */}
             {showModal && (
                 <div className="modal-overlay">
                     <div className="modal" ref={modalRef}>
@@ -514,7 +503,7 @@ const LatestPrice = () => {
                                             setNewPrice({ ...newPrice, code: e.target.value.trim().toUpperCase() })
                                         }
                                         onKeyDown={(e) => handleKeyNav(e, "code")}
-                                        disabled={editId} // Disable code editing when updating
+                                        disabled={editId}
                                     />
                                     <button
                                         type="button"
