@@ -39,7 +39,6 @@ export const DaywiseSummary = async (req, res) => {
             rateMap.get(code).push(r);
         }
 
-        console.log(rateMap);
 
         const itemMap = new Map();
 
@@ -51,7 +50,6 @@ export const DaywiseSummary = async (req, res) => {
             });
         }
 
-        console.log(itemMap);
 
         const getRateforDate = (itemCode, saleDate) => {
             const list = rateMap.get(normalize(itemCode));
@@ -123,15 +121,12 @@ export const DaywiseSummary = async (req, res) => {
 
                 if (!it) {
                     day.missingItems.push(normalize(item.itemCode));
-                    console.log(day.missingItems);
                     continue;
                 }
 
                 if (!it) continue;
-                console.log(it);
                 if (normalize(it.container) === normalize("EMT")) {
                     day.refunds += (item.Emt * finalPrice);
-                    console.log(`refunds : ${day.refunds}`);
                 } else {
                     day.grossSale -= ((item.Filled + item.Burst) * finalPrice);
                 }
