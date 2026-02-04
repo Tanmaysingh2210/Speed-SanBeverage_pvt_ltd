@@ -4,7 +4,6 @@ import { Link, useNavigate } from 'react-router-dom'
 import { NavLink } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext'
 import toast from "react-hot-toast";
-import { FaWineBottle } from "react-icons/fa";
 import { IoMenu, IoClose } from "react-icons/io5";
 import { useDepo } from '../context/depoContext';
 
@@ -52,10 +51,10 @@ const Burger = ({ onMenuToggle }) => {
 
             <div className={`burger-box ${open ? "show" : "hide"}`}>
                 <div className="heading">
-                    <FaWineBottle className="text-blue-600 text-2xl" />
+                    {/* <FaWineBottle className="text-blue-600 text-2xl" /> */}
                     <h3 >SAN Beverages</h3>
 
-                    <IoClose className="text-3xl cursor-pointer hover:text-red-500"
+                    <IoClose className="close-icon"
                         onClick={() => handleMenuToggle(false)}
                     />
 
