@@ -14,12 +14,8 @@ export const addLoadout = async (req, res) => {
 
         if (existing) return res.status(400).json({ message: `Loadout record exists` });
 
-
-        // Clean up expired items first
         await StockService.cleanupExpiredItems(depo);
-        // Process loadout with FIFO logic
-        const allocations = await StockService.processLoadout(items, depo );
-        // Check for shortfalls
+        const allocations = await StockService.processLoadout(items, depo);
         const hasShortfall = allocations.some(a => a.shortfall > 0);
 
         if (hasShortfall) {
@@ -30,7 +26,6 @@ export const addLoadout = async (req, res) => {
             });
         }
 
-        // Create loadout record
         await LoadOut.create({
             salesmanCode: salesmanCode,
             date: date,
@@ -38,7 +33,7 @@ export const addLoadout = async (req, res) => {
             items,
             depo
         });
-
+        
         res.status(200).json({ message: "loadout added sucessfully", success: true, allocations });
 
     } catch (err) {

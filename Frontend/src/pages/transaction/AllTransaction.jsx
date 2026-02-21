@@ -18,7 +18,7 @@ import ExcelJS from "exceljs";
 const AllTransaction = () => {
   const navigate = useNavigate();
   const { showToast } = useToast();
-  const { FormatDate, getLoadout, deleteLoadout, getLoadIn, deleteLoadin, getCash_credit, deleteCash_credit, loading } = useTransaction();
+  const { FormatDate, getLoadout, deleteLoadout, getLoadIn, deleteLoadin, getCash_credit, deleteCash_credit } = useTransaction();
   const { salesmans } = useSalesman();
   const { items } = useSKU();
   const { openSalesmanModal } = useSalesmanModal();
@@ -252,7 +252,6 @@ const AllTransaction = () => {
   const tripRef = useRef(null);
   const findRef = useRef(null);
 
-
   const handleKeyNav = (e, currentField) => {
     if (["ArrowRight", "ArrowDown", "Enter"].includes(e.key)) {
       e.preventDefault();
@@ -295,6 +294,7 @@ const AllTransaction = () => {
     }
   };
 
+  const [loading, setLoading] = useState(false);
   const handleFind = async (e) => {
     e.preventDefault();
     if (!find.date || !find.type || !find.trip || !find.salesmanCode) {
@@ -310,6 +310,7 @@ const AllTransaction = () => {
 
     if (find.type === "all") {
       try {
+        setLoading(true);
         const [loadoutRes, loadinRes, cashRes] = await Promise.allSettled([
           getLoadout(payload),
           getLoadIn(payload),
@@ -353,10 +354,13 @@ const AllTransaction = () => {
       } catch (error) {
         console.error('Unexpected error in all-fetch:', error);
         showToast('Error fetching records', 'error');
+      }finally{
+        setLoading(false);
       }
     }
     else if (find.type === "loadout") {
       try {
+        setLoading(true);
         const loadoutData = await getLoadout(payload);
 
         const newTransactions = [];
@@ -405,10 +409,13 @@ const AllTransaction = () => {
         })
       } catch (error) {
         console.error("Error fetching loadin");
+      }finally{
+        setLoading(false);
       }
     }
     else {
       try {
+        setLoading(true);
         const cashCreditData = await getCash_credit(payload);
 
         const newTransactions = [];
@@ -431,6 +438,9 @@ const AllTransaction = () => {
         })
       } catch (error) {
         console.error("Error fetching data");
+      }
+      finally{
+        setLoading(false);
       }
     }
   };
@@ -599,9 +609,10 @@ const AllTransaction = () => {
               color: '#666',
               backgroundColor: 'white'
             }}>
-              No items found
+              {loading ? 'Loading...' : "No items found"}
             </div>
           )}
+
 
           {transactions.map((p, i) => {
             const matchedSalesman = Array.isArray(salesmans)
@@ -635,6 +646,5 @@ const AllTransaction = () => {
 
   )
 };
-
 
 export default AllTransaction

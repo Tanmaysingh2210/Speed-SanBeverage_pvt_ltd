@@ -5,7 +5,7 @@ const MONGO_URI = `mongodb://127.0.0.1:27017/speed`;
 
 const connectDB = async () => {
     try {
-        await mongoose.connect(process.env.ATLAS_URI);
+        await mongoose.connect(process.env.MONGO_URI);
 
         console.log("Mongodb connected successfully");
 
