@@ -463,10 +463,31 @@ const LoadOut = () => {
                                         return;
                                     }
 
-                                    setNewLoadOut(prev => ({
-                                        ...prev,
-                                        items: [...prev.items, ...itemsToAdd]
-                                    }));
+                                    setNewLoadOut(prev => {
+                                        const updatedItems = [...prev.items];
+
+                                        itemsToAdd.forEach(newItem => {
+                                            const index = updatedItems.findIndex(
+                                                it =>
+                                                    it.itemCode.trim().toUpperCase() ===
+                                                    newItem.itemCode.trim().toUpperCase()
+                                            );
+
+                                            if (index !== -1) {
+                                                updatedItems[index].qty = Number(newItem.qty);
+                                            } else {
+                                                updatedItems.push({
+                                                    itemCode: newItem.itemCode.trim().toUpperCase(),
+                                                    qty: Number(newItem.qty)
+                                                });
+                                            }
+                                        });
+
+                                        return {
+                                            ...prev,
+                                            items: updatedItems
+                                        };
+                                    });
 
                                     setModalQtyMap({});
                                     setItemShow(false);

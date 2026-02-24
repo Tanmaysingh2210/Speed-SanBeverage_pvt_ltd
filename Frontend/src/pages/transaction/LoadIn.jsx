@@ -560,10 +560,35 @@ const LoadIn = () => {
                                         showToast("Enter Filled or Burst qty for at least one item", "error");
                                         return;
                                     }
-                                    setNewLoadIn(prev => ({
-                                        ...prev,
-                                        items: [...prev.items, ...itemsToAdd]
-                                    }));
+                                    setNewLoadIn(prev => {
+                                        const updatedItems = [...prev.items];
+
+                                        itemsToAdd.forEach(newItem => {
+                                            const index = updatedItems.findIndex(
+                                                it =>
+                                                    it.itemCode.trim().toUpperCase() ===
+                                                    newItem.itemCode.trim().toUpperCase()
+                                            );
+
+                                            if (index !== -1) {
+                                                updatedItems[index].Filled = Number(newItem.Filled);
+                                                updatedItems[index].Burst = Number(newItem.Burst);
+                                                updatedItems[index].Emt = Number(newItem.Emt);
+                                            } else {
+                                                updatedItems.push({
+                                                    itemCode: newItem.itemCode.trim().toUpperCase(),
+                                                    Filled: Number(newItem.Filled),
+                                                    Burst: Number(newItem.Burst),
+                                                    Emt: Number(newItem.Emt)
+                                                });
+                                            }
+                                        });
+
+                                        return {
+                                            ...prev,
+                                            items: updatedItems
+                                        };
+                                    });
 
                                     setModalQtyMapFill({});
                                     setModalQtyMapBurst({});

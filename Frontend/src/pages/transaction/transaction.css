@@ -124,7 +124,7 @@
 
 .trans-loadin-table-grid {
   display: grid;
-  grid-template-columns: 0.6fr 2fr 0.5fr 0.5fr 1fr;
+  grid-template-columns: 0.6fr 2fr 0.6fr 0.5fr 0.6fr;
   align-items: center;
   text-align: left;
   font-size: 14px;
