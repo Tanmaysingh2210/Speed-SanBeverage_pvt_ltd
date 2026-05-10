@@ -34,40 +34,51 @@ const allowedOrigins = [
 ];
 
 app.use(cors({
-  origin: (origin, callback) => {
-    // Allow requests without origin (like mobile apps or curl requests)
-    if (!origin) {
-      callback(null, true);
-    } else if (allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      // Log the blocked origin for debugging
-      console.warn(`CORS blocked for origin: ${origin}`);
-      callback(null, true); // Allow anyway for showcase - remove in production
-    }
-  },
-  credentials: true,
-  optionsSuccessStatus: 200
+  origin: [
+    'http://localhost:5173',
+    'https://speed.aalsicoders.in',
+    'https://speed-sanbeveragepvtltd.vercel.app'
+  ],
+  credentials: true
 }));
 
+// app.use(cors({
+//   origin: (origin, callback) => {
+//     // Allow requests without origin (like mobile apps or curl requests)
+//     if (!origin) {
+//       callback(null, true);
+//     } else if (allowedOrigins.includes(origin)) {
+//       callback(null, true);
+//     } else {
+//       // Log the blocked origin for debugging
+//       console.warn(`CORS blocked for origin: ${origin}`);
+//       callback(null, true); // Allow anyway for showcase - remove in production
+//     }
+//   },
+//   credentials: true,
+//   optionsSuccessStatus: 200
+// }));
+
+app.set('trust proxy', 1);
+
 app.use(session({
-    secret: process.env.Secret,
-    resave: false,
-    saveUninitialized: false,
-    store: MongoStore.create({
-        mongoUrl: process.env.ATLAS_URI,
-        collectionName: "sessions"
-    }),
-    cookie: {
-        secure: true,           // always secure in production (Render is HTTPS)
-        httpOnly: true,
-        sameSite: 'none',       // required for cross-site cookie sending
-        maxAge: 1000 * 60 * 60 * 24 * 7
-    }
+  secret: process.env.Secret,
+  resave: false,
+  saveUninitialized: false,
+  store: MongoStore.create({
+    mongoUrl: process.env.ATLAS_URI,
+    collectionName: "sessions"
+  }),
+  cookie: {
+    secure: true,           // always secure in production (Render is HTTPS)
+    httpOnly: true,
+    sameSite: 'none',       // required for cross-site cookie sending
+    maxAge: 1000 * 60 * 60 * 24 * 7
+  }
 }));
 
 app.get("/ping", (req, res) => {
-    res.send("Server is alive")
+  res.send("Server is alive")
 })
 
 // cron.schedule("*/5 * * * *", async () => {
