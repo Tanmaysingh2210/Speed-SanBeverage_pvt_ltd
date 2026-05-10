@@ -59,12 +59,9 @@ app.use(session({
         collectionName: "sessions"
     }),
     cookie: {
-        secure: process.env.NODE_ENV === 'production',
+        secure: true,           // always secure in production (Render is HTTPS)
         httpOnly: true,
-        // 'none' + domain allows cross-subdomain sharing on same root domain
-        // Once api.aalsicoders.in is set up, change sameSite to 'lax' and keep domain
-        sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
-        domain: process.env.NODE_ENV === 'production' ? '.aalsicoders.in' : undefined,
+        sameSite: 'none',       // required for cross-site cookie sending
         maxAge: 1000 * 60 * 60 * 24 * 7
     }
 }));
