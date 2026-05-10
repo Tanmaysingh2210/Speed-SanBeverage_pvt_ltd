@@ -27,9 +27,21 @@ initializeDefaultUser().catch(err => console.error('Failed to initialize default
 const app = express();
 app.use(express.json());
 
+const allowedOrigins = [
+  'http://localhost:5173',
+  'https://speed.aalsicoders.in',
+  'https://speed-sanbeveragepvtltd.vercel.app'
+];
+
 app.use(cors({
-    origin: 'http://speed.aalsicoders.in/',
-    credentials: true
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error(`CORS blocked for origin: ${origin}`));
+    }
+  },
+  credentials: true
 }));
 
 app.use(session({
