@@ -1,16 +1,15 @@
 import express from "express";
 import LoadOut from "../models/transaction/LoadOut.js";
 
-console.log("✅ SalesmanWiseItemWise Summary Loaded");
 export const salesmanwiseItemwiseSummary = async (req, res) => {
   try {
-    console.log("→ SalesmanWiseItemwise called", {
-      salesmanCode: req.query.salesmanCode,
-      start: req.query.startDate,
-      end: req.query.endDate,
-      user: req.user ? req.user._id : "NO USER",
-      depo: req.user?.depo || "NO DEPO"
-    });
+    // console.log("→ SalesmanWiseItemwise called", {
+    //   salesmanCode: req.query.salesmanCode,
+    //   start: req.query.startDate,
+    //   end: req.query.endDate,
+    //   user: req.user ? req.user._id : "NO USER",
+    //   depo: req.user?.depo || "NO DEPO"
+    // });
 
     const { salesmanCode, startDate, endDate } = req.query;
 

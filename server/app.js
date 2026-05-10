@@ -3,6 +3,7 @@ import session from 'express-session';
 import cors from 'cors';
 import 'dotenv/config';
 import connectDB from './config/db.js';
+import { initializeDefaultUser } from './config/initDefaultUser.js';
 import authRoutes from './routes/authRoutes.js';
 import containerRoutes from './routes/containerRoutes.js';
 import flavourRoutes from './routes/flavourRoutes.js';
@@ -18,8 +19,11 @@ import summaryRoutes from './routes/summaryRoutes.js';
 import requireAuth from './middleware/requireAuth.js';
 import requireDepo from './middleware/requireDepo.js';
 import graphRoutes from './routes/graphRoutes.js';
+import MongoStore from "connect-mongo";
+import cron from "node-cron";
 
 connectDB();
+initializeDefaultUser().catch(err => console.error('Failed to initialize default user:', err));
 const app = express();
 app.use(express.json());
 
@@ -29,15 +33,35 @@ app.use(cors({
 }));
 
 app.use(session({
-    secret: "beverage-campa",
+    secret: process.env.Secret,
     resave: false,
-    saveUninitialized: true,
+    saveUninitialized: false,
+    store: MongoStore.create({
+        mongoUrl: process.env.ATLAS_URI,
+        collectionName: "sessions"
+    }),
     cookie: {
-        secure: false,
+        secure: process.env.NODE_ENV === 'production',
         httpOnly: true,
-        sameSite: 'lax'
+        sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+        maxAge: 1000 * 60 * 60 * 24 * 7
     }
 }));
+
+app.get("/ping", (req, res) => {
+    res.send("Server is alive")
+})
+
+// cron.schedule("*/5 * * * *", async () => {
+//     try {
+//         await fetch("https://parliamentbackend.onrender.com/ping");
+//         console.log("self ping succesful");
+
+//     } catch (error) {
+//         console.log("ping failed", error.message);
+
+//     }
+// })
 
 app.use('/auth', authRoutes);
 app.use('/depo', depoRoutes);

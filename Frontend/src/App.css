@@ -12,6 +12,7 @@ body {
   width: 100vw;
   height: 100vh;
   overflow: hidden;
+  scrollbar-width: none;
   /* position:relative; */
 }
 

@@ -2,9 +2,9 @@ import { Item } from '../../models/SKU.js';
 
 export const addItem = async (req, res) => {
     try {
-        const { code, name, container, package: pkg, flavour, status } = req.body;
+        const { code, name, container, package: pkg, flavour, packOf, status } = req.body;
 
-        if (!code || !name || !container || !pkg || !flavour) return res.status(400).json({ message: "Every field is required" });
+        if (!code || !name || !container || !pkg || !flavour || !packOf) return res.status(400).json({ message: "Every field is required" });
 
         const depo = req.user?.depo;
 
@@ -19,6 +19,7 @@ export const addItem = async (req, res) => {
             package: pkg,
             flavour,
             depo,
+            packOf,
             status: status || 'Active'
         });
 
@@ -30,8 +31,8 @@ export const addItem = async (req, res) => {
 
 export const getAllItems = async (req, res) => {
     try {
-        
-        const items = await Item.find({ depo:req.user.depo });
+
+        const items = await Item.find({ depo: req.user.depo });
         res.status(200).json(items);
 
     } catch (err) {

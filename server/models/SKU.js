@@ -42,6 +42,7 @@ const itemSchema = new mongoose.Schema({
         ref: 'depo-master',
         required: true
     },
+    packOf: { type: Number, required: true },
     status: { type: String, enum: ['Active', 'Inactive'], default: 'Active' }
 });
 

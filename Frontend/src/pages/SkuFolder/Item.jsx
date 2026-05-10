@@ -26,13 +26,14 @@ const Item = () => {
 
   const [showModal, setShowModal] = useState(false);
   const [editId, setEditId] = useState(null);
-  const [editItem, setEditItem] = useState({});
+  // const [editItem, setEditItem] = useState({});
   const [searchTerm, setSearchTerm] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const isSubmittingRef = useRef(false);
   const [filteredContainers, setFilteredContainers] = useState([]);
   const [filteredFlavours, setFilteredFlavours] = useState([]);
   const [filteredPackages, setFilteredPackages] = useState([]);
+  const [mode, setMode] = useState("add"); // "add" | "edit"
 
 
   const [newItem, setNewItem] = useState({
@@ -41,16 +42,9 @@ const Item = () => {
     container: "",
     package: "",
     flavour: "",
+    packOf: "",
     status: "Active",
   });
-
-  const codeInputRef = useRef(null);
-  const nameInputRef = useRef(null);
-  const containerInputRef = useRef(null);
-  const packageInputRef = useRef(null);
-  const flavourInputRef = useRef(null);
-  const statusInputRef = useRef(null);
-  const saveBtnRef = useRef(null);
 
   const modalRef = useRef(null);
 
@@ -59,8 +53,10 @@ const Item = () => {
   const modalContainerRef = useRef(null);
   const modalPackageRef = useRef(null);
   const modalFlavourRef = useRef(null);
+  const modalPackOfRef = useRef(null);
   const modalStatusRef = useRef(null);
   const modalSaveBtnRef = useRef(null);
+
   const getDepo = (depo) => {
     if (!depo || !Array.isArray(depos)) return "";
     const id = String(depo).trim();
@@ -90,10 +86,9 @@ const Item = () => {
   }, [showModal]);
 
 
-  const handleAddItem = async (e) => {
+  const handleSubmitItem = async (e) => {
     e?.preventDefault();
-    console.log('handleAddItem called');
-    if (isSubmittingRef.current) return; 
+    if (isSubmittingRef.current) return;
     if (!newItem.code || !newItem.name || !newItem.container || !newItem.package || !newItem.flavour) {
       showToast('Fill all fields', 'error');
       return;
@@ -102,14 +97,26 @@ const Item = () => {
     try {
       isSubmittingRef.current = true;
       setIsSubmitting(true);
-      await addItem({
+
+      const payload = {
         code: newItem.code.toUpperCase(),
         name: newItem.name.toUpperCase(),
         container: newItem.container.toUpperCase(),
         package: newItem.package.toUpperCase(),
         flavour: newItem.flavour.toUpperCase(),
+        packOf: Number(newItem.packOf),
         status: newItem.status
-      });
+      };
+
+      if (mode == "add") {
+        await addItem(payload);
+      } else {
+        await updateItem(editId, payload);
+      }
+
+      setShowModal(false);
+      setMode("add");
+      setEditId(null);
 
       setNewItem({
         code: '',
@@ -117,10 +124,10 @@ const Item = () => {
         container: '',
         package: '',
         flavour: '',
+        packOf: "",
         status: 'Active',
       });
 
-      setShowModal(false);
     } catch (err) {
       console.error(err?.response?.data?.message || 'Failed to add item');
     } finally {
@@ -130,28 +137,29 @@ const Item = () => {
   };
 
   const handleEdit = (item) => {
+    setMode("edit");
+
     setEditId(item._id);
-    setEditItem({ ...item });
+    setNewItem({
+      code: item.code,
+      name: item.name,
+      container: item.container,
+      package: item.package,
+      flavour: item.flavour,
+      packOf: item.packOf,
+      status: item.status,
+    });
+    setShowModal(true);
 
     setTimeout(() => {
-      if (codeInputRef.current) {
-        codeInputRef.current.focus();
+      if (modalCodeRef.current) {
+        modalCodeRef.current.focus();
       }
     }, 50);
   };
 
-  const handleSaveEdit = async (id) => {
-    try {
-      await updateItem(id, editItem);
-      setEditId(null);
-    } catch (err) {
-      console.error(err?.response?.data?.message || "Update failed");
-    }
-  };
-
   const handleDelete = async (id) => {
     await deleteItem(id);
-
   };
 
   const filteredItems = items.filter((i) =>
@@ -186,36 +194,6 @@ const Item = () => {
     );
   };
 
-
-  const handleKeyNavigation = (e, nextField) => {
-    if (["ArrowRight", "ArrowDown", "Enter"].includes(e.key)) {
-      e.preventDefault();
-      switch (nextField) {
-        case "name":
-          nameInputRef.current?.focus();
-          break;
-        case "container":
-          containerInputRef.current?.focus();
-          break;
-        case "package":
-          packageInputRef.current?.focus();
-          break;
-        case "flavour":
-          flavourInputRef.current?.focus();
-          break;
-        case "status":
-          statusInputRef.current?.focus();
-          break;
-        case "save":
-          saveBtnRef.current?.click();
-          break;
-        default:
-          break;
-      }
-    }
-  };
-
-
   const handleModalKeyNavigation = (e, currentField) => {
     if (["ArrowRight", "ArrowDown"].includes(e.key)) {
       e.preventDefault();
@@ -239,6 +217,9 @@ const Item = () => {
           modalFlavourRef.current?.focus();
           break;
         case "flavour":
+          modalPackOfRef.current?.focus();
+          break;
+        case "packof":
           modalStatusRef.current?.focus();
           break;
         case "status":
@@ -350,6 +331,7 @@ const Item = () => {
       it.container,
       it.package,
       it.flavour,
+      it.packOf,
       it.status
     ]);
 
@@ -362,6 +344,7 @@ const Item = () => {
         "CONTAINER",
         "PACKAGE",
         "FLAVOUR",
+        "PACK OF",
         "STATUS"
       ]],
       body: tableData,
@@ -376,10 +359,10 @@ const Item = () => {
 
   };
   const exportItemExcel = async () => {
-   if (!filteredItems.length) {
-  showToast("No filtered data to export", "error");
-  return;
-}
+    if (!filteredItems.length) {
+      showToast("No filtered data to export", "error");
+      return;
+    }
     const workbook = new ExcelJS.Workbook();
     const sheet = workbook.addWorksheet("Item Master");
 
@@ -416,6 +399,7 @@ const Item = () => {
       "CONTAINER",
       "PACKAGE",
       "FLAVOUR",
+      "PACK OF",
       "STATUS"
     ];
 
@@ -429,6 +413,7 @@ const Item = () => {
         it.container,
         it.package,
         it.flavour,
+        it.packOf,
         it.status
       ]);
     });
@@ -440,13 +425,13 @@ const Item = () => {
       { width: 14 },
       { width: 14 },
       { width: 18 },
+      { width: 12 },
       { width: 12 }
     ];
 
     const buffer = await workbook.xlsx.writeBuffer();
     saveAs(new Blob([buffer]), "item-master.xlsx");
   };
-
 
   return (
     <div className="table-container">
@@ -470,13 +455,14 @@ const Item = () => {
         <button className="new-item-btn" onClick={() => setShowModal(true)}>+ New Item</button>
       </div>
 
-      <div className="table-grid table-header">
+      <div className="table-grid-items table-header">
         <div>SL.NO.</div>
         <div>Code</div>
         <div>NAME</div>
         <div>CONTAINER</div>
         <div>PACKAGE</div>
         <div>FLAVOUR</div>
+        <div>PACK OF</div>
         <div>STATUS</div>
         <div>ACTIONS</div>
       </div>
@@ -484,120 +470,41 @@ const Item = () => {
       {loading && <div className="loading">Loading...</div>}
 
       {filteredItems.map((item, index) => (
-        <div key={item._id || index} className="table-grid table-row">
+        <div key={item._id || index} className="table-grid-items table-row">
           <div>{index + 1}</div>
-          {editId === item._id ? (
-            <>
-              <input type="text"
-                ref={codeInputRef}
-                value={editItem.code}
-                className='edit-input'
-                onChange={(e) =>
-                  setEditItem({ ...editItem, code: e.target.value.trim().toUpperCase() })
-                }
-                onKeyDown={(e) => handleKeyNavigation(e, "name")}
-              />
-              <input
-                type="text"
-                ref={nameInputRef}
-                value={editItem.name}
-                className='edit-input'
-                onChange={(e) =>
-                  setEditItem({ ...editItem, name: e.target.value.toUpperCase() })
-                }
-                onKeyDown={(e) => handleKeyNavigation(e, "container")}
-              />
-              <input
-                type="text"
-                ref={containerInputRef}
-                value={editItem.container}
-                className='edit-input'
-                onChange={(e) =>
-                  setEditItem({ ...editItem, container: e.target.value.toUpperCase() })
-                }
-                onKeyDown={(e) => handleKeyNavigation(e, "package")}
-              />
-              <input
-                type="text"
-                ref={packageInputRef}
-                value={editItem.package}
-                className='edit-input'
-                onChange={(e) =>
-                  setEditItem({ ...editItem, package: e.target.value.toUpperCase() })
-                }
-                onKeyDown={(e) => handleKeyNavigation(e, "flavour")}
-              />
-              <input
-                type="text"
-                ref={flavourInputRef}
-                value={editItem.flavour}
-                className='edit-input'
-                onChange={(e) =>
-                  setEditItem({ ...editItem, flavour: e.target.value.toUpperCase() })
-                }
-                onKeyDown={(e) => handleKeyNavigation(e, "status")}
-              />
-              <select
-                ref={statusInputRef}
-                value={editItem.status}
-                className='edit-input'
-                onChange={(e) =>
-                  setEditItem({ ...editItem, status: e.target.value })
-                }
-                onKeyDown={(e) => handleKeyNavigation(e, "save")}
+          <>
+            <div>{item.code}</div>
+            <div>{item.name}</div>
+            <div>{item.container}</div>
+            <div>{item.package}</div>
+            <div>{item.flavour}</div>
+            <div className='packof'>{item.packOf}</div>
+            <div className='status'>
+              <span
+                className={`status-badge ${item.status === "Active" ? "active" : "inactive"
+                  }`}
               >
-                <option>Active</option>
-                <option>Inactive</option>
-              </select>
-              <div className="actions">
-                <span
-                  className="save"
-                  ref={saveBtnRef}
-                  disabled={loading}
-                  onClick={() => handleSaveEdit(item._id)}
-                >
-                  Save
-                </span>{" "}
-                |{" "}
-                <span className="cancel" onClick={() => setEditId(null)}>
-                  Cancel
-                </span>
-              </div>
-            </>
-          ) : (
-            <>
-              <div>{item.code}</div>
-              <div>{item.name}</div>
-              <div>{item.container}</div>
-              <div>{item.package}</div>
-              <div>{item.flavour}</div>
-              <div className='status'>
-                <span
-                  className={`status-badge ${item.status === "Active" ? "active" : "inactive"
-                    }`}
-                >
-                  {item.status}
-                </span>
-              </div>
-              <div className="actions">
-                <span className="edit" onClick={() => handleEdit(item)}>
-                  Edit
-                </span>{" "}
-                |{" "}
-                <span className="delete" onClick={() => handleDelete(item._id)}>
-                  Delete
-                </span>
-              </div>
-            </>
-          )}
+                {item.status}
+              </span>
+            </div>
+            <div className="actions">
+              <span className="edit" onClick={() => handleEdit(item)}>
+                Edit
+              </span>{" "}
+              |{" "}
+              <span className="delete" onClick={() => handleDelete(item._id)}>
+                Delete
+              </span>
+            </div>
+          </>
         </div>
       ))}
 
       {showModal && (
         <div className="modal-overlay">
           <div className="modal" ref={modalRef}>
-            <h2>Add New Item</h2>
-            <form onSubmit={handleAddItem}>
+            <h2>{mode === "add" ? "Add New Item" : "Edit Item"}</h2>
+            <form onSubmit={handleSubmitItem}>
               <div className="form-group">
                 <label>Code</label>
                 <input
@@ -640,8 +547,8 @@ const Item = () => {
                     <option disabled>Loading...</option>
                   ) : (
                     containers.map((c) => (
-                      <option key={c._id || c} value={c.name || c}>
-                        {c.name.toUpperCase() || c.toUpperCase()}
+                      <option key={c._id || c} value={(c.name || c).trim().toUpperCase()}>
+                        {(c.name || c).trim().toUpperCase()}
                       </option>
                     ))
                   )}
@@ -661,8 +568,8 @@ const Item = () => {
                     <option disabled>Loading...</option>
                   ) : (
                     packages.map((c) => (
-                      <option key={c._id || c} value={c.name || c}>
-                        {c.name.toUpperCase() || c.toUpperCase()}
+                      <option key={c._id || c} value={(c.name || c).trim().toUpperCase()}>
+                        {(c.name || c).trim().toUpperCase()}
                       </option>
                     ))
                   )}
@@ -682,12 +589,26 @@ const Item = () => {
                     <option disabled>Loading...</option>
                   ) : (
                     flavours.map((c) => (
-                      <option key={c._id || c} value={c.name || c}>
-                        {c.name.toUpperCase() || c.toUpperCase()}
+                      <option key={c._id || c} value={(c.name || c).trim().toUpperCase()}>
+                        {(c.name || c).trim().toUpperCase()}
                       </option>
                     ))
                   )}
                 </select>
+              </div>
+
+              <div className="form-group">
+                <label>Pack Of</label>
+                <input
+                  ref={modalPackOfRef}
+                  type="text"
+                  value={newItem.packOf}
+                  onChange={(e) =>
+                    setNewItem({ ...newItem, packOf: Number(e.target.value) })
+                  }
+                  onKeyDown={(e) => handleModalKeyNavigation(e, "packof")}
+                  placeholder="Pack Of"
+                />
               </div>
 
               <div className="form-group">
@@ -713,12 +634,12 @@ const Item = () => {
                   onKeyDown={(e) => handleModalKeyNavigation(e, "save")}
                   disabled={isSubmitting}
                 >
-                  {isSubmitting ? 'Saving...' : 'Save'}
+                  {isSubmitting ? 'Saving...' : mode === "add" ? 'Save' : 'Update'}
                 </button>
                 <button
                   type="button"
                   className="cancel-btn"
-                  onClick={() => setShowModal(false)}
+                  onClick={() => { setShowModal(false), setMode("add") }}
                 >
                   Cancel
                 </button>

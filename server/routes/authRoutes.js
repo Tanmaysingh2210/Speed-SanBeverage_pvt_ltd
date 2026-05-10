@@ -7,6 +7,7 @@ import { logout } from '../controllers/authControllers/logout.js';
 import { forgotPassword } from '../controllers/authControllers/forgotPassword.js';
 import { verify_reset_pass_otp } from '../controllers/authControllers/verifyresetPassOtp.js';
 import { resetPassword } from '../controllers/authControllers/resetPassword.js';
+import { autoLoginIfNeeded } from '../controllers/authControllers/autoLogin.js';
 
 const router = express.Router();
 
@@ -19,12 +20,13 @@ router.post('/forgot_password', forgotPassword);
 router.post('/verify_reset_otp', verify_reset_pass_otp);
 router.post('/reset_password', resetPassword);
 
-router.get('/me', (req, res) => {
-    if (req.session && req.session.user) {
-        return res.json({ user: req.session.user });
-    }
-    return res.status(200).json({ user: null });
-});
+// router.get('/me', (req, res) => {
+//     if (req.session && req.session.user) {
+//         return res.json({ user: req.session.user });
+//     }
+//     return res.status(200).json({ user: null });
+// });
 
+router.get('/me', autoLoginIfNeeded);
 
 export default router;

@@ -12,6 +12,7 @@
   "description": "",
   "dependencies": {
     "bcrypt": "^6.0.0",
+    "connect-mongo": "^6.0.0",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
     "dotenv": "^17.2.3",
@@ -20,6 +21,7 @@
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.19.0",
     "node-cron": "^4.2.1",
+    "nodecron": "^0.2.0",
     "nodemailer": "^7.0.6",
     "nodemon": "^3.1.10",
     "react-router-dom": "^7.9.3"

@@ -137,7 +137,7 @@ const BrowsePrice = () => {
 
 
   const calculateNetRate = (basePrice, perTax, perDisc) => {
-    if (!basePrice || !perTax) return '';
+    if (!basePrice) return '';
     let taxablePrice = (parseFloat(basePrice) - (parseFloat(basePrice) * parseFloat(perDisc) / 100)).toFixed(2);
     return (parseFloat(taxablePrice) + (parseFloat(taxablePrice) * parseFloat(perTax) / 100)).toFixed(2);
   };
@@ -282,7 +282,7 @@ const BrowsePrice = () => {
       {/* Table */}
       <div className="price-table">
         {/* Header Row */}
-        <div className="price-row header">
+        <div className="price-row header32">
           <div>SL.NO.</div>
           <div>CODE</div>
           <div>NAME</div>
@@ -319,9 +319,9 @@ const BrowsePrice = () => {
               <div>{i + 1}</div>
               <div>{p?.itemCode?.toUpperCase() || ''}</div>
               <div>{rowItem?.name?.toUpperCase() || ''}</div>
-              <div>₹{p?.basePrice || ''}</div>
-              <div>{p?.perDisc || ''}%</div>
-              <div>{p?.perTax || ''}%</div>
+              <div>₹{p?.basePrice || 0}</div>
+              <div>{p?.perDisc || 0}%</div>
+              <div>{p?.perTax || 0}%</div>
               <div>₹{calculateNetRate(p?.basePrice, p?.perTax, p?.perDisc)}</div>
               <div>{FormatDate(p?.date) || ""}</div>
               <div className="status">
