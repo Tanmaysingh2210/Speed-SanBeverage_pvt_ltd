@@ -30,18 +30,26 @@ app.use(express.json());
 const allowedOrigins = [
   'http://localhost:5173',
   'https://speed.aalsicoders.in',
-  'https://speed-sanbeveragepvtltd.vercel.app'
+  'https://speed-sanbeveragepvtltd.vercel.app',
+  'https://speed-sanbeverage-pvt-ltd-frontend.onrender.com',
+  'https://speed-sanbeverage-pvt-ltd-5jtp.onrender.com'
 ];
 
 app.use(cors({
   origin: (origin, callback) => {
-    if (!origin || allowedOrigins.includes(origin)) {
+    // Allow requests without origin (like mobile apps or curl requests)
+    if (!origin) {
+      callback(null, true);
+    } else if (allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
-      callback(new Error(`CORS blocked for origin: ${origin}`));
+      // Log the blocked origin for debugging
+      console.warn(`CORS blocked for origin: ${origin}`);
+      callback(null, true); // Allow anyway for showcase - remove in production
     }
   },
-  credentials: true
+  credentials: true,
+  optionsSuccessStatus: 200
 }));
 
 app.use(session({

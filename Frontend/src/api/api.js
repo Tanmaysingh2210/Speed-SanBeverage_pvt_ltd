@@ -1,8 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-    // baseURL: 'http://localhost:3000',
-    baseURL: 'https://speed-sanbeverage-pvt-ltd-ojt3.onrender.com',
+    baseURL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000',
     withCredentials: true, // send/receive cookies
     headers: {
         'Content-Type': 'application/json'
