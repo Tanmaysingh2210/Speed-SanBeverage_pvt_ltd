@@ -30,9 +30,7 @@ app.use(express.json());
 const allowedOrigins = [
   'http://localhost:5173',
   'https://speed.aalsicoders.in',
-  'https://speed-sanbeveragepvtltd.vercel.app',
-  'https://speed-sanbeverage-pvt-ltd-frontend.onrender.com',
-  'https://speed-sanbeverage-pvt-ltd-5jtp.onrender.com'
+  'https://speed-sanbeveragepvtltd.vercel.app'
 ];
 
 app.use(cors({
@@ -63,7 +61,10 @@ app.use(session({
     cookie: {
         secure: process.env.NODE_ENV === 'production',
         httpOnly: true,
+        // 'none' + domain allows cross-subdomain sharing on same root domain
+        // Once api.aalsicoders.in is set up, change sameSite to 'lax' and keep domain
         sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+        domain: process.env.NODE_ENV === 'production' ? '.aalsicoders.in' : undefined,
         maxAge: 1000 * 60 * 60 * 24 * 7
     }
 }));
