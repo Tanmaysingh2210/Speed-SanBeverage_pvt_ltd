@@ -30,7 +30,8 @@ app.use(express.json());
 const allowedOrigins = [
   'http://localhost:5173',
   'https://speed.aalsicoders.in',
-  'https://speed-sanbeveragepvtltd.vercel.app'
+  'https://demospeed.aalsicoders.in',
+  'https://speed-sanbeveragepvtltd.vercel.app',
 ];
 
 app.use(cors({
