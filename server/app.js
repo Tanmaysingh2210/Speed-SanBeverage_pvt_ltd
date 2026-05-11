@@ -82,16 +82,14 @@ app.get("/ping", (req, res) => {
   res.send("Server is alive")
 })
 
-// cron.schedule("*/5 * * * *", async () => {
-//     try {
-//         await fetch("https://parliamentbackend.onrender.com/ping");
-//         console.log("self ping succesful");
-
-//     } catch (error) {
-//         console.log("ping failed", error.message);
-
-//     }
-// })
+cron.schedule("*/5 * * * *", async () => {
+  try {
+    await fetch("https://speed-sanbeverage-pvt-ltd-ojt3.onrender.com/ping");
+    console.log("self ping succesful");
+  } catch (error) {
+    console.log("ping failed", error.message);
+  }
+})
 
 app.use('/auth', authRoutes);
 app.use('/depo', depoRoutes);
