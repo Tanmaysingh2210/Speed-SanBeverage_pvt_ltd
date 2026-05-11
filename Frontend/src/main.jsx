@@ -15,6 +15,7 @@ import { SalesmanModalProvider } from './context/SalesmanModalContext.jsx';
 import { DepoProvider } from './context/depoContext.jsx';
 import { ItemModalProvider } from './context/ItemModalContext.jsx';
 import { ToastProvider } from './context/ToastContext.jsx';
+import DeviceBlocker from './DeviceBlocker.jsx';
 
 createRoot(document.getElementById('root')).render(
   <React.StrictMode>
@@ -32,9 +33,9 @@ createRoot(document.getElementById('root')).render(
 
                           <PurchaseProvider>
                             <TransactionProvider>
-
-                              <App />
-
+                              <DeviceBlocker>
+                                <App />
+                              </DeviceBlocker>
                             </TransactionProvider>
                           </PurchaseProvider>
 
@@ -47,7 +48,7 @@ createRoot(document.getElementById('root')).render(
             </SalesmanProvider>
           </AuthProvider>
         </DepoProvider>
-      </ToastProvider>  
+      </ToastProvider>
     </BrowserRouter>
   </React.StrictMode>
 )
