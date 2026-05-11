@@ -15,16 +15,12 @@ const Purchase = () => {
                         <li><NavLink to={`/purchase/purchaseEntry`} className={({ isActive }) => (isActive ? 'active' : '')}> Purchase-Entry</NavLink></li>
                         <li><NavLink to={`/purchase/purchaseItemwise`} className={({ isActive }) => (isActive ? 'active' : '')}> Purchase-Itemwise</NavLink></li>
                     </ul>
-
                 </div>
 
                 <Routes>
                     <Route index element={<Navigate to="purchaseItemwise" replace />} />
-
                     <Route path="purchaseEntry" element={<PurchaseEntry />} />
                     <Route path="purchaseItemwise" element={<PurchaseItemwise />} />
-
-
                 </Routes>
             </div>
         </>
