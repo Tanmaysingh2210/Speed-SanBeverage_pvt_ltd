@@ -19,7 +19,7 @@ const Purchase = () => {
                 </div>
 
                 <Routes>
-                    <Route index element={<Navigate to="purchaseEntry" replace />} />
+                    <Route index element={<Navigate to="purchaseItemwise" replace />} />
 
                     <Route path="purchaseEntry" element={<PurchaseEntry />} />
                     <Route path="purchaseItemwise" element={<PurchaseItemwise />} />
