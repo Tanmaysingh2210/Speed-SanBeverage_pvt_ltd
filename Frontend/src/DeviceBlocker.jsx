@@ -8,7 +8,7 @@ const DeviceBlocker = ({ children }) => {
             const width = window.innerWidth;
 
             // block tablets + mobiles
-            if (width < 1024) {
+            if (width <= 1024) {
                 setBlocked(true);
             } else {
                 setBlocked(false);
